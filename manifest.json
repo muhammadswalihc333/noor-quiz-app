@@ -1,0 +1,25 @@
+{
+  "name": "Noor Al Madrasa Quiz App",
+  "short_name": "NoorQuiz",
+  "version": "3.1.0 - Photo Model 6 Column Final",
+  "description": "Noor Al Madrasa Quiz App - 6 Column Photo Model - Logo 60px Banner 60px Certificate Timer Bulk Link Profile",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a3d2e",
+  "theme_color": "#0a3d2e",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
