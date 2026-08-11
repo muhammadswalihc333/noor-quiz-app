@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noor AI Madrasa Quiz - Online Cloud Version</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{background:#fdf8e7;font-family:sans-serif}
+.box{background:#fff;border:2px solid #14532d;border-radius:14px;padding:12px}
+.head{background:#14532d;color:#fff;text-align:center;padding:6px;border-radius:8px;font-weight:bold;font-size:11px;margin-bottom:8px}
+.greenBtn{background:#16a34a;color:#fff;padding:14px;border-radius:12px;width:100%;font-weight:900;border:4px solid #14532d}
+.blueBtn{background:#2563eb;color:#fff;padding:12px;border-radius:12px;width:100%;font-weight:900}
+.linkBox{background:#dcfce7;border:3px solid #16a34a;padding:12px;border-radius:12px;margin-top:10px;word-break:break-all}
+</style>
+</head>
+<body>
+
+<!-- ADMIN VIEW -->
+<div id="adminView">
+<div class="bg-green-900 text-white p-3 flex justify-between items-center">
+<span class="font-bold text-sm">🌙 Noor AI Madrasa - ONLINE Cloud Sync</span>
+<span class="bg-yellow-400 text-black px-3 py-1 rounded-full text-[10px] font-bold">ADMIN PANEL</span>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-2 p-2">
+<!-- Box 1 -->
+<div class="box">
+<div class="head">1 - Branding</div>
+<input id="eventName" placeholder="ഇസ്ലാമിക് 2k26 ക്വിസ് - ഇവന്റ് പേര്" class="w-full border-2 border-yellow-600 p-2 rounded mt-1 text-sm">
+<input id="placeName" placeholder="സ്ഥലം - എറണാകുളം" class="w-full border p-2 rounded mt-2 text-sm">
+<input id="eventDate" type="date" class="w-full border p-2 rounded mt-2 text-sm">
+<div class="mt-2 text-[11px]">Logo (Optional)<input id="logoFile" type="file" accept="image/*" class="w-full text-[9px] mt-1"></div>
+<img id="logoPrev" class="h-16 mt-1 hidden border rounded">
+<div class="mt-2 text-[11px]">Banner (Optional)<input id="bannerFile" type="file" accept="image/*" class="w-full text-[9px] mt-1"></div>
+<img id="bannerPrev" class="h-20 w-full object-cover mt-1 hidden border rounded">
+</div>
+
+<!-- Box 2 -->
+<div class="box">
+<div class="head">2 - Certificate</div>
+<select id="certType" class="w-full border p-2 rounded mt-1 text-xs"><option>Type B BG</option><option>Type A</option></select>
+<div class="mt-2 text-[10px]">X: <span id="xv">50</span> <input id="xRange" type="range" min="0" max="100" value="50" class="w-full"></div>
+<div class="text-[10px]">Y: <span id="yv">60</span> <input id="yRange" type="range" min="0" max="100" value="60" class="w-full"></div>
+<div class="text-[10px]">S: <span id="sv">24</span> <input id="sRange" type="range" min="10" max="60" value="24" class="w-full"></div>
+<div id="certBox" class="border-2 border-dashed h-36 mt-2 rounded bg-white relative flex items-center justify-center overflow-hidden">
+<div id="certName" class="font-bold relative z-10">Name</div>
+</div>
+</div>
+
+<!-- Box 3 -->
+<div class="box">
+<div class="head">3 - Settings - Cloud Sync</div>
+<div class="grid grid-cols-2 gap-2 mt-2 text-xs">
+<div>Timer (sec)<select id="timer" class="w-full border p-2 rounded"><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="60">60</option></select></div>
+<div>Count<input id="qCountSet" type="number" value="20" class="w-full border p-2 rounded"></div>
+<div>Shuffle<select id="shuffle" class="w-full border p-2 rounded"><option>Same</option><option>Shuffle</option></select></div>
+<div>Result<select id="resultMode" class="w-full border p-2 rounded"><option>Both-Best</option><option>First Only</option></select></div>
+<div class="col-span-2">Mode<select id="appMode" class="w-full border p-2 rounded"><option>Online+Offline</option><option>Online Only</option></select></div>
+</div>
+<input id="eventIdShow" placeholder="Event ID - Auto from Cloud" class="w-full bg-gray-100 border p-2 rounded mt-3 text-[10px]" readonly>
+<button onclick="createOnline()" class="greenBtn mt-3 text-sm">✅ CREATE ONLINE LINK - Cloud Save</button>
+<div class="grid grid-cols-2 gap-2 mt-2">
+<button onclick="saveToCloud()" class="blueBtn text-xs">💾 SAVE TO CLOUD - Update (Link Same)</button>
+<button onclick="clearAll()" class="bg-gray-300 p-3 rounded-xl font-bold text-xs">Clear</button>
+</div>
+<div id="linkResult"></div>
+<p class="text-[9px] text-blue-700 mt-2 text-center font-bold">Settings മാറ്റിയാൽ SAVE TO CLOUD Click ചെയ്യൂ - Link മാറില്ല, Data മാറും!</p>
+</div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-2 p-2">
+<div class="box lg:col-span-2">
+<div class="head">4 - Questions - Edit/Delete Separate (Bulk Only Enough!)</div>
+<textarea id="bulkInput" placeholder="Bulk Format: Question | a,b,c,d | correct answer&#10;ഉദാ: നബി ജനിച്ച സ്ഥലം? | മക്ക,മദീന,തായിഫ്,ജിദ്ദ | മക്ക" class="w-full border-2 border-orange-300 p-2 rounded h-28 mt-2 text-xs"></textarea>
+<button onclick="addBulk()" class="w-full bg-yellow-700 text-white p-2 rounded mt-1 text-xs font-bold">Bulk Add - Bulk Only Enough!</button>
+<div class="grid grid-cols-3 gap-1 mt-3">
+<input id="qInput" placeholder="Question" class="border p-2 rounded col-span-3 text-xs">
+<input id="optsInput" placeholder="Options - a,b,c,d" class="border p-2 rounded col-span-2 text-xs">
+<input id="ansInput" placeholder="Correct Ans" class="border p-2 rounded text-xs">
+</div>
+<button onclick="addSingle()" class="w-full bg-yellow-800 text-white p-2 rounded mt-1 text-xs">+ Add Single Question</button>
+<div id="qList" class="mt-3 max-h-80 overflow-auto text-[11px] border rounded p-2 bg-yellow-50"></div>
+</div>
+
+<div class="box">
+<div class="head">5 - Actions & 6 - Results</div>
+<div class="bg-yellow-50 p-2 rounded mt-1 text-[11px]">Link only enough! Participant Link Auto Generated via Cloud</div>
+<div class="mt-3">
+<div class="flex items-center gap-2 text-xs"><input type="checkbox" checked> Auto <input value="90" class="border w-12 p-1 rounded"> Days</div>
+<input placeholder="Admin Pass - noor123" class="w-full border p-2 rounded mt-2 text-xs">
+</div>
+<div class="bg-green-50 border rounded p-2 mt-3">
+<div class="text-xs font-bold">Quota: <span id="quota">0/15</span> | Rank Score+Less Time</div>
+<button class="w-full bg-green-900 text-white p-2 rounded mt-2 text-xs">Participants - Excel, Clear</button>
+</div>
+<div class="mt-3">
+<p class="font-bold text-xs">Your Cloud Events - Click to Edit</p>
+<div id="eventsList" class="mt-2 text-[11px] max-h-80 overflow-auto"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- PARTICIPANT VIEW -->
+<div id="participantView" class="hidden min-h-screen bg-yellow-50 p-3">
+<div class="bg-green-900 text-white p-4 rounded-xl text-center">
+<h1 id="pEventName" class="font-bold text-xl"></h1>
+<p id="pPlace" class="text-xs mt-1"></p>
+<p id="pTimerInfo" class="text-[10px] mt-1 bg-yellow-400 text-black inline-block px-2 py-1 rounded-full"></p>
+</div>
+<div id="quizArea" class="mt-4"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getFirestore, collection, addDoc, doc, getDoc, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+// FIREBASE CONFIG - Replace with your real config if needed
+// Firebase Console > Project Settings > General > Your apps > Config
+const firebaseConfig = {
+  apiKey: "AIzaSyB4R8a2X9v5b3Q8k8h8j8k8h8j8k8h8j8k8h8j",
+  authDomain: "noor-ai-madrasa-app.firebaseapp.com",
+  projectId: "noor-ai-madrasa-app",
+  storageBucket: "noor-ai-madrasa-app.appspot.com",
+  messagingSenderId: "1234567890",
+  appId: "1:1234567890:web:abcdef123456"
+};
+
+let db;
+try {
+  const app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+  console.log("Firebase Online Ready");
+} catch(e) {
+  console.error("Firebase init failed", e);
+  alert("Firebase Config തെറ്റ്! Firebase Console-ൽ നിന്ന് Real Config എടുത്ത് Paste ചെയ്യണം! എന്നാലും Local ആയി Work ആവും");
+  // Fallback to dummy for local testing
+  db = null;
+}
+
+let questions = JSON.parse(localStorage.getItem('noor_q_final')||'[]');
+let currentEventId = localStorage.getItem('noor_current_event_id')||'';
+let currentLink = '';
+
+function saveLocal(){localStorage.setItem('noor_q_final',JSON.stringify(questions));}
+function renderQ(){
+  const div=document.getElementById('qList');
+  if(questions.length==0){div.innerHTML='<span class="text-gray-400">No Questions - Add Bulk or Single</span>'; document.getElementById('quota').innerText='0/15'; return;}
+  div.innerHTML=questions.map((qq,i)=>`<div class="border-b py-1 flex justify-between"><div><b>Q${i+1}.</b> ${qq.q}<br><span class="text-[9px] text-gray-500">${qq.opts.join(', ')} | Ans: ${qq.ans}</span></div><div class="flex gap-1"><button onclick="editQ(${i})" class="bg-blue-500 text-white px-2 py-0.5 rounded text-[9px]">Edit</button><button onclick="delQ(${i})" class="bg-red-500 text-white px-2 py-0.5 rounded text-[9px]">Del</button></div></div>`).join('');
+  document.getElementById('quota').innerText=questions.length+'/15';
+}
+window.delQ=i=>{questions.splice(i,1);saveLocal();renderQ();}
+window.editQ=i=>{
+  const qq=questions[i];
+  document.getElementById('qInput').value=qq.q;
+  document.getElementById('optsInput').value=qq.opts.join(',');
+  document.getElementById('ansInput').value=qq.ans;
+  questions.splice(i,1);saveLocal();renderQ();
+}
+window.addBulk=()=>{
+  const txt=document.getElementById('bulkInput').value.trim();
+  if(!txt) return alert('Bulk Questions എഴുതൂ');
+  txt.split('\n').forEach(line=>{
+    const p=line.split('|'); if(p.length>=2){
+      const q=p[0].trim(); const opts=p[1].split(',').map(s=>s.trim()).filter(s=>s); const ans=p[2]?p[2].trim():opts[0];
+      if(q && opts.length) questions.push({q,opts,ans});
+    }
+  });
+  document.getElementById('bulkInput').value=''; saveLocal(); renderQ();
+}
+window.addSingle=()=>{
+  const q=document.getElementById('qInput').value.trim();
+  const o=document.getElementById('optsInput').value.trim();
+  const a=document.getElementById('ansInput').value.trim();
+  if(!q) return alert('Question എഴുതൂ');
+  const opts=o?o.split(',').map(s=>s.trim()).filter(s=>s):['A','B','C','D'];
+  questions.push({q,opts,ans:a||opts[0]});
+  document.getElementById('qInput').value='';document.getElementById('optsInput').value='';document.getElementById('ansInput').value='';
+  saveLocal(); renderQ();
+}
+window.clearAll=()=>{if(confirm('Clear form?')){document.getElementById('eventName').value='';document.getElementById('linkResult').innerHTML='';}}
+
+window.createOnline=async()=>{
+  if(!db){return alert('Firebase Not Ready - Config Check ചെയ്യൂ');}
+  const name=document.getElementById('eventName').value.trim()||'Noor Quiz '+new Date().toLocaleDateString();
+  const place=document.getElementById('placeName').value.trim()||'Kerala';
+  const date=document.getElementById('eventDate').value||new Date().toISOString().split('T')[0];
+  const timer=document.getElementById('timer').value;
+  const count=document.getElementById('qCountSet').value;
+  const shuffle=document.getElementById('shuffle').value;
+
+  if(questions.length==0){if(!confirm('0 Questions! എന്നാലും Link Create ചെയ്യണോ?')) return;}
+
+  document.getElementById('linkResult').innerHTML='<div class="bg-yellow-100 border p-3 rounded mt-3 text-xs text-center">⏳ Cloud-ൽ Save ചെയ്യുന്നു... Wait</div>';
+  try{
+    const docRef=await addDoc(collection(db,'events'),{name,place,date,timer,count,shuffle,questions,created:new Date().toISOString(),updated:new Date().toISOString()});
+    currentEventId=docRef.id;
+    localStorage.setItem('noor_current_event_id',currentEventId);
+    currentLink=location.origin+location.pathname+'?event='+currentEventId;
+    document.getElementById('eventIdShow').value=currentEventId;
+    showLinkBox(currentLink,name,questions.length,timer,true);
+    loadCloudEvents();
+  }catch(e){
+    document.getElementById('linkResult').innerHTML=`<div class="bg-red-100 border-2 border-red-500 p-3 rounded mt-3 text-xs">❌ Failed: ${e.message}<br><br>Firebase Rules-ൽ allow read,write: if true ആക്കിയോ? Check ചെയ്യൂ</div>`;
+  }
+}
+
+window.saveToCloud=async()=>{
+  if(!db) return alert('Firebase Not Ready');
+  if(!currentEventId) return alert('ആദ്യം CREATE ONLINE LINK ചെയ്യൂ!');
+  const name=document.getElementById('eventName').value.trim()||'Noor Quiz';
+  const place=document.getElementById('placeName').value.trim()||'Kerala';
+  const timer=document.getElementById('timer').value;
+  const count=document.getElementById('qCountSet').value;
+  const shuffle=document.getElementById('shuffle').value;
+
+  document.getElementById('linkResult').innerHTML='<div class="bg-blue-100 border p-3 rounded mt-3 text-xs text-center">💾 Cloud Update ചെയ്യുന്നു...</div>';
+  try{
+    await updateDoc(doc(db,'events',currentEventId),{name,place,timer,count,shuffle,questions,updated:new Date().toISOString()});
+    currentLink=location.origin+location.pathname+'?event='+currentEventId;
+    showLinkBox(currentLink,name,questions.length,timer,false);
+    alert('✅ SAVE ആയി! Link മാറിയില്ല! Participant refresh ചെയ്താൽ പുതിയ Settings കാണും!');
+    loadCloudEvents();
+  }catch(e){alert('Save Failed: '+e.message);}
+}
+
+function showLinkBox(link,name,qLen,timer,isNew){
+  document.getElementById('linkResult').innerHTML=`
+    <div class="linkBox">
+      <div class="font-black text-green-900 text-center text-xs">${isNew?'✅ ONLINE LINK CREATED!':'✅ SAVED TO CLOUD!'}</div>
+      <div class="bg-white p-2 rounded border mt-2 text-[10px] break-all select-all" id="linkTxt">${link}</div>
+      <div class="grid grid-cols-3 gap-2 mt-3">
+        <button onclick="navigator.clipboard.writeText(document.getElementById('linkTxt').innerText);alert('✅ Link Copied!')" class="bg-green-700 text-white p-2 rounded font-bold text-[10px]">📋 COPY</button>
+        <button onclick="window.open('${link}','_blank')" class="bg-blue-600 text-white p-2 rounded font-bold text-[10px]">👁️ PREVIEW</button>
+        <button onclick="window.open('https://wa.me/?text='+encodeURIComponent('🌙 Noor Quiz: '+document.getElementById('linkTxt').innerText))" class="bg-green-500 text-white p-2 rounded font-bold text-[10px]">WA Share</button>
+      </div>
+      <div class="text-[9px] text-center mt-2">${name} | Qs: ${qLen} | Timer: ${timer}s | ${isNew?'New Cloud Event':'Updated! Link Same'}</div>
+      <div class="text-[8px] text-center mt-1 text-blue-700 font-bold">${isNew?'☁️ Cloud-ൽ Save ആയി - എല്ലാവർക്കും കാണും':'🔄 Cloud Update ആയി - Participant Refresh ചെയ്താൽ മാറും'}</div>
+    </div>
+  `;
+  document.getElementById('linkResult').scrollIntoView({behavior:'smooth'});
+}
+
+async function loadCloudEvents(){
+  if(!db) return;
+  try{
+    const snap=await getDocs(collection(db,'events'));
+    const div=document.getElementById('eventsList');
+    if(snap.empty){div.innerHTML='<span class="text-gray-400">No Cloud Events Yet</span>'; return;}
+    div.innerHTML='';
+    snap.forEach(docSnap=>{
+      const e=docSnap.data(); const id=docSnap.id;
+      const link=location.origin+location.pathname+'?event='+id;
+      div.innerHTML+=`<div class="border p-2 rounded mb-2 bg-white"><b class="text-[11px]">${e.name}</b> <span class="text-[8px]">(${e.questions?.length||0} Qs | ${e.timer}s)</span><br><span class="text-[7px] break-all text-gray-500">${link}</span><div class="flex gap-1 mt-1"><button onclick="loadEventToEdit('${id}')" class="bg-blue-500 text-white px-2 py-0.5 rounded text-[8px]">✏️ Edit/Update</button><button onclick="navigator.clipboard.writeText('${link}');alert('Copied')" class="bg-green-600 text-white px-2 py-0.5 rounded text-[8px]">Copy</button><button onclick="window.open('${link}','_blank')" class="bg-gray-600 text-white px-2 py-0.5 rounded text-[8px]">Open</button></div></div>`;
+    });
+  }catch(e){console.log('Load events fail',e);}
+}
+window.loadEventToEdit=async(id)=>{
+  try{
+    const snap=await getDoc(doc(db,'events',id));
+    if(!snap.exists()) return alert('Event Not Found');
+    const e=snap.data();
+    document.getElementById('eventName').value=e.name||'';
+    document.getElementById('placeName').value=e.place||'';
+    document.getElementById('eventDate').value=e.date||'';
+    document.getElementById('timer').value=e.timer||'10';
+    document.getElementById('qCountSet').value=e.count||'20';
+    questions=e.questions||[];
+    saveLocal(); renderQ();
+    currentEventId=id;
+    localStorage.setItem('noor_current_event_id',id);
+    document.getElementById('eventIdShow').value=id;
+    const link=location.origin+location.pathname+'?event='+id;
+    document.getElementById('linkResult').innerHTML=`<div class="bg-blue-50 border-2 border-blue-400 p-3 rounded-xl mt-3"><div class="font-bold text-xs text-blue-800">📂 Loaded: ${e.name}</div><div class="text-[9px] break-all mt-1 bg-white p-2 rounded" id="linkTxt">${link}</div><div class="text-[8px] mt-1">ഇനി Timer/Questions മാറ്റി SAVE TO CLOUD Click ചെയ്യൂ - Link Same ആയിരിക്കും!</div><button onclick="navigator.clipboard.writeText('${link}');alert('Copied')" class="bg-green-600 text-white px-3 py-1 rounded text-[9px] mt-2">Copy Link</button></div>`;
+    window.scrollTo(0,0);
+  }catch(e){alert('Load failed: '+e.message);}
+}
+
+// Participant View
+const params=new URLSearchParams(location.search);
+const evId=params.get('event');
+if(evId){
+  document.getElementById('adminView').classList.add('hidden');
+  document.getElementById('participantView').classList.remove('hidden');
+  (async()=>{
+    try{
+      const snap=await getDoc(doc(db,'events',evId));
+      if(!snap.exists()){document.getElementById('quizArea').innerHTML='<div class="bg-red-100 p-4 rounded">❌ Event Not Found - Link തെറ്റ് ആവാം</div>'; return;}
+      const ev=snap.data();
+      document.getElementById('pEventName').innerText=ev.name;
+      document.getElementById('pPlace').innerText=ev.place+' | '+ev.date;
+      document.getElementById('pTimerInfo').innerText=`Timer: ${ev.timer}s | ${ev.questions.length} Qs | Mode: ${ev.shuffle}`;
+      let html=`<div class="bg-white rounded-xl p-3 border-2 border-green-800"><p class="font-bold text-sm mb-3">📝 Quiz - ${ev.questions.length} Questions (Cloud Live Data)</p>`;
+      ev.questions.forEach((qq,i)=>{
+        html+=`<div class="border rounded-lg p-3 mb-3 bg-yellow-50"><b class="text-sm">Q${i+1}. ${qq.q}</b><div class="mt-2 space-y-1">${qq.opts.map((o,j)=>`<label class="flex items-center gap-2 bg-white p-2 rounded border text-sm"><input type="radio" name="q${i}" value="${o}"> ${o}</label>`).join('')}</div></div>`;
+      });
+      html+=`<button onclick="alert('Quiz Submit - Score Logic Add ചെയ്യാം')" class="w-full bg-green-600 text-white p-4 rounded-xl font-black mt-4">✅ Submit Quiz</button></div>`;
+      html+=`<p class="text-[10px] text-center mt-3 text-gray-500">Live from Cloud - Admin Settings മാറ്റിയാൽ Refresh ചെയ്താൽ മാറും | Event ID: ${evId}</p>`;
+      document.getElementById('quizArea').innerHTML=html;
+    }catch(e){
+      document.getElementById('quizArea').innerHTML=`<div class="bg-red-100 p-4 rounded">Error: ${e.message}<br>Firebase Config Check ചെയ്യൂ</div>`;
+    }
+  })();
+}
+
+renderQ();
+if(db) loadCloudEvents();
+
+// Certificate preview logic
+document.getElementById('xRange')?.addEventListener('input',e=>{document.getElementById('xv').innerText=e.target.value; document.getElementById('certName').style.left=e.target.value+'%';});
+document.getElementById('yRange')?.addEventListener('input',e=>{document.getElementById('yv').innerText=e.target.value; document.getElementById('certName').style.top=e.target.value+'%';});
+document.getElementById('sRange')?.addEventListener('input',e=>{document.getElementById('sv').innerText=e.target.value; document.getElementById('certName').style.fontSize=e.target.value+'px';});
+</script>
+</body>
+  </html>
