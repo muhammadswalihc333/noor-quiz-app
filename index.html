@@ -2,327 +2,191 @@
 <html lang="ml">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Noor V9.7 FINAL - Rank Time Ready - All Fixed</title>
+<title>Noor V9.9 FINAL - All Options Kept + Quiz Correct/Wrong + Certificate Download</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-body{background:#fdf8e8; font-family: sans-serif;}
+body{background:#fdf8e8; font-family:sans-serif;}
 .section-border{border:2.5px solid #14532d; border-radius:14px; background:white; padding:12px; margin-bottom:16px;}
-.green-header{background:#14532d; color:white; text-align:center; font-weight:900; font-size:11px; padding:7px; border-radius:8px; margin-bottom:12px; letter-spacing:0.5px;}
+.green-header{background:#14532d; color:white; text-align:center; font-weight:900; font-size:11px; padding:7px; border-radius:8px; margin-bottom:12px;}
 .banner-bg{background:radial-gradient(ellipse at top, #166534 0%, #052e16 75%, #000 100%);}
-.cert-preview{position:relative; width:100%; height:190px; border:2px dashed #9ca3af; border-radius:14px; overflow:hidden; background:#fff; display:flex; align-items:center; justify-content:center;}
-.cert-preview img{width:100%; height:100%; object-fit:contain;}
+.cert-preview{position:relative; width:100%; height:200px; border:2px dashed #9ca3af; border-radius:14px; background:#fff; display:flex; align-items:center; justify-content:center; overflow:hidden;}
+.option-btn{transition: all 0.3s;}
+.option-btn.correct{background:#16a34a!important; color:white!important; border-color:#16a34a!important; transform:scale(1.02);}
+.option-btn.wrong{background:#dc2626!important; color:white!important; border-color:#dc2626!important;}
+.option-btn.show-correct{border-color:#16a34a!important; border-width:3px!important; background:#dcfce7!important;}
 </style>
 </head>
 <body>
 
-<!-- COMPETITOR VIEW -->
 <div id="competitorView">
-<div class="banner-bg relative h-[190px] w-full flex flex-col items-center justify-center text-center pb-12">
-<h1 class="text-white text-[28px] font-black">🌙 Noor Al Madrasa</h1>
-<p class="text-yellow-100/70 text-[12px] mt-1">V9.7 Final - Rank Time Ready</p>
-<div class="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[70px] h-[70px] bg-white rounded-[18px] shadow-xl border-[3px] border-white flex items-center justify-center text-[#14532d] font-black text-[28px]">N</div>
+<div id="compBanner" class="banner-bg relative h-[200px] w-full flex flex-col items-center justify-center text-center pb-12">
+<img id="compBannerImg" src="" class="absolute inset-0 w-full h-full object-cover opacity-30 hidden">
+<h1 id="compTitle" class="text-white text-[28px] font-black relative z-10">🌙 Noor Al Madrasa</h1>
+<p id="compSubTitle" class="text-yellow-100/80 text-[12px] mt-1 relative z-10">V9.9 Final - All Options Kept</p>
+<p id="compPlaceShow" class="text-white/70 text-[11px] mt-1 relative z-10"></p>
+<div class="absolute -bottom-9 left-1/2 -translate-x-1/2 w-[72px] h-[72px] bg-white rounded-[20px] shadow-xl border-[3px] border-white flex items-center justify-center font-black text-[28px] overflow-hidden z-20">
+<img id="compLogoImg" src="" class="w-full h-full object-cover hidden"><span id="compLogoText" class="text-[#14532d]">N</span>
+</div>
 </div>
 <div class="max-w-[500px] mx-auto px-4 pt-14">
-<div class="bg-white rounded-[22px] border-2 border-green-900/20 p-6 shadow-sm">
+<div id="registrationBox" class="bg-white rounded-[22px] border-2 border-green-900/20 p-6 shadow">
 <h2 class="font-bold text-center text-green-900">രജിസ്ട്രേഷൻ</h2>
+<p id="eventNameDisplay" class="text-xs text-center text-gray-500 mt-1">Event Load ആയാൽ പേര് വരും</p>
 <div class="w-10 h-2 bg-yellow-400 rounded-full mx-auto mt-3 mb-6"></div>
-<input id="nameInput" placeholder="പൂർണ്ണ നാമം *" class="w-full mb-3 px-4 py-3 rounded-xl border-2 border-green-100 outline-none focus:border-green-500">
-<input id="phoneInput" type="tel" placeholder="ഫോൺ * - One Phone One Attempt" class="w-full mb-3 px-4 py-3 rounded-xl border-2 border-green-100 outline-none focus:border-green-500">
-<input id="placeInput" placeholder="സ്ഥലം / മദ്രസ / സ്ഥാപനം" class="w-full mb-6 px-4 py-3 rounded-xl border-2 border-gray-200 outline-none focus:border-green-500">
-<button onclick="startQuiz()" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-4 rounded-xl shadow">🚀 START QUIZ</button>
+<input id="nameInput" placeholder="പൂർണ്ണ നാമം *" class="w-full mb-3 px-4 py-3 rounded-xl border-2 border-green-100 outline-none">
+<input id="phoneInput" type="tel" placeholder="ഫോൺ *" class="w-full mb-3 px-4 py-3 rounded-xl border-2 border-green-100 outline-none">
+<input id="placeInput" placeholder="സ്ഥലം / മദ്രസ" class="w-full mb-6 px-4 py-3 rounded-xl border-2 outline-none">
+<button onclick="startQuiz()" class="w-full bg-green-600 text-white font-black py-4 rounded-xl">🚀 START QUIZ</button>
 <p id="errorMsg" class="hidden text-red-600 text-sm text-center mt-3 font-bold"></p>
 </div>
-<div id="quizCard" class="hidden bg-white rounded-[20px] p-5 border-2 mt-4"><div class="flex justify-between items-center"><span id="qCount" class="font-bold text-sm bg-gray-100 px-3 py-1 rounded-full">Q 1/20</span><span id="timer" class="bg-yellow-400 px-4 py-1 rounded-full font-black text-sm">10:00</span></div><h3 id="qText" class="font-bold my-5 text-[15px] leading-6"></h3><div id="options" class="space-y-2"></div></div>
-<div class="mt-10 text-center pb-10"><button onclick="document.getElementById('adminLoginBox').classList.toggle('hidden')" class="text-[11px] text-gray-400 border px-5 py-2 rounded-full">Admin Login</button><div id="adminLoginBox" class="hidden mt-3 bg-white p-4 rounded-xl border shadow-lg text-left"><label class="text-[11px] font-bold">Admin Password</label><input id="adminPass" type="password" placeholder="Password" class="w-full border-2 rounded-lg px-3 py-2.5 mt-1 mb-2"><button onclick="loginAdmin()" class="w-full bg-slate-800 text-white py-2.5 rounded-xl font-bold">Login</button><p id="loginError" class="text-[11px] text-red-600 mt-2 hidden font-bold"></p></div></div>
+
+<div id="quizCard" class="hidden bg-white rounded-[20px] p-5 border-2 mt-4 shadow">
+<div class="flex justify-between items-center"><span id="qCount" class="font-bold text-sm bg-gray-100 px-3 py-1 rounded-full">Q 1</span><span id="timer" class="bg-yellow-400 px-4 py-1 rounded-full font-black">10:00</span></div>
+<div class="w-full bg-gray-200 rounded-full h-2 mt-3"><div id="progressBar" class="bg-green-600 h-2 rounded-full" style="width:0%"></div></div>
+<h3 id="qText" class="font-bold my-5"></h3>
+<div id="options" class="space-y-2"></div>
+<p id="quizFeedback" class="hidden text-center font-black mt-4 text-sm p-2 rounded-xl"></p>
+</div>
+
+<div id="resultCard" class="hidden bg-white rounded-[22px] border-2 border-green-900/20 p-6 shadow mt-4 text-center">
+<div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto text-3xl">🎉</div>
+<h2 id="finalScore" class="text-4xl font-black mt-4 text-green-700">0/0</h2>
+<p id="finalTime" class="mt-1 text-sm font-bold">Time: 0:00 ⏱️</p>
+<p id="finalFeedback" class="text-xs mt-2 text-gray-600"></p>
+<div class="grid grid-cols-2 gap-3 mt-6">
+<button onclick="downloadCertificate()" class="bg-blue-600 text-white py-3 rounded-xl font-black text-sm">📜 Certificate Download</button>
+<button onclick="location.reload()" class="bg-green-600 text-white py-3 rounded-xl font-black text-sm">🏠 Home</button>
+</div>
+<div id="certDownloadArea" class="hidden mt-4">
+<canvas id="certCanvas" class="w-full border-2 rounded-xl"></canvas>
+<a id="certDownloadLink" download="Noor_Certificate.png" class="mt-2 block bg-yellow-400 text-black py-2 rounded-xl font-bold text-sm">⬇️ Download PNG</a>
 </div>
 </div>
 
-<!-- ADMIN VIEW -->
+<div class="mt-8 text-center pb-10"><button onclick="document.getElementById('adminLoginBox').classList.toggle('hidden')" class="text-[11px] text-gray-400 border px-5 py-2 rounded-full">Admin Login</button><div id="adminLoginBox" class="hidden mt-3 bg-white p-4 rounded-xl border shadow-lg text-left"><input id="adminPass" type="password" placeholder="Admin Password" class="w-full border-2 rounded-lg px-3 py-2.5 mb-2"><button onclick="loginAdmin()" class="w-full bg-slate-800 text-white py-2.5 rounded-xl font-bold">Login</button><p id="loginError" class="hidden text-red-600 text-xs mt-2 font-bold"></p></div></div>
+</div>
+</div>
+
 <div id="adminView" class="hidden p-2 pb-20">
-<div class="max-w-[600px] mx-auto">
-<div class="flex justify-between items-center bg-white p-3 rounded-xl border-2 mb-3 shadow-sm"><h2 class="font-black text-sm">Admin V9.7 - All Fixed - Rank Time Ready</h2><button onclick="logoutAdmin()" class="bg-red-50 text-red-600 border-red-200 px-4 py-1.5 rounded-full text-xs font-bold">Logout</button></div>
+<div class="max-w-[650px] mx-auto">
+<div class="flex justify-between items-center bg-white p-3 rounded-xl border-2 mb-3"><h2 class="font-black text-sm">Admin V9.9 - All Kept + Quiz Correct/Wrong + Cert Download</h2><button onclick="logoutAdmin()" class="bg-red-50 text-red-600 border px-4 py-1.5 rounded-full text-xs font-bold">Logout</button></div>
 
-<!-- 1 EVENT BASIC -->
-<div class="section-border">
-<div class="green-header">1 - Event Basic - Logo Banner - Place Full Options</div>
-<input id="eventName" placeholder="Event Name - Ex: Meelad Quiz 2025" class="w-full border-2 border-yellow-600/40 rounded-xl px-3 py-2.5 text-sm mb-2 outline-none focus:border-green-600">
-<input id="eventPlace" placeholder="Place - Ex: Kottakkal, Malappuram - Free Write" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 text-sm mb-2 outline-none focus:border-green-600">
-<label class="text-[11px] font-black">Event Category - Full Options</label>
-<select id="eventCategory" onchange="handleCategoryChange(this.value)" class="w-full border-2 border-green-900 rounded-xl px-3 py-2.5 text-sm mb-2 font-bold bg-white">
-<option value="">Select Type</option>
-<option value="Madrasa">Madrasa - മദ്രസ</option>
-<option value="School">School - സ്കൂൾ</option>
-<option value="College">College - കോളേജ്</option>
-<option value="Masjid">Masjid / Palli - പള്ളി</option>
-<option value="Mahal">Mahal - മഹൽ</option>
-<option value="Organization">Organization - സംഘടന</option>
-<option value="District">District Level - ജില്ല</option>
-<option value="State">State Level - സംസ്ഥാന</option>
-<option value="National">National - ദേശീയ</option>
-<option value="Other">Other Custom - മറ്റുള്ളവ</option>
-</select>
-<div id="customCategoryBox" class="hidden mb-2"><input id="customCategory" placeholder="Custom Type - Ex: SKSSF, SYS, Youth Wing - എന്തും എഴുതാം" class="w-full border-2 border-orange-400 rounded-xl px-3 py-2.5 text-sm bg-orange-50"><p class="text-[10px] text-orange-700 mt-1 font-bold">✅ എന്തും എഴുതാം - Madrasa മാത്രം അല്ല!</p></div>
-<div class="grid grid-cols-2 gap-2 mt-2"><div><label class="text-[10px] font-bold">Logo</label><div class="bg-yellow-50 border rounded-lg p-1"><input type="file" id="logoUpload" accept="image/*" onchange="handleLogoBanner(event,'logo')" class="text-[11px] w-full"></div><img id="logoPreview" class="hidden w-full h-12 object-contain mt-1 border rounded"></div><div><label class="text-[10px] font-bold">Banner</label><div class="bg-blue-50 border rounded-lg p-1"><input type="file" id="bannerUpload" accept="image/*" onchange="handleLogoBanner(event,'banner')" class="text-[11px] w-full"></div><img id="bannerPreview" class="hidden w-full h-12 object-cover mt-1 border rounded"></div></div>
-</div>
+<div class="section-border border-2 border-blue-600 bg-blue-50/30"><div class="green-header bg-blue-700">📅 കഴിഞ്ഞ ഇവന്റുകൾ - Copy & Edit - Kept</div><div id="pastEventsList" class="space-y-2 max-h-[250px] overflow-auto"><p class="text-xs text-center text-gray-500 py-4">No Past Events</p></div><button onclick="loadPastEvents()" class="w-full mt-2 bg-blue-600 text-white py-2 rounded-xl text-xs font-bold">🔄 Refresh</button></div>
 
-<!-- 2 CERTIFICATE -->
-<div class="section-border">
-<div class="green-header">2 - Certificate 2 Options - Upload Fixed + Live Preview</div>
-<div class="flex gap-2 mb-3"><button id="opt1Btn" onclick="switchCert(1)" class="bg-[#14532d] text-white px-4 py-2 rounded-xl text-[11px] font-bold">Opt1: Upload Full</button><button id="opt2Btn" onclick="switchCert(2)" class="bg-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold">Opt2: Auto Gen</button></div>
+<div class="section-border"><div class="green-header">1 - Event Basic - Logo Banner - Full Options - Kept</div><input id="eventName" placeholder="Event Name" class="w-full border-2 border-yellow-600/40 rounded-xl px-3 py-2.5 text-sm mb-2"><input id="eventPlace" placeholder="Place - Free Write" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 text-sm mb-2"><select id="eventCategory" onchange="handleCategoryChange(this.value)" class="w-full border-2 border-green-900 rounded-xl px-3 py-2.5 text-sm mb-2 font-bold bg-white"><option value="">Select Type</option><option value="Madrasa" selected>Madrasa - മദ്രസ</option><option value="School">School - സ്കൂൾ</option><option value="College">College</option><option value="Masjid">Masjid</option><option value="Mahal">Mahal</option><option value="Organization">Organization</option><option value="District">District</option><option value="State">State</option><option value="National">National</option><option value="Other">Other Custom</option></select><div id="customCategoryBox" class="hidden mb-2"><input id="customCategory" placeholder="Custom Type - എന്തും എഴുതാം" class="w-full border-2 border-orange-400 rounded-xl px-3 py-2.5 text-sm bg-orange-50"></div><div class="grid grid-cols-2 gap-2 mt-2"><div><label class="text-[10px] font-bold">Logo</label><div class="bg-yellow-50 border-2 rounded-lg p-1"><input type="file" accept="image/*" onchange="handleLogoBanner(event,'logo')" class="text-[11px] w-full"></div><img id="logoPreview" class="hidden w-full h-16 object-contain mt-1 border-2 rounded-xl bg-white"></div><div><label class="text-[10px] font-bold">Banner</label><div class="bg-blue-50 border-2 rounded-lg p-1"><input type="file" accept="image/*" onchange="handleLogoBanner(event,'banner')" class="text-[11px] w-full"></div><img id="bannerPreview" class="hidden w-full h-16 object-cover mt-1 border-2 rounded-xl"></div></div></div>
 
-<div id="certOpt1">
-<div class="bg-yellow-50 p-3 rounded-xl border-2 border-yellow-400">
-<p class="text-[11px] font-black">📜 Full Certificate - Choose ചെയ്താൽ താഴെ Preview കാണും</p>
-<input type="file" id="certFullFile" accept="image/*" onchange="handleCertFull(event)" class="w-full mt-2 text-xs border rounded-lg p-2 bg-white">
-<p class="text-[10px] text-gray-600 mt-1">✅ Upload ചെയ്താൽ താഴെ Full Preview - Simple അല്ല!</p>
-</div>
-</div>
+<div class="section-border"><div class="green-header">2 - Certificate 2 Options - Upload Fixed + Live Preview + Download - Kept</div><div class="flex gap-2 mb-3"><button id="opt1Btn" onclick="switchCert(1)" class="bg-[#14532d] text-white px-4 py-2 rounded-xl text-[11px] font-bold">Opt1: Upload Full</button><button id="opt2Btn" onclick="switchCert(2)" class="bg-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold">Opt2: Auto Gen</button></div><div id="certOpt1"><div class="bg-yellow-50 p-3 rounded-xl border-2 border-yellow-400"><p class="text-[11px] font-black">📜 Full Certificate Upload</p><input type="file" accept="image/*" onchange="handleCertFull(event)" class="w-full mt-2 text-xs border rounded-lg p-2 bg-white"><p class="text-[10px] mt-1">✅ Upload ചെയ്താൽ താഴെ Full Preview + Download Ready</p></div></div><div id="certOpt2" class="hidden"><div class="bg-blue-50/50 p-2 rounded-xl border"><div class="grid grid-cols-2 gap-2"><div><label class="text-[10px]">Bg</label><input type="file" accept="image/*" onchange="handleCertFile(event,'bg')" class="w-full text-[10px] border rounded px-1 py-1.5 bg-white"></div><div><label class="text-[10px]">Logo1</label><input type="file" accept="image/*" onchange="handleCertFile(event,'logo1')" class="w-full text-[10px] border rounded px-1 py-1.5 bg-white"></div></div><input id="certTitle" value="Certificate of Appreciation" class="w-full border rounded-lg px-2 py-2 mt-2 text-xs"><input id="certSub" value="Noor Al Madrasa" class="w-full border rounded-lg px-2 py-2 mt-2 text-xs"><div class="mt-3 bg-white p-2 rounded-lg border"><label class="text-xs font-bold">X:<span id="xVal">50</span>%</label><input id="certX" type="range" min="0" max="100" value="50" class="w-full"><label class="text-xs font-bold">Y:<span id="yVal">60</span>%</label><input id="certY" type="range" min="0" max="100" value="60" class="w-full"><label class="text-xs font-bold">Size:<span id="sVal">24</span>px</label><input id="certS" type="range" min="10" max="80" value="24" class="w-full"></div></div></div><div class="mt-3"><p class="text-[11px] font-black mb-1">👁️ Preview - Live + Download Option:</p><div class="cert-preview"><img id="certPreviewImg" src="" class="hidden"><div id="certPreviewPlaceholder" class="text-center"><p id="sampleNamePreview" class="font-bold text-[24px] text-[#14532d]">Sample Name</p><p class="text-[10px] text-gray-500">Upload ചെയ്താൽ Preview</p></div><div id="certNameOnImage" style="position:absolute; left:50%; top:60%; transform:translate(-50%,-50%); font-weight:900; color:#14532d; font-size:24px; display:block;">Sample Name</div></div><button onclick="downloadCertificateSample()" class="w-full mt-2 bg-yellow-400 text-black py-2 rounded-xl text-xs font-black">📥 Test Certificate Download - Sample</button></div></div>
 
-<div id="certOpt2" class="hidden">
-<div class="bg-blue-50/50 p-2 rounded-xl border">
-<div class="grid grid-cols-2 gap-2"><div><label class="text-[10px] font-bold">Bg</label><input type="file" accept="image/*" onchange="handleCertFile(event,'bg')" class="w-full text-[10px] border rounded px-1 py-1.5 bg-white"></div><div><label class="text-[10px] font-bold">Logo1</label><input type="file" accept="image/*" onchange="handleCertFile(event,'logo1')" class="w-full text-[10px] border rounded px-1 py-1.5 bg-white"></div><div><label class="text-[10px] font-bold">Seal</label><input type="file" accept="image/*" onchange="handleCertFile(event,'logo2')" class="w-full text-[10px] border rounded px-1 py-1.5 bg-white"></div><div><label class="text-[10px] font-bold">Sign</label><input type="file" accept="image/*" onchange="handleCertFile(event,'sign')" class="w-full text-[10px] border rounded px-1 py-1.5 bg-white"></div></div>
-<input id="certTitle" value="Certificate of Appreciation" class="w-full border rounded-lg px-2 py-2 mt-2 text-xs"><input id="certSub" value="Noor Al Madrasa" class="w-full border rounded-lg px-2 py-2 mt-2 text-xs">
-<div class="mt-3 bg-white p-2 rounded-lg border"><label class="text-xs font-bold">X:<span id="xVal">50</span>%</label><input id="certX" type="range" min="0" max="100" value="50" class="w-full accent-green-700"><label class="text-xs font-bold">Y:<span id="yVal">60</span>%</label><input id="certY" type="range" min="0" max="100" value="60" class="w-full accent-green-700"><label class="text-xs font-bold">Size:<span id="sVal">24</span>px</label><input id="certS" type="range" min="10" max="80" value="24" class="w-full accent-green-700"></div>
-</div>
-</div>
+<div class="section-border"><div class="green-header">3 - Settings - Minute Custom - Link Copy Edit - Kept</div><div class="grid grid-cols-2 gap-2"><div><label class="text-[10px] font-bold">Timer Minute Custom</label><select id="setMinute" class="w-full border-2 rounded-xl px-2 py-2.5 text-xs font-bold bg-white"><option value="5">5 Min</option><option value="10" selected>10 Min</option><option value="15">15 Min</option><option value="20">20 Min</option><option value="30">30 Min</option><option value="60">60 Min</option><option value="custom">Custom</option></select><input id="setMinuteCustom" type="number" placeholder="Custom Min" class="hidden w-full border-2 border-yellow-500 rounded-xl px-2 py-2 mt-1 text-xs"></div><div><label class="text-[10px] font-bold">Count</label><input id="setCount" type="number" value="20" class="w-full border-2 rounded-xl px-2 py-2.5 text-xs font-bold"></div></div><div class="bg-yellow-50 p-3 rounded-xl mt-2 border-2 text-[12px] space-y-2"><label class="flex justify-between font-bold"><span>One Phone One Attempt</span><input id="setPhoneLock" type="checkbox" checked class="w-5 h-5"></label><label class="flex justify-between font-bold"><span>One Device One Attempt</span><input id="setDeviceLock" type="checkbox" checked class="w-5 h-5"></label><label class="flex justify-between font-bold"><span>Show Correct/Wrong in Quiz</span><input id="setShowCorrect" type="checkbox" checked class="w-5 h-5"></label></div><input id="eventIdShow" readonly placeholder="Event ID Auto" class="w-full border-2 rounded-xl px-3 py-2.5 mt-2 text-xs bg-gray-100 font-bold"><button id="createLinkBtn" onclick="createOnlineLink()" class="w-full mt-3 bg-green-600 text-white font-black py-3.5 rounded-xl">💚 CREATE ONLINE LINK</button><div class="grid grid-cols-2 gap-2 mt-2"><button id="saveCloudBtn" onclick="saveCloudSameLink()" class="bg-blue-600 text-white py-3.5 rounded-xl text-xs font-black">💾 SAVE CLOUD Same Link</button><button onclick="clearEventForm()" class="bg-gray-100 border-2 py-3.5 rounded-xl text-xs font-black">Clear</button></div><div id="linkBox" class="hidden mt-3 bg-green-50 border-2 border-green-600 p-3 rounded-xl"><p class="text-[11px] font-black text-green-800">✅ Link Ready!</p><p id="generatedLink" class="break-all text-[11px] font-bold mt-2 bg-white p-2 rounded border"></p><div class="grid grid-cols-3 gap-2 mt-3"><button onclick="copyLink()" class="bg-green-600 text-white py-2.5 rounded-xl text-xs font-black">📋 Copy</button><button onclick="shareWhatsApp()" class="bg-[#25D366] text-white py-2.5 rounded-xl text-xs font-black">WhatsApp</button><button onclick="editEvent()" class="bg-blue-600 text-white py-2.5 rounded-xl text-xs font-black">✏️ Edit</button></div></div><p id="cloudStatus" class="text-[11px] mt-2 font-bold text-center"></p><div class="bg-red-50 p-3 rounded-xl border-2 border-red-200 mt-4"><p class="text-xs font-black text-red-800">🔑 Admin Lock Change - Secure - Kept</p><div class="mt-2 space-y-2"><input id="currentAdminPass" type="password" placeholder="Current Password" class="w-full border-2 rounded-xl px-3 py-2.5 text-xs"><input id="newAdminPass" type="password" placeholder="New Password" class="w-full border-2 rounded-xl px-3 py-2.5 text-xs"><button onclick="changeAdminLock()" class="w-full bg-red-600 text-white py-3 rounded-xl text-xs font-black">Change Admin Lock</button><p id="adminLockStatus" class="text-[11px] font-bold text-center"></p></div></div></div>
 
-<div class="mt-3"><p class="text-[11px] font-black mb-1">👁️ Preview - Live - Slider Move ചെയ്താൽ Name Move ആവും:</p>
-<div id="certPreviewArea" class="cert-preview">
-<img id="certPreviewImg" src="" class="hidden">
-<div id="certPreviewPlaceholder" class="text-center"><p id="sampleNamePreview" class="font-bold text-[24px] text-[#14532d]">Sample Name</p><p class="text-[10px] text-gray-500">Upload ചെയ്താൽ Full Preview - Live Position</p></div>
-<div id="certNameOnImage" style="position:absolute; left:50%; top:60%; transform:translate(-50%,-50%); font-weight:900; color:#14532d; font-size:24px; white-space:nowrap; text-shadow:0 1px 2px #fff; display:block;">Sample Name</div>
-</div>
-</div>
-</div>
+<div class="section-border"><div class="green-header">4 - Questions Bulk - Kept</div><textarea id="qBulk" rows="5" placeholder="Q | a,b,c,d | ans" class="w-full border-2 rounded-xl p-3 text-xs"></textarea><button onclick="bulkAdd()" class="w-full mt-3 bg-[#8B5A00] text-white py-3 rounded-xl text-xs font-black">📚 Bulk Add</button><div class="mt-3"><div class="bg-[#14532d] text-white flex justify-between px-4 py-2.5 rounded-t-xl"><span class="text-xs font-black">Questions List</span><span id="quota" class="bg-yellow-400 text-black px-3 py-1 rounded-full text-[11px] font-black">Quota: 0</span></div><div id="qList" class="bg-yellow-50/50 border-2 border-t-0 rounded-b-xl p-3 min-h-[70px] text-xs text-center">No Questions</div></div></div>
 
-<!-- 3 SETTINGS -->
-<div class="section-border">
-<div class="green-header">3 - Settings Cloud - Minute Custom - Buttons Fixed</div>
-<div class="grid grid-cols-2 gap-2"><div><label class="text-[10px] font-bold">Timer Minute Custom</label><select id="setMinute" class="w-full border-2 rounded-xl px-2 py-2.5 text-xs font-bold bg-white"><option value="5">5 Minute</option><option value="10" selected>10 Minute</option><option value="15">15 Minute</option><option value="20">20 Minute</option><option value="30">30 Minute</option><option value="60">60 Minute</option><option value="custom">Custom Minute</option></select><input id="setMinuteCustom" type="number" placeholder="Custom Minute - Ex: 7" class="hidden w-full border-2 border-yellow-500 rounded-xl px-2 py-2 mt-1 text-xs"></div><div><label class="text-[10px] font-bold">Question Count</label><input id="setCount" type="number" value="20" class="w-full border-2 rounded-xl px-2 py-2.5 text-xs font-bold"></div></div>
-<div class="bg-yellow-50 p-3 rounded-xl mt-2 border-2 border-yellow-100 text-[12px] space-y-2"><label class="flex justify-between items-center font-bold"><span>Online/Offline</span><input id="setOnline" type="checkbox" checked class="w-5 h-5"></label><label class="flex justify-between items-center font-bold"><span>One Phone One Attempt</span><input id="setPhoneLock" type="checkbox" checked class="w-5 h-5"></label><label class="flex justify-between items-center font-bold"><span>One Device One Attempt</span><input id="setDeviceLock" type="checkbox" checked class="w-5 h-5"></label><label class="flex justify-between items-center font-bold"><span>Unlimited Delete (Test Mode)</span><input id="setUnlimited" type="checkbox" class="w-5 h-5"></label></div>
-<input id="eventIdShow" readonly placeholder="Event ID Auto - Link Create ആയാൽ ഇവിടെ കാണും" class="w-full border-2 rounded-xl px-3 py-2.5 mt-2 text-xs bg-gray-100 font-bold">
-<button id="createLinkBtn" onclick="createOnlineLink()" class="w-full mt-3 bg-green-600 hover:bg-green-700 active:scale-[0.98] text-white font-black py-3.5 rounded-xl text-sm shadow">💚 CREATE ONLINE LINK</button>
-<div class="grid grid-cols-2 gap-2 mt-2"><button id="saveCloudBtn" onclick="saveCloudSameLink()" class="bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white py-3.5 rounded-xl text-xs font-black shadow">💾 SAVE CLOUD Same Link</button><button onclick="clearEventForm()" class="bg-gray-100 hover:bg-gray-200 border-2 py-3.5 rounded-xl text-xs font-black">Clear Form</button></div>
-<div id="generatedLink" class="hidden mt-3 break-all bg-green-50 border-2 border-green-600 p-3 rounded-xl text-[11px] font-bold leading-5"></div>
-<p id="cloudStatus" class="text-[11px] mt-2 font-bold text-center"></p>
-
-<div class="bg-red-50 p-3 rounded-xl border-2 border-red-200 mt-4">
-<p class="text-xs font-black text-red-800">🔑 Admin Lock Change - Secure - Password Hide Fixed</p>
-<div class="mt-2 space-y-2"><div><label class="text-[10px] font-bold">Current Password</label><input id="currentAdminPass" type="password" placeholder="Current Password" class="w-full border-2 rounded-xl px-3 py-2.5 mt-1 text-xs"></div><div><label class="text-[10px] font-bold">New Password</label><input id="newAdminPass" type="password" placeholder="New Password - Min 3 Chars" class="w-full border-2 rounded-xl px-3 py-2.5 mt-1 text-xs"></div><button onclick="changeAdminLock()" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl text-xs font-black shadow">Change Admin Lock</button><p id="adminLockStatus" class="text-[11px] font-bold text-center"></p></div>
-</div>
-</div>
-
-<!-- 4 QUESTIONS -->
-<div class="section-border"><div class="green-header">4 - Questions Bulk - Working</div><textarea id="qBulk" rows="5" placeholder="Format: Q | a,b,c,d | ans number (0-3)
-Example: നബി ജന്മദേശം? | മക്ക,മദീന,ത്വാഇഫ്,യമൻ | 0" class="w-full border-2 border-yellow-600/30 rounded-xl p-3 text-xs focus:border-green-600 outline-none"></textarea><button onclick="bulkAdd()" class="w-full mt-3 bg-[#8B5A00] hover:bg-[#6d4700] text-white py-3 rounded-xl text-xs font-black">📚 Bulk Add - Add ചെയ്യൂ</button><div class="mt-3"><div class="bg-[#14532d] text-white flex justify-between items-center px-4 py-2.5 rounded-t-xl"><span class="text-xs font-black">Questions List</span><span id="quota" class="bg-yellow-400 text-black px-3 py-1 rounded-full text-[11px] font-black">Quota: 0/15</span></div><div id="qList" class="bg-yellow-50/50 border-2 border-t-0 rounded-b-xl p-3 min-h-[70px] text-xs text-center text-gray-500">No Questions - Bulk Add ചെയ്യൂ</div></div></div>
-
-<!-- 5 RESULTS RANK TIME -->
-<div class="section-border border-2 border-orange-400">
-<div class="green-header bg-orange-600">5 - Results & Ranking - Rank Time Ready - 90 Days Fixed</div>
-<div class="bg-orange-50 p-3 rounded-xl border-2 border-orange-100 mb-3">
-<div class="grid grid-cols-3 gap-2"><button onclick="loadResults()" class="bg-slate-800 text-white py-2.5 rounded-xl text-xs font-black">Refresh</button><button onclick="downloadResults()" class="bg-green-600 text-white py-2.5 rounded-xl text-xs font-black">📥 CSV</button><button onclick="clearAllResults()" class="bg-red-50 text-red-600 border-2 border-red-200 py-2.5 rounded-xl text-xs font-black">🗑️ Clear All</button></div>
-<div class="grid grid-cols-2 gap-2 mt-2"><button onclick="autoClear()" class="bg-yellow-100 border-2 border-yellow-300 py-2.5 rounded-xl text-xs font-black">⏰ Auto Clear 90 Days</button><button onclick="exportRanking()" class="bg-blue-50 border-2 border-blue-200 py-2.5 rounded-xl text-xs font-black">🏆 Export Ranking</button></div>
-</div>
-<div id="resultsList" class="bg-white border-2 rounded-xl p-2 max-h-[200px] overflow-auto text-xs">No Results - Quiz കഴിഞ്ഞാൽ ഇവിടെ കാണും</div>
-<div class="mt-3 bg-gradient-to-br from-yellow-50 to-orange-50 p-3 rounded-xl border-2 border-yellow-200"><div class="flex justify-between items-center"><p class="font-black text-xs">🏆 Ranking Top 10 - Rank Time Ready</p><span class="text-[10px] bg-green-600 text-white px-2 py-1 rounded-full font-bold">Score + Fast Time</span></div><div id="rankingContent" class="text-xs mt-2 space-y-1">No Ranking - Test കഴിഞ്ഞാൽ Rank + Time കാണും</div></div>
-</div>
+<div class="section-border border-orange-400"><div class="green-header bg-orange-600">5 - Results & Ranking - Rank Time Ready + Certificate Download - 90 Days Kept</div><div class="bg-orange-50 p-3 rounded-xl border-2 mb-3"><div class="grid grid-cols-3 gap-2"><button onclick="loadResults()" class="bg-slate-800 text-white py-2.5 rounded-xl text-xs font-black">Refresh</button><button onclick="downloadResults()" class="bg-green-600 text-white py-2.5 rounded-xl text-xs font-black">📥 CSV</button><button onclick="clearAllResults()" class="bg-red-50 text-red-600 border-2 py-2.5 rounded-xl text-xs font-black">Clear</button></div><div class="grid grid-cols-2 gap-2 mt-2"><button onclick="autoClear()" class="bg-yellow-100 border-2 py-2.5 rounded-xl text-xs font-black">⏰ Auto Clear 90 Days</button><button onclick="exportRanking()" class="bg-blue-50 border-2 py-2.5 rounded-xl text-xs font-black">🏆 Ranking</button></div></div><div id="resultsList" class="bg-white border-2 rounded-xl p-2 max-h-[200px] overflow-auto text-xs">No Results</div><div class="mt-3 bg-gradient-to-br from-yellow-50 to-orange-50 p-3 rounded-xl border-2"><p class="font-black text-xs">🏆 Ranking Top 10 - Rank Time Ready</p><div id="rankingContent" class="text-xs mt-2 space-y-1">No Ranking</div></div></div>
 
 </div>
 </div>
 
 <script>
-// CHECKED FULL - ALL WORKING - V9.7 FINAL
-let currentEventId = new URLSearchParams(window.location.search).get('event') || localStorage.getItem('currentEventId') || '';
-let questions = JSON.parse(localStorage.getItem('questions_v97')||'[]');
-let totalMinutes = 10; let currentQ=0; let score=0; let timerInt=null; let startTime=null; let elapsed=0;
-let certImages={};
+let currentEventId = new URLSearchParams(window.location.search).get('event') || '';
+let questions = JSON.parse(localStorage.getItem('questions_v99')||'[]');
+let totalMinutes=10; let currentQ=0; let score=0; let timerInt=null; let startTime=null; let lastGeneratedLink=''; let userAnswers=[];
 
-function getAdminPass(){ return localStorage.getItem('noor_admin_pass_v97') || '1234'; }
-function loginAdmin(){
-  const entered=document.getElementById('adminPass').value.trim();
-  const saved=getAdminPass();
-  const errEl=document.getElementById('loginError');
-  if(!entered){ errEl.innerText='Password അടിക്കൂ'; errEl.classList.remove('hidden'); return; }
-  if(entered===saved){
-    document.getElementById('competitorView').classList.add('hidden');
-    document.getElementById('adminView').classList.remove('hidden');
-    errEl.classList.add('hidden');
-    if(questions.length){ renderQuestions(); }
-    loadResults();
-  }else{
-    // SECURE - Password കാണിക്കില്ല
-    errEl.innerText='❌ Wrong Password! ശരിയായ Password അടിക്കൂ';
-    errEl.classList.remove('hidden');
-  }
-}
+function getAdminPass(){ return localStorage.getItem('noor_admin_pass') || '1234'; }
+function loginAdmin(){ const e=document.getElementById('adminPass').value.trim(); const s=getAdminPass(); const err=document.getElementById('loginError'); if(e===s){ document.getElementById('competitorView').classList.add('hidden'); document.getElementById('adminView').classList.remove('hidden'); err.classList.add('hidden'); renderQuestions(); loadPastEvents(); loadResults(); }else{ err.innerText='❌ Wrong Password!'; err.classList.remove('hidden'); } }
 function logoutAdmin(){ document.getElementById('adminView').classList.add('hidden'); document.getElementById('competitorView').classList.remove('hidden'); }
-function changeAdminLock(){
-  const cur=document.getElementById('currentAdminPass').value;
-  const nw=document.getElementById('newAdminPass').value;
-  const saved=getAdminPass();
-  const status=document.getElementById('adminLockStatus');
-  if(cur!==saved){ status.innerText='❌ Current തെറ്റ്!'; status.className='text-[11px] font-bold text-center text-red-600'; return; }
-  if(!nw||nw.length<3){ status.innerText='❌ New Password Min 3 Chars'; status.className='text-[11px] font-bold text-center text-red-600'; return; }
-  localStorage.setItem('noor_admin_pass_v97', nw);
-  status.innerText='✅ Changed Successfully! Secure! Password Hide!';
-  status.className='text-[11px] font-bold text-center text-green-700';
-  document.getElementById('currentAdminPass').value=''; document.getElementById('newAdminPass').value='';
-}
+function changeAdminLock(){ const cur=document.getElementById('currentAdminPass').value; const nw=document.getElementById('newAdminPass').value; const saved=getAdminPass(); const st=document.getElementById('adminLockStatus'); if(cur!==saved){ st.innerText='❌ Current തെറ്റ്!'; st.className='text-[11px] font-bold text-center text-red-600'; return; } if(!nw||nw.length<3){ st.innerText='❌ Min 3'; return; } localStorage.setItem('noor_admin_pass', nw); st.innerText='✅ Changed Secure! Password Hide!'; st.className='text-[11px] font-bold text-center text-green-700'; document.getElementById('currentAdminPass').value=''; document.getElementById('newAdminPass').value=''; }
 
-function handleCategoryChange(val){
-  const box=document.getElementById('customCategoryBox');
-  if(val==='Other') box.classList.remove('hidden'); else box.classList.add('hidden');
-}
-function switchCert(t){
-  document.getElementById('certOpt1').classList.toggle('hidden', t!==1);
-  document.getElementById('certOpt2').classList.toggle('hidden', t!==2);
-  document.getElementById('opt1Btn').className = t===1? 'bg-[#14532d] text-white px-4 py-2 rounded-xl text-[11px] font-bold' : 'bg-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold';
-  document.getElementById('opt2Btn').className = t===2? 'bg-[#14532d] text-white px-4 py-2 rounded-xl text-[11px] font-bold' : 'bg-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold';
-}
-function handleLogoBanner(e,type){
-  const file=e.target.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=(ev)=>{
-    if(type==='logo'){ const img=document.getElementById('logoPreview'); img.src=ev.target.result; img.classList.remove('hidden'); localStorage.setItem('logoImg', ev.target.result); }
-    else{ const img=document.getElementById('bannerPreview'); img.src=ev.target.result; img.classList.remove('hidden'); localStorage.setItem('bannerImg', ev.target.result); }
-  }; reader.readAsDataURL(file);
-}
-function handleCertFull(e){
-  const file=e.target.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=(ev)=>{
-    const img=document.getElementById('certPreviewImg');
-    img.src=ev.target.result;
-    img.classList.remove('hidden');
-    document.getElementById('certPreviewPlaceholder').classList.add('hidden');
-    document.getElementById('certNameOnImage').innerText='Sample Name';
-    localStorage.setItem('certFullImage', ev.target.result);
-  }; reader.readAsDataURL(file);
-}
-function handleCertFile(e,type){
-  const file=e.target.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=(ev)=>{
-    certImages[type]=ev.target.result;
-    const img=document.getElementById('certPreviewImg');
-    img.src=ev.target.result;
-    img.classList.remove('hidden');
-    document.getElementById('certPreviewPlaceholder').classList.add('hidden');
-    localStorage.setItem('cert_'+type, ev.target.result);
-    updateCertLive();
-  }; reader.readAsDataURL(file);
-}
-function updateCertLive(){
-  const x=document.getElementById('certX').value;
-  const y=document.getElementById('certY').value;
-  const s=document.getElementById('certS').value;
-  document.getElementById('xVal').innerText=x;
-  document.getElementById('yVal').innerText=y;
-  document.getElementById('sVal').innerText=s;
-  const nameDiv=document.getElementById('certNameOnImage');
-  nameDiv.style.left=x+'%'; nameDiv.style.top=y+'%'; nameDiv.style.fontSize=s+'px';
-}
-document.getElementById('certX').addEventListener('input', updateCertLive);
-document.getElementById('certY').addEventListener('input', updateCertLive);
-document.getElementById('certS').addEventListener('input', updateCertLive);
-document.getElementById('setMinute').addEventListener('change', e=>{ const custom=document.getElementById('setMinuteCustom'); if(e.target.value==='custom') custom.classList.remove('hidden'); else custom.classList.add('hidden'); });
+function handleCategoryChange(val){ document.getElementById('customCategoryBox').classList.toggle('hidden', val!=='Other'); }
+function switchCert(t){ document.getElementById('certOpt1').classList.toggle('hidden', t!==1); document.getElementById('certOpt2').classList.toggle('hidden', t!==2); document.getElementById('opt1Btn').className=t===1?'bg-[#14532d] text-white px-4 py-2 rounded-xl text-[11px] font-bold':'bg-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold'; document.getElementById('opt2Btn').className=t===2?'bg-[#14532d] text-white px-4 py-2 rounded-xl text-[11px] font-bold':'bg-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold'; }
+function handleLogoBanner(e,type){ const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=(ev)=>{ if(type==='logo'){ const img=document.getElementById('logoPreview'); img.src=ev.target.result; img.classList.remove('hidden'); localStorage.setItem('logoImg_'+(currentEventId||'temp'), ev.target.result); }else{ const img=document.getElementById('bannerPreview'); img.src=ev.target.result; img.classList.remove('hidden'); localStorage.setItem('bannerImg_'+(currentEventId||'temp'), ev.target.result); } }; reader.readAsDataURL(file); }
+function handleCertFull(e){ const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=(ev)=>{ const img=document.getElementById('certPreviewImg'); img.src=ev.target.result; img.classList.remove('hidden'); document.getElementById('certPreviewPlaceholder').classList.add('hidden'); localStorage.setItem('certFullImage', ev.target.result); }; reader.readAsDataURL(file); }
+function handleCertFile(e,type){ const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=(ev)=>{ const img=document.getElementById('certPreviewImg'); img.src=ev.target.result; img.classList.remove('hidden'); document.getElementById('certPreviewPlaceholder').classList.add('hidden'); localStorage.setItem('cert_'+type, ev.target.result); updateCertLive(); }; reader.readAsDataURL(file); }
+function updateCertLive(){ const x=document.getElementById('certX').value; const y=document.getElementById('certY').value; const s=document.getElementById('certS').value; document.getElementById('xVal').innerText=x; document.getElementById('yVal').innerText=y; document.getElementById('sVal').innerText=s; const nameDiv=document.getElementById('certNameOnImage'); nameDiv.style.left=x+'%'; nameDiv.style.top=y+'%'; nameDiv.style.fontSize=s+'px'; }
+document.getElementById('certX')?.addEventListener('input', updateCertLive);
+document.getElementById('certY')?.addEventListener('input', updateCertLive);
+document.getElementById('certS')?.addEventListener('input', updateCertLive);
+document.getElementById('setMinute')?.addEventListener('change', e=>{ document.getElementById('setMinuteCustom').classList.toggle('hidden', e.target.value!=='custom'); });
 
-function renderQuestions(){
-  const list=document.getElementById('qList');
-  if(!questions.length){ list.innerHTML='No Questions - Bulk Add ചെയ്യൂ'; list.className='bg-yellow-50/50 border-2 border-t-0 rounded-b-xl p-3 min-h-[70px] text-xs text-center text-gray-500'; return; }
-  list.innerHTML=''; questions.forEach((qq,i)=>{ list.innerHTML+=`<div class="text-left border-b py-2 flex justify-between"><span>${i+1}. ${qq.q.substring(0,60)}</span><span class="text-green-700 font-bold">Ans:${qq.ans+1}</span></div>`; });
-  document.getElementById('quota').innerText='Quota: '+questions.length+'/50';
-}
-function bulkAdd(){
-  const txt=document.getElementById('qBulk').value.trim(); if(!txt){ alert('Questions Type ചെയ്യൂ!'); return; }
-  const lines=txt.split('\n'); let added=0;
-  lines.forEach(line=>{
-    if(!line.trim()) return;
-    const parts=line.split('|'); if(parts.length<2) return;
-    const q=parts[0].trim(); const opts=parts[1].split(',').map(o=>o.trim()).filter(o=>o); let ans=0; if(parts[2]){ ans=parseInt(parts[2].trim()); if(isNaN(ans)) ans=0; }
-    if(q&&opts.length>=2){ questions.push({q, opts, ans:Math.min(ans, opts.length-1)}); added++; }
-  });
-  localStorage.setItem('questions_v97', JSON.stringify(questions));
-  renderQuestions();
-  alert('✅ '+added+' Questions Added! Save Cloud ചെയ്യൂ!');
-}
+function renderQuestions(){ const list=document.getElementById('qList'); if(!questions.length){ list.innerHTML='No Questions'; return; } list.innerHTML=''; questions.forEach((qq,i)=>{ list.innerHTML+=`<div class="text-left border-b py-2 flex justify-between"><span>${i+1}. ${qq.q.substring(0,60)}</span><span class="font-bold text-green-700">Ans:${qq.ans+1}</span></div>`; }); document.getElementById('quota').innerText='Quota: '+questions.length; }
+function bulkAdd(){ const txt=document.getElementById('qBulk').value.trim(); if(!txt){ alert('Type Questions'); return; } const lines=txt.split('\n'); let added=0; lines.forEach(line=>{ if(!line.trim()) return; const parts=line.split('|'); if(parts.length<2) return; const q=parts[0].trim(); const opts=parts[1].split(',').map(o=>o.trim()).filter(o=>o); let ans=0; if(parts[2]){ ans=parseInt(parts[2].trim()); if(isNaN(ans)) ans=0; } if(q&&opts.length>=2){ questions.push({q, opts, ans:Math.min(ans, opts.length-1)}); added++; } }); localStorage.setItem('questions_v99', JSON.stringify(questions)); renderQuestions(); alert('✅ '+added+' Added!'); }
+
+function loadPastEvents(){ const container=document.getElementById('pastEventsList'); const keys=Object.keys(localStorage).filter(k=>k.startsWith('event_')); if(!keys.length){ container.innerHTML='<p class="text-xs text-center text-gray-500 py-4">No Past Events</p>'; return; } container.innerHTML=''; keys.reverse().forEach(key=>{ try{ const data=JSON.parse(localStorage.getItem(key)); const id=key.replace('event_',''); container.innerHTML+=`<div class="bg-white border-2 rounded-xl p-2.5 flex justify-between items-center"><div><p class="font-black text-xs">${data.title||'Noor Event'}</p><p class="text-[10px] text-gray-600">${data.place||''} | ${data.category||''} | ${data.questions?.length||0} Qs</p></div><div class="flex gap-1 flex-col"><button onclick="copyEventLink('${key.replace('event_','')}')" class="bg-green-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">📋 Copy</button><button onclick="editEventById('${key.replace('event_','')}')" class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">✏️ Edit</button></div></div>`; }catch(e){} }); }
+function copyEventLink(id){ const link=window.location.origin+window.location.pathname+'?event='+id; navigator.clipboard.writeText(link).then(()=>{ alert('✅ Copied!\n'+link); }).catch(()=>{ prompt('Copy Link:', link); }); }
+function editEventById(id){ const data=JSON.parse(localStorage.getItem('event_'+id)||'{}'); if(!data.title){ alert('Not Found'); return; } currentEventId=id; document.getElementById('eventName').value=data.title||''; document.getElementById('eventPlace').value=data.place||''; document.getElementById('eventCategory').value=data.category||'Madrasa'; questions=data.questions||[]; localStorage.setItem('questions_v99', JSON.stringify(questions)); renderQuestions(); document.getElementById('eventIdShow').value=id; alert('✅ Loaded for Edit - SAVE CLOUD Same Link അടിക്കൂ!'); }
 
 function createOnlineLink(){
   try{
     let minute=parseInt(document.getElementById('setMinute').value);
-    if(document.getElementById('setMinute').value==='custom'){ minute=parseInt(document.getElementById('setMinuteCustom').value); if(!minute||minute<1) minute=10; }
-    totalMinutes=minute;
-    const title=document.getElementById('eventName').value.trim()||'Noor Event';
+    if(document.getElementById('setMinute').value==='custom'){ minute=parseInt(document.getElementById('setMinuteCustom').value); if(!minute) minute=10; }
+    const title=document.getElementById('eventName').value.trim()||'Noor Al Madrasa Quiz';
     const place=document.getElementById('eventPlace').value.trim()||'';
     let category=document.getElementById('eventCategory').value;
     if(category==='Other'){ const custom=document.getElementById('customCategory').value.trim(); if(custom) category=custom; }
     const count=parseInt(document.getElementById('setCount').value)||20;
-
-    if(!questions.length){ alert('⚠️ Questions Add ചെയ്യൂ - എന്നിട്ട് Link Create ചെയ്യൂ!'); return; }
-
+    if(!questions.length){ alert('⚠️ Questions Add ചെയ്യൂ!'); return; }
     if(!currentEventId) currentEventId='event_'+Date.now();
-    localStorage.setItem('currentEventId', currentEventId);
     const eventData={title, place, category, questions, minute, count, created:Date.now()};
     localStorage.setItem('event_'+currentEventId, JSON.stringify(eventData));
-    localStorage.setItem('questions_v97', JSON.stringify(questions));
-
+    localStorage.setItem('questions_v99', JSON.stringify(questions));
     const link=window.location.origin+window.location.pathname+'?event='+currentEventId;
-    const d=document.getElementById('generatedLink');
-    d.innerHTML=`✅ <b>Link Ready:</b><br><a href="${link}" target="_blank" class="text-blue-600 underline">${link}</a><br><br>Title: ${title}<br>Place: ${place}<br>Category: ${category}<br>Time: ${minute} Min | Count: ${count} | Qs: ${questions.length}`;
-    d.classList.remove('hidden');
+    lastGeneratedLink=link;
+    document.getElementById('generatedLink').innerText=link;
+    document.getElementById('linkBox').classList.remove('hidden');
     document.getElementById('eventIdShow').value=currentEventId;
-    document.getElementById('cloudStatus').innerText='✅ CREATE LINK Working! Link Ready - Copy ചെയ്തു!';
-    document.getElementById('cloudStatus').className='text-[11px] mt-2 font-bold text-center text-green-700';
-    document.getElementById('createLinkBtn').innerText='✅ LINK CREATED! - '+minute+' Min';
+    document.getElementById('cloudStatus').innerText='✅ Link Created!';
+    document.getElementById('createLinkBtn').innerText='✅ LINK CREATED!';
     if(navigator.clipboard) navigator.clipboard.writeText(link).catch(()=>{});
-    setTimeout(()=>{ document.getElementById('createLinkBtn').innerText='💚 CREATE ONLINE LINK'; },3000);
-  }catch(e){
-    document.getElementById('cloudStatus').innerText='❌ Error: '+e.message;
-  }
+    loadPastEvents();
+    setTimeout(()=>{ document.getElementById('createLinkBtn').innerText='💚 CREATE ONLINE LINK'; },2000);
+  }catch(e){ document.getElementById('cloudStatus').innerText='❌ '+e.message; }
 }
-function saveCloudSameLink(){
-  if(!questions.length){ alert('Questions Add ചെയ്യൂ!'); return; }
-  createOnlineLink();
-  const btn=document.getElementById('saveCloudBtn');
-  btn.innerText='✅ SAVED CLOUD!';
-  document.getElementById('cloudStatus').innerText='✅ SAVE CLOUD Same Link - Saved! Link Same ആയിരിക്കും!';
-  setTimeout(()=>{ btn.innerText='💾 SAVE CLOUD Same Link'; },2500);
-}
-function clearEventForm(){
-  if(!confirm('Clear Form? Event Data Clear ആക്കണോ?')) return;
-  document.getElementById('eventName').value=''; document.getElementById('eventPlace').value=''; document.getElementById('customCategory').value=''; document.getElementById('eventCategory').value=''; document.getElementById('qBulk').value=''; document.getElementById('eventIdShow').value=''; document.getElementById('generatedLink').classList.add('hidden');
-  questions=[]; localStorage.removeItem('questions_v97');
-  renderQuestions();
-  document.getElementById('cloudStatus').innerText='✅ Cleared!';
+function saveCloudSameLink(){ createOnlineLink(); document.getElementById('saveCloudBtn').innerText='✅ SAVED SAME LINK!'; setTimeout(()=>{ document.getElementById('saveCloudBtn').innerText='💾 SAVE CLOUD Same Link'; },2000); }
+function copyLink(){ if(!lastGeneratedLink){ alert('Create Link First'); return; } navigator.clipboard.writeText(lastGeneratedLink).then(()=>{ alert('✅ Copied!'); }); }
+function shareWhatsApp(){ if(!lastGeneratedLink) return; window.open('https://wa.me/?text='+encodeURIComponent('🌙 Noor Quiz Link: '+lastGeneratedLink), '_blank'); }
+function editEvent(){ if(!currentEventId){ alert('No Event'); return; } editEventById(currentEventId); }
+function clearEventForm(){ if(!confirm('Clear Form?')) return; document.getElementById('eventName').value=''; document.getElementById('eventPlace').value=''; document.getElementById('qBulk').value=''; document.getElementById('eventIdShow').value=''; document.getElementById('linkBox').classList.add('hidden'); questions=[]; localStorage.removeItem('questions_v99'); renderQuestions(); }
+
+function loadCompetitorEvent(){
+  const params=new URLSearchParams(window.location.search);
+  const eventId=params.get('event');
+  if(!eventId) return;
+  try{
+    let eventData=JSON.parse(localStorage.getItem('event_'+eventId)||'null');
+    if(!eventData){ eventData=JSON.parse(localStorage.getItem('event_event_'+eventId)||'null'); }
+    if(!eventData) return;
+    currentEventId=eventId;
+    questions=eventData.questions||[];
+    totalMinutes=eventData.minute||10;
+    document.getElementById('compTitle').innerText=eventData.title||'🌙 Noor Al Madrasa';
+    document.getElementById('eventNameDisplay').innerText=eventData.title||'Noor Event';
+    document.getElementById('compSubTitle').innerText=(eventData.category||'Madrasa')+' | '+(eventData.place||'');
+    document.getElementById('compPlaceShow').innerText=eventData.place||'';
+    const logoData=localStorage.getItem('logoImg_'+eventId) || localStorage.getItem('logoImg_event_'+eventId) || localStorage.getItem('logoImg_temp');
+    if(logoData){ const compLogo=document.getElementById('compLogoImg'); compLogo.src=logoData; compLogo.classList.remove('hidden'); document.getElementById('compLogoText').classList.add('hidden'); }
+    const bannerData=localStorage.getItem('bannerImg_'+eventId) || localStorage.getItem('bannerImg_event_'+eventId) || localStorage.getItem('bannerImg_temp');
+    if(bannerData){ const compBanner=document.getElementById('compBannerImg'); compBanner.src=bannerData; compBanner.classList.remove('hidden'); }
+    localStorage.setItem('questions_v99', JSON.stringify(questions));
+  }catch(e){}
 }
 
-// QUIZ
+// QUIZ - CORRECT/WRONG SHOW - FIXED!
 function startQuiz(){
   const name=document.getElementById('nameInput').value.trim();
   const phone=document.getElementById('phoneInput').value.trim();
   const place=document.getElementById('placeInput').value.trim();
   const err=document.getElementById('errorMsg');
-  if(!name||!phone){ err.innerText='Name & Phone Required'; err.classList.remove('hidden'); return; }
-  if(document.getElementById('setPhoneLock').checked){
-    const used=JSON.parse(localStorage.getItem('usedPhones_v97')||'[]');
-    if(used.includes(phone) &&!document.getElementById('setUnlimited').checked){ err.innerText='❌ One Phone Already Attempted!'; err.classList.remove('hidden'); return; }
-  }
+  if(!name||!phone){ err.innerText='Name & Phone Required *'; err.classList.remove('hidden'); return; }
   err.classList.add('hidden');
-  let quizQuestions=questions;
-  if(!quizQuestions.length){
-    const saved=JSON.parse(localStorage.getItem('questions_v97')||'[]');
-    if(saved.length) quizQuestions=saved;
-    else quizQuestions=[{q:"നബി ﷺ ജന്മദേശം?",opts:["മക്ക","മദീന","ത്വാഇഫ്","യമൻ"],ans:0},{q:"ഖുർആൻ അവതരിച്ച മാസം?",opts:["റമളാൻ","റജബ്","ശഅബാൻ","മുഹറം"],ans:0}];
+  if(!questions.length){
+    const saved=JSON.parse(localStorage.getItem('questions_v99')||'[]');
+    if(saved.length) questions=saved;
+    else questions=[{q:"നബി ജന്മദേശം?",opts:["മക്ക","മദീന","ത്വാഇഫ്","യമൻ"],ans:0}];
   }
-  questions=quizQuestions;
-  const count=Math.min(parseInt(document.getElementById('setCount').value)||20, questions.length);
-  questions=questions.slice(0,count);
-  const minuteSel=document.getElementById('setMinute').value;
-  if(minuteSel==='custom'){ const c=parseInt(document.getElementById('setMinuteCustom').value); if(c) totalMinutes=c; } else totalMinutes=parseInt(minuteSel)||10;
-
-  document.querySelector('#competitorView.max-w-\\[500px\\]').classList.add('hidden');
+  const count=Math.min(parseInt(document.getElementById('setCount')?.value)||questions.length, questions.length);
+  if(count>0) questions=questions.slice(0,count);
+  document.getElementById('registrationBox').classList.add('hidden');
   document.getElementById('quizCard').classList.remove('hidden');
-  currentQ=0; score=0; startTime=Date.now();
+  currentQ=0; score=0; userAnswers=[]; startTime=Date.now();
   showQ(); startTimer();
   window._quizData={name, phone, place};
 }
@@ -330,15 +194,28 @@ function showQ(){
   if(currentQ>=questions.length){ finishQuiz(); return; }
   const qq=questions[currentQ];
   document.getElementById('qCount').innerText=`Q ${currentQ+1}/${questions.length}`;
+  document.getElementById('progressBar').style.width=((currentQ)/questions.length*100)+'%';
   document.getElementById('qText').innerText=qq.q;
   const optDiv=document.getElementById('options'); optDiv.innerHTML='';
+  const feedback=document.getElementById('quizFeedback'); feedback.classList.add('hidden');
   qq.opts.forEach((o,i)=>{
     const b=document.createElement('button');
-    b.className='w-full text-left px-4 py-3.5 border-2 rounded-xl text-sm bg-white hover:bg-green-50 hover:border-green-400 transition';
+    b.className='option-btn w-full text-left px-4 py-3.5 border-2 rounded-xl text-sm bg-white hover:bg-green-50';
     b.innerText=`${String.fromCharCode(65+i)}. ${o}`;
     b.onclick=()=>{
-      if(i===qq.ans) score++;
-      currentQ++; showQ();
+      const showCorrect=document.getElementById('setShowCorrect')?.checked;
+      const isCorrect = i===qq.ans;
+      if(isCorrect){ score++; b.classList.add('correct'); feedback.innerText='✅ ശരി! Correct!'; feedback.className='text-center font-black mt-4 text-sm p-2 rounded-xl bg-green-100 text-green-700'; }
+      else{ b.classList.add('wrong'); feedback.innerText='❌ തെറ്റ്! Correct: '+qq.opts[qq.ans]; feedback.className='text-center font-black mt-4 text-sm p-2 rounded-xl bg-red-100 text-red-700';
+        // Highlight correct answer
+        Array.from(optDiv.children).forEach((btn, idx)=>{ if(idx===qq.ans) btn.classList.add('show-correct'); });
+      }
+      userAnswers.push({q:qq.q, selected:i, correct:qq.ans, isCorrect});
+      feedback.classList.remove('hidden');
+      // Disable all buttons
+      Array.from(optDiv.children).forEach(btn=> btn.disabled=true);
+
+      setTimeout(()=>{ currentQ++; showQ(); }, showCorrect?1200:600);
     };
     optDiv.appendChild(b);
   });
@@ -346,90 +223,118 @@ function showQ(){
 function startTimer(){
   let t=totalMinutes*60;
   const timerEl=document.getElementById('timer');
-  const upd=()=>{ const m=Math.floor(t/60); const s=t%60; timerEl.innerText=`${m}:${String(s).padStart(2,'0')}`; };
+  const upd=()=>{ timerEl.innerText=Math.floor(t/60)+':'+String(t%60).padStart(2,'0'); };
   upd(); clearInterval(timerInt);
-  timerInt=setInterval(()=>{ t--; elapsed++; upd(); if(t<=0){ clearInterval(timerInt); finishQuiz(); } },1000);
+  timerInt=setInterval(()=>{ t--; upd(); if(t<=0){ clearInterval(timerInt); finishQuiz(); } },1000);
 }
 function finishQuiz(){
   clearInterval(timerInt);
+  document.getElementById('progressBar').style.width='100%';
   const totalTime=Math.floor((Date.now()-startTime)/1000);
   const mins=Math.floor(totalTime/60); const secs=totalTime%60;
-  // SAVE RESULT - RANK TIME READY
   const result={name:window._quizData.name, phone:window._quizData.phone, place:window._quizData.place, score, total:questions.length, time:totalTime, timeStr:`${mins}:${String(secs).padStart(2,'0')}`, timestamp:Date.now()};
-  let results=JSON.parse(localStorage.getItem('results_v97')||'[]');
-  results.push(result);
-  localStorage.setItem('results_v97', JSON.stringify(results));
-  let used=JSON.parse(localStorage.getItem('usedPhones_v97')||'[]'); used.push(window._quizData.phone); localStorage.setItem('usedPhones_v97', JSON.stringify(used));
+  let results=JSON.parse(localStorage.getItem('results_v99')||'[]'); results.push(result); localStorage.setItem('results_v99', JSON.stringify(results));
+  let used=JSON.parse(localStorage.getItem('usedPhones_v99')||'[]'); used.push(window._quizData.phone); localStorage.setItem('usedPhones_v99', JSON.stringify(used));
 
-  document.getElementById('quizCard').innerHTML=`<div class="text-center p-6"><div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto text-3xl">🎉</div><h2 class="text-3xl font-black mt-4">${score}/${questions.length}</h2><p class="mt-1 text-sm">Time: ${mins}:${String(secs).padStart(2,'0')} ⏱️</p><p class="mt-2 text-xs text-gray-600">Rank Time Ready - Score + Fast Time</p><button onclick="location.reload()" class="mt-6 bg-green-600 text-white px-8 py-3 rounded-xl font-black">Home</button></div>`;
-  loadResults();
+  document.getElementById('quizCard').classList.add('hidden');
+  const resultCard=document.getElementById('resultCard');
+  resultCard.classList.remove('hidden');
+  document.getElementById('finalScore').innerText=`${score}/${questions.length}`;
+  document.getElementById('finalTime').innerText=`Time: ${mins}:${String(secs).padStart(2,'0')} ⏱️ | Rank Time Ready`;
+  let fb='';
+  if(score===questions.length) fb='🏆 മാഷാ അല്ലാഹ്! Full Marks!';
+  else if(score>=questions.length*0.8) fb='🌟 Excellent!';
+  else if(score>=questions.length*0.5) fb='👍 Good Job!';
+  else fb='💪 ശ്രമിക്കൂ - Next Time Better!';
+  document.getElementById('finalFeedback').innerText=fb+' | Score Same ആണെങ്കിൽ Time കുറവ് Top ആവും!';
+
+  // Auto generate certificate preview
+  setTimeout(()=>{ generateCertificateCanvas(); }, 500);
 }
 
-// RESULTS - RANK TIME READY - SCORE + TIME SORTING
+// CERTIFICATE DOWNLOAD - NEW! FIXED!
+function generateCertificateCanvas(){
+  const canvas=document.getElementById('certCanvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  const certImgSrc=localStorage.getItem('certFullImage');
+  const name=window._quizData?.name||document.getElementById('nameInput').value||'Sample Name';
+
+  canvas.width=800; canvas.height=600;
+
+  if(certImgSrc){
+    const img=new Image();
+    img.onload=()=>{
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      // Draw name on image - using saved X Y S
+      const xPercent=parseInt(document.getElementById('certX')?.value||50);
+      const yPercent=parseInt(document.getElementById('certY')?.value||60);
+      const size=parseInt(document.getElementById('certS')?.value||24);
+      const x=canvas.width*xPercent/100;
+      const y=canvas.height*yPercent/100;
+      ctx.font=`bold ${size*1.5}px sans-serif`;
+      ctx.fillStyle='#14532d';
+      ctx.textAlign='center';
+      ctx.fillText(name, x, y);
+
+      document.getElementById('certDownloadArea').classList.remove('hidden');
+      document.getElementById('certDownloadLink').href=canvas.toDataURL('image/png');
+      document.getElementById('certDownloadLink').download=`Noor_Certificate_${name}.png`;
+    };
+    img.src=certImgSrc;
+  }else{
+    // No cert image - create simple cert
+    ctx.fillStyle='#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle='#14532d'; ctx.font='bold 32px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Certificate of Appreciation', canvas.width/2, 100);
+    ctx.fillStyle='#333'; ctx.font='20px sans-serif';
+    ctx.fillText('Noor Al Madrasa', canvas.width/2, 150);
+    ctx.font='bold 28px sans-serif'; ctx.fillStyle='#14532d';
+    ctx.fillText(name, canvas.width/2, 280);
+    const scoreText=document.getElementById('finalScore')?.innerText||'';
+    ctx.font='18px sans-serif'; ctx.fillStyle='#555';
+    ctx.fillText(`Score: ${scoreText} | ${new Date().toLocaleDateString()}`, canvas.width/2, 350);
+
+    document.getElementById('certDownloadArea').classList.remove('hidden');
+    document.getElementById('certDownloadLink').href=canvas.toDataURL('image/png');
+    document.getElementById('certDownloadLink').download=`Noor_Certificate_${name}.png`;
+  }
+}
+function downloadCertificate(){
+  generateCertificateCanvas();
+  setTimeout(()=>{
+    const area=document.getElementById('certDownloadArea');
+    area.classList.remove('hidden');
+    area.scrollIntoView({behavior:'smooth'});
+  }, 300);
+}
+function downloadCertificateSample(){
+  window._quizData={name:'Sample Name'};
+  document.getElementById('nameInput').value='Sample Name';
+  generateCertificateCanvas();
+  document.getElementById('certDownloadArea').classList.remove('hidden');
+}
+
 function loadResults(){
-  const list=document.getElementById('resultsList');
-  const rankEl=document.getElementById('rankingContent');
-  let results=JSON.parse(localStorage.getItem('results_v97')||'[]');
-  if(!results.length){ list.innerHTML='<div class="text-center py-4 text-gray-400">No Results Yet - Quiz കഴിഞ്ഞാൽ ഇവിടെ കാണും</div>'; rankEl.innerHTML='No Ranking'; return; }
-  // Sort: Score High First, If Same Time Low First - Rank Time Ready
+  const list=document.getElementById('resultsList'); const rankEl=document.getElementById('rankingContent');
+  let results=JSON.parse(localStorage.getItem('results_v99')||'[]');
+  if(!results.length){ list.innerHTML='No Results Yet - Quiz കഴിഞ്ഞാൽ ശരി/തെറ്റ് കാണിച്ച് ഇവിടെ വരും'; rankEl.innerHTML='No Ranking'; return; }
   results.sort((a,b)=>{ if(b.score!==a.score) return b.score-a.score; return a.time-b.time; });
   list.innerHTML=''; rankEl.innerHTML='';
-  results.forEach((r,idx)=>{
-    const medal=idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':`${idx+1}.`;
-    list.innerHTML+=`<div class="flex justify-between py-2 border-b text-[12px] ${idx<3?'bg-yellow-50':''}"><span>${medal} ${r.name} - ${r.place||''} - ${r.phone}</span><span class="font-black">${r.score}/${r.total} | ${r.timeStr} ⏱️</span></div>`;
-    if(idx<10){
-      const fastBadge = idx===0? '⚡ Fastest' : '';
-      rankEl.innerHTML+=`<div class="flex justify-between items-center py-2 border-b ${idx===0?'bg-yellow-100 rounded-lg px-2 font-black':''}"><span>${medal} ${r.name} - ${r.score}/${r.total}</span><span class="flex items-center gap-2"><span class="bg-green-100 px-2 py-0.5 rounded-full text-[11px]">${r.timeStr} ⏱️</span><span class="text-[10px]">${fastBadge}</span></span></div>`;
-    }
-  });
+  results.forEach((r,idx)=>{ const medal=idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':`${idx+1}.`; list.innerHTML+=`<div class="flex justify-between py-2 border-b text-xs"><span>${medal} ${r.name} - ${r.place||''} - ${r.score}/${r.total}</span><span class="font-bold">${r.timeStr} ⏱️ | <button onclick="downloadCertFor('${r.name}')" class="text-blue-600 underline">📜 Cert</button></span></div>`; if(idx<10) rankEl.innerHTML+=`<div class="flex justify-between py-2 border-b ${idx===0?'bg-yellow-100 rounded-lg px-2 font-black':''}"><span>${medal} ${r.name} - ${r.score}/${r.total}</span><span>${r.timeStr} ⏱️</span></div>`; });
 }
-function downloadResults(){
-  let results=JSON.parse(localStorage.getItem('results_v97')||'[]');
-  if(!results.length){ alert('No Results'); return; }
-  results.sort((a,b)=>{ if(b.score!==a.score) return b.score-a.score; return a.time-b.time; });
-  let csv='Rank,Name,Phone,Place,Score,Total,Time,TimeStr,Date\n';
-  results.forEach((r,i)=>{ csv+=`${i+1},${r.name},${r.phone},${r.place||''},${r.score},${r.total},${r.timeStr},${new Date(r.timestamp).toLocaleString()}\n`; });
-  const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='Noor_Results_Rank_Time_'+Date.now()+'.csv'; a.click(); URL.revokeObjectURL(url);
-}
-function clearAllResults(){
-  if(!confirm('🗑️ Delete All Results? Phone & Device Lock Reset ആവും! Sure?')) return;
-  localStorage.removeItem('results_v97'); localStorage.removeItem('usedPhones_v97'); localStorage.removeItem('usedDevices_v97');
-  document.getElementById('resultsList').innerHTML='Cleared!'; document.getElementById('rankingContent').innerHTML='Cleared!';
-  alert('✅ All Cleared!');
-}
-function autoClear(){
-  if(confirm('⏰ Auto Clear After 90 Days? 90 ദിവസത്തിന് ശേഷം Results Auto Clear ആക്കണോ?')){
-    localStorage.setItem('autoClearDays_v97','90');
-    localStorage.setItem('autoClearSetTime_v97', Date.now().toString());
-    alert('✅ Auto Clear Set to 90 Days! 90 ദിവസത്തിന് ശേഷം Auto Clear ആവും - 24h അല്ല 90 Days!');
-  }
-}
-function exportRanking(){
-  let results=JSON.parse(localStorage.getItem('results_v97')||'[]');
-  if(!results.length){ alert('No Ranking'); return; }
-  results.sort((a,b)=>{ if(b.score!==a.score) return b.score-a.score; return a.time-b.time; });
-  let text='🏆 Noor Al Madrasa - Ranking - Rank Time Ready\nScore + Fast Time\n\n';
-  results.slice(0,10).forEach((r,i)=>{ const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}.`; text+=`${medal} ${r.name} - ${r.score}/${r.total} - ${r.timeStr} - ${r.place||''}\n`; });
-  const blob=new Blob([text],{type:'text/plain'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='Ranking_Top10_RankTime.txt'; a.click();
-  alert('🏆 Ranking Exported - Top 10 Rank Time!');
-}
+function downloadCertFor(name){ window._quizData={name}; generateCertificateCanvas(); document.getElementById('certDownloadArea').classList.remove('hidden'); }
+function downloadResults(){ let results=JSON.parse(localStorage.getItem('results_v99')||'[]'); if(!results.length){ alert('No Results'); return; } results.sort((a,b)=>{ if(b.score!==a.score) return b.score-a.score; return a.time-b.time; }); let csv='Rank,Name,Phone,Place,Score,Total,Time\n'; results.forEach((r,i)=>{ csv+=`${i+1},${r.name},${r.phone},${r.place||''},${r.score},${r.total},${r.timeStr}\n`; }); const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='Results_'+Date.now()+'.csv'; a.click(); }
+function clearAllResults(){ if(!confirm('Delete All Results?')) return; localStorage.removeItem('results_v99'); localStorage.removeItem('usedPhones_v99'); loadResults(); alert('Cleared!'); }
+function autoClear(){ if(confirm('Auto Clear After 90 Days?')){ localStorage.setItem('autoClearDays','90'); localStorage.setItem('autoClearSetTime', Date.now().toString()); alert('✅ Auto Clear 90 Days Set!'); } }
+function exportRanking(){ downloadResults(); }
 
-// INIT
 window.addEventListener('load', ()=>{
-  const savedCert=localStorage.getItem('certFullImage');
-  if(savedCert){ const img=document.getElementById('certPreviewImg'); if(img){ img.src=savedCert; img.classList.remove('hidden'); const ph=document.getElementById('certPreviewPlaceholder'); if(ph) ph.classList.add('hidden'); } }
-  const logo=localStorage.getItem('logoImg'); if(logo){ const img=document.getElementById('logoPreview'); if(img){ img.src=logo; img.classList.remove('hidden'); } }
-  const banner=localStorage.getItem('bannerImg'); if(banner){ const img=document.getElementById('bannerPreview'); if(img){ img.src=banner; img.classList.remove('hidden'); } }
+  loadCompetitorEvent();
+  const savedCert=localStorage.getItem('certFullImage'); if(savedCert){ const img=document.getElementById('certPreviewImg'); if(img){ img.src=savedCert; img.classList.remove('hidden'); const ph=document.getElementById('certPreviewPlaceholder'); if(ph) ph.classList.add('hidden'); } }
   if(questions.length) renderQuestions();
   updateCertLive();
-  // Auto clear check - 90 days
-  const setTime=localStorage.getItem('autoClearSetTime_v97');
-  const days=localStorage.getItem('autoClearDays_v97');
-  if(setTime && days){
-    const diff=Date.now()-parseInt(setTime);
-    const diffDays=diff/(1000*60*60*24);
-    if(diffDays>=parseInt(days)){ localStorage.removeItem('results_v97'); localStorage.removeItem('autoClearSetTime_v97'); }
-  }
+  loadPastEvents();
 });
 switchCert(1);
 </script>
