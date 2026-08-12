@@ -2,38 +2,32 @@
 <html lang="ml">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Noor V9.12 TRUE CLOUD - Friends Get Updated Settings Same Link</title>
+<title>Noor V9.13.1 FINAL STABLE - Logo Banner Keep Fixed</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
 body{background:#fdf8e8; font-family:sans-serif;}
 .section-border{border:2.5px solid #14532d; border-radius:14px; background:white; padding:12px; margin-bottom:16px;}
 .green-header{background:#14532d; color:white; text-align:center; font-weight:900; font-size:11px; padding:7px; border-radius:8px; margin-bottom:12px;}
 .banner-bg{background:radial-gradient(ellipse at top, #166534 0%, #052e16 75%, #000 100%);}
 .cert-preview{position:relative; width:100%; height:200px; border:2px dashed #9ca3af; border-radius:14px; background:#fff; display:flex; align-items:center; justify-content:center; overflow:hidden;}
-.option-btn.correct{background:#16a34a!important; color:white!important;}
-.option-btn.wrong{background:#dc2626!important; color:white!important;}
-.option-btn.show-correct{border-color:#16a34a!important; border-width:3px!important; background:#dcfce7!important;}
 </style>
 </head>
 <body>
 
 <div id="competitorView">
-<div id="compBanner" class="banner-bg relative h-[200px] w-full flex flex-col items-center justify-center text-center pb-12">
-<img id="compBannerImg" src="" class="absolute inset-0 w-full h-full object-cover opacity-30 hidden">
-<h1 id="compTitle" class="text-white text-[28px] font-black relative z-10">🌙 Noor Al Madrasa</h1>
-<p id="compSubTitle" class="text-yellow-100/80 text-[12px] mt-1 relative z-10">V9.12 TRUE CLOUD</p>
-<p id="compPlaceShow" class="text-white/70 text-[11px] mt-1 relative z-10"></p>
-<div class="absolute -bottom-9 left-1/2 -translate-x-1/2 w-[72px] h-[72px] bg-white rounded-[20px] shadow-xl border-[3px] border-white flex items-center justify-center font-black text-[28px] overflow-hidden z-20">
-<img id="compLogoImg" src="" class="w-full h-full object-cover hidden"><span id="compLogoText" class="text-[#14532d]">N</span>
+<div class="banner-bg relative h-[200px] w-full flex flex-col items-center justify-center text-center pb-12">
+<h1 id="compTitle" class="text-white text-[28px] font-black">🌙 Noor Al Madrasa</h1>
+<p id="compSubTitle" class="text-yellow-100/80 text-[12px] mt-1">V9.13.1 STABLE - Logo Banner Keep Fixed</p>
+<p id="compPlaceShow" class="text-white/70 text-[11px] mt-1"></p>
+<p id="cloudLoadStatus" class="text-[10px] text-yellow-300 mt-1 font-bold"></p>
+<div class="absolute -bottom-9 left-1/2 -translate-x-1/2 w-[72px] h-[72px] bg-white rounded-[20px] shadow-xl border-[3px] border-white flex items-center justify-center font-black text-[28px] overflow-hidden">
+<span id="compLogoText" class="text-[#14532d]">N</span>
 </div>
 </div>
 <div class="max-w-[500px] mx-auto px-4 pt-14">
 <div id="registrationBox" class="bg-white rounded-[22px] border-2 border-green-900/20 p-6 shadow">
 <h2 class="font-bold text-center text-green-900">രജിസ്ട്രേഷൻ</h2>
 <p id="eventNameDisplay" class="text-xs text-center text-gray-500 mt-1"></p>
-<p id="cloudLoadStatus" class="text-[10px] text-center text-blue-600 font-bold mt-1"></p>
 <div class="w-10 h-2 bg-yellow-400 rounded-full mx-auto mt-3 mb-6"></div>
 <input id="nameInput" placeholder="പൂർണ്ണ നാമം *" class="w-full mb-3 px-4 py-3 rounded-xl border-2 border-green-100 outline-none">
 <input id="phoneInput" type="tel" placeholder="ഫോൺ *" class="w-full mb-3 px-4 py-3 rounded-xl border-2 border-green-100 outline-none">
@@ -49,83 +43,96 @@ body{background:#fdf8e8; font-family:sans-serif;}
 
 <div id="adminView" class="hidden p-2 pb-20">
 <div class="max-w-[650px] mx-auto">
-<div class="flex justify-between items-center bg-white p-3 rounded-xl border-2 mb-3"><h2 class="font-black text-xs">Admin V9.12 TRUE CLOUD - Friends Get Update Same Link</h2><button onclick="logoutAdmin()" class="bg-red-50 text-red-600 border px-4 py-1.5 rounded-full text-xs font-bold">Logout</button></div>
+<div class="flex justify-between items-center bg-white p-3 rounded-xl border-2 mb-3"><h2 class="font-black text-xs">Admin V9.13.1 STABLE - Logo Banner Keep Fixed</h2><button onclick="logoutAdmin()" class="bg-red-50 text-red-600 border px-4 py-1.5 rounded-full text-xs font-bold">Logout</button></div>
 
-<div class="section-border border-2 border-blue-600 bg-blue-50/30"><div class="green-header bg-blue-700">📅 Past Events - TRUE CLOUD - Edit = Friends Get Update</div><div id="pastEventsList" class="space-y-2 max-h-[250px] overflow-auto"></div><button onclick="loadPastEvents()" class="w-full mt-2 bg-blue-600 text-white py-2 rounded-xl text-xs font-bold">🔄 Refresh</button></div>
+<div class="section-border border-2 border-blue-600 bg-blue-50/30">
+<div class="green-header bg-blue-700">📅 Past Events - Edit Delete Copy - Logo Keep Fixed</div>
+<div id="pastEventsList" class="space-y-2 max-h-[250px] overflow-auto"></div>
+<div class="grid grid-cols-2 gap-2 mt-2">
+<button onclick="loadPastEvents()" class="bg-blue-600 text-white py-2.5 rounded-xl text-xs font-black">🔄 Refresh Past Events</button>
+<button onclick="clearAllEvents()" class="bg-red-100 text-red-600 border-2 py-2.5 rounded-xl text-xs font-black">🗑️ Clear All Events</button>
+</div>
+</div>
 
-<div class="section-border"><div class="green-header">1 - Event Basic - Logo Banner - Kept</div><input id="eventName" placeholder="Event Name" class="w-full border-2 border-yellow-600/40 rounded-xl px-3 py-2.5 text-sm mb-2"><input id="eventPlace" placeholder="Place" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 text-sm mb-2"><select id="eventCategory" onchange="handleCategoryChange(this.value)" class="w-full border-2 border-green-900 rounded-xl px-3 py-2.5 text-sm mb-2 font-bold bg-white"><option value="">Select Type</option><option value="Madrasa" selected>Madrasa</option><option value="School">School</option><option value="College">College</option><option value="Masjid">Masjid</option><option value="Mahal">Mahal</option><option value="Organization">Organization</option><option value="District">District</option><option value="State">State</option><option value="National">National</option><option value="Other">Other Custom</option></select><div id="customCategoryBox" class="hidden mb-2"><input id="customCategory" placeholder="Custom Type" class="w-full border-2 border-orange-400 rounded-xl px-3 py-2.5 text-sm bg-orange-50"></div><div class="grid grid-cols-2 gap-2 mt-2"><div><label class="text-[10px] font-bold">Logo</label><div class="bg-yellow-50 border-2 rounded-lg p-1"><input type="file" accept="image/*" onchange="handleLogoBanner(event,'logo')" class="text-[11px] w-full"></div><img id="logoPreview" class="hidden w-full h-16 object-contain mt-1 border-2 rounded-xl bg-white"></div><div><label class="text-[10px] font-bold">Banner</label><div class="bg-blue-50 border-2 rounded-lg p-1"><input type="file" accept="image/*" onchange="handleLogoBanner(event,'banner')" class="text-[11px] w-full"></div><img id="bannerPreview" class="hidden w-full h-16 object-cover mt-1 border-2 rounded-xl"></div></div></div>
+<div class="section-border"><div class="green-header">1 - Event Basic - Logo Banner - Full Options Kept - Keep Fixed</div><input id="eventName" placeholder="Event Name" class="w-full border-2 border-yellow-600/40 rounded-xl px-3 py-2.5 text-sm mb-2"><input id="eventPlace" placeholder="Place" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 text-sm mb-2"><select id="eventCategory" onchange="handleCategoryChange(this.value)" class="w-full border-2 border-green-900 rounded-xl px-3 py-2.5 text-sm mb-2 font-bold bg-white"><option value="">Select Type</option><option value="Madrasa" selected>Madrasa</option><option value="School">School</option><option value="College">College</option><option value="Masjid">Masjid</option><option value="Mahal">Mahal</option><option value="Organization">Organization</option><option value="District">District</option><option value="State">State</option><option value="National">National</option><option value="Other">Other Custom</option></select><div id="customCategoryBox" class="hidden mb-2"><input id="customCategory" placeholder="Custom Type" class="w-full border-2 border-orange-400 rounded-xl px-3 py-2.5 text-sm bg-orange-50"></div><div class="grid grid-cols-2 gap-2 mt-2"><div><label class="text-[10px] font-bold">Logo</label><div class="bg-yellow-50 border-2 rounded-lg p-1"><input type="file" accept="image/*" onchange="handleLogoBanner(event,'logo')" class="text-[11px] w-full"></div><img id="logoPreview" class="hidden w-full h-16 object-contain mt-1 border-2 rounded-xl bg-white"></div><div><label class="text-[10px] font-bold">Banner</label><div class="bg-blue-50 border-2 rounded-lg p-1"><input type="file" accept="image/*" onchange="handleLogoBanner(event,'banner')" class="text-[11px] w-full"></div><img id="bannerPreview" class="hidden w-full h-16 object-cover mt-1 border-2 rounded-xl"></div></div></div>
 
-<div class="section-border"><div class="green-header">2 - Certificate - Kept</div><div class="flex gap-2 mb-3"><button id="opt1Btn" onclick="switchCert(1)" class="bg-[#14532d] text-white px-4 py-2 rounded-xl text-[11px] font-bold">Opt1: Upload Full</button><button id="opt2Btn" onclick="switchCert(2)" class="bg-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold">Opt2: Auto Gen</button></div><div id="certOpt1"><div class="bg-yellow-50 p-3 rounded-xl border-2 border-yellow-400"><p class="text-[11px] font-black">📜 Full Certificate Upload</p><input type="file" accept="image/*" onchange="handleCertFull(event)" class="w-full mt-2 text-xs border rounded-lg p-2 bg-white"></div></div><div id="certOpt2" class="hidden"><div class="bg-blue-50/50 p-2 rounded-xl border"><div class="grid grid-cols-2 gap-2"><div><label class="text-[10px]">Bg</label><input type="file" accept="image/*" onchange="handleCertFile(event,'bg')" class="w-full text-[10px] border rounded px-1 py-1.5 bg-white"></div><div><label class="text-[10px]">Logo1</label><input type="file" accept="image/*" onchange="handleCertFile(event,'logo1')" class="w-full text-[10px] border rounded px-1 py-1.5 bg-white"></div></div><input id="certTitle" value="Certificate of Appreciation" class="w-full border rounded-lg px-2 py-2 mt-2 text-xs"><input id="certSub" value="Noor Al Madrasa" class="w-full border rounded-lg px-2 py-2 mt-2 text-xs"><div class="mt-3 bg-white p-2 rounded-lg border"><label class="text-xs font-bold">X:<span id="xVal">50</span>%</label><input id="certX" type="range" min="0" max="100" value="50" class="w-full"><label class="text-xs font-bold">Y:<span id="yVal">60</span>%</label><input id="certY" type="range" min="0" max="100" value="60" class="w-full"><label class="text-xs font-bold">Size:<span id="sVal">24</span>px</label><input id="certS" type="range" min="10" max="80" value="24" class="w-full"></div></div></div><div class="mt-3"><div class="cert-preview"><img id="certPreviewImg" src="" class="hidden"><div id="certPreviewPlaceholder" class="text-center"><p id="sampleNamePreview" class="font-bold text-[24px] text-[#14532d]">Sample Name</p></div><div id="certNameOnImage" style="position:absolute; left:50%; top:60%; transform:translate(-50%,-50%); font-weight:900; color:#14532d; font-size:24px; display:block;">Sample Name</div></div></div></div>
+<div class="section-border"><div class="green-header">2 - Certificate - Kept - Position Fixed</div><div class="flex gap-2 mb-3"><button id="opt1Btn" onclick="switchCert(1)" class="bg-[#14532d] text-white px-4 py-2 rounded-xl text-[11px] font-bold">Opt1: Upload Full</button><button id="opt2Btn" onclick="switchCert(2)" class="bg-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold">Opt2: Auto Gen</button></div><div id="certOpt1"><div class="bg-yellow-50 p-3 rounded-xl border-2 border-yellow-400"><p class="text-[11px] font-black">📜 Full Certificate Upload</p><input type="file" accept="image/*" onchange="handleCertFull(event)" class="w-full mt-2 text-xs border rounded-lg p-2 bg-white"></div></div><div id="certOpt2" class="hidden"><div class="bg-blue-50/50 p-2 rounded-xl border"><div class="grid grid-cols-2 gap-2"><div><label class="text-[10px]">Bg</label><input type="file" accept="image/*" onchange="handleCertFile(event,'bg')" class="w-full text-[10px] border rounded px-1 py-1.5 bg-white"></div><div><label class="text-[10px]">Logo1</label><input type="file" accept="image/*" onchange="handleCertFile(event,'logo1')" class="w-full text-[10px] border rounded px-1 py-1.5 bg-white"></div></div><input id="certTitle" value="Certificate" class="w-full border rounded-lg px-2 py-2 mt-2 text-xs"><input id="certSub" value="Noor Al Madrasa" class="w-full border rounded-lg px-2 py-2 mt-2 text-xs"><div class="mt-3 bg-white p-2 rounded-lg border"><label class="text-xs font-bold">X:<span id="xVal">50</span>%</label><input id="certX" type="range" min="0" max="100" value="50" class="w-full"><label class="text-xs font-bold">Y:<span id="yVal">60</span>%</label><input id="certY" type="range" min="0" max="100" value="60" class="w-full"><label class="text-xs font-bold">Size:<span id="sVal">24</span>px</label><input id="certS" type="range" min="10" max="80" value="24" class="w-full"></div></div></div><div class="mt-3"><div class="cert-preview"><img id="certPreviewImg" src="" class="hidden"><div id="certPreviewPlaceholder" class="text-center"><p id="sampleNamePreview" class="font-bold text-[24px] text-[#14532d]">Sample Name</p></div><div id="certNameOnImage" style="position:absolute; left:50%; top:60%; transform:translate(-50%,-50%); font-weight:900; color:#14532d; font-size:24px; display:block;">Sample Name</div></div></div></div>
 
-<div class="section-border"><div class="green-header">3 - Settings - TRUE CLOUD - Online ON = Friends Get Update!</div>
-<div class="bg-green-50 border-2 border-green-400 p-3 rounded-xl mb-3"><p class="font-black text-xs text-green-800">🌐 TRUE CLOUD Mode - ON ആക്കി വെച്ചാൽ കൂട്ടുകാർക്ക് പഴയ ലിങ്കിൽ നിന്ന് തന്നെ മാറ്റം കിട്ടും!</p><p class="text-[10px] mt-1">ON = Firebase Cloud-ൽ Save - Friends Refresh ചെയ്താൽ പുതിയ Settings വരും<br>OFF = Local Only - നിന്റെ Phone-ൽ മാത്രം</p></div>
-<div class="grid grid-cols-2 gap-2"><div><label class="text-[10px] font-bold">Timer Minute Custom</label><select id="setMinute" class="w-full border-2 rounded-xl px-2 py-2.5 text-xs font-bold bg-white"><option value="5">5 Min</option><option value="10" selected>10 Min</option><option value="15">15 Min</option><option value="20">20 Min</option><option value="30">30 Min</option><option value="60">60 Min</option><option value="custom">Custom</option></select><input id="setMinuteCustom" type="number" placeholder="Custom Min" class="hidden w-full border-2 border-yellow-500 rounded-xl px-2 py-2 mt-1 text-xs"></div><div><label class="text-[10px] font-bold">Count</label><input id="setCount" type="number" value="20" class="w-full border-2 rounded-xl px-2 py-2.5 text-xs font-bold"></div></div>
+<div class="section-border"><div class="green-header">3 - Settings - Online Offline Restored + Same Link Fixed - Logo Keep</div>
+<div class="bg-green-50 border-2 border-green-400 p-3 rounded-xl mb-3"><p class="font-black text-xs text-green-800">🌐 SAME LINK - Settings മാറ്റി SAVE SAME LINK അടിച്ചാൽ പഴയ ലിങ്കിൽ തന്നെ മാറ്റം വരും - Logo Banner നഷ്ടപ്പെടില്ല!</p></div>
+<div class="grid grid-cols-2 gap-2"><div><label class="text-[10px] font-bold">Timer Minute</label><select id="setMinute" class="w-full border-2 rounded-xl px-2 py-2.5 text-xs font-bold bg-white"><option value="5">5 Min</option><option value="10" selected>10 Min</option><option value="15">15 Min</option><option value="20">20 Min</option><option value="30">30 Min</option><option value="60">60 Min</option><option value="custom">Custom</option></select><input id="setMinuteCustom" type="number" placeholder="Custom Min" class="hidden w-full border-2 border-yellow-500 rounded-xl px-2 py-2 mt-1 text-xs"></div><div><label class="text-[10px] font-bold">Count</label><input id="setCount" type="number" value="20" class="w-full border-2 rounded-xl px-2 py-2.5 text-xs font-bold"></div></div>
 <div class="bg-yellow-50 p-3 rounded-xl mt-3 border-2 text-[12px] space-y-3">
-<label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border-2 border-green-500"><span>🌐 Online - TRUE CLOUD - Friends Get Update</span><input id="setOnline" type="checkbox" checked class="w-6 h-6 accent-green-600"></label>
+<label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border-2 border-green-500"><span>🌐 Online - Same Link Update</span><input id="setOnline" type="checkbox" checked class="w-6 h-6"></label>
 <label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border"><span>📱 One Phone One Attempt</span><input id="setPhoneLock" type="checkbox" checked class="w-6 h-6"></label>
 <label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border"><span>💻 One Device One Attempt</span><input id="setDeviceLock" type="checkbox" checked class="w-6 h-6"></label>
 <label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border"><span>✅ Show Correct/Wrong</span><input id="setShowCorrect" type="checkbox" checked class="w-6 h-6"></label>
 </div>
-<input id="eventIdShow" readonly placeholder="Event ID" class="w-full border-2 rounded-xl px-3 py-2.5 mt-3 text-xs bg-gray-100 font-bold">
+<input id="eventIdShow" readonly placeholder="Event ID - Same Link-ന് Same ID" class="w-full border-2 rounded-xl px-3 py-2.5 mt-3 text-xs bg-gray-100 font-bold">
 <div class="grid grid-cols-1 gap-2 mt-3">
-<button id="createLinkBtn" onclick="createNewLink()" class="w-full bg-green-600 text-white font-black py-3.5 rounded-xl shadow">💚 CREATE NEW LINK</button>
-<button id="saveCloudBtn" onclick="saveCloudSameLink()" class="w-full bg-blue-600 text-white py-3.5 rounded-xl text-xs font-black shadow border-2 border-blue-800">💾 SAVE CLOUD - Same Link - കൂട്ടുകാർക്ക് പഴയ ലിങ്കിൽ മാറ്റം കിട്ടും! TRUE CLOUD!</button>
-<button onclick="clearEventForm()" class="bg-gray-100 border-2 py-2.5 rounded-xl text-xs font-black">Clear Form</button>
+<button id="createLinkBtn" onclick="createNewLink()" class="w-full bg-green-600 text-white font-black py-3.5 rounded-xl">💚 CREATE NEW LINK - New ID</button>
+<button id="saveCloudBtn" onclick="saveCloudSameLink()" class="w-full bg-blue-600 text-white py-3.5 rounded-xl text-xs font-black border-2 border-blue-800">💾 SAVE CLOUD SAME LINK - പഴയ ലിങ്ക് മാറില്ല - Logo Banner Keep!</button>
 </div>
-<div id="linkBox" class="hidden mt-3 bg-green-50 border-2 border-green-600 p-3 rounded-xl"><p class="text-[11px] font-black text-green-800">✅ Link Ready - TRUE CLOUD!</p><p id="generatedLink" class="break-all text-[11px] font-bold mt-2 bg-white p-2 rounded border"></p><div class="grid grid-cols-3 gap-2 mt-3"><button onclick="copyLink()" class="bg-green-600 text-white py-2.5 rounded-xl text-xs font-black">📋 Copy</button><button onclick="shareWhatsApp()" class="bg-[#25D366] text-white py-2.5 rounded-xl text-xs font-black">WhatsApp</button><button onclick="editEvent()" class="bg-blue-600 text-white py-2.5 rounded-xl text-xs font-black">✏️ Edit</button></div></div>
+<div id="linkBox" class="hidden mt-3 bg-green-50 border-2 border-green-600 p-3 rounded-xl"><p class="text-[11px] font-black text-green-800">✅ Link Ready!</p><p id="generatedLink" class="break-all text-[11px] font-bold mt-2 bg-white p-2 rounded border"></p><div class="grid grid-cols-3 gap-2 mt-3"><button onclick="copyLink()" class="bg-green-600 text-white py-2.5 rounded-xl text-xs font-black">📋 Copy</button><button onclick="shareWhatsApp()" class="bg-[#25D366] text-white py-2.5 rounded-xl text-xs font-black">WhatsApp</button><button onclick="editCurrentEvent()" class="bg-blue-600 text-white py-2.5 rounded-xl text-xs font-black">✏️ Edit</button></div></div>
 <p id="cloudStatus" class="text-[11px] mt-2 font-bold text-center"></p>
-<div class="bg-red-50 p-3 rounded-xl border-2 border-red-200 mt-4"><p class="text-xs font-black text-red-800">🔑 Admin Lock</p><div class="mt-2 space-y-2"><input id="currentAdminPass" type="password" placeholder="Current Password" class="w-full border-2 rounded-xl px-3 py-2.5 text-xs"><input id="newAdminPass" type="password" placeholder="New Password" class="w-full border-2 rounded-xl px-3 py-2.5 text-xs"><button onclick="changeAdminLock()" class="w-full bg-red-600 text-white py-3 rounded-xl text-xs font-black">Change Admin Lock</button><p id="adminLockStatus" class="text-[11px] font-bold text-center"></p></div></div>
+<div class="bg-red-50 p-3 rounded-xl border-2 border-red-200 mt-4"><p class="text-xs font-black text-red-800">🔑 Admin Lock</p><div class="mt-2 space-y-2"><input id="currentAdminPass" type="password" placeholder="Current" class="w-full border-2 rounded-xl px-3 py-2.5 text-xs"><input id="newAdminPass" type="password" placeholder="New" class="w-full border-2 rounded-xl px-3 py-2.5 text-xs"><button onclick="changeAdminLock()" class="w-full bg-red-600 text-white py-3 rounded-xl text-xs font-black">Change Lock</button><p id="adminLockStatus" class="text-[11px] font-bold text-center"></p></div></div>
 </div>
 
-<div class="section-border"><div class="green-header">4 - Questions Bulk - Edit Delete Kept</div><textarea id="qBulk" rows="4" placeholder="Q | a,b,c,d | ans" class="w-full border-2 rounded-xl p-3 text-xs"></textarea><button onclick="bulkAdd()" class="w-full mt-2 bg-[#8B5A00] text-white py-3 rounded-xl text-xs font-black">📚 Bulk Add</button><div class="mt-3"><div class="bg-[#14532d] text-white flex justify-between px-4 py-2.5 rounded-t-xl"><span class="text-xs font-black">Questions List - Edit Delete</span><span id="quota" class="bg-yellow-400 text-black px-3 py-1 rounded-full text-[11px] font-black">Quota: 0</span></div><div id="qList" class="bg-yellow-50/50 border-2 border-t-0 rounded-b-xl p-2 min-h-[70px] text-xs">No Questions</div></div><div id="editQBox" class="hidden mt-3 bg-blue-50 border-2 border-blue-400 p-3 rounded-xl"><p class="font-black text-xs text-blue-800">✏️ Edit Question</p><input id="editQText" placeholder="Question" class="w-full border-2 rounded-xl px-3 py-2 mt-2 text-xs"><input id="editQOpts" placeholder="Options - a,b,c,d" class="w-full border-2 rounded-xl px-3 py-2 mt-2 text-xs"><input id="editQAns" type="number" placeholder="Answer 0-3" class="w-full border-2 rounded-xl px-3 py-2 mt-2 text-xs"><div class="grid grid-cols-2 gap-2 mt-2"><button onclick="saveEditedQ()" class="bg-green-600 text-white py-2 rounded-xl text-xs font-bold">💾 Save Edit</button><button onclick="cancelEditQ()" class="bg-gray-200 py-2 rounded-xl text-xs font-bold">Cancel</button></div></div></div>
+<div class="section-border"><div class="green-header">4 - Questions Bulk - Edit Delete - Refresh Working</div><textarea id="qBulk" rows="4" placeholder="Q | a,b,c,d | ans" class="w-full border-2 rounded-xl p-3 text-xs"></textarea><button onclick="bulkAdd()" class="w-full mt-2 bg-[#8B5A00] text-white py-3 rounded-xl text-xs font-black">📚 Bulk Add</button><div class="mt-3"><div class="bg-[#14532d] text-white flex justify-between px-4 py-2.5 rounded-t-xl"><span class="text-xs font-black">Questions List</span><span id="quota" class="bg-yellow-400 text-black px-3 py-1 rounded-full text-[11px] font-black">Quota: 0</span></div><div id="qList" class="bg-yellow-50/50 border-2 border-t-0 rounded-b-xl p-2 min-h-[70px] text-xs">No Questions</div></div><div id="editQBox" class="hidden mt-3 bg-blue-50 border-2 border-blue-400 p-3 rounded-xl"><p class="font-black text-xs text-blue-800">✏️ Edit Question</p><input id="editQText" placeholder="Question" class="w-full border-2 rounded-xl px-3 py-2 mt-2 text-xs"><input id="editQOpts" placeholder="Options a,b,c,d" class="w-full border-2 rounded-xl px-3 py-2 mt-2 text-xs"><input id="editQAns" type="number" placeholder="Ans 0-3" class="w-full border-2 rounded-xl px-3 py-2 mt-2 text-xs"><div class="grid grid-cols-2 gap-2 mt-2"><button onclick="saveEditedQ()" class="bg-green-600 text-white py-2 rounded-xl text-xs font-bold">💾 Save Edit</button><button onclick="cancelEditQ()" class="bg-gray-200 py-2 rounded-xl text-xs font-bold">Cancel</button></div></div></div>
 
-<div class="section-border border-orange-400"><div class="green-header bg-orange-600">5 - Results & Ranking - Kept</div><div class="bg-orange-50 p-3 rounded-xl border-2 mb-3"><div class="grid grid-cols-3 gap-2"><button onclick="loadResults()" class="bg-slate-800 text-white py-2.5 rounded-xl text-xs font-black">Refresh</button><button onclick="downloadResults()" class="bg-green-600 text-white py-2.5 rounded-xl text-xs font-black">📥 CSV</button><button onclick="clearAllResults()" class="bg-red-50 text-red-600 border-2 py-2.5 rounded-xl text-xs font-black">Clear</button></div><div class="grid grid-cols-2 gap-2 mt-2"><button onclick="autoClear()" class="bg-yellow-100 border-2 py-2.5 rounded-xl text-xs font-black">⏰ Auto Clear 90 Days</button><button onclick="exportRanking()" class="bg-blue-50 border-2 py-2.5 rounded-xl text-xs font-black">🏆 Ranking</button></div></div><div id="resultsList" class="bg-white border-2 rounded-xl p-2 max-h-[200px] overflow-auto text-xs">No Results</div><div class="mt-3 bg-gradient-to-br from-yellow-50 to-orange-50 p-3 rounded-xl border-2"><p class="font-black text-xs">🏆 Ranking Top 10 - Rank Time Ready</p><div id="rankingContent" class="text-xs mt-2 space-y-1">No Ranking</div></div></div>
+<div class="section-border border-orange-400"><div class="green-header bg-orange-600">5 - Results & Ranking - Refresh Working</div><div class="bg-orange-50 p-3 rounded-xl border-2 mb-3"><div class="grid grid-cols-3 gap-2"><button onclick="loadResults()" class="bg-slate-800 text-white py-2.5 rounded-xl text-xs font-black">🔄 Refresh Results</button><button onclick="downloadResults()" class="bg-green-600 text-white py-2.5 rounded-xl text-xs font-black">📥 CSV</button><button onclick="clearAllResults()" class="bg-red-50 text-red-600 border-2 py-2.5 rounded-xl text-xs font-black">Clear</button></div><div class="grid grid-cols-2 gap-2 mt-2"><button onclick="autoClear()" class="bg-yellow-100 border-2 py-2.5 rounded-xl text-xs font-black">⏰ Auto Clear 90 Days</button><button onclick="exportRanking()" class="bg-blue-50 border-2 py-2.5 rounded-xl text-xs font-black">🏆 Ranking</button></div></div><div id="resultsList" class="bg-white border-2 rounded-xl p-2 max-h-[200px] overflow-auto text-xs">No Results</div><div class="mt-3 bg-gradient-to-br from-yellow-50 to-orange-50 p-3 rounded-xl border-2"><p class="font-black text-xs">🏆 Ranking Top 10</p><div id="rankingContent" class="text-xs mt-2 space-y-1">No Ranking</div></div></div>
 
 </div>
 </div>
 
 <script>
-// FIREBASE CONFIG - FREE - TRUE CLOUD
-const firebaseConfig = {
-  apiKey: "AIzaSyDemo-Noor-Al-Madrasa-V912-TrueCloud",
-  authDomain: "noor-al-madrasa-v912.firebaseapp.com",
-  databaseURL: "https://noor-al-madrasa-v912-default-rtdb.firebaseio.com",
-  projectId: "noor-al-madrasa-v912",
-  storageBucket: "noor-al-madrasa-v912.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef"
-};
-
-// Initialize Firebase - with fallback to local if fails
-let firebaseDB = null;
-let useFirebase = true;
-try{
-  firebase.initializeApp(firebaseConfig);
-  firebaseDB = firebase.database();
-  console.log('✅ Firebase TRUE CLOUD Connected!');
-}catch(e){
-  console.log('Firebase not connected, using Local Only mode - ', e.message);
-  useFirebase = false;
-}
-
-let currentEventId = localStorage.getItem('currentEventId_v12') || new URLSearchParams(window.location.search).get('event') || '';
-let questions = JSON.parse(localStorage.getItem('questions_v12')||'[]');
+let currentEventId = '';
+let questions = [];
 let totalMinutes=10; let currentQ=0; let score=0; let timerInt=null; let startTime=null; let lastGeneratedLink=''; let editingQIndex=-1;
+
+function init(){
+  const urlId = new URLSearchParams(window.location.search).get('event');
+  if(urlId) currentEventId = urlId;
+  else currentEventId = localStorage.getItem('currentEventId_v13') || '';
+  questions = JSON.parse(localStorage.getItem('questions_v13')||'[]');
+  const savedCertPos = JSON.parse(localStorage.getItem('certPos_v13')||'{"x":"50","y":"60","s":"24"}');
+  if(document.getElementById('certX')){ document.getElementById('certX').value=savedPos.x; document.getElementById('certY').value=savedPos.y; document.getElementById('certS').value=savedPos.s; }
+}
 
 function getAdminPass(){ return localStorage.getItem('noor_admin_pass') || '1234'; }
 function loginAdmin(){ const e=document.getElementById('adminPass').value.trim(); const s=getAdminPass(); const err=document.getElementById('loginError'); if(e===s){ document.getElementById('competitorView').classList.add('hidden'); document.getElementById('adminView').classList.remove('hidden'); err.classList.add('hidden'); renderQuestions(); loadPastEvents(); loadResults(); }else{ err.innerText='❌ Wrong Password!'; err.classList.remove('hidden'); } }
 function logoutAdmin(){ document.getElementById('adminView').classList.add('hidden'); document.getElementById('competitorView').classList.remove('hidden'); }
 function changeAdminLock(){ const cur=document.getElementById('currentAdminPass').value; const nw=document.getElementById('newAdminPass').value; const saved=getAdminPass(); const st=document.getElementById('adminLockStatus'); if(cur!==saved){ st.innerText='❌ Current തെറ്റ്!'; return; } if(!nw||nw.length<3){ st.innerText='❌ Min 3'; return; } localStorage.setItem('noor_admin_pass', nw); st.innerText='✅ Changed!'; document.getElementById('currentAdminPass').value=''; document.getElementById('newAdminPass').value=''; }
+
 function handleCategoryChange(val){ document.getElementById('customCategoryBox').classList.toggle('hidden', val!=='Other'); }
 function switchCert(t){ document.getElementById('certOpt1').classList.toggle('hidden', t!==1); document.getElementById('certOpt2').classList.toggle('hidden', t!==2); document.getElementById('opt1Btn').className=t===1?'bg-[#14532d] text-white px-4 py-2 rounded-xl text-[11px] font-bold':'bg-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold'; document.getElementById('opt2Btn').className=t===2?'bg-[#14532d] text-white px-4 py-2 rounded-xl text-[11px] font-bold':'bg-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold'; }
-function handleLogoBanner(e,type){ const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=(ev)=>{ if(type==='logo'){ const img=document.getElementById('logoPreview'); img.src=ev.target.result; img.classList.remove('hidden'); localStorage.setItem('logoImg_'+(currentEventId||'temp'), ev.target.result); }else{ const img=document.getElementById('bannerPreview'); img.src=ev.target.result; img.classList.remove('hidden'); localStorage.setItem('bannerImg_'+(currentEventId||'temp'), ev.target.result); } }; reader.readAsDataURL(file); }
+function handleLogoBanner(e,type){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=(ev)=>{
+    const cleanId = (currentEventId||'temp').replace('event_','');
+    if(type==='logo'){
+      const img=document.getElementById('logoPreview'); img.src=ev.target.result; img.classList.remove('hidden');
+      localStorage.setItem('logoImg_temp', ev.target.result);
+      localStorage.setItem('logoImg_'+cleanId, ev.target.result);
+      localStorage.setItem('logoImg_event_'+cleanId, ev.target.result);
+      if(currentEventId) localStorage.setItem('logoImg_'+currentEventId, ev.target.result);
+    }else{
+      const img=document.getElementById('bannerPreview'); img.src=ev.target.result; img.classList.remove('hidden');
+      localStorage.setItem('bannerImg_temp', ev.target.result);
+      localStorage.setItem('bannerImg_'+cleanId, ev.target.result);
+      localStorage.setItem('bannerImg_event_'+cleanId, ev.target.result);
+      if(currentEventId) localStorage.setItem('bannerImg_'+currentEventId, ev.target.result);
+    }
+  };
+  reader.readAsDataURL(file);
+}
 function handleCertFull(e){ const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=(ev)=>{ const img=document.getElementById('certPreviewImg'); img.src=ev.target.result; img.classList.remove('hidden'); document.getElementById('certPreviewPlaceholder').classList.add('hidden'); localStorage.setItem('certFullImage', ev.target.result); }; reader.readAsDataURL(file); }
 function handleCertFile(e,type){ const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=(ev)=>{ const img=document.getElementById('certPreviewImg'); img.src=ev.target.result; img.classList.remove('hidden'); document.getElementById('certPreviewPlaceholder').classList.add('hidden'); localStorage.setItem('cert_'+type, ev.target.result); updateCertLive(); }; reader.readAsDataURL(file); }
 function updateCertLive(){
   const x=document.getElementById('certX').value; const y=document.getElementById('certY').value; const s=document.getElementById('certS').value;
   document.getElementById('xVal').innerText=x; document.getElementById('yVal').innerText=y; document.getElementById('sVal').innerText=s;
   const nameDiv=document.getElementById('certNameOnImage'); nameDiv.style.left=x+'%'; nameDiv.style.top=y+'%'; nameDiv.style.fontSize=s+'px'; nameDiv.style.transform='translate(-50%,-50%)';
-  localStorage.setItem('certPos_v12', JSON.stringify({x,y,s}));
+  localStorage.setItem('certPos_v13', JSON.stringify({x,y,s}));
 }
 document.getElementById('certX')?.addEventListener('input', updateCertLive);
 document.getElementById('certY')?.addEventListener('input', updateCertLive);
@@ -134,10 +141,10 @@ document.getElementById('setMinute')?.addEventListener('change', e=>{ document.g
 
 function renderQuestions(){
   const list=document.getElementById('qList');
-  if(!questions.length){ list.innerHTML='<p class="text-center text-gray-500 py-4">No Questions</p>'; document.getElementById('quota').innerText='Quota: 0'; return; }
+  if(!questions.length){ list.innerHTML='<p class="text-center text-gray-500 py-4">No Questions - Bulk Add ചെയ്യൂ</p>'; document.getElementById('quota').innerText='Quota: 0'; return; }
   list.innerHTML='';
   questions.forEach((qq,i)=>{
-    list.innerHTML+=`<div class="bg-white border rounded-xl p-2.5 mb-2 flex justify-between items-start gap-2"><div class="flex-1"><p class="font-bold text-[12px]">${i+1}. ${qq.q}</p><p class="text-[10px] text-gray-600 mt-1">${qq.opts.map((o,idx)=> (idx===qq.ans?'✅':'')+o).join(' | ')}</p></div><div class="flex flex-col gap-1"><button onclick="editQuestion(${i})" class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">✏️ Edit</button><button onclick="deleteQuestion(${i})" class="bg-red-100 text-red-600 border px-3 py-1 rounded-full text-[10px] font-bold">🗑️</button></div></div>`;
+    list.innerHTML+=`<div class="bg-white border rounded-xl p-2.5 mb-2 flex justify-between items-start gap-2"><div class="flex-1"><p class="font-bold text-[12px]">${i+1}. ${qq.q}</p><p class="text-[10px] text-gray-600 mt-1">${qq.opts.map((o,idx)=> (idx===qq.ans?'✅':'')+o).join(' | ')}</p></div><div class="flex flex-col gap-1"><button onclick="editQuestion(${i})" class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">✏️ Edit</button><button onclick="deleteQuestion(${i})" class="bg-red-100 text-red-600 border px-3 py-1 rounded-full text-[10px] font-bold">🗑️ Delete</button></div></div>`;
   });
   document.getElementById('quota').innerText='Quota: '+questions.length;
 }
@@ -145,181 +152,199 @@ function bulkAdd(){
   const txt=document.getElementById('qBulk').value.trim(); if(!txt){ alert('Type Questions'); return; }
   const lines=txt.split('\n'); let added=0;
   lines.forEach(line=>{ if(!line.trim()) return; const parts=line.split('|'); if(parts.length<2) return; const q=parts[0].trim(); const opts=parts[1].split(',').map(o=>o.trim()).filter(o=>o); let ans=0; if(parts[2]){ ans=parseInt(parts[2].trim()); if(isNaN(ans)) ans=0; } if(q&&opts.length>=2){ questions.push({q, opts, ans:Math.min(ans, opts.length-1)}); added++; } });
-  localStorage.setItem('questions_v12', JSON.stringify(questions));
+  localStorage.setItem('questions_v13', JSON.stringify(questions));
   document.getElementById('qBulk').value='';
-  renderQuestions(); alert('✅ '+added+' Added!');
+  renderQuestions(); alert('✅ '+added+' Added! Now SAVE CLOUD SAME LINK അടിക്കൂ!');
 }
-function editQuestion(idx){ editingQIndex=idx; const qq=questions[idx]; document.getElementById('editQText').value=qq.q; document.getElementById('editQOpts').value=qq.opts.join(', '); document.getElementById('editQAns').value=qq.ans; document.getElementById('editQBox').classList.remove('hidden'); }
-function saveEditedQ(){ if(editingQIndex<0) return; const q=document.getElementById('editQText').value.trim(); const optsStr=document.getElementById('editQOpts').value.trim(); const ans=parseInt(document.getElementById('editQAns').value); if(!q||!optsStr){ alert('Fill All'); return; } const opts=optsStr.split(',').map(o=>o.trim()).filter(o=>o); if(opts.length<2){ alert('Min 2 Options'); return; } questions[editingQIndex]={q, opts, ans:Math.min(isNaN(ans)?0:ans, opts.length-1)}; localStorage.setItem('questions_v12', JSON.stringify(questions)); renderQuestions(); cancelEditQ(); alert('✅ Edited! Now SAVE CLOUD Same Link അടിക്കൂ - Friends ന് മാറ്റം കിട്ടും!'); }
+function editQuestion(idx){ editingQIndex=idx; const qq=questions[idx]; document.getElementById('editQText').value=qq.q; document.getElementById('editQOpts').value=qq.opts.join(', '); document.getElementById('editQAns').value=qq.ans; document.getElementById('editQBox').classList.remove('hidden'); document.getElementById('editQBox').scrollIntoView({behavior:'smooth'}); }
+function saveEditedQ(){ if(editingQIndex<0) return; const q=document.getElementById('editQText').value.trim(); const optsStr=document.getElementById('editQOpts').value.trim(); const ans=parseInt(document.getElementById('editQAns').value); if(!q||!optsStr){ alert('Fill All'); return; } const opts=optsStr.split(',').map(o=>o.trim()).filter(o=>o); if(opts.length<2){ alert('Min 2 Options'); return; } questions[editingQIndex]={q, opts, ans:Math.min(isNaN(ans)?0:ans, opts.length-1)}; localStorage.setItem('questions_v13', JSON.stringify(questions)); renderQuestions(); cancelEditQ(); alert('✅ Edited! SAVE CLOUD Same Link അടിക്കൂ!'); }
 function cancelEditQ(){ editingQIndex=-1; document.getElementById('editQBox').classList.add('hidden'); }
-function deleteQuestion(idx){ if(!confirm(`Delete Q ${idx+1}?`)) return; questions.splice(idx,1); localStorage.setItem('questions_v12', JSON.stringify(questions)); renderQuestions(); }
+function deleteQuestion(idx){ if(!confirm(`Delete Q ${idx+1}?`)) return; questions.splice(idx,1); localStorage.setItem('questions_v13', JSON.stringify(questions)); renderQuestions(); }
 
 function loadPastEvents(){
   const container=document.getElementById('pastEventsList');
+  if(!container) return;
   const keys=Object.keys(localStorage).filter(k=>k.startsWith('event_'));
-  if(!keys.length){ container.innerHTML='<p class="text-xs text-center text-gray-500 py-4">No Past Events</p>'; return; }
+  if(!keys.length){ container.innerHTML='<p class="text-xs text-center text-gray-500 py-4">No Past Events - Create Link ചെയ്താൽ വരും</p>'; return; }
   container.innerHTML='';
-  keys.reverse().forEach(key=>{
+  keys.sort((a,b)=>{ try{ const da=JSON.parse(localStorage.getItem(a)); const db=JSON.parse(localStorage.getItem(b)); return (db.updated||db.created||0)-(da.updated||da.created||0); }catch(e){ return 0; } }).forEach(key=>{
     try{
       const data=JSON.parse(localStorage.getItem(key));
       const id=key.replace('event_','');
-      container.innerHTML+=`<div class="bg-white border-2 rounded-xl p-2.5"><div class="flex justify-between items-start"><div class="flex-1"><p class="font-black text-xs">${data.title||'Noor Event'} <span class="text-[9px] bg-green-100 px-2 py-0.5 rounded-full">🌐 Cloud</span></p><p class="text-[10px] text-gray-600">${data.place||''} | ${data.questions?.length||0} Qs</p></div><div class="flex gap-1"><button onclick="copyEventLink('${id}')" class="bg-green-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">📋 Copy</button><button onclick="editEventById('${id}')" class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">✏️ Edit</button></div></div></div>`;
+      container.innerHTML+=`<div class="bg-white border-2 rounded-xl p-2.5 mb-2"><div class="flex justify-between items-start"><div class="flex-1"><p class="font-black text-xs">${data.title||'Noor Event'} <span class="text-[9px] bg-green-100 px-2 py-0.5 rounded-full">${data.minute||10} Min</span></p><p class="text-[10px] text-gray-600">${data.place||''} | ${data.questions?.length||0} Qs | ID:${id}</p><p class="text-[9px] text-gray-400">${new Date(data.updated||data.created||Date.now()).toLocaleString()}</p></div><div class="flex flex-col gap-1"><button onclick="copyEventLink('${id}')" class="bg-green-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">📋 Copy</button><button onclick="editEventById('${id}')" class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">✏️ Edit</button><button onclick="deleteEvent('${id}')" class="bg-red-100 text-red-600 border px-3 py-1 rounded-full text-[10px] font-bold">🗑️ Delete</button></div></div></div>`;
     }catch(e){}
   });
+  document.getElementById('cloudStatus').innerText='✅ Past Events Refreshed! '+keys.length+' Events';
 }
-function copyEventLink(id){ const link=window.location.origin+window.location.pathname+'?event='+id; navigator.clipboard.writeText(link).then(()=>{ alert('✅ Copied!\n'+link); }); }
+function clearAllEvents(){ if(!confirm('Delete ALL Past Events?')) return; Object.keys(localStorage).filter(k=>k.startsWith('event_')).forEach(k=>localStorage.removeItem(k)); loadPastEvents(); alert('All Events Cleared!'); }
+function copyEventLink(id){ const link=window.location.origin+window.location.pathname+'?event='+id; navigator.clipboard.writeText(link).then(()=>{ alert('✅ Link Copied!\n'+link); }).catch(()=>{ prompt('Copy Link:', link); }); }
+function deleteEvent(id){ if(!confirm('Delete Event ID:'+id+'? Logo Banner also delete ആവും! Sure?')) return; localStorage.removeItem('event_'+id); localStorage.removeItem('event_event_'+id); localStorage.removeItem('logoImg_'+id); localStorage.removeItem('bannerImg_'+id); localStorage.removeItem('logoImg_event_'+id); localStorage.removeItem('bannerImg_event_'+id); loadPastEvents(); alert('✅ Deleted!'); }
+
 function editEventById(id){
-  // Try local first, then Firebase
-  const localData = localStorage.getItem('event_'+id) || localStorage.getItem('event_event_'+id);
-  if(localData){
-    const data=JSON.parse(localData);
-    currentEventId=id;
+  try{
+    let data=null;
+    if(localStorage.getItem('event_'+id)) data=JSON.parse(localStorage.getItem('event_'+id));
+    else if(localStorage.getItem('event_event_'+id)) data=JSON.parse(localStorage.getItem('event_event_'+id));
+    else{
+      const keys=Object.keys(localStorage).filter(k=>k.includes(id) && k.startsWith('event_'));
+      if(keys.length) data=JSON.parse(localStorage.getItem(keys[0]));
+    }
+    if(!data){ alert('Event Not Found: '+id); return; }
+
+    currentEventId='event_'+id.replace('event_','');
+    localStorage.setItem('currentEventId_v13', currentEventId);
+
     document.getElementById('eventName').value=data.title||'';
     document.getElementById('eventPlace').value=data.place||'';
     document.getElementById('eventCategory').value=data.category||'Madrasa';
+    if(data.category &&!['Madrasa','School','College','Masjid','Mahal','Organization','District','State','National'].includes(data.category)){
+      document.getElementById('eventCategory').value='Other';
+      document.getElementById('customCategoryBox').classList.remove('hidden');
+      document.getElementById('customCategory').value=data.category;
+    }
     document.getElementById('setMinute').value=data.minute||10;
     document.getElementById('setCount').value=data.count||20;
     document.getElementById('setOnline').checked=data.onlineMode!==false;
+    document.getElementById('setPhoneLock').checked=data.phoneLock!==false;
+    document.getElementById('setDeviceLock').checked=data.deviceLock!==false;
+
     questions=data.questions||[];
-    localStorage.setItem('questions_v12', JSON.stringify(questions));
+    localStorage.setItem('questions_v13', JSON.stringify(questions));
     renderQuestions();
+
+    const logoKeys=[`logoImg_${id}`, `logoImg_event_${id}`, `logoImg_${currentEventId}`, `logoImg_temp`, `logoImg_${currentEventId.replace('event_','')}`];
+    const bannerKeys=[`bannerImg_${id}`, `bannerImg_event_${id}`, `bannerImg_${currentEventId}`, `bannerImg_temp`, `bannerImg_${currentEventId.replace('event_','')}`];
+    let logoFound=null, bannerFound=null;
+    for(let k of logoKeys){ const v=localStorage.getItem(k); if(v){ logoFound=v; break; } }
+    for(let k of bannerKeys){ const v=localStorage.getItem(k); if(v){ bannerFound=v; break; } }
+
+    const logoPrev=document.getElementById('logoPreview');
+    if(logoFound && logoPrev){ logoPrev.src=logoFound; logoPrev.classList.remove('hidden'); }
+    else if(logoPrev){ logoPrev.classList.add('hidden'); }
+
+    const bannerPrev=document.getElementById('bannerPreview');
+    if(bannerFound && bannerPrev){ bannerPrev.src=bannerFound; bannerPrev.classList.remove('hidden'); }
+    else if(bannerPrev){ bannerPrev.classList.add('hidden'); }
+
+    if(logoFound){
+      localStorage.setItem('logoImg_'+id, logoFound);
+      localStorage.setItem('logoImg_'+currentEventId, logoFound);
+      localStorage.setItem('logoImg_'+currentEventId.replace('event_',''), logoFound);
+      localStorage.setItem('logoImg_temp', logoFound);
+    }
+    if(bannerFound){
+      localStorage.setItem('bannerImg_'+id, bannerFound);
+      localStorage.setItem('bannerImg_'+currentEventId, bannerFound);
+      localStorage.setItem('bannerImg_'+currentEventId.replace('event_',''), bannerFound);
+      localStorage.setItem('bannerImg_temp', bannerFound);
+    }
+
     document.getElementById('eventIdShow').value=id;
     lastGeneratedLink=window.location.origin+window.location.pathname+'?event='+id;
     document.getElementById('generatedLink').innerText=lastGeneratedLink;
     document.getElementById('linkBox').classList.remove('hidden');
-    document.getElementById('cloudStatus').innerText='✅ Loaded for Edit - Edit ചെയ്ത് SAVE CLOUD Same Link അടിക്കൂ - Friends ന് പഴയ ലിങ്കിൽ തന്നെ മാറ്റം കിട്ടും! TRUE CLOUD!';
-    return;
-  }
-  // Try Firebase
-  if(firebaseDB){
-    firebaseDB.ref('events/'+id).once('value').then(snap=>{
-      const data=snap.val();
-      if(!data){ alert('Not Found'); return; }
-      currentEventId=id;
-      document.getElementById('eventName').value=data.title||'';
-      document.getElementById('eventPlace').value=data.place||'';
-      document.getElementById('setMinute').value=data.minute||10;
-      document.getElementById('setCount').value=data.count||20;
-      questions=data.questions||[];
-      localStorage.setItem('questions_v12', JSON.stringify(questions));
-      renderQuestions();
-      document.getElementById('eventIdShow').value=id;
-      lastGeneratedLink=window.location.origin+window.location.pathname+'?event='+id;
-      document.getElementById('generatedLink').innerText=lastGeneratedLink;
-      document.getElementById('linkBox').classList.remove('hidden');
-      document.getElementById('cloudStatus').innerText='✅ Loaded from TRUE CLOUD - Edit & Save Same Link - Friends will get update!';
-    });
-  }
+    document.getElementById('cloudStatus').innerText='✅ Event Loaded - Logo Banner Kept! ID: '+id+' - Settings മാറ്റി SAVE SAME LINK അടിച്ചാൽ Logo നഷ്ടപ്പെടില്ല!';
+    window.scrollTo({top:200, behavior:'smooth'});
+  }catch(e){ alert('Error: '+e.message); }
 }
+function editCurrentEvent(){ if(!currentEventId){ alert('Past Events-ൽ നിന്ന് Edit ചെയ്യൂ'); return; } editEventById(currentEventId.replace('event_','')); }
 
-function createNewLink(){ currentEventId='event_'+Date.now(); localStorage.setItem('currentEventId_v12', currentEventId); createOrUpdateLink(true); }
+function createNewLink(){
+  currentEventId = 'event_'+Date.now();
+  localStorage.setItem('currentEventId_v13', currentEventId);
+  createOrUpdateLink(true);
+}
 function saveCloudSameLink(){
-  let existingId = document.getElementById('eventIdShow').value.trim() || currentEventId || localStorage.getItem('currentEventId_v12') || '';
-  if(existingId){ currentEventId = existingId; }else{ currentEventId = 'event_'+Date.now(); }
-  if(!currentEventId.startsWith('event_')) currentEventId = 'event_'+currentEventId.replace('event_','');
-  localStorage.setItem('currentEventId_v12', currentEventId);
+  let existingId = document.getElementById('eventIdShow').value.trim() || currentEventId || localStorage.getItem('currentEventId_v13') || '';
+  if(existingId){
+    existingId = existingId.replace(/event_/g,'');
+    currentEventId = 'event_'+existingId;
+  }
+  if(!currentEventId || currentEventId==='event_') currentEventId='event_'+Date.now();
+  localStorage.setItem('currentEventId_v13', currentEventId);
   createOrUpdateLink(false);
 }
-
 function createOrUpdateLink(isNew){
-  let minute = parseInt(document.getElementById('setMinute').value);
-  if(document.getElementById('setMinute').value==='custom'){ minute = parseInt(document.getElementById('setMinuteCustom').value); if(!minute) minute=10; }
-  const title = document.getElementById('eventName').value.trim()||'Noor Quiz';
-  const place = document.getElementById('eventPlace').value.trim()||'';
-  let category = document.getElementById('eventCategory').value;
-  if(category==='Other'){ const c=document.getElementById('customCategory').value.trim(); if(c) category=c; }
-  const count = parseInt(document.getElementById('setCount').value)||20;
-  const onlineMode = document.getElementById('setOnline').checked;
-  const phoneLock = document.getElementById('setPhoneLock').checked;
-  const deviceLock = document.getElementById('setDeviceLock').checked;
+  try{
+    let minute = parseInt(document.getElementById('setMinute').value);
+    if(document.getElementById('setMinute').value==='custom'){ minute = parseInt(document.getElementById('setMinuteCustom').value); if(!minute) minute=10; }
+    const title = document.getElementById('eventName').value.trim()||'Noor Quiz';
+    const place = document.getElementById('eventPlace').value.trim()||'';
+    let category = document.getElementById('eventCategory').value;
+    if(category==='Other'){ const c=document.getElementById('customCategory').value.trim(); if(c) category=c; }
+    const count = parseInt(document.getElementById('setCount').value)||20;
+    const onlineMode = document.getElementById('setOnline').checked;
+    const phoneLock = document.getElementById('setPhoneLock').checked;
+    const deviceLock = document.getElementById('setDeviceLock').checked;
+    if(!questions.length){ alert('⚠️ Questions Add ചെയ്യൂ!'); return; }
 
-  if(!questions.length){ alert('⚠️ Questions Add ചെയ്യൂ!'); return; }
+    const cleanId = currentEventId.replace(/event_/g,'');
+    const finalId = 'event_'+cleanId;
+    const eventData = {title, place, category, questions, minute, count, onlineMode, phoneLock, deviceLock, created: Date.now(), updated: Date.now()};
 
-  const cleanId = currentEventId.replace('event_','');
-  const eventData = {title, place, category, questions, minute, count, onlineMode, phoneLock, deviceLock, created: Date.now(), updated: Date.now()};
+    localStorage.setItem('event_'+cleanId, JSON.stringify(eventData));
+    localStorage.setItem(finalId, JSON.stringify(eventData));
+    localStorage.setItem('questions_v13', JSON.stringify(questions));
+    localStorage.setItem('currentEventId_v13', finalId);
 
-  // 1. Save Local
-  localStorage.setItem('event_'+currentEventId, JSON.stringify(eventData));
-  localStorage.setItem('event_'+cleanId, JSON.stringify(eventData));
-  localStorage.setItem('questions_v12', JSON.stringify(eventData.questions));
-  localStorage.setItem('currentEventId_v12', currentEventId);
+    const existingLogo = localStorage.getItem('logoImg_'+cleanId) || localStorage.getItem('logoImg_'+finalId) || localStorage.getItem('logoImg_temp');
+    const existingBanner = localStorage.getItem('bannerImg_'+cleanId) || localStorage.getItem('bannerImg_'+finalId) || localStorage.getItem('bannerImg_temp');
+    if(existingLogo){
+      localStorage.setItem('logoImg_'+cleanId, existingLogo);
+      localStorage.setItem('logoImg_'+finalId, existingLogo);
+      localStorage.setItem('logoImg_temp', existingLogo);
+    }
+    if(existingBanner){
+      localStorage.setItem('bannerImg_'+cleanId, existingBanner);
+      localStorage.setItem('bannerImg_'+finalId, existingBanner);
+      localStorage.setItem('bannerImg_temp', existingBanner);
+    }
 
-  const link = window.location.origin + window.location.pathname + '?event=' + cleanId;
-  lastGeneratedLink = link;
-  localStorage.setItem('lastLink_v12', link);
+    const link = window.location.origin + window.location.pathname + '?event=' + cleanId;
+    lastGeneratedLink = link;
+    document.getElementById('generatedLink').innerText = link;
+    document.getElementById('linkBox').classList.remove('hidden');
+    document.getElementById('eventIdShow').value = cleanId;
 
-  document.getElementById('generatedLink').innerText = link;
-  document.getElementById('linkBox').classList.remove('hidden');
-  document.getElementById('eventIdShow').value = cleanId;
+    if(isNew){
+      document.getElementById('cloudStatus').innerText = '✅ NEW Link Created! ID: '+cleanId+' - Logo Banner Kept!';
+      document.getElementById('createLinkBtn').innerText='✅ NEW LINK CREATED!';
+    }else{
+      document.getElementById('cloudStatus').innerText = '✅ SAME LINK UPDATED! ID: '+cleanId+' - Logo Banner നഷ്ടപ്പെട്ടില്ല! Friends Refresh ചെയ്താൽ മാറ്റം കിട്ടും! Time: '+minute+' Min';
+      document.getElementById('saveCloudBtn').innerText='✅ SAME LINK UPDATED! Logo Kept!';
+    }
 
-  // 2. Save TRUE CLOUD Firebase - THIS MAKES FRIENDS GET UPDATE!
-  if(firebaseDB && onlineMode){
-    document.getElementById('cloudStatus').innerText = '☁️ Saving to TRUE CLOUD...';
-    firebaseDB.ref('events/'+cleanId).set(eventData).then(()=>{
-      document.getElementById('cloudStatus').innerText = '✅ TRUE CLOUD SAVED! പഴയ ലിങ്കിൽ തന്നെ Friends ന് മാറ്റം കിട്ടും! Link: '+cleanId+' | Online ON! Friends Refresh ചെയ്താൽ പുതിയ Settings!';
-      document.getElementById('saveCloudBtn').innerText = '✅ SAVED TO TRUE CLOUD! Friends Get Update Same Link!';
-      setTimeout(()=>{ document.getElementById('saveCloudBtn').innerText='💾 SAVE CLOUD - Same Link - കൂട്ടുകാർക്ക് പഴയ ലിങ്കിൽ മാറ്റം കിട്ടും! TRUE CLOUD!'; },3000);
-    }).catch(err=>{
-      document.getElementById('cloudStatus').innerText = '⚠️ Local Saved, Cloud Failed: '+err.message+' - Same Browser-ൽ മാത്രം Work ആവും. Firebase Config ശരിയാക്കൂ!';
-    });
-  }else{
-    document.getElementById('cloudStatus').innerText = isNew? '✅ NEW Link Created! ID: '+cleanId : '✅ SAVE SAME LINK! Same ID: '+cleanId+' | Local Only - Same Browser-ൽ മാത്രം. TRUE CLOUD-ന് Online ON ആക്കൂ + Firebase Config Add ചെയ്യൂ!';
-    if(isNew) document.getElementById('createLinkBtn').innerText='✅ NEW LINK CREATED!';
-    else document.getElementById('saveCloudBtn').innerText='✅ SAVED SAME LINK! Local Only';
-    setTimeout(()=>{ document.getElementById('createLinkBtn').innerText='💚 CREATE NEW LINK'; document.getElementById('saveCloudBtn').innerText='💾 SAVE CLOUD - Same Link - കൂട്ടുകാർക്ക് പഴയ ലിങ്കിൽ മാറ്റം കിട്ടും! TRUE CLOUD!'; },3000);
-  }
-
-  if(navigator.clipboard) navigator.clipboard.writeText(link).catch(()=>{});
-  loadPastEvents();
+    if(navigator.clipboard) navigator.clipboard.writeText(link).catch(()=>{});
+    loadPastEvents();
+    setTimeout(()=>{ document.getElementById('createLinkBtn').innerText='💚 CREATE NEW LINK - New ID'; document.getElementById('saveCloudBtn').innerText='💾 SAVE CLOUD SAME LINK - പഴയ ലിങ്ക് മാറില്ല - Logo Banner Keep!'; },2500);
+  }catch(e){ document.getElementById('cloudStatus').innerText='❌ Error: '+e.message; }
 }
 function copyLink(){ if(!lastGeneratedLink){ alert('Create Link First'); return; } navigator.clipboard.writeText(lastGeneratedLink).then(()=>{ alert('✅ Copied!\n'+lastGeneratedLink); }); }
 function shareWhatsApp(){ if(!lastGeneratedLink) return; window.open('https://wa.me/?text='+encodeURIComponent('🌙 Noor Quiz: '+lastGeneratedLink), '_blank'); }
-function editEvent(){ if(!currentEventId){ alert('Past Events-ൽ നിന്ന് Edit ചെയ്യൂ'); return; } editEventById(currentEventId.replace('event_','')); }
-function clearEventForm(){ if(!confirm('Clear Form?')) return; document.getElementById('eventName').value=''; document.getElementById('eventPlace').value=''; document.getElementById('qBulk').value=''; questions=[]; localStorage.removeItem('questions_v12'); renderQuestions(); }
 
 function loadCompetitorEvent(){
   const params = new URLSearchParams(window.location.search);
   const eventId = params.get('event');
   if(!eventId) return;
-  document.getElementById('cloudLoadStatus').innerText = '☁️ Loading latest from TRUE CLOUD...';
-  // Try Firebase first - TRUE CLOUD
-  if(firebaseDB){
-    firebaseDB.ref('events/'+eventId).once('value').then(snap=>{
-      const data = snap.val();
-      if(data){
-        // FOUND IN CLOUD - Latest!
-        currentEventId='event_'+eventId;
-        questions=data.questions||[];
-        totalMinutes=data.minute||10;
-        document.getElementById('compTitle').innerText=data.title||'🌙 Noor Al Madrasa';
-        document.getElementById('eventNameDisplay').innerText=data.title||'';
-        document.getElementById('compSubTitle').innerText=(data.category||'')+' | 🌐 TRUE CLOUD - Latest Settings';
-        document.getElementById('compPlaceShow').innerText=data.place||'';
-        document.getElementById('cloudLoadStatus').innerText='✅ Latest from TRUE CLOUD Loaded! Updated: '+new Date(data.updated||Date.now()).toLocaleString();
-        localStorage.setItem('questions_v12', JSON.stringify(questions));
-        return;
-      }else{
-        // Not in cloud, try local
-        tryLocalLoad(eventId);
-      }
-    }).catch(()=>{ tryLocalLoad(eventId); });
-  }else{
-    tryLocalLoad(eventId);
-  }
-}
-function tryLocalLoad(eventId){
   try{
-    let eventData = JSON.parse(localStorage.getItem('event_'+eventId)||localStorage.getItem('event_event_'+eventId)||'null');
-    if(!eventData){ document.getElementById('cloudLoadStatus').innerText='⚠️ Local Data - Cloud-ൽ ഇല്ല - Admin-ൽ Firebase Config Add ചെയ്യൂ'; return; }
+    let eventData=null;
+    if(localStorage.getItem('event_'+eventId)) eventData=JSON.parse(localStorage.getItem('event_'+eventId));
+    else if(localStorage.getItem('event_event_'+eventId)) eventData=JSON.parse(localStorage.getItem('event_event_'+eventId));
+    else{
+      const keys=Object.keys(localStorage).filter(k=>k.includes(eventId));
+      if(keys.length) eventData=JSON.parse(localStorage.getItem(keys[0]));
+    }
+    if(!eventData){ document.getElementById('cloudLoadStatus').innerText='⚠️ Event Not Found Locally'; return; }
     currentEventId='event_'+eventId;
+    localStorage.setItem('currentEventId_v13', currentEventId);
     questions=eventData.questions||[];
     totalMinutes=eventData.minute||10;
     document.getElementById('compTitle').innerText=eventData.title||'🌙 Noor Al Madrasa';
     document.getElementById('eventNameDisplay').innerText=eventData.title||'';
-    document.getElementById('compSubTitle').innerText=(eventData.category||'')+' | Local';
-    document.getElementById('compPlaceShow').innerText=eventData.place||'';
-    document.getElementById('cloudLoadStatus').innerText='📴 Local Data Loaded';
-    localStorage.setItem('questions_v12', JSON.stringify(questions));
+    document.getElementById('compSubTitle').innerText=(eventData.category||'')+' | '+(eventData.place||'')+' | '+totalMinutes+' Min';
+    document.getElementById('compPlaceShow').innerText='Updated: '+new Date(eventData.updated||Date.now()).toLocaleString()+' | ID:'+eventId;
+    document.getElementById('cloudLoadStatus').innerText='✅ Latest Settings Loaded! Time: '+totalMinutes+' Min | Questions: '+questions.length;
+    localStorage.setItem('questions_v13', JSON.stringify(questions));
   }catch(e){}
 }
 
@@ -330,7 +355,7 @@ function startQuiz(){
   if(!name||!phone){ err.innerText='Name & Phone Required'; err.classList.remove('hidden'); return; }
   err.classList.add('hidden');
   if(!questions.length){
-    const saved=JSON.parse(localStorage.getItem('questions_v12')||'[]');
+    const saved=JSON.parse(localStorage.getItem('questions_v13')||'[]');
     if(saved.length) questions=saved;
     else questions=[{q:"നബി ജന്മദേശം?",opts:["മക്ക","മദീന","ത്വാഇഫ്","യമൻ"],ans:0}];
   }
@@ -352,12 +377,12 @@ function showQ(){
   const feedback=document.getElementById('quizFeedback'); feedback.classList.add('hidden');
   qq.opts.forEach((o,i)=>{
     const b=document.createElement('button');
-    b.className='option-btn w-full text-left px-4 py-3.5 border-2 rounded-xl text-sm bg-white hover:bg-green-50';
+    b.className='w-full text-left px-4 py-3.5 border-2 rounded-xl text-sm bg-white hover:bg-green-50';
     b.innerText=`${String.fromCharCode(65+i)}. ${o}`;
     b.onclick=()=>{
       const isCorrect=i===qq.ans;
-      if(isCorrect){ score++; b.classList.add('correct'); feedback.innerText='✅ ശരി!'; feedback.className='text-center font-black mt-4 text-sm p-2 rounded-xl bg-green-100 text-green-700'; }
-      else{ b.classList.add('wrong'); feedback.innerText='❌ തെറ്റ്! ശരി: '+qq.opts[qq.ans]; feedback.className='text-center font-black mt-4 text-sm p-2 rounded-xl bg-red-100 text-red-700'; Array.from(optDiv.children).forEach((btn, idx)=>{ if(idx===qq.ans) btn.classList.add('show-correct'); }); }
+      if(isCorrect){ score++; b.style.background='#16a34a'; b.style.color='white'; feedback.innerText='✅ ശരി!'; feedback.className='text-center font-black mt-4 text-sm p-2 rounded-xl bg-green-100 text-green-700'; }
+      else{ b.style.background='#dc2626'; b.style.color='white'; feedback.innerText='❌ തെറ്റ്! ശരി: '+qq.opts[qq.ans]; feedback.className='text-center font-black mt-4 text-sm p-2 rounded-xl bg-red-100 text-red-700'; Array.from(optDiv.children).forEach((btn, idx)=>{ if(idx===qq.ans){ btn.style.borderColor='#16a34a'; btn.style.borderWidth='3px'; btn.style.background='#dcfce7'; } }); }
       feedback.classList.remove('hidden');
       Array.from(optDiv.children).forEach(btn=> btn.disabled=true);
       setTimeout(()=>{ currentQ++; showQ(); }, 1200);
@@ -377,7 +402,7 @@ function finishQuiz(){
   const totalTime=Math.floor((Date.now()-startTime)/1000);
   const mins=Math.floor(totalTime/60); const secs=totalTime%60;
   const result={name:window._quizData.name, phone:window._quizData.phone, place:window._quizData.place, score, total:questions.length, time:totalTime, timeStr:`${mins}:${String(secs).padStart(2,'0')}`, timestamp:Date.now()};
-  let results=JSON.parse(localStorage.getItem('results_v12')||'[]'); results.push(result); localStorage.setItem('results_v12', JSON.stringify(results));
+  let results=JSON.parse(localStorage.getItem('results_v13')||'[]'); results.push(result); localStorage.setItem('results_v13', JSON.stringify(results));
   document.getElementById('quizCard').classList.add('hidden');
   const resultCard=document.getElementById('resultCard'); resultCard.classList.remove('hidden');
   document.getElementById('finalScore').innerText=`${score}/${questions.length}`;
@@ -389,7 +414,7 @@ function generateCertificateCanvas(){
   const ctx=canvas.getContext('2d');
   const certImgSrc=localStorage.getItem('certFullImage');
   const name=window._quizData?.name||document.getElementById('nameInput').value||'Sample Name';
-  const savedPos=JSON.parse(localStorage.getItem('certPos_v12')||'{"x":"50","y":"60","s":"24"}');
+  const savedPos=JSON.parse(localStorage.getItem('certPos_v13')||'{"x":"50","y":"60","s":"24"}');
   canvas.width=1000; canvas.height=700;
   if(certImgSrc){
     const img=new Image();
@@ -412,16 +437,25 @@ function generateCertificateCanvas(){
   }
 }
 function downloadCertificate(){ generateCertificateCanvas(); setTimeout(()=>{ document.getElementById('certDownloadArea').classList.remove('hidden'); document.getElementById('certDownloadArea').scrollIntoView({behavior:'smooth'}); },300); }
-function loadResults(){ const list=document.getElementById('resultsList'); const rankEl=document.getElementById('rankingContent'); let results=JSON.parse(localStorage.getItem('results_v12')||'[]'); if(!results.length){ list.innerHTML='No Results Yet'; rankEl.innerHTML='No Ranking'; return; } results.sort((a,b)=>{ if(b.score!==a.score) return b.score-a.score; return a.time-b.time; }); list.innerHTML=''; rankEl.innerHTML=''; results.forEach((r,idx)=>{ const medal=idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':`${idx+1}.`; list.innerHTML+=`<div class="flex justify-between py-2 border-b text-xs"><span>${medal} ${r.name} - ${r.score}/${r.total}</span><span>${r.timeStr} ⏱️</span></div>`; if(idx<10) rankEl.innerHTML+=`<div class="flex justify-between py-2 border-b ${idx===0?'bg-yellow-100 rounded-lg px-2 font-black':''}"><span>${medal} ${r.name} - ${r.score}/${r.total}</span><span>${r.timeStr} ⏱️</span></div>`; }); }
-function downloadResults(){ let results=JSON.parse(localStorage.getItem('results_v12')||'[]'); if(!results.length){ alert('No Results'); return; } results.sort((a,b)=>{ if(b.score!==a.score) return b.score-a.score; return a.time-b.time; }); let csv='Rank,Name,Phone,Place,Score,Total,Time\n'; results.forEach((r,i)=>{ csv+=`${i+1},${r.name},${r.phone},${r.place||''},${r.score},${r.total},${r.timeStr}\n`; }); const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='Results_'+Date.now()+'.csv'; a.click(); }
-function clearAllResults(){ if(!confirm('Delete All?')) return; localStorage.removeItem('results_v12'); loadResults(); alert('Cleared!'); }
+function loadResults(){
+  const list=document.getElementById('resultsList'); const rankEl=document.getElementById('rankingContent');
+  if(!list||!rankEl) return;
+  let results=JSON.parse(localStorage.getItem('results_v13')||'[]');
+  if(!results.length){ list.innerHTML='<p class="text-center py-4 text-gray-500">No Results Yet</p>'; rankEl.innerHTML='<p class="text-center py-4 text-gray-500">No Ranking</p>'; return; }
+  results.sort((a,b)=>{ if(b.score!==a.score) return b.score-a.score; return a.time-b.time; });
+  list.innerHTML=''; rankEl.innerHTML='';
+  results.forEach((r,idx)=>{ const medal=idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':`${idx+1}.`; list.innerHTML+=`<div class="flex justify-between py-2 border-b text-xs"><span>${medal} ${r.name} - ${r.score}/${r.total}</span><span>${r.timeStr} ⏱️</span></div>`; if(idx<10) rankEl.innerHTML+=`<div class="flex justify-between py-2 border-b ${idx===0?'bg-yellow-100 rounded-lg px-2 font-black':''}"><span>${medal} ${r.name} - ${r.score}/${r.total}</span><span>${r.timeStr} ⏱️</span></div>`; });
+}
+function downloadResults(){ let results=JSON.parse(localStorage.getItem('results_v13')||'[]'); if(!results.length){ alert('No Results'); return; } results.sort((a,b)=>{ if(b.score!==a.score) return b.score-a.score; return a.time-b.time; }); let csv='Rank,Name,Phone,Place,Score,Total,Time\n'; results.forEach((r,i)=>{ csv+=`${i+1},${r.name},${r.phone},${r.place||''},${r.score},${r.total},${r.timeStr}\n`; }); const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='Results_'+Date.now()+'.csv'; a.click(); }
+function clearAllResults(){ if(!confirm('Delete All Results?')) return; localStorage.removeItem('results_v13'); loadResults(); alert('Cleared!'); }
 function autoClear(){ if(confirm('Auto Clear 90 Days?')){ localStorage.setItem('autoClearDays','90'); localStorage.setItem('autoClearSetTime', Date.now().toString()); alert('✅ 90 Days Set!'); } }
 function exportRanking(){ downloadResults(); }
 
 window.addEventListener('load', ()=>{
+  init();
   loadCompetitorEvent();
   const savedCert=localStorage.getItem('certFullImage'); if(savedCert){ const img=document.getElementById('certPreviewImg'); if(img){ img.src=savedCert; img.classList.remove('hidden'); document.getElementById('certPreviewPlaceholder').classList.add('hidden'); } }
-  const savedPos=JSON.parse(localStorage.getItem('certPos_v12')||'{"x":"50","y":"60","s":"24"}');
+  const savedPos=JSON.parse(localStorage.getItem('certPos_v13')||'{"x":"50","y":"60","s":"24"}');
   if(document.getElementById('certX')){ document.getElementById('certX').value=savedPos.x; document.getElementById('certY').value=savedPos.y; document.getElementById('certS').value=savedPos.s; updateCertLive(); }
   if(questions.length) renderQuestions();
   loadPastEvents();
@@ -429,4 +463,4 @@ window.addEventListener('load', ()=>{
 switchCert(1);
 </script>
 </body>
-  </html>
+</html>
