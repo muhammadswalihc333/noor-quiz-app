@@ -2,7 +2,7 @@
 <html lang="ml">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Noor V9.14.7 FINAL FIX - Link Instant - All Features - TRUE CLOUD</title>
+<title>Noor V9.14.8 FINAL - Link Box Fix - Banner Clean - All Features</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -11,27 +11,43 @@ body{background:#fdf8e8; font-family:sans-serif;}
 .section-border{border:2.5px solid #14532d; border-radius:14px; background:white; padding:12px; margin-bottom:16px;}
 .green-header{background:#14532d; color:white; text-align:center; font-weight:900; font-size:11px; padding:7px; border-radius:8px; margin-bottom:12px;}
 .banner-bg{background:radial-gradient(ellipse at top, #166534 0%, #052e16 75%, #000 100%);}
-.correct-answer{animation: pulse-green 0.5s ease-in-out; border-color:#16a34a!important; background:#dcfce7!important;}
-.wrong-answer{animation: shake 0.5s ease-in-out; border-color:#dc2626!important; background:#fee2e2!important;}
-@keyframes pulse-green{0%{transform:scale(1);}50%{transform:scale(1.02);}100%{transform:scale(1);}}
-@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
+.correct-answer{border-color:#16a34a!important; background:#dcfce7!important;}
+.wrong-answer{border-color:#dc2626!important; background:#fee2e2!important;}
 .cert-preview{position:relative; width:100%; height:200px; border:2px dashed #9ca3af; border-radius:14px; background:#fff; display:flex; align-items:center; justify-content:center; overflow:hidden;}
+/* Competitor Banner Clean - New Style */
+.comp-banner-clean{position:relative; width:100%; height:220px; overflow:hidden; background:#052e16;}
+.comp-banner-clean img{width:100%; height:100%; object-fit:cover;}
+.comp-banner-overlay{position:absolute; inset:0; background:linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.6) 100%);}
+.comp-logo-clean{position:absolute; left:50%; bottom:20px; transform:translateX(-50%); width:80px; height:80px; background:white; border-radius:20px; border:4px solid white; box-shadow:0 10px 25px rgba(0,0,0,0.3); display:flex; align-items:center; justify-content:center; overflow:hidden; font-weight:900; font-size:28px; color:#14532d;}
+.comp-title-clean{position:absolute; top:35%; left:50%; transform:translate(-50%,-50%); text-align:center; width:90%;}
 </style>
 </head>
 <body>
 
+<!-- COMPETITOR VIEW - CLEAN BANNER + TITLE BELOW -->
 <div id="competitorView">
-<div class="banner-bg relative h-[200px] w-full flex flex-col items-center justify-center text-center pb-12">
-<img id="compBannerImg" src="" class="absolute inset-0 w-full h-full object-cover opacity-40 hidden">
-<h1 id="compTitle" class="text-white text-[28px] font-black relative z-10">🌙 Noor Al Madrasa</h1>
-<p id="compSubTitle" class="text-yellow-100/80 text-[12px] mt-1 relative z-10">V9.14.7 LINK FIX</p>
-<p id="compPlaceShow" class="text-white/70 text-[11px] mt-1 relative z-10"></p>
-<p id="cloudLoadStatus" class="text-[10px] text-yellow-300 mt-1 font-bold relative z-10">☁️ Loading TRUE CLOUD...</p>
-<div class="absolute -bottom-9 left-1/2 -translate-x-1/2 w-[72px] h-[72px] bg-white rounded-[20px] shadow-xl border-[3px] border-white flex items-center justify-center font-black text-[28px] overflow-hidden z-20">
-<img id="compLogoImg" src="" class="w-full h-full object-cover hidden"><span id="compLogoText" class="text-[#14532d]">N</span>
+<!-- Clean Banner - Only Banner + Logo, Title is below for neat look -->
+<div class="comp-banner-clean">
+<img id="compBannerImg" src="" class="hidden">
+<div id="compBannerDefault" class="w-full h-full banner-bg flex items-center justify-center"><span class="text-white/20 text-5xl">🌙</span></div>
+<div class="comp-banner-overlay"></div>
+<div class="comp-title-clean">
+<h1 id="compTitle" class="text-white text-[32px] font-black drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">🌙 Noor Al Madrasa</h1>
+<p id="compSubTitle" class="text-white/90 text-[13px] mt-1 font-bold drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Meelad Quiz 2K26</p>
+</div>
+<div class="comp-logo-clean">
+<img id="compLogoImg" src="" class="w-full h-full object-cover hidden"><span id="compLogoText">N</span>
 </div>
 </div>
-<div class="max-w-[500px] mx-auto px-4 pt-14">
+<!-- Event Info Below Banner - Clean & Neat -->
+<div class="bg-white border-b-2 border-green-900/10 px-4 py-4 text-center">
+<h2 id="compEventNameBelow" class="text-[20px] font-black text-[#14532d]"></h2>
+<p id="compPlaceShow" class="text-[13px] text-gray-600 mt-1 font-medium"></p>
+<p id="compDetailsBelow" class="text-[11px] text-gray-500 mt-2"></p>
+<p id="cloudLoadStatus" class="text-[10px] text-green-600 mt-1 font-bold">☁️ Loading TRUE CLOUD...</p>
+</div>
+
+<div class="max-w-[500px] mx-auto px-4 pt-6">
 <div id="registrationBox" class="bg-white rounded-[22px] border-2 border-green-900/20 p-6 shadow">
 <h2 class="font-bold text-center text-green-900">രജിസ്ട്രേഷൻ</h2>
 <p id="eventNameDisplay" class="text-xs text-center text-gray-500 mt-1"></p>
@@ -52,39 +68,51 @@ body{background:#fdf8e8; font-family:sans-serif;}
 
 <div id="adminView" class="hidden p-2 pb-20">
 <div class="max-w-[650px] mx-auto">
-<div class="flex justify-between items-center bg-white p-3 rounded-xl border-2 mb-3"><h2 class="font-black text-xs">Admin V9.14.7 LINK FIX - All Features Working</h2><button onclick="logoutAdmin()" class="bg-red-50 text-red-600 border px-4 py-1.5 rounded-full text-xs font-bold">Logout</button></div>
+<div class="flex justify-between items-center bg-white p-3 rounded-xl border-2 mb-3"><h2 class="font-black text-xs">Admin V9.14.8 LINK FIX - Banner Clean - All Features</h2><button onclick="logoutAdmin()" class="bg-red-50 text-red-600 border px-4 py-1.5 rounded-full text-xs font-bold">Logout</button></div>
 
 <div class="section-border border-2 border-blue-600 bg-blue-50/30">
-<div class="green-header bg-blue-700">📅 Past Events - LINK FIX - TRUE CLOUD</div>
-<div id="pastEventsList" class="space-y-2 max-h-[250px] overflow-auto">☁️ Loading...</div>
+<div class="green-header bg-blue-700">📅 Past Events - LINK FIX - TRUE CLOUD - Banner Clean</div>
+<div id="pastEventsList" class="space-y-2 max-h-[250px] overflow-auto">☁️ Loading TRUE CLOUD... If stuck, check Firebase Rules!</div>
+<div class="grid grid-cols-2 gap-2 mt-2"><button onclick="forceLoadPastEvents()" class="bg-blue-600 text-white py-2 rounded-xl text-xs font-black">🔄 Force Reload</button><button onclick="clearAllEvents()" class="bg-red-100 text-red-600 border py-2 rounded-xl text-xs font-black">Clear All Cloud</button></div>
 <p id="storageInfo" class="text-[10px] text-center mt-2 font-bold"></p>
+<p id="firebaseRuleHelp" class="text-[9px] text-center mt-1 text-red-600 hidden">⚠️ If Loading stuck: Firebase Console → Realtime Database → Rules → Set to { ".read": true, ".write": true } → Publish!</p>
 </div>
 
-<div class="section-border"><div class="green-header">1 - Event Basic - Logo+Banner Both Keep</div><input id="eventName" placeholder="Event Name" class="w-full border-2 border-yellow-600/40 rounded-xl px-3 py-2.5 text-sm mb-2"><input id="eventPlace" placeholder="Place" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 text-sm mb-2"><select id="eventCategory" onchange="handleCategoryChange(this.value)" class="w-full border-2 border-green-900 rounded-xl px-3 py-2.5 text-sm mb-2 font-bold bg-white"><option value="">Select Type</option><option value="Madrasa" selected>Madrasa</option><option value="School">School</option><option value="College">College</option><option value="Masjid">Masjid</option><option value="Mahal">Mahal</option><option value="Organization">Organization</option><option value="District">District</option><option value="State">State</option><option value="National">National</option><option value="Other">Other Custom</option></select><div id="customCategoryBox" class="hidden mb-2"><input id="customCategory" placeholder="Custom Type" class="w-full border-2 border-orange-400 rounded-xl px-3 py-2.5 text-sm bg-orange-50"></div><div class="grid grid-cols-2 gap-2 mt-2"><div><label class="text-[10px] font-bold">Logo - Keep</label><div class="bg-yellow-50 border-2 rounded-lg p-1"><input type="file" accept="image/*" onchange="handleLogoBanner(event,'logo')" class="text-[11px] w-full"></div><img id="logoPreview" class="hidden w-full h-16 object-contain mt-1 border-2 rounded-xl bg-white"><p id="logoSizeInfo" class="text-[9px] text-gray-500 mt-1"></p></div><div><label class="text-[10px] font-bold">Banner - Keep</label><div class="bg-blue-50 border-2 rounded-lg p-1"><input type="file" accept="image/*" onchange="handleLogoBanner(event,'banner')" class="text-[11px] w-full"></div><img id="bannerPreview" class="hidden w-full h-16 object-cover mt-1 border-2 rounded-xl"><p id="bannerSizeInfo" class="text-[9px] text-gray-500 mt-1"></p></div></div></div>
+<div class="section-border"><div class="green-header">1 - Event Basic - Logo+Banner Both Keep - Clean Banner</div><input id="eventName" placeholder="Event Name - Ex: Meelad Quiz 2K26 - Competitor-ന് താഴെ വൃത്തിയായി കാണും!" class="w-full border-2 border-yellow-600/40 rounded-xl px-3 py-2.5 text-sm mb-2"><input id="eventPlace" placeholder="Place - Ex: Markazul Uloom Madrasa, Perinthalmanna" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 text-sm mb-2"><select id="eventCategory" onchange="handleCategoryChange(this.value)" class="w-full border-2 border-green-900 rounded-xl px-3 py-2.5 text-sm mb-2 font-bold bg-white"><option value="">Select Type</option><option value="Madrasa" selected>Madrasa</option><option value="School">School</option><option value="College">College</option><option value="Masjid">Masjid</option><option value="Mahal">Mahal</option><option value="Organization">Organization</option><option value="District">District</option><option value="State">State</option><option value="National">National</option><option value="Other">Other Custom</option></select><div id="customCategoryBox" class="hidden mb-2"><input id="customCategory" placeholder="Custom Type" class="w-full border-2 border-orange-400 rounded-xl px-3 py-2.5 text-sm bg-orange-50"></div><div class="grid grid-cols-2 gap-2 mt-2"><div><label class="text-[10px] font-bold">Logo - Keep - Banner-ന്റെ മുകളിൽ വൃത്തിയായി വരും</label><div class="bg-yellow-50 border-2 rounded-lg p-1"><input type="file" accept="image/*" onchange="handleLogoBanner(event,'logo')" class="text-[11px] w-full"></div><img id="logoPreview" class="hidden w-full h-16 object-contain mt-1 border-2 rounded-xl bg-white"><p id="logoSizeInfo" class="text-[9px] text-gray-500 mt-1"></p></div><div><label class="text-[10px] font-bold">Banner - Keep - Competitor-ന് മുകളിൽ Full ആയി വരും</label><div class="bg-blue-50 border-2 rounded-lg p-1"><input type="file" accept="image/*" onchange="handleLogoBanner(event,'banner')" class="text-[11px] w-full"></div><img id="bannerPreview" class="hidden w-full h-16 object-cover mt-1 border-2 rounded-xl"><p id="bannerSizeInfo" class="text-[9px] text-gray-500 mt-1"></p></div></div></div>
 
-<div class="section-border"><div class="green-header">2 - Certificate - FIXED! Fast Upload - Keep</div><div class="flex gap-2 mb-3"><button id="opt1Btn" onclick="switchCert(1)" class="bg-[#14532d] text-white px-4 py-2 rounded-xl text-[11px] font-bold">Opt1: Upload Full Certificate</button><button id="opt2Btn" onclick="switchCert(2)" class="bg-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold">Opt2: Auto Gen</button></div><div id="certOpt1"><div class="bg-yellow-50 p-3 rounded-xl border-2 border-yellow-400"><p class="text-[11px] font-black">📜 Full Certificate Upload - FIXED! Auto Compress 200KB!</p><input type="file" accept="image/*" onchange="handleCertFull(event)" class="w-full mt-2 text-xs border rounded-lg p-2 bg-white"><p id="certSizeInfo" class="text-[9px] text-gray-600 mt-1"></p></div></div><div id="certOpt2" class="hidden"><div class="bg-blue-50/50 p-2 rounded-xl border"><div class="grid grid-cols-2 gap-2"><div><label class="text-[10px]">Bg</label><input type="file" accept="image/*" onchange="handleCertFile(event,'bg')" class="w-full text-[10px] border rounded px-1 py-1.5 bg-white"></div><div><label class="text-[10px]">Logo1</label><input type="file" accept="image/*" onchange="handleCertFile(event,'logo1')" class="w-full text-[10px] border rounded px-1 py-1.5 bg-white"></div></div><input id="certTitle" value="Certificate of Appreciation" class="w-full border rounded-lg px-2 py-2 mt-2 text-xs"><input id="certSub" value="Noor Al Madrasa - Meelad Quiz 2K26" class="w-full border rounded-lg px-2 py-2 mt-2 text-xs"><div class="mt-3 bg-white p-2 rounded-lg border"><label class="text-xs font-bold">X:<span id="xVal">50</span>%</label><input id="certX" type="range" min="0" max="100" value="50" class="w-full"><label class="text-xs font-bold">Y:<span id="yVal">60</span>%</label><input id="certY" type="range" min="0" max="100" value="60" class="w-full"><label class="text-xs font-bold">Size:<span id="sVal">24</span>px</label><input id="certS" type="range" min="10" max="80" value="24" class="w-full"></div></div></div><div class="mt-3"><div class="cert-preview"><img id="certPreviewImg" src="" class="hidden w-full h-full object-contain"><div id="certPreviewPlaceholder" class="text-center"><p class="text-xs text-gray-400">Certificate Preview</p><p id="sampleNamePreview" class="font-bold text-[24px] text-[#14532d] mt-2">Sample Name</p></div><div id="certNameOnImage" style="position:absolute; left:50%; top:60%; transform:translate(-50%,-50%); font-weight:900; color:#14532d; font-size:24px; display:block;">Sample Name</div></div></div></div>
+<div class="section-border"><div class="green-header">2 - Certificate - Fast - Keep</div><div class="flex gap-2 mb-3"><button id="opt1Btn" onclick="switchCert(1)" class="bg-[#14532d] text-white px-4 py-2 rounded-xl text-[11px] font-bold">Opt1: Upload Full</button><button id="opt2Btn" onclick="switchCert(2)" class="bg-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold">Opt2: Auto Gen</button></div><div id="certOpt1"><div class="bg-yellow-50 p-3 rounded-xl border-2 border-yellow-400"><p class="text-[11px] font-black">📜 Full Certificate Upload - Auto Compress 200KB!</p><input type="file" accept="image/*" onchange="handleCertFull(event)" class="w-full mt-2 text-xs border rounded-lg p-2 bg-white"><p id="certSizeInfo" class="text-[9px] text-gray-600 mt-1"></p></div></div><div id="certOpt2" class="hidden"><div class="bg-blue-50/50 p-2 rounded-xl border"><div class="grid grid-cols-2 gap-2"><div><label class="text-[10px]">Bg</label><input type="file" accept="image/*" onchange="handleCertFile(event,'bg')" class="w-full text-[10px] border rounded px-1 py-1.5 bg-white"></div><div><label class="text-[10px]">Logo1</label><input type="file" accept="image/*" onchange="handleCertFile(event,'logo1')" class="w-full text-[10px] border rounded px-1 py-1.5 bg-white"></div></div><input id="certTitle" value="Certificate of Appreciation" class="w-full border rounded-lg px-2 py-2 mt-2 text-xs"><input id="certSub" value="Noor Al Madrasa - Meelad Quiz 2K26" class="w-full border rounded-lg px-2 py-2 mt-2 text-xs"><div class="mt-3 bg-white p-2 rounded-lg border"><label class="text-xs font-bold">X:<span id="xVal">50</span>%</label><input id="certX" type="range" min="0" max="100" value="50" class="w-full"><label class="text-xs font-bold">Y:<span id="yVal">60</span>%</label><input id="certY" type="range" min="0" max="100" value="60" class="w-full"><label class="text-xs font-bold">Size:<span id="sVal">24</span>px</label><input id="certS" type="range" min="10" max="80" value="24" class="w-full"></div></div></div><div class="mt-3"><div class="cert-preview"><img id="certPreviewImg" src="" class="hidden w-full h-full object-contain"><div id="certPreviewPlaceholder" class="text-center"><p class="text-xs text-gray-400">Certificate Preview</p><p id="sampleNamePreview" class="font-bold text-[24px] text-[#14532d] mt-2">Sample Name</p></div><div id="certNameOnImage" style="position:absolute; left:50%; top:60%; transform:translate(-50%,-50%); font-weight:900; color:#14532d; font-size:24px; display:block;">Sample Name</div></div></div></div>
 
-<div class="section-border"><div class="green-header">3 - Settings - LINK FIX - All Features - TRUE CLOUD</div>
-<div class="bg-green-50 border-2 border-green-400 p-3 rounded-xl mb-3"><p class="font-black text-xs text-green-800">✅ LINK FIX! Certificate Compress + Fast Save + All Features Working!</p><p id="firebaseStatus" class="text-[10px] mt-1 font-bold">Firebase: Connecting...</p></div>
+<div class="section-border"><div class="green-header">3 - Settings - LINK BOX FIX - All Features - Banner Clean</div>
+<div class="bg-green-50 border-2 border-green-400 p-3 rounded-xl mb-3"><p class="font-black text-xs text-green-800">✅ LINK BOX FIX! Banner Clean! All Features - Certificate + One Phone + One Device + Random!</p><p id="firebaseStatus" class="text-[10px] mt-1 font-bold">Firebase: Connecting to noor-ai-madrasa-app...</p></div>
 <div class="grid grid-cols-2 gap-2"><div><label class="text-[10px] font-bold">Timer Minute</label><select id="setMinute" class="w-full border-2 rounded-xl px-2 py-2.5 text-xs font-bold bg-white"><option value="5">5 Min</option><option value="10" selected>10 Min</option><option value="15">15 Min</option><option value="20">20 Min</option><option value="30">30 Min</option><option value="60">60 Min</option><option value="custom">Custom</option></select><input id="setMinuteCustom" type="number" placeholder="Custom Min" class="hidden w-full border-2 border-yellow-500 rounded-xl px-2 py-2 mt-1 text-xs"></div><div><label class="text-[10px] font-bold">Count - Fixed!</label><input id="setCount" type="number" value="20" min="1" max="100" class="w-full border-2 border-blue-500 rounded-xl px-2 py-2.5 text-xs font-bold bg-blue-50"></div></div>
 <div class="bg-yellow-50 p-3 rounded-xl mt-3 border-2 text-[12px] space-y-3">
 <label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border-2 border-orange-500"><span>🔀 Random Mode - Qs Random!</span><input id="setRandom" type="checkbox" checked class="w-6 h-6"></label>
-<label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border-2 border-green-500"><span>✅ Show Correct/Wrong - Green Show - തെറ്റ് അടിച്ചാൽ ശരി പച്ച!</span><input id="setShowCorrect" type="checkbox" checked class="w-6 h-6"></label>
-<label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border-2 border-blue-500"><span>🌐 Online - TRUE CLOUD - Same Link Update</span><input id="setOnline" type="checkbox" checked class="w-6 h-6"></label>
+<label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border-2 border-green-500"><span>✅ Show Correct/Wrong - Green Show</span><input id="setShowCorrect" type="checkbox" checked class="w-6 h-6"></label>
+<label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border-2 border-blue-500"><span>🌐 Online - TRUE CLOUD</span><input id="setOnline" type="checkbox" checked class="w-6 h-6"></label>
 <label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border"><span>📱 One Phone One Attempt</span><input id="setPhoneLock" type="checkbox" checked class="w-6 h-6"></label>
 <label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border"><span>💻 One Device One Attempt</span><input id="setDeviceLock" type="checkbox" checked class="w-6 h-6"></label>
 </div>
-<input id="eventIdShow" readonly placeholder="Event ID - Same Link-ന് Same ID" class="w-full border-2 rounded-xl px-3 py-2.5 mt-3 text-xs bg-gray-100 font-bold">
+<input id="eventIdShow" readonly placeholder="Event ID" class="w-full border-2 rounded-xl px-3 py-2.5 mt-3 text-xs bg-gray-100 font-bold">
 <div class="grid grid-cols-1 gap-2 mt-3">
-<button id="createLinkBtn" onclick="createNewLink()" class="w-full bg-green-600 text-white font-black py-3.5 rounded-xl">💚 CREATE NEW LINK - LINK FIX - TRUE CLOUD</button>
+<button id="createLinkBtn" onclick="createNewLink()" class="w-full bg-green-600 text-white font-black py-3.5 rounded-xl text-[15px]">💚 CREATE NEW LINK - LINK FIX - INSTANT!</button>
 <button id="saveCloudBtn" onclick="saveCloudSameLink()" class="w-full bg-blue-600 text-white py-3.5 rounded-xl text-xs font-black border-2 border-blue-800">💾 SAVE CLOUD SAME LINK - LINK FIX - All Keep!</button>
 </div>
-<div id="linkBox" class="hidden mt-3 bg-green-50 border-2 border-green-600 p-3 rounded-xl"><p class="text-[11px] font-black text-green-800">✅ TRUE CLOUD Link Ready! LINK FIX!</p><p id="generatedLink" class="break-all text-[11px] font-bold mt-2 bg-white p-2 rounded border"></p><div class="grid grid-cols-3 gap-2 mt-3"><button onclick="copyLink()" class="bg-green-600 text-white py-2.5 rounded-xl text-xs font-black">📋 Copy</button><button onclick="shareWhatsApp()" class="bg-[#25D366] text-white py-2.5 rounded-xl text-xs font-black">WhatsApp</button><button onclick="editCurrentEvent()" class="bg-blue-600 text-white py-2.5 rounded-xl text-xs font-black">✏️ Edit</button></div></div>
+<!-- LINK BOX - FIXED! Always visible after create, with border -->
+<div id="linkBox" class="mt-3 bg-green-50 border-[3px] border-green-600 p-4 rounded-xl shadow-lg">
+<p class="text-[13px] font-black text-green-800">✅ TRUE CLOUD Link Ready! LINK FIX! - താഴെ Link Copy ചെയ്യൂ!</p>
+<p id="generatedLink" class="break-all text-[13px] font-bold mt-3 bg-white p-3 rounded-xl border-2 border-green-300 select-all"></p>
+<p class="text-[10px] text-gray-600 mt-2">👆 Link-ൽ Long Press ചെയ്ത് Copy ചെയ്യൂ! WhatsApp-ൽ Share ചെയ്യൂ!</p>
+<div class="grid grid-cols-3 gap-2 mt-4">
+<button onclick="copyLink()" class="bg-green-600 text-white py-3 rounded-xl text-xs font-black shadow">📋 Copy Link</button>
+<button onclick="shareWhatsApp()" class="bg-[#25D366] text-white py-3 rounded-xl text-xs font-black shadow">WhatsApp</button>
+<button onclick="editCurrentEvent()" class="bg-blue-600 text-white py-3 rounded-xl text-xs font-black shadow">✏️ Edit</button>
+</div>
+</div>
 <p id="cloudStatus" class="text-[11px] mt-2 font-bold text-center"></p>
 <div class="bg-red-50 p-3 rounded-xl border-2 border-red-200 mt-4"><p class="text-xs font-black text-red-800">🔑 Admin Lock</p><div class="mt-2 space-y-2"><input id="currentAdminPass" type="password" placeholder="Current" class="w-full border-2 rounded-xl px-3 py-2.5 text-xs"><input id="newAdminPass" type="password" placeholder="New" class="w-full border-2 rounded-xl px-3 py-2.5 text-xs"><button onclick="changeAdminLock()" class="w-full bg-red-600 text-white py-3 rounded-xl text-xs font-black">Change Lock</button><p id="adminLockStatus" class="text-[11px] font-bold text-center"></p></div></div>
 </div>
 
-<div class="section-border"><div class="green-header">4 - Questions Bulk - Count Fixed - Random Mode</div><textarea id="qBulk" rows="4" placeholder="Q | a,b,c,d | ans" class="w-full border-2 rounded-xl p-3 text-xs"></textarea><button onclick="bulkAdd()" class="w-full mt-2 bg-[#8B5A00] text-white py-3 rounded-xl text-xs font-black">📚 Bulk Add</button><div class="mt-3"><div class="bg-[#14532d] text-white flex justify-between px-4 py-2.5 rounded-t-xl"><span class="text-xs font-black">Questions - Total: <span id="totalQCount">0</span> | Show: <span id="showQCount">0</span> | <span id="randomModeDisplay">Random: ON</span></span><span id="quota" class="bg-yellow-400 text-black px-3 py-1 rounded-full text-[11px] font-black">Quota: 0</span></div><div id="qList" class="bg-yellow-50/50 border-2 border-t-0 rounded-b-xl p-2 min-h-[70px] text-xs">No Questions</div></div><div id="editQBox" class="hidden mt-3 bg-blue-50 border-2 border-blue-400 p-3 rounded-xl"><p class="font-black text-xs text-blue-800">✏️ Edit Question</p><input id="editQText" placeholder="Question" class="w-full border-2 rounded-xl px-3 py-2 mt-2 text-xs"><input id="editQOpts" placeholder="Options a,b,c,d" class="w-full border-2 rounded-xl px-3 py-2 mt-2 text-xs"><input id="editQAns" type="number" placeholder="Ans 0-3" class="w-full border-2 rounded-xl px-3 py-2 mt-2 text-xs"><div class="grid grid-cols-2 gap-2 mt-2"><button onclick="saveEditedQ()" class="bg-green-600 text-white py-2 rounded-xl text-xs font-bold">💾 Save Edit</button><button onclick="cancelEditQ()" class="bg-gray-200 py-2 rounded-xl text-xs font-bold">Cancel</button></div></div></div>
+<div class="section-border"><div class="green-header">4 - Questions Bulk</div><textarea id="qBulk" rows="4" placeholder="Q | a,b,c,d | ans" class="w-full border-2 rounded-xl p-3 text-xs"></textarea><button onclick="bulkAdd()" class="w-full mt-2 bg-[#8B5A00] text-white py-3 rounded-xl text-xs font-black">📚 Bulk Add</button><div class="mt-3"><div class="bg-[#14532d] text-white flex justify-between px-4 py-2.5 rounded-t-xl"><span class="text-xs font-black">Questions - Total: <span id="totalQCount">0</span> | Show: <span id="showQCount">0</span></span><span id="quota" class="bg-yellow-400 text-black px-3 py-1 rounded-full text-[11px] font-black">Quota: 0</span></div><div id="qList" class="bg-yellow-50/50 border-2 border-t-0 rounded-b-xl p-2 min-h-[70px] text-xs">No Questions</div></div><div id="editQBox" class="hidden mt-3 bg-blue-50 border-2 border-blue-400 p-3 rounded-xl"><p class="font-black text-xs text-blue-800">✏️ Edit Question</p><input id="editQText" placeholder="Question" class="w-full border-2 rounded-xl px-3 py-2 mt-2 text-xs"><input id="editQOpts" placeholder="Options a,b,c,d" class="w-full border-2 rounded-xl px-3 py-2 mt-2 text-xs"><input id="editQAns" type="number" placeholder="Ans 0-3" class="w-full border-2 rounded-xl px-3 py-2 mt-2 text-xs"><div class="grid grid-cols-2 gap-2 mt-2"><button onclick="saveEditedQ()" class="bg-green-600 text-white py-2 rounded-xl text-xs font-bold">💾 Save Edit</button><button onclick="cancelEditQ()" class="bg-gray-200 py-2 rounded-xl text-xs font-bold">Cancel</button></div></div></div>
 
 <div class="section-border border-orange-400"><div class="green-header bg-orange-600">5 - Results & Ranking</div><div class="bg-orange-50 p-3 rounded-xl border-2 mb-3"><div class="grid grid-cols-3 gap-2"><button onclick="loadResults()" class="bg-slate-800 text-white py-2.5 rounded-xl text-xs font-black">🔄 Refresh</button><button onclick="downloadResults()" class="bg-green-600 text-white py-2.5 rounded-xl text-xs font-black">📥 CSV</button><button onclick="clearAllResults()" class="bg-red-100 text-red-600 border-2 py-2.5 rounded-xl text-xs font-black">Clear</button></div></div><div id="resultsList" class="bg-white border-2 rounded-xl p-2 max-h-[200px] overflow-auto text-xs">No Results</div><div class="mt-3 bg-gradient-to-br from-yellow-50 to-orange-50 p-3 rounded-xl border-2"><p class="font-black text-xs">🏆 Ranking Top 10</p><div id="rankingContent" class="text-xs mt-2 space-y-1">No Ranking</div></div></div>
 
@@ -107,13 +135,13 @@ try{
   firebase.initializeApp(firebaseConfig);
   firebaseDB=firebase.database();
   console.log('✅ Firebase TRUE CLOUD Connected');
-  setTimeout(()=>{ const s=document.getElementById('firebaseStatus'); if(s) s.innerText='✅ Firebase TRUE CLOUD Connected! LINK FIX - All Working!'; },800);
+  setTimeout(()=>{ const s=document.getElementById('firebaseStatus'); if(s) s.innerText='✅ Firebase TRUE CLOUD Connected! LINK BOX FIX - Banner Clean - All Working!'; },800);
 }catch(e){
   const s=document.getElementById('firebaseStatus');
-  if(s) s.innerText='❌ Firebase Failed: '+e.message;
+  if(s) s.innerText='❌ Firebase Failed: '+e.message+' - Rules Check!';
 }
 
-const DB_NAME='NoorDB_V14_7'; const STORE='images';
+const DB_NAME='NoorDB_V14_8'; const STORE='images';
 function openDB(){
   return new Promise((resolve, reject)=>{
     const req=indexedDB.open(DB_NAME,1);
@@ -146,6 +174,14 @@ function init(){
   const savedCertPos=JSON.parse(localStorage.getItem('certPos_v13')||'{"x":"50","y":"60","s":"24"}');
   certPos=savedCertPos;
   if(document.getElementById('certX')){ document.getElementById('certX').value=savedCertPos.x; document.getElementById('certY').value=savedCertPos.y; document.getElementById('certS').value=savedCertPos.s; updateCertLive(); }
+  // Show link box by default with last link if exists
+  const lastLink=localStorage.getItem('lastGeneratedLink_v14');
+  if(lastLink){
+    lastGeneratedLink=lastLink;
+    document.getElementById('generatedLink').innerText=lastLink;
+    document.getElementById('linkBox').classList.remove('hidden');
+    document.getElementById('linkBox').style.display='block';
+  }
 }
 function getAdminPass(){ return localStorage.getItem('noor_admin_pass')||'1234'; }
 function loginAdmin(){ const e=document.getElementById('adminPass').value.trim(); const s=getAdminPass(); const err=document.getElementById('loginError'); if(e===s){ document.getElementById('competitorView').classList.add('hidden'); document.getElementById('adminView').classList.remove('hidden'); err.classList.add('hidden'); renderQuestions(); loadPastEvents(); loadResults(); }else{ err.innerText='❌ Wrong Password!'; err.classList.remove('hidden'); } }
@@ -173,44 +209,33 @@ function compressImage(file, maxW, quality, callback){
 }
 async function handleLogoBanner(e,type){
   const file=e.target.files[0]; if(!file) return;
-  // Compress more aggressively for fast link
   compressImage(file, type==='logo'?300:800, 0.5, async (compressed)=>{
-    if(compressed.length>900000){
-      alert('⚠️ Image വലുതാണ്! 900KB-ൽ താഴെ ആക്കി Compress ചെയ്തു! വീണ്ടും ശ്രമിക്കൂ!');
-      compressImage(file, type==='logo'?200:600, 0.4, async (c2)=>{
-        if(type==='logo'){ currentLogoBase64=c2; document.getElementById('logoPreview').src=c2; document.getElementById('logoPreview').classList.remove('hidden'); document.getElementById('logoSizeInfo').innerText=`✅ Logo: ${(c2.length/1024).toFixed(1)}KB - Fast`; await saveToIndexedDB('logoImg_'+(currentEventId||'temp').replace(/event_/g,''), c2); }
-        else{ currentBannerBase64=c2; document.getElementById('bannerPreview').src=c2; document.getElementById('bannerPreview').classList.remove('hidden'); document.getElementById('bannerSizeInfo').innerText=`✅ Banner: ${(c2.length/1024).toFixed(1)}KB - Fast`; await saveToIndexedDB('bannerImg_'+(currentEventId||'temp').replace(/event_/g,''), c2); }
-      });
-      return;
-    }
     if(type==='logo'){
       currentLogoBase64=compressed;
       document.getElementById('logoPreview').src=compressed;
       document.getElementById('logoPreview').classList.remove('hidden');
-      document.getElementById('logoSizeInfo').innerText=`✅ Logo: ${(compressed.length/1024).toFixed(1)}KB - Fast - Keep`;
+      document.getElementById('logoSizeInfo').innerText=`✅ Logo: ${(compressed.length/1024).toFixed(1)}KB`;
       await saveToIndexedDB('logoImg_'+(currentEventId||'temp').replace(/event_/g,''), compressed);
     }else{
       currentBannerBase64=compressed;
       document.getElementById('bannerPreview').src=compressed;
       document.getElementById('bannerPreview').classList.remove('hidden');
-      document.getElementById('bannerSizeInfo').innerText=`✅ Banner: ${(compressed.length/1024).toFixed(1)}KB - Fast - Keep`;
+      document.getElementById('bannerSizeInfo').innerText=`✅ Banner: ${(compressed.length/1024).toFixed(1)}KB`;
       await saveToIndexedDB('bannerImg_'+(currentEventId||'temp').replace(/event_/g,''), compressed);
     }
   });
 }
 function handleCertFull(e){
   const file=e.target.files[0]; if(!file) return;
-  // FIX: Compress certificate heavily - 800px max, 0.5 quality - Link will be instant!
-  document.getElementById('certSizeInfo').innerText='⏳ Compressing Certificate... 200KB ആക്കുന്നു... Link Fast ആവാൻ...';
+  document.getElementById('certSizeInfo').innerText='⏳ Compressing... 200KB ആക്കുന്നു...';
   compressImage(file, 800, 0.5, async (compressed)=>{
     if(compressed.length>800000){
-      // Still too big, compress more
       compressImage(file, 600, 0.4, async (c2)=>{
         currentCertBase64=c2;
         document.getElementById('certPreviewImg').src=c2; document.getElementById('certPreviewImg').classList.remove('hidden');
         document.getElementById('certPreviewPlaceholder').classList.add('hidden');
         document.getElementById('certNameOnImage').style.display='block';
-        document.getElementById('certSizeInfo').innerText=`✅ Certificate: ${(c2.length/1024).toFixed(1)}KB - Compressed - Fast Link!`;
+        document.getElementById('certSizeInfo').innerText=`✅ Certificate: ${(c2.length/1024).toFixed(1)}KB - Fast`;
         localStorage.setItem('certFullImage', c2);
         await saveToIndexedDB('certFullImage', c2);
         updateCertLive();
@@ -220,7 +245,7 @@ function handleCertFull(e){
       document.getElementById('certPreviewImg').src=compressed; document.getElementById('certPreviewImg').classList.remove('hidden');
       document.getElementById('certPreviewPlaceholder').classList.add('hidden');
       document.getElementById('certNameOnImage').style.display='block';
-      document.getElementById('certSizeInfo').innerText=`✅ Certificate: ${(compressed.length/1024).toFixed(1)}KB - Fast - Keep!`;
+      document.getElementById('certSizeInfo').innerText=`✅ Certificate: ${(compressed.length/1024).toFixed(1)}KB - Fast`;
       localStorage.setItem('certFullImage', compressed);
       await saveToIndexedDB('certFullImage', compressed);
       updateCertLive();
@@ -266,9 +291,6 @@ function renderQuestions(){
     const originalIndex=questions.indexOf(qq);
     list.innerHTML+=`<div class="bg-white border rounded-xl p-2.5 mb-2 flex justify-between items-start gap-2"><div class="flex-1"><p class="font-bold text-[12px]">${i+1}. ${qq.q} ${randomMode?'🔀':''}</p><p class="text-[10px] text-gray-600 mt-1">${qq.opts.map((o,idx)=> idx===qq.ans?`✅ ${o}`:o).join(' | ')}</p></div><div class="flex flex-col gap-1"><button onclick="editQuestion(${originalIndex})" class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">✏️ Edit</button><button onclick="deleteQuestion(${originalIndex})" class="bg-red-100 text-red-600 border px-3 py-1 rounded-full text-[10px] font-bold">🗑️ Delete</button></div></div>`;
   });
-  if(questions.length>displayCount){
-    list.innerHTML+=`<div class="bg-yellow-100 border-2 border-yellow-400 rounded-xl p-3 text-center text-xs font-bold">⚠️ Total ${questions.length} Qs, Show ${displayCount}, Random ${randomMode?'ON':'OFF'}</div>`;
-  }
   document.getElementById('quota').innerText='Total: '+questions.length+' | Show: '+displayCount+' | Random: '+(randomMode?'ON':'OFF');
 }
 function bulkAdd(){
@@ -286,21 +308,35 @@ function deleteQuestion(idx){ if(!confirm(`Delete Q ${idx+1}?`)) return; questio
 
 async function loadPastEvents(){
   const container=document.getElementById('pastEventsList');
+  const ruleHelp=document.getElementById('firebaseRuleHelp');
   if(!container) return;
-  if(!firebaseDB){ container.innerHTML='<p class="text-xs text-center py-4">❌ Firebase Not Connected</p>'; return; }
-  container.innerHTML='<p class="text-xs text-center py-4">☁️ Loading TRUE CLOUD...</p>';
+  if(!firebaseDB){ container.innerHTML='<p class="text-xs text-center py-4 text-red-600">❌ Firebase Not Connected - Check Config!</p>'; if(ruleHelp) ruleHelp.classList.remove('hidden'); return; }
+  container.innerHTML='<p class="text-xs text-center py-4">☁️ Loading TRUE CLOUD - noor-ai-madrasa-app...</p>';
+  // Add timeout - if Firebase fails, show message
+  const timeout=setTimeout(()=>{
+    container.innerHTML='<p class="text-xs text-center py-4 text-red-600">⚠️ Firebase Loading Timeout! <br> Firebase Console → Realtime Database → Rules → { ".read": true, ".write": true } → Publish ചെയ്യൂ! <br><br> എന്നിട്ട് 🔄 Force Reload അടിക്കൂ!</p>';
+    if(ruleHelp) ruleHelp.classList.remove('hidden');
+  }, 8000);
   try{
     const snap=await firebaseDB.ref('events').once('value');
+    clearTimeout(timeout);
     const data=snap.val();
-    if(!data){ container.innerHTML='<p class="text-xs text-center py-4">No Events - Create One!</p>'; return; }
+    if(!data){ container.innerHTML='<p class="text-xs text-center py-4">No Events in Cloud - Create One! All Features!</p>'; if(ruleHelp) ruleHelp.classList.add('hidden'); return; }
     container.innerHTML='';
+    if(ruleHelp) ruleHelp.classList.add('hidden');
     Object.keys(data).reverse().forEach(id=>{
       const ev=data[id];
-      container.innerHTML+=`<div class="bg-white border-2 rounded-xl p-2.5 mb-2"><div class="flex justify-between items-start"><div class="flex-1"><p class="font-black text-xs">${ev.title||'Noor Event'} <span class="text-[9px] bg-green-100 px-2 py-0.5 rounded-full">${ev.minute||10} Min</span> <span class="text-[9px] bg-blue-100 px-2 py-0.5 rounded-full">Count: ${ev.count||20}</span> <span class="text-[9px] ${ev.randomMode?'bg-orange-100':'bg-gray-100'} px-2 py-0.5 rounded-full">Random:${ev.randomMode?'ON':'OFF'}</span></p><p class="text-[10px] text-gray-600">${ev.place||''} | Total: ${ev.questions?.length||0} | Show: ${ev.count||20} | ID:${id}</p></div><div class="flex flex-col gap-1"><button onclick="copyEventLink('${id}')" class="bg-green-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">📋 Copy</button><button onclick="editEventById('${id}')" class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">✏️ Edit</button><button onclick="deleteEvent('${id}')" class="bg-red-100 text-red-600 border px-3 py-1 rounded-full text-[10px] font-bold">🗑️ Delete</button></div></div></div>`;
+      container.innerHTML+=`<div class="bg-white border-2 rounded-xl p-2.5 mb-2"><div class="flex justify-between items-start"><div class="flex-1"><p class="font-black text-xs">${ev.title||'Noor Event'} <span class="text-[9px] bg-green-100 px-2 py-0.5 rounded-full">${ev.minute||10} Min</span> <span class="text-[9px] bg-blue-100 px-2 py-0.5 rounded-full">Count: ${ev.count||20}</span></p><p class="text-[10px] text-gray-600">${ev.place||''} | Total: ${ev.questions?.length||0} | Show: ${ev.count||20} | ID:${id}</p></div><div class="flex flex-col gap-1"><button onclick="copyEventLink('${id}')" class="bg-green-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">📋 Copy</button><button onclick="editEventById('${id}')" class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">✏️ Edit</button><button onclick="deleteEvent('${id}')" class="bg-red-100 text-red-600 border px-3 py-1 rounded-full text-[10px] font-bold">🗑️ Delete</button></div></div></div>`;
     });
-  }catch(e){ container.innerHTML='<p class="text-xs text-center py-4">❌ Error: '+e.message+'</p>'; }
+  }catch(e){
+    clearTimeout(timeout);
+    container.innerHTML='<p class="text-xs text-center py-4 text-red-600">❌ Error: '+e.message+'<br><br>🔧 Fix: Firebase Console → Realtime Database → Rules →<br>{<br> "rules": {<br> ".read": true,<br> ".write": true<br> }<br>}<br>→ Publish!</p>';
+    if(ruleHelp) ruleHelp.classList.remove('hidden');
+  }
 }
-function copyEventLink(id){ const link=window.location.origin+window.location.pathname+'?event='+id; navigator.clipboard.writeText(link).then(()=>{ alert('✅ TRUE CLOUD Link Copied!\n'+link); }); }
+function forceLoadPastEvents(){ loadPastEvents(); }
+function clearAllEvents(){ if(!confirm('Delete ALL from TRUE CLOUD?')) return; if(firebaseDB) firebaseDB.ref('events').remove().then(()=>{ loadPastEvents(); }); }
+function copyEventLink(id){ const link=window.location.origin+window.location.pathname+'?event='+id; navigator.clipboard.writeText(link).then(()=>{ alert('✅ Link Copied!\n'+link); }); }
 async function deleteEvent(id){ if(!confirm('Delete '+id+'?')) return; if(firebaseDB) firebaseDB.ref('events/'+id).remove().then(()=>{ loadPastEvents(); }); }
 
 async function editEventById(id){
@@ -327,13 +363,15 @@ async function editEventById(id){
     renderQuestions();
     if(data.logo){ currentLogoBase64=data.logo; document.getElementById('logoPreview').src=data.logo; document.getElementById('logoPreview').classList.remove('hidden'); document.getElementById('logoSizeInfo').innerText=`✅ Logo Keep`; await saveToIndexedDB('logoImg_'+id, data.logo); }
     if(data.banner){ currentBannerBase64=data.banner; document.getElementById('bannerPreview').src=data.banner; document.getElementById('bannerPreview').classList.remove('hidden'); document.getElementById('bannerSizeInfo').innerText=`✅ Banner Keep`; await saveToIndexedDB('bannerImg_'+id, data.banner); }
-    if(data.certificate){ currentCertBase64=data.certificate; document.getElementById('certPreviewImg').src=data.certificate; document.getElementById('certPreviewImg').classList.remove('hidden'); document.getElementById('certPreviewPlaceholder').classList.add('hidden'); document.getElementById('certNameOnImage').style.display='block'; document.getElementById('certSizeInfo').innerText=`✅ Certificate Keep - ${(data.certificate.length/1024).toFixed(1)}KB`; }
+    if(data.certificate){ currentCertBase64=data.certificate; document.getElementById('certPreviewImg').src=data.certificate; document.getElementById('certPreviewImg').classList.remove('hidden'); document.getElementById('certPreviewPlaceholder').classList.add('hidden'); document.getElementById('certNameOnImage').style.display='block'; }
     if(data.certPos){ certPos=data.certPos; document.getElementById('certX').value=data.certPos.x; document.getElementById('certY').value=data.certPos.y; document.getElementById('certS').value=data.certPos.s; updateCertLive(); }
     document.getElementById('eventIdShow').value=id;
     lastGeneratedLink=window.location.origin+window.location.pathname+'?event='+id;
     document.getElementById('generatedLink').innerText=lastGeneratedLink;
     document.getElementById('linkBox').classList.remove('hidden');
-    document.getElementById('cloudStatus').innerText=`✅ Loaded FULL - Certificate:${data.certificate?'✅':'❌'} Count:${data.count} Random:${data.randomMode?'ON':'OFF'}`;
+    document.getElementById('linkBox').style.display='block';
+    localStorage.setItem('lastGeneratedLink_v14', lastGeneratedLink);
+    document.getElementById('cloudStatus').innerText=`✅ Loaded - Count:${data.count} Random:${data.randomMode?'ON':'OFF'}`;
     window.scrollTo({top:200, behavior:'smooth'});
   }catch(e){ alert('Error: '+e.message); }
 }
@@ -364,23 +402,28 @@ async function createOrUpdateLink(isNew){
   randomMode=random;
   if(!questions.length){ alert('⚠️ Questions Add ചെയ്യൂ!'); return; }
   const cleanId=currentEventId.replace(/event_/g,'');
-  if(!firebaseDB){ alert('❌ Firebase Not Connected!'); return; }
+  if(!firebaseDB){ alert('❌ Firebase Not Connected! Rules Check ചെയ്യൂ!'); return; }
 
-  // LINK FIX: Show link instantly before Firebase save!
+  // LINK BOX FIX - Show instantly!
   const link=window.location.origin+window.location.pathname+'?event='+cleanId;
   lastGeneratedLink=link;
+  localStorage.setItem('lastGeneratedLink_v14', link);
   document.getElementById('generatedLink').innerText=link;
   document.getElementById('linkBox').classList.remove('hidden');
+  document.getElementById('linkBox').style.display='block';
   document.getElementById('eventIdShow').value=cleanId;
   document.getElementById('cloudStatus').innerText='☁️ Link Ready! Saving to TRUE CLOUD in background... Fast!';
-  document.getElementById('createLinkBtn').innerText='⏳ Saving... Link Ready!';
-  document.getElementById('saveCloudBtn').innerText='⏳ Saving... Link Ready!';
+  document.getElementById('createLinkBtn').innerText='⏳ Saving... Link Ready! Scroll Down - Link Below!';
+  document.getElementById('saveCloudBtn').innerText='⏳ Saving... Link Below Ready!';
+
+  // Scroll to link box
+  setTimeout(()=>{ document.getElementById('linkBox').scrollIntoView({behavior:'smooth', block:'center'}); },300);
 
   const eventData={title, place, category, questions, minute, count, onlineMode, showCorrect, randomMode: random, phoneLock, deviceLock, logo: currentLogoBase64||'', banner: currentBannerBase64||'', certificate: currentCertBase64||'', certPos: certPos, updated: Date.now()};
 
   try{
     await firebaseDB.ref('events/'+cleanId).set(eventData);
-    document.getElementById('cloudStatus').innerText=isNew?`✅ NEW TRUE CLOUD! Link Instant! Count:${count} Random:${random?'ON':'OFF'} ID:${cleanId}`:`✅ SAME LINK UPDATED! Link Instant! Count:${count} Random:${random?'ON':'OFF'} - Friends Refresh ചെയ്താൽ മാറ്റം!`;
+    document.getElementById('cloudStatus').innerText=isNew?`✅ NEW TRUE CLOUD! Link Instant! Count:${count} Random:${random?'ON':'OFF'} ID:${cleanId} - Link Below!`:`✅ SAME LINK UPDATED! Link Instant! Count:${count} Random:${random?'ON':'OFF'} - Friends Refresh ചെയ്താൽ മാറ്റം! Link Below!`;
     document.getElementById('createLinkBtn').innerText='💚 CREATE NEW LINK - LINK FIX - TRUE CLOUD';
     document.getElementById('saveCloudBtn').innerText='💾 SAVE CLOUD SAME LINK - LINK FIX - All Keep!';
     if(currentLogoBase64) await saveToIndexedDB('logoImg_'+cleanId, currentLogoBase64);
@@ -389,25 +432,24 @@ async function createOrUpdateLink(isNew){
     if(navigator.clipboard) navigator.clipboard.writeText(link).catch(()=>{});
     loadPastEvents(); renderQuestions();
   }catch(e){
-    document.getElementById('cloudStatus').innerText='❌ Cloud Save Failed: '+e.message+' - But Link is Ready Locally! Firebase Rules Check ചെയ്യൂ!';
-    document.getElementById('createLinkBtn').innerText='💚 CREATE NEW LINK - LINK FIX';
-    document.getElementById('saveCloudBtn').innerText='💾 SAVE CLOUD SAME LINK - LINK FIX';
-    // Even if Firebase fails, link is still shown!
+    document.getElementById('cloudStatus').innerText='❌ Cloud Save Failed: '+e.message+' - But Link is Ready! Rules Check ചെയ്യൂ! Firebase Console → Rules → { ".read": true, ".write": true } → Publish!';
+    document.getElementById('createLinkBtn').innerText='💚 CREATE NEW LINK';
+    document.getElementById('saveCloudBtn').innerText='💾 SAVE CLOUD SAME LINK';
   }
 }
-function copyLink(){ if(!lastGeneratedLink){ alert('Create Link First'); return; } navigator.clipboard.writeText(lastGeneratedLink).then(()=>{ alert('✅ FULL RESTORED Link Copied!\n'+lastGeneratedLink); }); }
-function shareWhatsApp(){ if(!lastGeneratedLink) return; window.open('https://wa.me/?text='+encodeURIComponent('🌙 Noor Quiz FULL: '+lastGeneratedLink), '_blank'); }
+function copyLink(){ if(!lastGeneratedLink){ const last=localStorage.getItem('lastGeneratedLink_v14'); if(last) lastGeneratedLink=last; else{ alert('Create Link First'); return; } } navigator.clipboard.writeText(lastGeneratedLink).then(()=>{ alert('✅ Link Copied!\n'+lastGeneratedLink+'\n\nCompetitor-ന് Banner + Title താഴെ വൃത്തിയായി കാണും!'); }); }
+function shareWhatsApp(){ if(!lastGeneratedLink){ const last=localStorage.getItem('lastGeneratedLink_v14'); if(last) lastGeneratedLink=last; else return; } window.open('https://wa.me/?text='+encodeURIComponent('🌙 Noor Quiz: '+lastGeneratedLink), '_blank'); }
 
 async function loadCompetitorEvent(){
   const params=new URLSearchParams(window.location.search);
   const eventId=params.get('event');
   if(!eventId) return;
-  document.getElementById('cloudLoadStatus').innerText='☁️ Loading TRUE CLOUD...';
+  document.getElementById('cloudLoadStatus').innerText='☁️ Loading TRUE CLOUD - Banner Clean...';
   if(!firebaseDB) return;
   try{
     const snap=await firebaseDB.ref('events/'+eventId).once('value');
     const data=snap.val();
-    if(!data){ document.getElementById('cloudLoadStatus').innerText='❌ Event Not Found'; return; }
+    if(!data){ document.getElementById('cloudLoadStatus').innerText='❌ Event Not Found in Cloud!'; return; }
     currentEventId='event_'+eventId;
     questions=data.questions||[];
     totalMinutes=data.minute||10;
@@ -416,15 +458,18 @@ async function loadCompetitorEvent(){
     randomMode=data.randomMode!==false;
     currentCertBase64=data.certificate||'';
     certPos=data.certPos||{x:'50',y:'60',s:'24'};
+    // Clean Banner - Title below
     document.getElementById('compTitle').innerText=data.title||'🌙 Noor Al Madrasa';
+    document.getElementById('compEventNameBelow').innerText=data.title||'';
+    document.getElementById('compPlaceShow').innerText=data.place||'';
+    document.getElementById('compDetailsBelow').innerText=`${data.category||''} | ${totalMinutes} Min | ${Math.min(eventQuestionCount, questions.length)} Questions | ${randomMode?'🔀 Random':'📝 Sequential'}`;
     document.getElementById('eventNameDisplay').innerText=data.title||'';
     document.getElementById('eventCountDisplay').innerText=`📝 Total: ${questions.length} Qs | Show: ${Math.min(eventQuestionCount, questions.length)} Qs | Time: ${totalMinutes} Min`;
-    document.getElementById('eventRandomDisplay').innerText=`${randomMode?'🔀 Random ON':'📝 Sequential'} | ${showCorrectWrong?'✅ Show Correct ON':'❌ OFF'}`;
-    document.getElementById('compSubTitle').innerText=(data.category||'')+' | '+(data.place||'')+' | '+totalMinutes+' Min | Count: '+eventQuestionCount;
-    document.getElementById('compPlaceShow').innerText='From: TRUE CLOUD FULL RESTORED - Updated: '+new Date(data.updated||Date.now()).toLocaleString();
-    document.getElementById('cloudLoadStatus').innerText=`✅ FULL RESTORED Loaded! Count:${eventQuestionCount} Random:${randomMode?'ON':'OFF'} Cert:${data.certificate?'✅':'❌'}`;
+    document.getElementById('eventRandomDisplay').innerText=`${randomMode?'🔀 Random ON':'📝 Sequential'} | ${showCorrectWrong?'✅ Show Correct ON':''}`;
+    document.getElementById('compSubTitle').innerText=data.category||'Meelad Quiz 2K26';
+    document.getElementById('cloudLoadStatus').innerText=`✅ Loaded! Banner Clean! Title Below - Neat Look! Count:${eventQuestionCount} Random:${randomMode?'ON':'OFF'}`;
     if(data.logo){ const img=document.getElementById('compLogoImg'); img.src=data.logo; img.classList.remove('hidden'); document.getElementById('compLogoText').classList.add('hidden'); }
-    if(data.banner){ const img=document.getElementById('compBannerImg'); img.src=data.banner; img.classList.remove('hidden'); }
+    if(data.banner){ const img=document.getElementById('compBannerImg'); img.src=data.banner; img.classList.remove('hidden'); document.getElementById('compBannerDefault').classList.add('hidden'); }
     if(data.certificate){ localStorage.setItem('certFullImage', data.certificate); }
     if(data.certPos){ localStorage.setItem('certPos_v13', JSON.stringify(data.certPos)); }
     localStorage.setItem('questions_v13', JSON.stringify(questions));
@@ -584,6 +629,16 @@ window.addEventListener('load', ()=>{
   if(questions.length) renderQuestions();
   loadPastEvents();
   loadResults();
+  // Force show link box if exists - LINK BOX FIX!
+  const lastLink=localStorage.getItem('lastGeneratedLink_v14');
+  if(lastLink){
+    document.getElementById('linkBox').style.display='block';
+    document.getElementById('linkBox').classList.remove('hidden');
+  } else {
+    // Show empty box to prove it exists
+    document.getElementById('linkBox').style.display='block';
+    document.getElementById('generatedLink').innerText='ലിങ്ക് ഇവിടെ വരും - CREATE NEW LINK അടിക്കൂ!';
+  }
 });
 switchCert(1);
 </script>
