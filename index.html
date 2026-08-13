@@ -2,7 +2,7 @@
 <html lang="ml">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Noor V9.14.5 FINAL - Random Mode - Wrong→Correct Green - TRUE CLOUD</title>
+<title>Noor V9.14.6 FINAL FULL - All Features Restored - Certificate + One Phone + One Device + Random + TRUE CLOUD</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -15,6 +15,7 @@ body{background:#fdf8e8; font-family:sans-serif;}
 .wrong-answer{animation: shake 0.5s ease-in-out; border-color:#dc2626!important; background:#fee2e2!important;}
 @keyframes pulse-green{0%{transform:scale(1);}50%{transform:scale(1.02);}100%{transform:scale(1);}}
 @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
+.cert-preview{position:relative; width:100%; height:200px; border:2px dashed #9ca3af; border-radius:14px; background:#fff; display:flex; align-items:center; justify-content:center; overflow:hidden;}
 </style>
 </head>
 <body>
@@ -23,9 +24,9 @@ body{background:#fdf8e8; font-family:sans-serif;}
 <div class="banner-bg relative h-[200px] w-full flex flex-col items-center justify-center text-center pb-12">
 <img id="compBannerImg" src="" class="absolute inset-0 w-full h-full object-cover opacity-40 hidden">
 <h1 id="compTitle" class="text-white text-[28px] font-black relative z-10">🌙 Noor Al Madrasa</h1>
-<p id="compSubTitle" class="text-yellow-100/80 text-[12px] mt-1 relative z-10">V9.14.5 - Random Mode</p>
+<p id="compSubTitle" class="text-yellow-100/80 text-[12px] mt-1 relative z-10">V9.14.6 FULL RESTORED</p>
 <p id="compPlaceShow" class="text-white/70 text-[11px] mt-1 relative z-10"></p>
-<p id="cloudLoadStatus" class="text-[10px] text-yellow-300 mt-1 font-bold relative z-10">☁️ Loading from TRUE CLOUD...</p>
+<p id="cloudLoadStatus" class="text-[10px] text-yellow-300 mt-1 font-bold relative z-10">☁️ Loading TRUE CLOUD...</p>
 <div class="absolute -bottom-9 left-1/2 -translate-x-1/2 w-[72px] h-[72px] bg-white rounded-[20px] shadow-xl border-[3px] border-white flex items-center justify-center font-black text-[28px] overflow-hidden z-20">
 <img id="compLogoImg" src="" class="w-full h-full object-cover hidden"><span id="compLogoText" class="text-[#14532d]">N</span>
 </div>
@@ -44,42 +45,49 @@ body{background:#fdf8e8; font-family:sans-serif;}
 <p id="errorMsg" class="hidden text-red-600 text-sm text-center mt-3 font-bold"></p>
 </div>
 <div id="quizCard" class="hidden bg-white rounded-[20px] p-5 border-2 mt-4 shadow"><div class="flex justify-between items-center"><span id="qCount" class="font-bold text-sm bg-gray-100 px-3 py-1 rounded-full">Q 1</span><span id="timer" class="bg-yellow-400 px-4 py-1 rounded-full font-black">10:00</span></div><div class="w-full bg-gray-200 rounded-full h-2 mt-3"><div id="progressBar" class="bg-green-600 h-2 rounded-full" style="width:0%"></div></div><h3 id="qText" class="font-bold my-5"></h3><div id="options" class="space-y-3"></div><p id="quizFeedback" class="hidden text-center font-black mt-4 text-sm p-3 rounded-xl"></p></div>
-<div id="resultCard" class="hidden bg-white rounded-[22px] border-2 p-6 shadow mt-4 text-center"><h2 id="finalScore" class="text-4xl font-black mt-2 text-green-700">0/0</h2><p id="finalTime" class="mt-1 text-sm font-bold"></p><div class="grid grid-cols-2 gap-3 mt-6"><button onclick="location.reload()" class="bg-green-600 text-white py-3 rounded-xl font-black text-sm">🏠 Home</button><button onclick="downloadCertificate()" class="bg-blue-600 text-white py-3 rounded-xl font-black text-sm">📜 Certificate</button></div></div>
+<div id="resultCard" class="hidden bg-white rounded-[22px] border-2 p-6 shadow mt-4 text-center"><h2 id="finalScore" class="text-4xl font-black mt-2 text-green-700">0/0</h2><p id="finalTime" class="mt-1 text-sm font-bold"></p><div class="grid grid-cols-2 gap-3 mt-6"><button onclick="location.reload()" class="bg-green-600 text-white py-3 rounded-xl font-black text-sm">🏠 Home</button><button onclick="downloadCertificate()" class="bg-blue-600 text-white py-3 rounded-xl font-black text-sm">📜 Certificate Download</button></div><div id="certDownloadArea" class="hidden mt-4"><canvas id="certCanvas" class="w-full border-2 rounded-xl"></canvas><a id="certDownloadLink" download="Certificate.png" class="mt-2 block bg-yellow-400 text-black py-2 rounded-xl font-bold text-sm">⬇️ Download PNG</a></div></div>
 <div class="mt-8 text-center pb-10"><button onclick="document.getElementById('adminLoginBox').classList.toggle('hidden')" class="text-[11px] text-gray-400 border px-5 py-2 rounded-full">Admin Login</button><div id="adminLoginBox" class="hidden mt-3 bg-white p-4 rounded-xl border shadow-lg text-left"><input id="adminPass" type="password" placeholder="Admin Password" class="w-full border-2 rounded-lg px-3 py-2.5 mb-2"><button onclick="loginAdmin()" class="w-full bg-slate-800 text-white py-2.5 rounded-xl font-bold">Login</button><p id="loginError" class="hidden text-red-600 text-xs mt-2 font-bold"></p></div></div>
 </div>
 </div>
 
 <div id="adminView" class="hidden p-2 pb-20">
 <div class="max-w-[650px] mx-auto">
-<div class="flex justify-between items-center bg-white p-3 rounded-xl border-2 mb-3"><h2 class="font-black text-xs">Admin V9.14.5 - Random Mode - Wrong→Correct Green</h2><button onclick="logoutAdmin()" class="bg-red-50 text-red-600 border px-4 py-1.5 rounded-full text-xs font-bold">Logout</button></div>
+<div class="flex justify-between items-center bg-white p-3 rounded-xl border-2 mb-3"><h2 class="font-black text-xs">Admin V9.14.6 FULL - All Restored - Certificate + One Phone + One Device + Random</h2><button onclick="logoutAdmin()" class="bg-red-50 text-red-600 border px-4 py-1.5 rounded-full text-xs font-bold">Logout</button></div>
 
 <div class="section-border border-2 border-blue-600 bg-blue-50/30">
-<div class="green-header bg-blue-700">📅 Past Events - Random Mode - TRUE CLOUD</div>
+<div class="green-header bg-blue-700">📅 Past Events - All Features - TRUE CLOUD</div>
 <div id="pastEventsList" class="space-y-2 max-h-[250px] overflow-auto"></div>
+<p id="storageInfo" class="text-[10px] text-center mt-2 font-bold"></p>
 </div>
 
 <div class="section-border"><div class="green-header">1 - Event Basic - Logo+Banner Both Keep</div><input id="eventName" placeholder="Event Name" class="w-full border-2 border-yellow-600/40 rounded-xl px-3 py-2.5 text-sm mb-2"><input id="eventPlace" placeholder="Place" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 text-sm mb-2"><select id="eventCategory" onchange="handleCategoryChange(this.value)" class="w-full border-2 border-green-900 rounded-xl px-3 py-2.5 text-sm mb-2 font-bold bg-white"><option value="">Select Type</option><option value="Madrasa" selected>Madrasa</option><option value="School">School</option><option value="College">College</option><option value="Masjid">Masjid</option><option value="Mahal">Mahal</option><option value="Organization">Organization</option><option value="District">District</option><option value="State">State</option><option value="National">National</option><option value="Other">Other Custom</option></select><div id="customCategoryBox" class="hidden mb-2"><input id="customCategory" placeholder="Custom Type" class="w-full border-2 border-orange-400 rounded-xl px-3 py-2.5 text-sm bg-orange-50"></div><div class="grid grid-cols-2 gap-2 mt-2"><div><label class="text-[10px] font-bold">Logo - Keep</label><div class="bg-yellow-50 border-2 rounded-lg p-1"><input type="file" accept="image/*" onchange="handleLogoBanner(event,'logo')" class="text-[11px] w-full"></div><img id="logoPreview" class="hidden w-full h-16 object-contain mt-1 border-2 rounded-xl bg-white"><p id="logoSizeInfo" class="text-[9px] text-gray-500 mt-1"></p></div><div><label class="text-[10px] font-bold">Banner - Keep</label><div class="bg-blue-50 border-2 rounded-lg p-1"><input type="file" accept="image/*" onchange="handleLogoBanner(event,'banner')" class="text-[11px] w-full"></div><img id="bannerPreview" class="hidden w-full h-16 object-cover mt-1 border-2 rounded-xl"><p id="bannerSizeInfo" class="text-[9px] text-gray-500 mt-1"></p></div></div></div>
 
-<div class="section-border"><div class="green-header">3 - Settings - Random Mode NEW! + Count Fixed + Wrong→Correct Green + TRUE CLOUD</div>
-<div class="bg-green-50 border-2 border-green-400 p-3 rounded-xl mb-3"><p class="font-black text-xs text-green-800">✅ Random Mode NEW! Count Fixed! Wrong→Correct Green! Logo Banner Both Keep!</p><p id="firebaseStatus" class="text-[10px] mt-1 font-bold">Firebase: Connecting...</p></div>
+<!-- 2 - CERTIFICATE - RESTORED! -->
+<div class="section-border"><div class="green-header">2 - Certificate - RESTORED! Keep - Position Fixed</div><div class="flex gap-2 mb-3"><button id="opt1Btn" onclick="switchCert(1)" class="bg-[#14532d] text-white px-4 py-2 rounded-xl text-[11px] font-bold">Opt1: Upload Full Certificate</button><button id="opt2Btn" onclick="switchCert(2)" class="bg-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold">Opt2: Auto Gen</button></div><div id="certOpt1"><div class="bg-yellow-50 p-3 rounded-xl border-2 border-yellow-400"><p class="text-[11px] font-black">📜 Full Certificate Upload - RESTORED!</p><input type="file" accept="image/*" onchange="handleCertFull(event)" class="w-full mt-2 text-xs border rounded-lg p-2 bg-white"><p class="text-[9px] text-gray-600 mt-1">Upload ചെയ്താൽ Certificate Download-ൽ ഇത് വരും!</p></div></div><div id="certOpt2" class="hidden"><div class="bg-blue-50/50 p-2 rounded-xl border"><div class="grid grid-cols-2 gap-2"><div><label class="text-[10px]">Bg Image</label><input type="file" accept="image/*" onchange="handleCertFile(event,'bg')" class="w-full text-[10px] border rounded px-1 py-1.5 bg-white"></div><div><label class="text-[10px]">Logo1</label><input type="file" accept="image/*" onchange="handleCertFile(event,'logo1')" class="w-full text-[10px] border rounded px-1 py-1.5 bg-white"></div></div><input id="certTitle" value="Certificate of Appreciation" class="w-full border rounded-lg px-2 py-2 mt-2 text-xs"><input id="certSub" value="Noor Al Madrasa - Meelad Quiz 2K26" class="w-full border rounded-lg px-2 py-2 mt-2 text-xs"><div class="mt-3 bg-white p-2 rounded-lg border"><label class="text-xs font-bold">Name X Position: <span id="xVal">50</span>%</label><input id="certX" type="range" min="0" max="100" value="50" class="w-full"><label class="text-xs font-bold">Name Y Position: <span id="yVal">60</span>%</label><input id="certY" type="range" min="0" max="100" value="60" class="w-full"><label class="text-xs font-bold">Name Size: <span id="sVal">24</span>px</label><input id="certS" type="range" min="10" max="80" value="24" class="w-full"></div></div></div><div class="mt-3"><div class="cert-preview"><img id="certPreviewImg" src="" class="hidden w-full h-full object-contain"><div id="certPreviewPlaceholder" class="text-center"><p class="text-xs text-gray-400">Certificate Preview - Upload ചെയ്താൽ ഇവിടെ കാണും</p><p id="sampleNamePreview" class="font-bold text-[24px] text-[#14532d] mt-2">Sample Name</p></div><div id="certNameOnImage" style="position:absolute; left:50%; top:60%; transform:translate(-50%,-50%); font-weight:900; color:#14532d; font-size:24px; display:block;">Sample Name</div></div></div></div>
+
+<div class="section-border"><div class="green-header">3 - Settings - FULL RESTORED! Random + Count + One Phone + One Device + Wrong→Correct Green + TRUE CLOUD</div>
+<div class="bg-green-50 border-2 border-green-400 p-3 rounded-xl mb-3"><p class="font-black text-xs text-green-800">✅ FULL RESTORED! Certificate + One Phone + One Device + Random + Count + Wrong→Correct Green + Logo Banner Both Keep!</p><p id="firebaseStatus" class="text-[10px] mt-1 font-bold">Firebase: Connecting to noor-ai-madrasa-app...</p></div>
 <div class="grid grid-cols-2 gap-2"><div><label class="text-[10px] font-bold">Timer Minute</label><select id="setMinute" class="w-full border-2 rounded-xl px-2 py-2.5 text-xs font-bold bg-white"><option value="5">5 Min</option><option value="10" selected>10 Min</option><option value="15">15 Min</option><option value="20">20 Min</option><option value="30">30 Min</option><option value="60">60 Min</option><option value="custom">Custom</option></select><input id="setMinuteCustom" type="number" placeholder="Custom Min" class="hidden w-full border-2 border-yellow-500 rounded-xl px-2 py-2 mt-1 text-xs"></div><div><label class="text-[10px] font-bold">Count - Fixed! ✅</label><input id="setCount" type="number" value="20" min="1" max="100" class="w-full border-2 border-blue-500 rounded-xl px-2 py-2.5 text-xs font-bold bg-blue-50"></div></div>
 <div class="bg-yellow-50 p-3 rounded-xl mt-3 border-2 text-[12px] space-y-3">
-<label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border-2 border-orange-500"><span>🔀 Random Mode - NEW! ON ആക്കിയാൽ Qs Random ആവും!</span><input id="setRandom" type="checkbox" checked class="w-6 h-6"></label>
-<label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border-2 border-green-500"><span>✅ Show Correct/Wrong - Green Show</span><input id="setShowCorrect" type="checkbox" checked class="w-6 h-6"></label>
-<label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border"><span>🌐 Online - TRUE CLOUD</span><input id="setOnline" type="checkbox" checked class="w-6 h-6"></label>
+<label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border-2 border-orange-500"><span>🔀 Random Mode - ON ആക്കിയാൽ Qs Random!</span><input id="setRandom" type="checkbox" checked class="w-6 h-6"></label>
+<label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border-2 border-green-500"><span>✅ Show Correct/Wrong - Green Show - തെറ്റ് അടിച്ചാൽ ശരി പച്ച!</span><input id="setShowCorrect" type="checkbox" checked class="w-6 h-6"></label>
+<label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border-2 border-blue-500"><span>🌐 Online - TRUE CLOUD - Same Link Update</span><input id="setOnline" type="checkbox" checked class="w-6 h-6"></label>
+<label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border"><span>📱 One Phone One Attempt - RESTORED!</span><input id="setPhoneLock" type="checkbox" checked class="w-6 h-6"></label>
+<label class="flex justify-between items-center font-bold bg-white p-2.5 rounded-xl border"><span>💻 One Device One Attempt - RESTORED!</span><input id="setDeviceLock" type="checkbox" checked class="w-6 h-6"></label>
 </div>
-<input id="eventIdShow" readonly placeholder="Event ID" class="w-full border-2 rounded-xl px-3 py-2.5 mt-3 text-xs bg-gray-100 font-bold">
+<input id="eventIdShow" readonly placeholder="Event ID - Same Link-ന് Same ID" class="w-full border-2 rounded-xl px-3 py-2.5 mt-3 text-xs bg-gray-100 font-bold">
 <div class="grid grid-cols-1 gap-2 mt-3">
-<button id="createLinkBtn" onclick="createNewLink()" class="w-full bg-green-600 text-white font-black py-3.5 rounded-xl">💚 CREATE NEW LINK - Random Mode - TRUE CLOUD</button>
-<button id="saveCloudBtn" onclick="saveCloudSameLink()" class="w-full bg-blue-600 text-white py-3.5 rounded-xl text-xs font-black border-2 border-blue-800">💾 SAVE CLOUD SAME LINK - Random+Count+Logo+Banner Keep - Same Link!</button>
+<button id="createLinkBtn" onclick="createNewLink()" class="w-full bg-green-600 text-white font-black py-3.5 rounded-xl">💚 CREATE NEW LINK - FULL RESTORED - TRUE CLOUD</button>
+<button id="saveCloudBtn" onclick="saveCloudSameLink()" class="w-full bg-blue-600 text-white py-3.5 rounded-xl text-xs font-black border-2 border-blue-800">💾 SAVE CLOUD SAME LINK - All Keep - Count+Random+Logo+Banner+Certificate!</button>
 </div>
-<div id="linkBox" class="hidden mt-3 bg-green-50 border-2 border-green-600 p-3 rounded-xl"><p class="text-[11px] font-black text-green-800">✅ TRUE CLOUD Link Ready! Random Mode!</p><p id="generatedLink" class="break-all text-[11px] font-bold mt-2 bg-white p-2 rounded border"></p><div class="grid grid-cols-3 gap-2 mt-3"><button onclick="copyLink()" class="bg-green-600 text-white py-2.5 rounded-xl text-xs font-black">📋 Copy</button><button onclick="shareWhatsApp()" class="bg-[#25D366] text-white py-2.5 rounded-xl text-xs font-black">WhatsApp</button><button onclick="editCurrentEvent()" class="bg-blue-600 text-white py-2.5 rounded-xl text-xs font-black">✏️ Edit</button></div></div>
+<div id="linkBox" class="hidden mt-3 bg-green-50 border-2 border-green-600 p-3 rounded-xl"><p class="text-[11px] font-black text-green-800">✅ TRUE CLOUD Link Ready! FULL RESTORED!</p><p id="generatedLink" class="break-all text-[11px] font-bold mt-2 bg-white p-2 rounded border"></p><div class="grid grid-cols-3 gap-2 mt-3"><button onclick="copyLink()" class="bg-green-600 text-white py-2.5 rounded-xl text-xs font-black">📋 Copy</button><button onclick="shareWhatsApp()" class="bg-[#25D366] text-white py-2.5 rounded-xl text-xs font-black">WhatsApp</button><button onclick="editCurrentEvent()" class="bg-blue-600 text-white py-2.5 rounded-xl text-xs font-black">✏️ Edit</button></div></div>
 <p id="cloudStatus" class="text-[11px] mt-2 font-bold text-center"></p>
+<div class="bg-red-50 p-3 rounded-xl border-2 border-red-200 mt-4"><p class="text-xs font-black text-red-800">🔑 Admin Lock - RESTORED!</p><div class="mt-2 space-y-2"><input id="currentAdminPass" type="password" placeholder="Current Password" class="w-full border-2 rounded-xl px-3 py-2.5 text-xs"><input id="newAdminPass" type="password" placeholder="New Password" class="w-full border-2 rounded-xl px-3 py-2.5 text-xs"><button onclick="changeAdminLock()" class="w-full bg-red-600 text-white py-3 rounded-xl text-xs font-black">Change Lock</button><p id="adminLockStatus" class="text-[11px] font-bold text-center"></p></div></div>
 </div>
 
-<div class="section-border"><div class="green-header">4 - Questions Bulk - Random Mode - Count Fixed</div><textarea id="qBulk" rows="4" placeholder="Q | a,b,c,d | ans" class="w-full border-2 rounded-xl p-3 text-xs"></textarea><button onclick="bulkAdd()" class="w-full mt-2 bg-[#8B5A00] text-white py-3 rounded-xl text-xs font-black">📚 Bulk Add</button><div class="mt-3"><div class="bg-[#14532d] text-white flex justify-between px-4 py-2.5 rounded-t-xl"><span class="text-xs font-black">Questions List - Total: <span id="totalQCount">0</span> | Show: <span id="showQCount">0</span> | <span id="randomModeDisplay">Random: ON</span></span><span id="quota" class="bg-yellow-400 text-black px-3 py-1 rounded-full text-[11px] font-black">Quota: 0</span></div><div id="qList" class="bg-yellow-50/50 border-2 border-t-0 rounded-b-xl p-2 min-h-[70px] text-xs">No Questions</div></div><div id="editQBox" class="hidden mt-3 bg-blue-50 border-2 border-blue-400 p-3 rounded-xl"><p class="font-black text-xs text-blue-800">✏️ Edit Question</p><input id="editQText" placeholder="Question" class="w-full border-2 rounded-xl px-3 py-2 mt-2 text-xs"><input id="editQOpts" placeholder="Options a,b,c,d" class="w-full border-2 rounded-xl px-3 py-2 mt-2 text-xs"><input id="editQAns" type="number" placeholder="Ans 0-3" class="w-full border-2 rounded-xl px-3 py-2 mt-2 text-xs"><div class="grid grid-cols-2 gap-2 mt-2"><button onclick="saveEditedQ()" class="bg-green-600 text-white py-2 rounded-xl text-xs font-bold">💾 Save Edit</button><button onclick="cancelEditQ()" class="bg-gray-200 py-2 rounded-xl text-xs font-bold">Cancel</button></div></div></div>
+<div class="section-border"><div class="green-header">4 - Questions Bulk - Count Fixed - Random Mode</div><textarea id="qBulk" rows="4" placeholder="Q | a,b,c,d | ans" class="w-full border-2 rounded-xl p-3 text-xs"></textarea><button onclick="bulkAdd()" class="w-full mt-2 bg-[#8B5A00] text-white py-3 rounded-xl text-xs font-black">📚 Bulk Add</button><div class="mt-3"><div class="bg-[#14532d] text-white flex justify-between px-4 py-2.5 rounded-t-xl"><span class="text-xs font-black">Questions List - Total: <span id="totalQCount">0</span> | Show: <span id="showQCount">0</span> | <span id="randomModeDisplay">Random: ON</span></span><span id="quota" class="bg-yellow-400 text-black px-3 py-1 rounded-full text-[11px] font-black">Quota: 0</span></div><div id="qList" class="bg-yellow-50/50 border-2 border-t-0 rounded-b-xl p-2 min-h-[70px] text-xs">No Questions</div></div><div id="editQBox" class="hidden mt-3 bg-blue-50 border-2 border-blue-400 p-3 rounded-xl"><p class="font-black text-xs text-blue-800">✏️ Edit Question</p><input id="editQText" placeholder="Question" class="w-full border-2 rounded-xl px-3 py-2 mt-2 text-xs"><input id="editQOpts" placeholder="Options a,b,c,d" class="w-full border-2 rounded-xl px-3 py-2 mt-2 text-xs"><input id="editQAns" type="number" placeholder="Ans 0-3" class="w-full border-2 rounded-xl px-3 py-2 mt-2 text-xs"><div class="grid grid-cols-2 gap-2 mt-2"><button onclick="saveEditedQ()" class="bg-green-600 text-white py-2 rounded-xl text-xs font-bold">💾 Save Edit</button><button onclick="cancelEditQ()" class="bg-gray-200 py-2 rounded-xl text-xs font-bold">Cancel</button></div></div></div>
 
-<div class="section-border border-orange-400"><div class="green-header bg-orange-600">5 - Results</div><div class="bg-orange-50 p-3 rounded-xl border-2 mb-3"><div class="grid grid-cols-2 gap-2"><button onclick="loadResults()" class="bg-slate-800 text-white py-2.5 rounded-xl text-xs font-black">🔄 Refresh</button><button onclick="downloadResults()" class="bg-green-600 text-white py-2.5 rounded-xl text-xs font-black">📥 CSV</button></div></div><div id="resultsList" class="bg-white border-2 rounded-xl p-2 max-h-[200px] overflow-auto text-xs">No Results</div></div>
+<div class="section-border border-orange-400"><div class="green-header bg-orange-600">5 - Results & Ranking</div><div class="bg-orange-50 p-3 rounded-xl border-2 mb-3"><div class="grid grid-cols-3 gap-2"><button onclick="loadResults()" class="bg-slate-800 text-white py-2.5 rounded-xl text-xs font-black">🔄 Refresh Results</button><button onclick="downloadResults()" class="bg-green-600 text-white py-2.5 rounded-xl text-xs font-black">📥 CSV</button><button onclick="clearAllResults()" class="bg-red-100 text-red-600 border-2 py-2.5 rounded-xl text-xs font-black">Clear Results</button></div></div><div id="resultsList" class="bg-white border-2 rounded-xl p-2 max-h-[200px] overflow-auto text-xs">No Results</div><div class="mt-3 bg-gradient-to-br from-yellow-50 to-orange-50 p-3 rounded-xl border-2"><p class="font-black text-xs">🏆 Ranking Top 10</p><div id="rankingContent" class="text-xs mt-2 space-y-1">No Ranking</div></div></div>
 
 </div>
 </div>
@@ -100,14 +108,14 @@ let firebaseDB=null;
 try{
   firebase.initializeApp(firebaseConfig);
   firebaseDB=firebase.database();
-  console.log('✅ Firebase TRUE CLOUD Connected - noor-ai-madrasa-app');
-  setTimeout(()=>{ const s=document.getElementById('firebaseStatus'); if(s) s.innerText='✅ Firebase TRUE CLOUD Connected! Random Mode + Count Fixed + Wrong→Correct Green - All Working!'; },800);
+  console.log('✅ Firebase TRUE CLOUD Connected');
+  setTimeout(()=>{ const s=document.getElementById('firebaseStatus'); if(s) s.innerText='✅ Firebase TRUE CLOUD Connected! noor-ai-madrasa-app - FULL RESTORED - Certificate + One Phone + One Device + Random + All Working!'; const si=document.getElementById('storageInfo'); if(si) si.innerText='✅ TRUE CLOUD: noor-ai-madrasa-app - FULL RESTORED - All Features Working!'; },800);
 }catch(e){
   const s=document.getElementById('firebaseStatus');
-  if(s) s.innerText='❌ Firebase Failed: '+e.message;
+  if(s) s.innerText='❌ Firebase Failed: '+e.message+' - Rules Check ചെയ്യൂ!';
 }
 
-const DB_NAME='NoorDB_V14_5'; const STORE='images';
+const DB_NAME='NoorDB_V14_6'; const STORE='images';
 function openDB(){
   return new Promise((resolve, reject)=>{
     const req=indexedDB.open(DB_NAME,1);
@@ -130,18 +138,23 @@ async function getFromIndexedDB(key){
 }
 
 let currentEventId=''; let questions=[]; let totalMinutes=10; let eventQuestionCount=20; let randomMode=true; let currentQ=0; let score=0; let timerInt=null; let startTime=null; let lastGeneratedLink=''; let editingQIndex=-1;
-let currentLogoBase64=''; let currentBannerBase64=''; let showCorrectWrong=true;
+let currentLogoBase64=''; let currentBannerBase64=''; let currentCertBase64=''; let showCorrectWrong=true; let certPos={x:'50',y:'60',s:'24'};
 
 function init(){
   const urlId=new URLSearchParams(window.location.search).get('event');
   if(urlId) currentEventId=urlId;
   else currentEventId=localStorage.getItem('currentEventId_v14')||'';
   questions=JSON.parse(localStorage.getItem('questions_v13')||'[]');
+  const savedCertPos=JSON.parse(localStorage.getItem('certPos_v13')||'{"x":"50","y":"60","s":"24"}');
+  certPos=savedCertPos;
+  if(document.getElementById('certX')){ document.getElementById('certX').value=savedCertPos.x; document.getElementById('certY').value=savedCertPos.y; document.getElementById('certS').value=savedCertPos.s; updateCertLive(); }
 }
 function getAdminPass(){ return localStorage.getItem('noor_admin_pass')||'1234'; }
 function loginAdmin(){ const e=document.getElementById('adminPass').value.trim(); const s=getAdminPass(); const err=document.getElementById('loginError'); if(e===s){ document.getElementById('competitorView').classList.add('hidden'); document.getElementById('adminView').classList.remove('hidden'); err.classList.add('hidden'); renderQuestions(); loadPastEvents(); loadResults(); }else{ err.innerText='❌ Wrong Password!'; err.classList.remove('hidden'); } }
 function logoutAdmin(){ document.getElementById('adminView').classList.add('hidden'); document.getElementById('competitorView').classList.remove('hidden'); }
+function changeAdminLock(){ const cur=document.getElementById('currentAdminPass').value; const nw=document.getElementById('newAdminPass').value; const saved=getAdminPass(); const st=document.getElementById('adminLockStatus'); if(cur!==saved){ st.innerText='❌ Current തെറ്റ്!'; return; } if(!nw||nw.length<3){ st.innerText='❌ Min 3'; return; } localStorage.setItem('noor_admin_pass', nw); st.innerText='✅ Changed! New Password: '+nw; document.getElementById('currentAdminPass').value=''; document.getElementById('newAdminPass').value=''; }
 function handleCategoryChange(val){ document.getElementById('customCategoryBox').classList.toggle('hidden', val!=='Other'); }
+function switchCert(t){ document.getElementById('certOpt1').classList.toggle('hidden', t!==1); document.getElementById('certOpt2').classList.toggle('hidden', t!==2); document.getElementById('opt1Btn').className=t===1?'bg-[#14532d] text-white px-4 py-2 rounded-xl text-[11px] font-bold':'bg-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold'; document.getElementById('opt2Btn').className=t===2?'bg-[#14532d] text-white px-4 py-2 rounded-xl text-[11px] font-bold':'bg-gray-200 px-4 py-2 rounded-xl text-[11px] font-bold'; }
 
 function compressImage(file, maxW, quality, callback){
   const reader=new FileReader();
@@ -178,6 +191,42 @@ async function handleLogoBanner(e,type){
     }
   });
 }
+function handleCertFull(e){
+  const file=e.target.files[0]; if(!file) return;
+  compressImage(file, 1200, 0.7, async (compressed)=>{
+    currentCertBase64=compressed;
+    const img=document.getElementById('certPreviewImg');
+    img.src=compressed; img.classList.remove('hidden');
+    document.getElementById('certPreviewPlaceholder').classList.add('hidden');
+    document.getElementById('certNameOnImage').style.display='block';
+    localStorage.setItem('certFullImage', compressed);
+    await saveToIndexedDB('certFullImage', compressed);
+    updateCertLive();
+    document.getElementById('cloudStatus').innerText='✅ Certificate Uploaded! SAVE CLOUD SAME LINK അടിച്ചാൽ Cloud-ൽ പോകും!';
+  });
+}
+function handleCertFile(e,type){
+  const file=e.target.files[0]; if(!file) return;
+  compressImage(file, 800, 0.6, (c)=>{
+    const img=document.getElementById('certPreviewImg');
+    img.src=c; img.classList.remove('hidden');
+    document.getElementById('certPreviewPlaceholder').classList.add('hidden');
+    localStorage.setItem('cert_'+type, c);
+    updateCertLive();
+  });
+}
+function updateCertLive(){
+  const x=document.getElementById('certX').value; const y=document.getElementById('certY').value; const s=document.getElementById('certS').value;
+  document.getElementById('xVal').innerText=x; document.getElementById('yVal').innerText=y; document.getElementById('sVal').innerText=s;
+  const nameDiv=document.getElementById('certNameOnImage');
+  nameDiv.style.left=x+'%'; nameDiv.style.top=y+'%'; nameDiv.style.fontSize=s+'px'; nameDiv.style.transform='translate(-50%,-50%)';
+  certPos={x,y,s};
+  localStorage.setItem('certPos_v13', JSON.stringify(certPos));
+}
+document.getElementById('certX')?.addEventListener('input', updateCertLive);
+document.getElementById('certY')?.addEventListener('input', updateCertLive);
+document.getElementById('certS')?.addEventListener('input', updateCertLive);
+document.getElementById('setMinute')?.addEventListener('change', e=>{ document.getElementById('setMinuteCustom').classList.toggle('hidden', e.target.value!=='custom'); });
 
 function renderQuestions(){
   const list=document.getElementById('qList');
@@ -187,7 +236,7 @@ function renderQuestions(){
   if(totalEl) totalEl.innerText=questions.length;
   if(showEl) showEl.innerText=Math.min(eventQuestionCount||questions.length, questions.length);
   if(randomEl) randomEl.innerText='Random: '+(randomMode?'ON 🔀':'OFF 📝');
-  if(!questions.length){ list.innerHTML='<p class="text-center text-gray-500 py-4">No Questions</p>'; document.getElementById('quota').innerText='Quota: 0'; return; }
+  if(!questions.length){ list.innerHTML='<p class="text-center text-gray-500 py-4">No Questions - Bulk Add ചെയ്യൂ!</p>'; document.getElementById('quota').innerText='Quota: 0'; return; }
   list.innerHTML='';
   const displayCount=Math.min(eventQuestionCount||questions.length, questions.length);
   const displayQuestions=randomMode?[...questions].sort(()=>0.5-Math.random()).slice(0, displayCount):questions.slice(0, displayCount);
@@ -196,7 +245,7 @@ function renderQuestions(){
     list.innerHTML+=`<div class="bg-white border rounded-xl p-2.5 mb-2 flex justify-between items-start gap-2"><div class="flex-1"><p class="font-bold text-[12px]">${i+1}. ${qq.q} ${randomMode?'🔀':''}</p><p class="text-[10px] text-gray-600 mt-1">${qq.opts.map((o,idx)=> idx===qq.ans?`✅ ${o}`:o).join(' | ')}</p></div><div class="flex flex-col gap-1"><button onclick="editQuestion(${originalIndex})" class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">✏️ Edit</button><button onclick="deleteQuestion(${originalIndex})" class="bg-red-100 text-red-600 border px-3 py-1 rounded-full text-[10px] font-bold">🗑️ Delete</button></div></div>`;
   });
   if(questions.length>displayCount){
-    list.innerHTML+=`<div class="bg-yellow-100 border-2 border-yellow-400 rounded-xl p-3 text-center text-xs font-bold">⚠️ Total ${questions.length} Qs, Count ${displayCount}, Random ${randomMode?'ON':'OFF'} - Quiz-ൽ ${displayCount} Q ${randomMode?'Random':'Same Order'} ആയി വരും!</div>`;
+    list.innerHTML+=`<div class="bg-yellow-100 border-2 border-yellow-400 rounded-xl p-3 text-center text-xs font-bold">⚠️ Total ${questions.length} Qs, Show ${displayCount}, Random ${randomMode?'ON':'OFF'} - Quiz-ൽ ${displayCount} Q ${randomMode?'Random':'Same Order'} ആയി വരും!</div>`;
   }
   document.getElementById('quota').innerText='Total: '+questions.length+' | Show: '+displayCount+' | Random: '+(randomMode?'ON':'OFF');
 }
@@ -206,9 +255,9 @@ function bulkAdd(){
   lines.forEach(line=>{ if(!line.trim()) return; const parts=line.split('|'); if(parts.length<2) return; const q=parts[0].trim(); const opts=parts[1].split(',').map(o=>o.trim()).filter(o=>o); let ans=0; if(parts[2]){ ans=parseInt(parts[2].trim()); if(isNaN(ans)) ans=0; } if(q&&opts.length>=2){ questions.push({q, opts, ans:Math.min(ans, opts.length-1)}); added++; } });
   localStorage.setItem('questions_v13', JSON.stringify(questions));
   document.getElementById('qBulk').value='';
-  renderQuestions(); alert('✅ '+added+' Added! Random Mode: '+(randomMode?'ON':'OFF')+' - SAVE SAME LINK അടിക്കൂ!');
+  renderQuestions(); alert('✅ '+added+' Added! SAVE SAME LINK അടിക്കൂ!');
 }
-function editQuestion(idx){ editingQIndex=idx; const qq=questions[idx]; document.getElementById('editQText').value=qq.q; document.getElementById('editQOpts').value=qq.opts.join(', '); document.getElementById('editQAns').value=qq.ans; document.getElementById('editQBox').classList.remove('hidden'); }
+function editQuestion(idx){ editingQIndex=idx; const qq=questions[idx]; document.getElementById('editQText').value=qq.q; document.getElementById('editQOpts').value=qq.opts.join(', '); document.getElementById('editQAns').value=qq.ans; document.getElementById('editQBox').classList.remove('hidden'); document.getElementById('editQBox').scrollIntoView({behavior:'smooth'}); }
 function saveEditedQ(){ if(editingQIndex<0) return; const q=document.getElementById('editQText').value.trim(); const optsStr=document.getElementById('editQOpts').value.trim(); const ans=parseInt(document.getElementById('editQAns').value); if(!q||!optsStr){ alert('Fill All'); return; } const opts=optsStr.split(',').map(o=>o.trim()).filter(o=>o); questions[editingQIndex]={q, opts, ans:Math.min(isNaN(ans)?0:ans, opts.length-1)}; localStorage.setItem('questions_v13', JSON.stringify(questions)); renderQuestions(); cancelEditQ(); alert('✅ Edited! SAVE SAME LINK അടിക്കൂ!'); }
 function cancelEditQ(){ editingQIndex=-1; document.getElementById('editQBox').classList.add('hidden'); }
 function deleteQuestion(idx){ if(!confirm(`Delete Q ${idx+1}?`)) return; questions.splice(idx,1); localStorage.setItem('questions_v13', JSON.stringify(questions)); renderQuestions(); }
@@ -216,21 +265,21 @@ function deleteQuestion(idx){ if(!confirm(`Delete Q ${idx+1}?`)) return; questio
 async function loadPastEvents(){
   const container=document.getElementById('pastEventsList');
   if(!container) return;
-  if(!firebaseDB){ container.innerHTML='<p class="text-xs text-center py-4">❌ Firebase Not Connected</p>'; return; }
-  container.innerHTML='<p class="text-xs text-center py-4">☁️ Loading from TRUE CLOUD - Random Mode...</p>';
+  if(!firebaseDB){ container.innerHTML='<p class="text-xs text-center py-4">❌ Firebase Not Connected - Check Rules!</p>'; return; }
+  container.innerHTML='<p class="text-xs text-center py-4">☁️ Loading from TRUE CLOUD - FULL RESTORED - Certificate + One Phone + One Device + Random...</p>';
   try{
     const snap=await firebaseDB.ref('events').once('value');
     const data=snap.val();
-    if(!data){ container.innerHTML='<p class="text-xs text-center py-4">No Events</p>'; return; }
+    if(!data){ container.innerHTML='<p class="text-xs text-center py-4">No Events in Cloud - Create One! FULL RESTORED!</p>'; return; }
     container.innerHTML='';
     Object.keys(data).reverse().forEach(id=>{
       const ev=data[id];
-      container.innerHTML+=`<div class="bg-white border-2 rounded-xl p-2.5 mb-2"><div class="flex justify-between items-start"><div class="flex-1"><p class="font-black text-xs">${ev.title||'Noor Event'} <span class="text-[9px] bg-green-100 px-2 py-0.5 rounded-full">${ev.minute||10} Min</span> <span class="text-[9px] bg-blue-100 px-2 py-0.5 rounded-full">Count: ${ev.count||20}</span> <span class="text-[9px] ${ev.randomMode?'bg-orange-100':'bg-gray-100'} px-2 py-0.5 rounded-full">Random: ${ev.randomMode?'ON 🔀':'OFF 📝'}</span></p><p class="text-[10px] text-gray-600">${ev.place||''} | Total: ${ev.questions?.length||0} | Show: ${ev.count||20} | ID:${id}</p></div><div class="flex flex-col gap-1"><button onclick="copyEventLink('${id}')" class="bg-green-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">📋 Copy</button><button onclick="editEventById('${id}')" class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">✏️ Edit</button><button onclick="deleteEvent('${id}')" class="bg-red-100 text-red-600 border px-3 py-1 rounded-full text-[10px] font-bold">🗑️ Delete</button></div></div></div>`;
+      container.innerHTML+=`<div class="bg-white border-2 rounded-xl p-2.5 mb-2"><div class="flex justify-between items-start"><div class="flex-1"><p class="font-black text-xs">${ev.title||'Noor Event'} <span class="text-[9px] bg-green-100 px-2 py-0.5 rounded-full">${ev.minute||10} Min</span> <span class="text-[9px] bg-blue-100 px-2 py-0.5 rounded-full">Count: ${ev.count||20}</span> <span class="text-[9px] ${ev.randomMode?'bg-orange-100':'bg-gray-100'} px-2 py-0.5 rounded-full">Random:${ev.randomMode?'ON':'OFF'}</span> <span class="text-[9px] bg-yellow-100 px-2 py-0.5 rounded-full">Cert:${ev.certificate?'✅':'❌'}</span></p><p class="text-[10px] text-gray-600">${ev.place||''} | Total: ${ev.questions?.length||0} | Show: ${ev.count||20} | ID:${id}</p><p class="text-[9px] text-gray-400">One Phone:${ev.phoneLock?'✅':'❌'} One Device:${ev.deviceLock?'✅':'❌'} | ${new Date(ev.updated||Date.now()).toLocaleString()}</p></div><div class="flex flex-col gap-1"><button onclick="copyEventLink('${id}')" class="bg-green-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">📋 Copy</button><button onclick="editEventById('${id}')" class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">✏️ Edit</button><button onclick="deleteEvent('${id}')" class="bg-red-100 text-red-600 border px-3 py-1 rounded-full text-[10px] font-bold">🗑️ Delete</button></div></div></div>`;
     });
   }catch(e){ container.innerHTML='<p class="text-xs text-center py-4">❌ Error: '+e.message+'</p>'; }
 }
-function copyEventLink(id){ const link=window.location.origin+window.location.pathname+'?event='+id; navigator.clipboard.writeText(link).then(()=>{ alert('✅ TRUE CLOUD Link Copied!\n'+link+'\n\nRandom Mode + Count Fixed!'); }); }
-async function deleteEvent(id){ if(!confirm('Delete '+id+'?')) return; if(firebaseDB) firebaseDB.ref('events/'+id).remove().then(()=>{ loadPastEvents(); }); }
+function copyEventLink(id){ const link=window.location.origin+window.location.pathname+'?event='+id; navigator.clipboard.writeText(link).then(()=>{ alert('✅ TRUE CLOUD FULL RESTORED Link Copied!\n'+link+'\n\nCertificate + One Phone + One Device + Random + All Included!'); }); }
+async function deleteEvent(id){ if(!confirm('Delete '+id+' from TRUE CLOUD?')) return; if(firebaseDB) firebaseDB.ref('events/'+id).remove().then(()=>{ loadPastEvents(); }); }
 
 async function editEventById(id){
   try{
@@ -247,18 +296,22 @@ async function editEventById(id){
     document.getElementById('setOnline').checked=data.onlineMode!==false;
     document.getElementById('setShowCorrect').checked=data.showCorrect!==false;
     document.getElementById('setRandom').checked=data.randomMode!==false;
+    document.getElementById('setPhoneLock').checked=data.phoneLock!==false;
+    document.getElementById('setDeviceLock').checked=data.deviceLock!==false;
     showCorrectWrong=data.showCorrect!==false;
     randomMode=data.randomMode!==false;
     questions=data.questions||[];
     localStorage.setItem('questions_v13', JSON.stringify(questions));
     renderQuestions();
-    if(data.logo){ currentLogoBase64=data.logo; document.getElementById('logoPreview').src=data.logo; document.getElementById('logoPreview').classList.remove('hidden'); document.getElementById('logoSizeInfo').innerText=`✅ Logo Keep`; await saveToIndexedDB('logoImg_'+id, data.logo); }
-    if(data.banner){ currentBannerBase64=data.banner; document.getElementById('bannerPreview').src=data.banner; document.getElementById('bannerPreview').classList.remove('hidden'); document.getElementById('bannerSizeInfo').innerText=`✅ Banner Keep`; await saveToIndexedDB('bannerImg_'+id, data.banner); }
+    if(data.logo){ currentLogoBase64=data.logo; document.getElementById('logoPreview').src=data.logo; document.getElementById('logoPreview').classList.remove('hidden'); document.getElementById('logoSizeInfo').innerText=`✅ Logo Keep - ${(data.logo.length/1024).toFixed(1)}KB`; await saveToIndexedDB('logoImg_'+id, data.logo); }
+    if(data.banner){ currentBannerBase64=data.banner; document.getElementById('bannerPreview').src=data.banner; document.getElementById('bannerPreview').classList.remove('hidden'); document.getElementById('bannerSizeInfo').innerText=`✅ Banner Keep - ${(data.banner.length/1024).toFixed(1)}KB`; await saveToIndexedDB('bannerImg_'+id, data.banner); }
+    if(data.certificate){ currentCertBase64=data.certificate; document.getElementById('certPreviewImg').src=data.certificate; document.getElementById('certPreviewImg').classList.remove('hidden'); document.getElementById('certPreviewPlaceholder').classList.add('hidden'); document.getElementById('certNameOnImage').style.display='block'; localStorage.setItem('certFullImage', data.certificate); await saveToIndexedDB('certFullImage', data.certificate); }
+    if(data.certPos){ certPos=data.certPos; document.getElementById('certX').value=data.certPos.x; document.getElementById('certY').value=data.certPos.y; document.getElementById('certS').value=data.certPos.s; updateCertLive(); }
     document.getElementById('eventIdShow').value=id;
     lastGeneratedLink=window.location.origin+window.location.pathname+'?event='+id;
     document.getElementById('generatedLink').innerText=lastGeneratedLink;
     document.getElementById('linkBox').classList.remove('hidden');
-    document.getElementById('cloudStatus').innerText=`✅ Loaded - Count:${data.count} Random:${data.randomMode?'ON 🔀':'OFF'} - Edit ചെയ്ത് SAVE SAME LINK അടിക്കൂ!`;
+    document.getElementById('cloudStatus').innerText=`✅ Loaded from TRUE CLOUD - FULL RESTORED - Certificate:${data.certificate?'✅':'❌'} One Phone:${data.phoneLock?'✅':'❌'} One Device:${data.deviceLock?'✅':'❌'} Count:${data.count} Random:${data.randomMode?'ON':'OFF'}`;
     window.scrollTo({top:200, behavior:'smooth'});
   }catch(e){ alert('Error: '+e.message); }
 }
@@ -283,15 +336,17 @@ async function createOrUpdateLink(isNew){
   const onlineMode=document.getElementById('setOnline').checked;
   const showCorrect=document.getElementById('setShowCorrect').checked;
   const random=document.getElementById('setRandom').checked;
+  const phoneLock=document.getElementById('setPhoneLock').checked;
+  const deviceLock=document.getElementById('setDeviceLock').checked;
   showCorrectWrong=showCorrect;
   randomMode=random;
   if(!questions.length){ alert('⚠️ Questions Add ചെയ്യൂ!'); return; }
   const cleanId=currentEventId.replace(/event_/g,'');
   if(!firebaseDB){ alert('❌ Firebase Not Connected!'); return; }
 
-  const eventData={title, place, category, questions, minute, count, onlineMode, showCorrect, randomMode: random, logo: currentLogoBase64||'', banner: currentBannerBase64||'', updated: Date.now()};
+  const eventData={title, place, category, questions, minute, count, onlineMode, showCorrect, randomMode: random, phoneLock, deviceLock, logo: currentLogoBase64||'', banner: currentBannerBase64||'', certificate: currentCertBase64||'', certPos: certPos, updated: Date.now()};
 
-  document.getElementById('cloudStatus').innerText='☁️ Saving to TRUE CLOUD - Random Mode '+(random?'ON 🔀':'OFF 📝')+'...';
+  document.getElementById('cloudStatus').innerText='☁️ Saving to TRUE CLOUD - FULL RESTORED - Certificate + One Phone + One Device + Random + All...';
   try{
     await firebaseDB.ref('events/'+cleanId).set(eventData);
     const link=window.location.origin+window.location.pathname+'?event='+cleanId;
@@ -299,21 +354,22 @@ async function createOrUpdateLink(isNew){
     document.getElementById('generatedLink').innerText=link;
     document.getElementById('linkBox').classList.remove('hidden');
     document.getElementById('eventIdShow').value=cleanId;
-    document.getElementById('cloudStatus').innerText=isNew?`✅ NEW TRUE CLOUD! Count: ${count} Random: ${random?'ON 🔀':'OFF 📝'} - ID: ${cleanId}`:`✅ SAME LINK UPDATED! Count: ${count} Random: ${random?'ON 🔀':'OFF 📝'} - Time: ${minute} Min - Friends Refresh ചെയ്താൽ മാറ്റം!`;
+    document.getElementById('cloudStatus').innerText=isNew?`✅ NEW TRUE CLOUD FULL RESTORED! Count:${count} Random:${random?'ON':'OFF'} Cert:${currentCertBase64?'✅':'❌'} One Phone:${phoneLock?'✅':'❌'} One Device:${deviceLock?'✅':'❌'} ID:${cleanId}`:`✅ SAME LINK UPDATED FULL RESTORED! Count:${count} Random:${random?'ON':'OFF'} Cert:${currentCertBase64?'✅':'❌'} - Friends Refresh ചെയ്താൽ എല്ലാം മാറ്റം!`;
     if(currentLogoBase64) await saveToIndexedDB('logoImg_'+cleanId, currentLogoBase64);
     if(currentBannerBase64) await saveToIndexedDB('bannerImg_'+cleanId, currentBannerBase64);
+    if(currentCertBase64) await saveToIndexedDB('certFullImage', currentCertBase64);
     if(navigator.clipboard) navigator.clipboard.writeText(link).catch(()=>{});
     loadPastEvents(); renderQuestions();
   }catch(e){ document.getElementById('cloudStatus').innerText='❌ Failed: '+e.message; }
 }
-function copyLink(){ if(!lastGeneratedLink){ alert('Create Link First'); return; } navigator.clipboard.writeText(lastGeneratedLink).then(()=>{ alert('✅ Copied!\n'+lastGeneratedLink); }); }
-function shareWhatsApp(){ if(!lastGeneratedLink) return; window.open('https://wa.me/?text='+encodeURIComponent('🌙 Noor Quiz Random Mode: '+lastGeneratedLink), '_blank'); }
+function copyLink(){ if(!lastGeneratedLink){ alert('Create Link First'); return; } navigator.clipboard.writeText(lastGeneratedLink).then(()=>{ alert('✅ FULL RESTORED Link Copied!\n'+lastGeneratedLink); }); }
+function shareWhatsApp(){ if(!lastGeneratedLink) return; window.open('https://wa.me/?text='+encodeURIComponent('🌙 Noor Quiz FULL: '+lastGeneratedLink), '_blank'); }
 
 async function loadCompetitorEvent(){
   const params=new URLSearchParams(window.location.search);
   const eventId=params.get('event');
   if(!eventId) return;
-  document.getElementById('cloudLoadStatus').innerText='☁️ Loading from TRUE CLOUD - noor-ai-madrasa-app...';
+  document.getElementById('cloudLoadStatus').innerText='☁️ Loading from TRUE CLOUD - FULL RESTORED...';
   if(!firebaseDB) return;
   try{
     const snap=await firebaseDB.ref('events/'+eventId).once('value');
@@ -325,15 +381,19 @@ async function loadCompetitorEvent(){
     eventQuestionCount=data.count||20;
     showCorrectWrong=data.showCorrect!==false;
     randomMode=data.randomMode!==false;
+    currentCertBase64=data.certificate||'';
+    certPos=data.certPos||{x:'50',y:'60',s:'24'};
     document.getElementById('compTitle').innerText=data.title||'🌙 Noor Al Madrasa';
     document.getElementById('eventNameDisplay').innerText=data.title||'';
     document.getElementById('eventCountDisplay').innerText=`📝 Total: ${questions.length} Qs | Show: ${Math.min(eventQuestionCount, questions.length)} Qs | Time: ${totalMinutes} Min`;
-    document.getElementById('eventRandomDisplay').innerText=`${randomMode?'🔀 Random Mode ON - Qs Random ആവും!':'📝 Sequential Mode - Qs Same Order'}`;
+    document.getElementById('eventRandomDisplay').innerText=`${randomMode?'🔀 Random ON':'📝 Sequential'} | ${showCorrectWrong?'✅ Show Correct/Wrong ON':'❌ OFF'} | One Phone:${data.phoneLock?'✅':'❌'} One Device:${data.deviceLock?'✅':'❌'}`;
     document.getElementById('compSubTitle').innerText=(data.category||'')+' | '+(data.place||'')+' | '+totalMinutes+' Min | Count: '+eventQuestionCount+' | Random: '+(randomMode?'ON':'OFF');
-    document.getElementById('compPlaceShow').innerText='From: TRUE CLOUD - Updated: '+new Date(data.updated||Date.now()).toLocaleString();
-    document.getElementById('cloudLoadStatus').innerText=`✅ Loaded! Count: ${eventQuestionCount} Random: ${randomMode?'ON 🔀':'OFF 📝'} Wrong→Correct Green ${showCorrectWrong?'ON':'OFF'}!`;
+    document.getElementById('compPlaceShow').innerText='From: TRUE CLOUD FULL RESTORED - Updated: '+new Date(data.updated||Date.now()).toLocaleString();
+    document.getElementById('cloudLoadStatus').innerText=`✅ FULL RESTORED Loaded! Count:${eventQuestionCount} Random:${randomMode?'ON':'OFF'} Cert:${data.certificate?'✅':'❌'} One Phone:${data.phoneLock?'✅':'❌'} One Device:${data.deviceLock?'✅':'❌'}`;
     if(data.logo){ const img=document.getElementById('compLogoImg'); img.src=data.logo; img.classList.remove('hidden'); document.getElementById('compLogoText').classList.add('hidden'); }
     if(data.banner){ const img=document.getElementById('compBannerImg'); img.src=data.banner; img.classList.remove('hidden'); }
+    if(data.certificate){ localStorage.setItem('certFullImage', data.certificate); }
+    if(data.certPos){ localStorage.setItem('certPos_v13', JSON.stringify(data.certPos)); }
     localStorage.setItem('questions_v13', JSON.stringify(questions));
   }catch(e){ document.getElementById('cloudLoadStatus').innerText='❌ Error: '+e.message; }
 }
@@ -343,6 +403,28 @@ function startQuiz(){
   const phone=document.getElementById('phoneInput').value.trim();
   const err=document.getElementById('errorMsg');
   if(!name||!phone){ err.innerText='Name & Phone Required'; err.classList.remove('hidden'); return; }
+  // One Phone Check - RESTORED!
+  const phoneLock=document.getElementById('setPhoneLock')?.checked || true;
+  if(phoneLock){
+    const usedPhones=JSON.parse(localStorage.getItem('usedPhones')||'[]');
+    const eventId=new URLSearchParams(window.location.search).get('event')||currentEventId;
+    if(usedPhones.includes(phone+'_'+eventId)){
+      err.innerText='❌ ഈ ഫോൺ നമ്പർ ഇതിനകം ഉപയോഗിച്ചു! One Phone One Attempt!';
+      err.classList.remove('hidden');
+      return;
+    }
+  }
+  // One Device Check - RESTORED!
+  const deviceLock=document.getElementById('setDeviceLock')?.checked || false;
+  if(deviceLock){
+    const usedDevices=JSON.parse(localStorage.getItem('usedDevices')||'[]');
+    const eventId=new URLSearchParams(window.location.search).get('event')||currentEventId;
+    if(usedDevices.includes(eventId)){
+      err.innerText='❌ ഈ Device-ൽ ഇതിനകം Quiz ചെയ്തു! One Device One Attempt!';
+      err.classList.remove('hidden');
+      return;
+    }
+  }
   err.classList.add('hidden');
   if(!questions.length){
     const saved=JSON.parse(localStorage.getItem('questions_v13')||'[]');
@@ -352,10 +434,8 @@ function startQuiz(){
   const countToShow=Math.min(eventQuestionCount||questions.length, questions.length);
   let finalQuestions;
   if(randomMode){
-    // 🔀 Random Mode ON - Shuffle and Slice
     finalQuestions=[...questions].sort(()=>0.5-Math.random()).slice(0, countToShow);
   }else{
-    // 📝 Random Mode OFF - Same Order, just slice
     finalQuestions=questions.slice(0, countToShow);
   }
   questions=finalQuestions;
@@ -366,16 +446,14 @@ function startQuiz(){
   window._quizData={name, phone, place:document.getElementById('placeInput').value.trim()};
 }
 
-// ✅ WRONG CLICK → CORRECT GREEN SHOW + RANDOM MODE!
 function showQ(){
   if(currentQ>=questions.length){ finishQuiz(); return; }
   const qq=questions[currentQ];
-  document.getElementById('qCount').innerText=`Q ${currentQ+1}/${questions.length} ${randomMode?'🔀 Random':''}`;
+  document.getElementById('qCount').innerText=`Q ${currentQ+1}/${questions.length} ${randomMode?'🔀':''}`;
   document.getElementById('progressBar').style.width=((currentQ)/questions.length*100)+'%';
   document.getElementById('qText').innerText=qq.q;
   const optDiv=document.getElementById('options'); optDiv.innerHTML='';
   const feedback=document.getElementById('quizFeedback'); feedback.classList.add('hidden');
-
   qq.opts.forEach((o,i)=>{
     const b=document.createElement('button');
     b.id=`opt-${i}`;
@@ -425,31 +503,72 @@ function finishQuiz(){
   const mins=Math.floor(totalTime/60); const secs=totalTime%60;
   const result={name:window._quizData.name, phone:window._quizData.phone, place:window._quizData.place, score, total:questions.length, time:totalTime, timeStr:`${mins}:${String(secs).padStart(2,'0')}`, timestamp:Date.now()};
   let results=JSON.parse(localStorage.getItem('results_v13')||'[]'); results.push(result); localStorage.setItem('results_v13', JSON.stringify(results));
+  // Save One Phone / One Device - RESTORED!
+  const eventId=new URLSearchParams(window.location.search).get('event')||currentEventId;
+  let usedPhones=JSON.parse(localStorage.getItem('usedPhones')||'[]'); usedPhones.push(window._quizData.phone+'_'+eventId); localStorage.setItem('usedPhones', JSON.stringify(usedPhones));
+  let usedDevices=JSON.parse(localStorage.getItem('usedDevices')||'[]'); usedDevices.push(eventId); localStorage.setItem('usedDevices', JSON.stringify(usedDevices));
   document.getElementById('quizCard').classList.add('hidden');
   const resultCard=document.getElementById('resultCard'); resultCard.classList.remove('hidden');
   document.getElementById('finalScore').innerText=`${score}/${questions.length}`;
   document.getElementById('finalTime').innerText=`Time: ${mins}:${String(secs).padStart(2,'0')} ⏱️`;
   loadResults();
-  if(firebaseDB){ const eventId=new URLSearchParams(window.location.search).get('event'); if(eventId) firebaseDB.ref('results/'+eventId).push(result); }
+  if(firebaseDB){ const eid=new URLSearchParams(window.location.search).get('event'); if(eid) firebaseDB.ref('results/'+eid).push(result); }
+  // Generate Certificate with uploaded image
+  setTimeout(()=>{ generateCertificate(); },500);
 }
+function generateCertificate(){
+  const canvas=document.getElementById('certCanvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  const certImg=currentCertBase64 || localStorage.getItem('certFullImage');
+  const name=window._quizData?.name||'Sample Name';
+  canvas.width=1000; canvas.height=700;
+  if(certImg){
+    const img=new Image();
+    img.onload=()=>{
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const x=canvas.width*parseInt(certPos.x)/100;
+      const y=canvas.height*parseInt(certPos.y)/100;
+      ctx.font=`bold ${parseInt(certPos.s)*2}px sans-serif`; ctx.fillStyle='#14532d'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(name, x, y);
+      document.getElementById('certDownloadArea').classList.remove('hidden');
+      document.getElementById('certDownloadLink').href=canvas.toDataURL('image/png');
+      document.getElementById('certDownloadLink').download=`Certificate_${name}.png`;
+    };
+    img.src=certImg;
+  }else{
+    ctx.fillStyle='#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle='#14532d'; ctx.font='bold 36px sans-serif'; ctx.textAlign='center'; ctx.fillText('Certificate of Appreciation', canvas.width/2, 100);
+    ctx.font='bold 20px sans-serif'; ctx.fillText('Noor Al Madrasa', canvas.width/2, 150);
+    ctx.font=`bold ${parseInt(certPos.s)*2}px sans-serif`; ctx.fillText(name, canvas.width*parseInt(certPos.x)/100, canvas.height*parseInt(certPos.y)/100);
+    document.getElementById('certDownloadArea').classList.remove('hidden');
+    document.getElementById('certDownloadLink').href=canvas.toDataURL('image/png');
+  }
+}
+function downloadCertificate(){ generateCertificate(); setTimeout(()=>{ document.getElementById('certDownloadArea').classList.remove('hidden'); document.getElementById('certDownloadArea').scrollIntoView({behavior:'smooth'}); },300); }
 function loadResults(){
-  const list=document.getElementById('resultsList');
+  const list=document.getElementById('resultsList'); const rankEl=document.getElementById('rankingContent');
   if(!list) return;
   let results=JSON.parse(localStorage.getItem('results_v13')||'[]');
-  if(!results.length){ list.innerHTML='<p class="text-center py-4 text-gray-500">No Results Yet</p>'; return; }
+  if(!results.length){ list.innerHTML='<p class="text-center py-4 text-gray-500">No Results Yet</p>'; if(rankEl) rankEl.innerHTML='<p class="text-center py-4 text-gray-500">No Ranking</p>'; return; }
   results.sort((a,b)=>{ if(b.score!==a.score) return b.score-a.score; return a.time-b.time; });
-  list.innerHTML='';
-  results.forEach((r,idx)=>{ const medal=idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':`${idx+1}.`; list.innerHTML+=`<div class="flex justify-between py-2 border-b text-xs"><span>${medal} ${r.name} - ${r.score}/${r.total}</span><span>${r.timeStr}</span></div>`; });
+  list.innerHTML=''; if(rankEl) rankEl.innerHTML='';
+  results.forEach((r,idx)=>{ const medal=idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':`${idx+1}.`; list.innerHTML+=`<div class="flex justify-between py-2 border-b text-xs"><span>${medal} ${r.name} - ${r.score}/${r.total}</span><span>${r.timeStr}</span></div>`; if(rankEl && idx<10) rankEl.innerHTML+=`<div class="flex justify-between py-2 border-b ${idx===0?'bg-yellow-100 rounded-lg px-2 font-black':''}"><span>${medal} ${r.name} - ${r.score}/${r.total}</span><span>${r.timeStr}</span></div>`; });
 }
 function downloadResults(){ let results=JSON.parse(localStorage.getItem('results_v13')||'[]'); if(!results.length){ alert('No Results'); return; } let csv='Rank,Name,Phone,Place,Score,Total,Time\n'; results.forEach((r,i)=>{ csv+=`${i+1},${r.name},${r.phone},${r.place||''},${r.score},${r.total},${r.timeStr}\n`; }); const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='Results.csv'; a.click(); }
+function clearAllResults(){ if(!confirm('Delete All Results?')) return; localStorage.removeItem('results_v13'); loadResults(); }
 
 window.addEventListener('load', ()=>{
   init();
   loadCompetitorEvent();
+  const savedCert=localStorage.getItem('certFullImage'); if(savedCert){ currentCertBase64=savedCert; const img=document.getElementById('certPreviewImg'); if(img){ img.src=savedCert; img.classList.remove('hidden'); document.getElementById('certPreviewPlaceholder').classList.add('hidden'); } }
+  const savedPos=JSON.parse(localStorage.getItem('certPos_v13')||'{"x":"50","y":"60","s":"24"}');
+  if(document.getElementById('certX')){ document.getElementById('certX').value=savedPos.x; document.getElementById('certY').value=savedPos.y; document.getElementById('certS').value=savedPos.s; updateCertLive(); }
   if(questions.length) renderQuestions();
   loadPastEvents();
   loadResults();
 });
+switchCert(1);
 </script>
 </body>
   </html>
