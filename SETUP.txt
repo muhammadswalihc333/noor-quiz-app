@@ -1,0 +1,9 @@
+NOOR QUIZ — MASTER ADMIN FINAL
+1. Upload the extracted files to the GitHub Pages repository root.
+2. Do not upload the ZIP itself.
+3. Master Admin:
+   Email: master@noorquiz.app
+   Password: NoorMaster2026!
+4. Open the app, enter the existing Admin area, then tap MASTER ADMIN.
+5. Create/activate organizer accounts with unique activation codes.
+IMPORTANT: Before production use, replace the demo master credentials with a secure Firebase Authentication/Cloud Function implementation and tighten Firebase Database Rules. The included rules are only for functional testing.
