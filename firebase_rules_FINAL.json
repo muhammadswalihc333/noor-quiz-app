@@ -1,0 +1,36 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "events": {
+      "$eventId": {
+        ".read": true,
+        ".write": "auth != null && (auth.token.email == 'muhammadswalihc333@gmail.com' || (data.exists() && data.child('ownerId').isString() && root.child('masterAdmin/organizers').child(data.child('ownerId').val()).child('email').val() == auth.token.email && root.child('masterAdmin/organizers').child(data.child('ownerId').val()).child('active').val() == true) || (newData.exists() && newData.child('ownerId').isString() && root.child('masterAdmin/organizers').child(newData.child('ownerId').val()).child('email').val() == auth.token.email && root.child('masterAdmin/organizers').child(newData.child('ownerId').val()).child('active').val() == true))"
+      }
+    },
+    "results": {
+      "$eventId": {
+        ".read": "auth != null && (auth.token.email == 'muhammadswalihc333@gmail.com' || (root.child('events').child($eventId).child('ownerId').isString() && root.child('masterAdmin/organizers').child(root.child('events').child($eventId).child('ownerId').val()).child('email').val() == auth.token.email && root.child('masterAdmin/organizers').child(root.child('events').child($eventId).child('ownerId').val()).child('active').val() == true))",
+        "$resultId": {
+          ".write": "auth != null && newData.hasChildren(['uid','name','phone','phoneHash','place','score','total','correct','wrong','time','timeStr','timestamp','answers']) && newData.child('uid').isString() && newData.child('name').isString() && newData.child('phone').isString() && newData.child('phoneHash').isString() && newData.child('score').isNumber() && newData.child('total').isNumber() && newData.child('correct').isNumber() && newData.child('wrong').isNumber() && newData.child('time').isNumber() && newData.child('timeStr').isString() && newData.child('timestamp').isNumber()"
+        }
+      }
+    },
+    "masterAdmin": {
+      "organizers": {
+        ".read": "auth != null && auth.token.email == 'muhammadswalihc333@gmail.com'",
+        "$orgId": {
+          ".write": "auth != null && auth.token.email == 'muhammadswalihc333@gmail.com'",
+          ".validate": "newData.hasChildren(['name','email','active','created']) && newData.child('name').isString() && newData.child('email').isString() && newData.child('active').isBoolean() && newData.child('created').isNumber()"
+        }
+      }
+    },
+    "organizerLookup": {
+      "$emailHash": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.token.email == 'muhammadswalihc333@gmail.com'",
+        ".validate": "newData.hasChildren(['orgId','active']) && newData.child('orgId').isString() && newData.child('active').isBoolean()"
+      }
+    }
+  }
+}
