@@ -1,0 +1,52 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "masterAdmins": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "organizers": {
+      "$orgId": {
+        ".read": "auth != null && (root.child('masterAdmins').child(auth.uid).val() === true || data.child('uid').val() === auth.uid)",
+        ".write": "auth != null && (root.child('masterAdmins').child(auth.uid).val() === true || (!data.exists() && newData.child('uid').val() === auth.uid))"
+      }
+    },
+    "events": {
+      "$eventId": {
+        ".read": "auth != null",
+        ".write": "auth != null && (root.child('masterAdmins').child(auth.uid).val() === true || (data.exists() && root.child('organizers').child(data.child('ownerId').val()).child('uid').val() === auth.uid) || (!data.exists() && root.child('organizers').child(newData.child('ownerId').val()).child('uid').val() === auth.uid))"
+      }
+    },
+    "answerKeys": {
+      "$eventId": {
+        ".read": "auth != null && (root.child('masterAdmins').child(auth.uid).val() === true || root.child('organizers').child(root.child('events').child($eventId).child('ownerId').val()).child('uid').val() === auth.uid)",
+        ".write": "auth != null && (root.child('masterAdmins').child(auth.uid).val() === true || root.child('organizers').child(root.child('events').child($eventId).child('ownerId').val()).child('uid').val() === auth.uid)"
+      }
+    },
+    "submissions": {
+      "$eventId": {
+        "$uid": {
+          ".read": "auth != null && (auth.uid === $uid || root.child('masterAdmins').child(auth.uid).val() === true || root.child('organizers').child(root.child('events').child($eventId).child('ownerId').val()).child('uid').val() === auth.uid)",
+          ".write": "auth != null && auth.uid === $uid && !data.exists()"
+        }
+      }
+    },
+    "results": {
+      "$eventId": {
+        "$resultId": {
+          ".read": "auth != null && (root.child('masterAdmins').child(auth.uid).val() === true || root.child('organizers').child(root.child('events').child($eventId).child('ownerId').val()).child('uid').val() === auth.uid)",
+          ".write": "auth != null && (root.child('masterAdmins').child(auth.uid).val() === true || root.child('organizers').child(root.child('events').child($eventId).child('ownerId').val()).child('uid').val() === auth.uid)"
+        }
+      }
+    },
+    "leaderboards": {
+      "$eventId": {
+        ".read": "auth != null && (root.child('masterAdmins').child(auth.uid).val() === true || root.child('organizers').child(root.child('events').child($eventId).child('ownerId').val()).child('uid').val() === auth.uid)",
+        ".write": "auth != null && (root.child('masterAdmins').child(auth.uid).val() === true || root.child('organizers').child(root.child('events').child($eventId).child('ownerId').val()).child('uid').val() === auth.uid)"
+      }
+    }
+  }
+}
