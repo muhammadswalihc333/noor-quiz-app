@@ -833,13 +833,29 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.se
     if($('adminLoginBox'))$('adminLoginBox').classList.remove('hidden');
   }
 
-  // Root page intentionally has no Master Admin button.
+  // Main/root page: show the Master Admin entry here only.
+  // It opens the dedicated ?master=1 page, while event/organizer/admin links hide it.
   function rootPage(){
     if(!rootMode)return;
-    hide($('nqMasterEntry'));
-    document.querySelectorAll('button').forEach(b=>{
-      if(/MASTER ADMIN/i.test(b.textContent||''))hide(b);
-    });
+    let entry=$('nqMasterEntry');
+    const host=$('competitorView');
+    if(!host)return;
+    if(!entry){
+      entry=document.createElement('div');
+      entry.id='nqMasterEntry';
+      entry.className='nq-root-admin-entry';
+      entry.innerHTML='<button type="button">👑 MASTER ADMIN LOGIN</button>';
+      const btn=entry.querySelector('button');
+      if(btn)btn.onclick=()=>{if(typeof openMasterAdmin==='function')openMasterAdmin();};
+      host.insertBefore(entry,host.firstChild);
+    }else{
+      entry.style.display='';
+      const btn=entry.querySelector('button');
+      if(btn && !btn.dataset.masterBound){
+        btn.dataset.masterBound='1';
+        btn.onclick=()=>{if(typeof openMasterAdmin==='function')openMasterAdmin();};
+      }
+    }
   }
 
   function restoreSessions(){
