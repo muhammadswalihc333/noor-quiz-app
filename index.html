@@ -51,7 +51,7 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
 .nq-organizer-mode #nqMasterEntry{display:none!important}
 .nq-organizer-mode #adminLoginBox{display:none!important}
 #certColor{width:58px;height:38px;padding:2px;border:2px solid #14532d;border-radius:9px;background:#fff}
-#masterControlBtn{display:none!important}.nq-master-mode #masterControlBtn{display:block!important}
+#masterControlBtn{display:none}.nq-master-mode #masterControlBtn{display:block!important;visibility:visible!important;opacity:1!important}
 .nq-public-mode #competitorView > div.mt-10.text-center > button{display:none!important}.nq-master-mode #competitorView{display:none!important}.nq-admin-mode #nqMasterEntry{display:none!important}
 </style>
 
@@ -245,10 +245,12 @@ function loginAdmin(){
   }
 }
 function addMasterControlButton(){
-  // This button is MASTER-ONLY. Never create it from normal Admin login.
-  if(!masterLoggedIn) return;
+  // MASTER-ONLY: show this extra control only after successful Master Google Sign-In.
+  if(!masterLoggedIn){ removeMasterControlButton(); return; }
+  document.documentElement.classList.add('nq-master-mode');
   const admin=document.getElementById('adminView'); if(!admin)return;
   removeMasterControlButton();
+  document.documentElement.classList.add('nq-master-mode');
   const b=document.createElement('button');
   b.id='masterControlBtn';
   b.dataset.masterOnly='1';
@@ -535,7 +537,7 @@ function openMasterAdmin(){
   document.getElementById('masterOverlay').style.display='flex';
   document.getElementById('masterLoginBox').style.display=masterLoggedIn?'none':'block';
   document.getElementById('masterPanel').style.display=masterLoggedIn?'block':'none';
-  if(masterLoggedIn) loadOrganizers();
+  if(masterLoggedIn){ document.documentElement.classList.add('nq-master-mode'); addMasterControlButton(); loadOrganizers(); }
 }
 
 function closeMaster(){document.getElementById('masterOverlay').style.display='none';}
@@ -562,6 +564,7 @@ async function masterLogin(){
     }
     masterLoggedIn=true;
     masterGoogleUser=user;
+    document.documentElement.classList.add('nq-master-mode');
     document.getElementById('masterLoginBox').style.display='none';
     document.getElementById('masterPanel').style.display='block';
     document.getElementById('masterStatus').innerText='✅ Google Sign-In success — Master Admin: '+email;
@@ -583,6 +586,8 @@ async function masterLogout(){
   try{if(typeof firebase!=='undefined'&&firebase.auth)await firebase.auth().signOut();}catch(e){}
   masterLoggedIn=false;
   masterGoogleUser=null;
+  document.documentElement.classList.remove('nq-master-mode');
+  removeMasterControlButton();
   document.getElementById('masterLoginBox').style.display='block';
   document.getElementById('masterPanel').style.display='none';
   document.getElementById('masterStatus').innerText='Google Sign-In required. Master access only.';
@@ -655,6 +660,7 @@ window.addEventListener('load',()=>{
     const email=(user.email||'').trim().toLowerCase();
     if(email!==MASTER_ADMIN_EMAIL.toLowerCase()) return;
     masterLoggedIn=true; masterGoogleUser=user;
+    document.documentElement.classList.add('nq-master-mode');
     document.getElementById('masterLoginBox').style.display='none';
     document.getElementById('masterPanel').style.display='block';
     document.getElementById('masterOverlay').style.display='none';
@@ -883,6 +889,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.se
   // Dedicated Master Admin page: Google Sign-In only. No admin password login.
   function masterPage(){
     if(!masterMode)return;
+    document.documentElement.classList.add('nq-master-mode');
     hide($('adminLoginBox'));
     const adminTrigger=$('adminLoginBox')?.previousElementSibling;
     hide(adminTrigger);
