@@ -5,6 +5,7 @@
 <title>Noor Quiz V9.17.3 FINAL - Nabidinam Special</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <style>
 body{background:#fdf8e8;font-family:sans-serif;margin:0}
@@ -45,11 +46,12 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
 #nqOrganizerCard{background:#fff;border-radius:20px;max-width:520px;width:100%;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
 #nqOrganizerCard input{width:100%;padding:12px;margin:7px 0;border:1px solid #d1d5db;border-radius:10px}
 #nqOrganizerCard button{width:100%;padding:12px;margin-top:8px;border:0;border-radius:10px;font-weight:900}
-.nq-public-mode #adminLoginBox,.nq-public-mode #nqMasterEntry{display:none!important}
+.nq-public-mode #adminLoginBox,.nq-public-mode #nqMasterEntry,.nq-public-mode #adminLoginBox + button{display:none!important}
 .nq-public-mode #adminView{display:none!important}
 .nq-organizer-mode #nqMasterEntry{display:none!important}
 .nq-organizer-mode #adminLoginBox{display:none!important}
 #certColor{width:58px;height:38px;padding:2px;border:2px solid #14532d;border-radius:9px;background:#fff}
+.nq-public-mode #competitorView > div.mt-10.text-center > button{display:none!important}.nq-master-mode #competitorView,.nq-master-mode #adminView{display:none!important}.nq-admin-mode #nqMasterEntry{display:none!important}
 </style>
 
 </head>
@@ -89,11 +91,10 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
 <div id="masterOverlay" class="master-overlay">
   <div class="master-card">
     <h2>👑 Master Admin</h2>
-    <p id="masterStatus" style="font-size:13px;color:#6b7280">Master control for organizer accounts.</p>
+    <p id="masterStatus" style="font-size:13px;color:#6b7280">Google Sign-In required. Master access only.</p>
     <div id="masterLoginBox">
-      <input id="masterEmail" type="email" placeholder="Master Admin Email">
-      <input id="masterPassword" type="password" placeholder="Master Admin Password">
-      <button class="master-btn master-primary" style="width:100%" onclick="masterLogin()">Login</button>
+      <button id="masterGoogleBtn" class="master-btn master-primary" style="width:100%" onclick="masterLogin()">🔐 Continue with Google</button>
+      <p id="masterGoogleMsg" style="font-size:12px;color:#b91c1c;font-weight:800;margin-top:10px"></p>
     </div>
     <div id="masterPanel" style="display:none">
       <h3>Create Organizer</h3>
@@ -148,7 +149,7 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
 </div>
 <div id="quizCard" class="hidden bg-white rounded-[20px] p-5 border-2 mt-4 shadow-lg"><div class="flex justify-between items-center"><span id="qCount" class="font-bold text-sm bg-gray-100 px-3 py-1.5 rounded-full">Q 1</span><span id="timer" class="bg-yellow-400 px-4 py-1.5 rounded-full font-black">10:00</span></div><div class="w-full bg-gray-200 rounded-full h-2.5 mt-4"><div id="progressBar" class="bg-green-600 h-2.5 rounded-full" style="width:0%"></div></div><h3 id="qText" class="font-bold my-6 text-[17px]"></h3><div id="options" class="space-y-3"></div><p id="quizFeedback" class="hidden text-center font-black mt-4 text-sm p-4 rounded-xl"></p></div>
 <div id="resultCard" class="hidden bg-white rounded-[22px] border-2 p-6 shadow-xl mt-4 text-center"><h2 id="finalScore" class="text-5xl font-black mt-2 text-green-700">0/0</h2><p id="finalTime" class="mt-2 text-sm font-bold"></p><div class="grid grid-cols-2 gap-3 mt-6"><button onclick="location.reload()" class="bg-green-600 text-white py-3.5 rounded-xl font-black text-sm">🏠 Home</button><button onclick="downloadCertificate()" class="bg-blue-600 text-white py-3.5 rounded-xl font-black text-sm">📜 Certificate - Secure</button></div><div id="certDownloadArea" class="hidden mt-5"><canvas id="certCanvas" class="w-full border-2 rounded-xl"></canvas><a id="certDownloadLink" download="Certificate_Nabidinam_Secure.png" class="mt-3 block bg-yellow-400 text-black py-3 rounded-xl font-bold text-sm">⬇️ Download PNG - Nabidinam Secure</a></div></div>
-<div class="mt-10 text-center pb-12"><button onclick="document.getElementById('adminLoginBox').classList.toggle('hidden')" class="text-[11px] text-gray-400 border-2 px-6 py-2.5 rounded-full">Admin Login - Secure - Nabidinam Special - V9.17.2</button><div id="adminLoginBox" class="hidden mt-4 bg-white p-5 rounded-xl border-2 shadow-xl text-left"><input id="adminPass" type="password" placeholder="Admin Password - 1234 Secure - No Misuse - V9.17.2" class="w-full border-2 rounded-xl px-3 py-3 mb-3 text-sm"><button onclick="loginAdmin()" class="w-full bg-slate-800 text-white py-3 rounded-xl font-bold">Login - Secure - No Misuse - V9.17.2</button><p id="loginError" class="hidden text-red-600 text-xs mt-3 font-bold"></p><p class="text-[10px] text-gray-500 mt-2">Secure: 1234 Only! If Forgot:?reset=admin - Auto Reset Secure - No Misuse - V9.17.2</p></div></div>
+<div class="mt-10 text-center pb-12"><button onclick="document.getElementById('adminLoginBox').classList.toggle('hidden')" class="text-[11px] text-gray-400 border-2 px-6 py-2.5 rounded-full">Admin Login - Secure - Nabidinam Special - V9.17.2</button><div id="adminLoginBox" class="hidden mt-4 bg-white p-5 rounded-xl border-2 shadow-xl text-left"><input id="adminPass" type="password" placeholder="Admin Password" class="w-full border-2 rounded-xl px-3 py-3 mb-3 text-sm"><button onclick="loginAdmin()" class="w-full bg-slate-800 text-white py-3 rounded-xl font-bold">Login - Secure - No Misuse - V9.17.2</button><p id="loginError" class="hidden text-red-600 text-xs mt-3 font-bold"></p><p class="text-[10px] text-gray-500 mt-2">Admin password login is for Admin only. Master Admin uses Google Sign-In.</p></div></div>
 </div>
 </div>
 <div id="adminView" class="hidden p-2 pb-24">
@@ -204,11 +205,11 @@ const firebaseConfig = {apiKey:"AIzaSyD-vcPSpB3LVCBObQsrHvBQ8N_Zyty0pgg",authDom
 const REST_URL="https://noor-ai-madrasa-app-default-rtdb.asia-southeast1.firebasedatabase.app";
 let firebaseDB=null;
 try{firebase.initializeApp(firebaseConfig);firebaseDB=firebase.database();setTimeout(()=>{const s=document.getElementById('firebaseStatus');if(s)s.innerText='✅ Firebase 8.10.1 + REST + Local - Secure - All Checked - No Breaking - No Misuse - Connected - V9.17.3 FINAL - NABIDINAM SPECIAL - 100% Working Secure!';const si=document.getElementById('storageInfo');if(si)si.innerText='✅ Secure - All Checked - No Breaking - No Misuse - 3 Layer - Event Board + Banner Logo + Login Secure + All Options Fixed - 100% Working Secure for Nabidinam! V9.17.2';},800);}catch(e){document.getElementById('firebaseStatus').innerText='⚠️ SDK Failed REST works - Secure - No Breaking - No Misuse: '+e.message}
-let currentEventId='',questions=[],totalMinutes=10,eventQuestionCount=20,randomMode=true,currentQ=0,score=0,timerInt=null,startTime=null,lastGeneratedLink='',currentLogoBase64='',currentBannerBase64='',currentCertBase64='',showCorrectWrong=true,certPos={x:'50',y:'60',s:'24'},eventPhoneLock=true,eventDeviceLock=true;
+let currentEventId='',questions=[],totalMinutes=10,eventQuestionCount=20,randomMode=true,currentQ=0,score=0,timerInt=null,startTime=null,lastGeneratedLink='',currentLogoBase64='',currentBannerBase64='',currentCertBase64='',currentCertBgBase64='',currentCertLogo1Base64='',currentCertLogo2Base64='',currentCertSignBase64='',certMode=1,showCorrectWrong=true,certPos={x:'50',y:'60',s:'24'},eventPhoneLock=true,eventDeviceLock=true;
 
 function init(){
   const params=new URLSearchParams(window.location.search);
-  if(params.get('reset')==='admin'){localStorage.removeItem('noor_admin_pass');localStorage.setItem('noor_admin_pass','1234');alert('✅ Secure! Admin Password Reset to 1234! - V9.17.2 - Nabidinam Special - No Misuse - Now Login with 1234!');}
+  if(params.get('reset')==='admin' && params.get('event')===null){localStorage.removeItem('noor_admin_pass');localStorage.setItem('noor_admin_pass','1234');}
   const urlId=params.get('event');
   if(urlId) currentEventId=urlId;
   else currentEventId=localStorage.getItem('currentEventId_v17')||localStorage.getItem('currentEventId_v16')||'';
@@ -227,8 +228,7 @@ function loginAdmin(){
   const input=document.getElementById('adminPass').value.trim();
   const saved=getAdminPass();
   const err=document.getElementById('loginError');
-  const validPasswords=['1234','admin','noor','nabidinam',saved,'Noor1234','Nabidinam2026'];
-  const isValid=validPasswords.includes(input) || input===saved;
+  const isValid=input===saved;
   if(isValid){
     document.getElementById('competitorView').classList.add('hidden');
     document.getElementById('adminView').classList.remove('hidden');
@@ -238,18 +238,18 @@ function loginAdmin(){
     try{loadPastEvents();}catch(e){console.log('loadPastEvents Error Ignored Secure:',e);}
     try{loadResults();}catch(e){console.log('loadResults Error Ignored Secure:',e);}
   }else{
-    err.innerHTML='❌ Wrong Password! Secure! Try: 1234 - Nabidinam Special V9.17.2 - No Misuse!<br><br>If Forgot: Open?reset=admin - Auto Reset to 1234 - Secure!';
+    err.innerHTML='❌ Wrong Admin Password.<br><br>Use the Admin password configured for this app.';
     err.classList.remove('hidden');
     console.log('❌ Secure Block - Wrong Password - No Misuse - V9.17.2');
   }
 }
 function logoutAdmin(){document.getElementById('adminView').classList.add('hidden');document.getElementById('competitorView').classList.remove('hidden');}
 function handleCategoryChange(v){document.getElementById('customCategoryBox').classList.toggle('hidden',v!=='Other');}
-function switchCert(t){document.getElementById('certOpt1').classList.toggle('hidden',t!==1);document.getElementById('certOpt2').classList.toggle('hidden',t!==2);document.getElementById('opt1Btn').className=t===1?'bg-[#14532d] text-white px-5 py-2.5 rounded-xl text-[11px] font-bold shadow':'bg-gray-200 px-5 py-2.5 rounded-xl text-[11px] font-bold';document.getElementById('opt2Btn').className=t===2?'bg-[#14532d] text-white px-5 py-2.5 rounded-xl text-[11px] font-bold shadow':'bg-gray-200 px-5 py-2.5 rounded-xl text-[11px] font-bold';}
+function switchCert(t){certMode=t;document.getElementById('certOpt1').classList.toggle('hidden',t!==1);document.getElementById('certOpt2').classList.toggle('hidden',t!==2);document.getElementById('opt1Btn').className=t===1?'bg-[#14532d] text-white px-5 py-2.5 rounded-xl text-[11px] font-bold shadow':'bg-gray-200 px-5 py-2.5 rounded-xl text-[11px] font-bold';document.getElementById('opt2Btn').className=t===2?'bg-[#14532d] text-white px-5 py-2.5 rounded-xl text-[11px] font-bold shadow':'bg-gray-200 px-5 py-2.5 rounded-xl text-[11px] font-bold';}
 function compressImage(file,maxW,q,cb){const r=new FileReader();r.onload=e=>{const i=new Image();i.onload=()=>{const c=document.createElement('canvas');let w=i.width,h=i.height;if(w>maxW){h=h*(maxW/w);w=maxW}c.width=w;c.height=h;c.getContext('2d').drawImage(i,0,0,w,h);cb(c.toDataURL('image/jpeg',q))};i.src=e.target.result};r.readAsDataURL(file)}
 async function handleLogoBanner(e,type){const f=e.target.files[0];if(!f)return;compressImage(f,type==='logo'?300:800,0.5,async c=>{if(type==='logo'){currentLogoBase64=c;document.getElementById('logoPreview').src=c;document.getElementById('logoPreview').classList.remove('hidden');document.getElementById('logoSizeInfo').innerText=`✅ Logo: ${(c.length/1024).toFixed(1)}KB - Secure - V9.17.2`;localStorage.setItem('temp_logo',c)}else{currentBannerBase64=c;document.getElementById('bannerPreview').src=c;document.getElementById('bannerPreview').classList.remove('hidden');document.getElementById('bannerSizeInfo').innerText=`✅ Banner: ${(c.length/1024).toFixed(1)}KB - Secure - V9.17.2`;localStorage.setItem('temp_banner',c)}})}
 function handleCertFull(e){const f=e.target.files[0];if(!f)return;compressImage(f,800,0.5,c=>{currentCertBase64=c;document.getElementById('certPreviewImg').src=c;document.getElementById('certPreviewImg').classList.remove('hidden');document.getElementById('certPreviewPlaceholder').classList.add('hidden');document.getElementById('certSizeInfo').innerText=`✅ Cert: ${(c.length/1024).toFixed(1)}KB - Secure - V9.17.2`;localStorage.setItem('certFullImage',c)})}
-function handleCertFile(e,type){const f=e.target.files[0];if(!f)return;compressImage(f,800,0.5,c=>{document.getElementById('certPreviewImg').src=c;document.getElementById('certPreviewImg').classList.remove('hidden');document.getElementById('certPreviewPlaceholder').classList.add('hidden');localStorage.setItem('cert_'+type,c);updateCertLive();})}
+function handleCertFile(e,type){const f=e.target.files[0];if(!f)return;compressImage(f,800,0.5,c=>{if(type==='bg')currentCertBgBase64=c;else if(type==='logo1')currentCertLogo1Base64=c;else if(type==='logo2')currentCertLogo2Base64=c;else if(type==='sign')currentCertSignBase64=c;document.getElementById('certPreviewImg').src=c;document.getElementById('certPreviewImg').classList.remove('hidden');document.getElementById('certPreviewPlaceholder').classList.add('hidden');localStorage.setItem('cert_'+type,c);updateCertLive();})}
 function updateCertLive(){const x=document.getElementById('certX').value,y=document.getElementById('certY').value,s=document.getElementById('certS').value;document.getElementById('xVal').innerText=x;document.getElementById('yVal').innerText=y;document.getElementById('sVal').innerText=s;const d=document.getElementById('certNameOnImage');d.style.left=x+'%';d.style.top=y+'%';d.style.fontSize=s+'px';d.style.transform='translate(-50%,-50%)';certPos={x,y,s};localStorage.setItem('certPos_v13',JSON.stringify(certPos));}
 document.getElementById('certX')?.addEventListener('input',updateCertLive);
 document.getElementById('certY')?.addEventListener('input',updateCertLive);
@@ -337,6 +337,7 @@ async function editEventById(id){
     if(data.logo){currentLogoBase64=data.logo;document.getElementById('logoPreview').src=data.logo;document.getElementById('logoPreview').classList.remove('hidden');document.getElementById('logoSizeInfo').innerText=`✅ Logo Loaded - ${(data.logo.length/1024).toFixed(1)}KB - Secure! V9.17.2`;}
     if(data.banner){currentBannerBase64=data.banner;document.getElementById('bannerPreview').src=data.banner;document.getElementById('bannerPreview').classList.remove('hidden');document.getElementById('bannerSizeInfo').innerText=`✅ Banner Loaded - ${(data.banner.length/1024).toFixed(1)}KB - Secure! V9.17.2`;}
     if(data.certificate){currentCertBase64=data.certificate;document.getElementById('certPreviewImg').src=data.certificate;document.getElementById('certPreviewImg').classList.remove('hidden');document.getElementById('certPreviewPlaceholder').classList.add('hidden');}
+    if(data.certBg)currentCertBgBase64=data.certBg; if(data.certLogo1)currentCertLogo1Base64=data.certLogo1; if(data.certLogo2)currentCertLogo2Base64=data.certLogo2; if(data.certSign)currentCertSignBase64=data.certSign; if(data.certMode)certMode=data.certMode; switchCert(certMode);
     if(data.certPos){certPos=data.certPos;document.getElementById('certX').value=data.certPos.x;document.getElementById('certY').value=data.certPos.y;document.getElementById('certS').value=data.certPos.s;updateCertLive();}
     if(data.certTitle) document.getElementById('certTitle').value=data.certTitle;
     if(data.certSub) document.getElementById('certSub').value=data.certSub;
@@ -377,7 +378,7 @@ async function createOrUpdateLink(isNew){
   const certTitle=document.getElementById('certTitle')?.value||'Certificate of Appreciation - Nabidinam Special Secure';
   const certSub=document.getElementById('certSub')?.value||'Noor Al Madrasa - Meelad Quiz 2K26 - Nabidinam Secure';
   const certSub2=document.getElementById('certSub2')?.value||'For Excellent Participation - Nabidinam Special Secure';
-  const certColor=document.getElementById('certColor')?.value||'#14532d'; const eventData={title,place,category,questions,minute,count,onlineMode:document.getElementById('setOnline').checked,showCorrect:showC,randomMode:random,phoneLock:document.getElementById('setPhoneLock').checked,deviceLock:document.getElementById('setDeviceLock').checked,logo:currentLogoBase64||'',banner:currentBannerBase64||'',certificate:currentCertBase64||'',certPos,certColor,certTitle,certSub,certSub2,updated:Date.now()};
+  const certColor=document.getElementById('certColor')?.value||'#14532d'; const eventData={title,place,category,questions,minute,count,onlineMode:document.getElementById('setOnline').checked,showCorrect:showC,randomMode:random,phoneLock:document.getElementById('setPhoneLock').checked,deviceLock:document.getElementById('setDeviceLock').checked,logo:currentLogoBase64||'',banner:currentBannerBase64||'',certificate:currentCertBase64||'',certBg:currentCertBgBase64||localStorage.getItem('cert_bg')||'',certLogo1:currentCertLogo1Base64||localStorage.getItem('cert_logo1')||'',certLogo2:currentCertLogo2Base64||localStorage.getItem('cert_logo2')||'',certSign:currentCertSignBase64||localStorage.getItem('cert_sign')||'',certMode,certPos,certColor,certTitle,certSub,certSub2,updated:Date.now()};
   let saved=false;
   try{const res=await fetch(`${REST_URL}/events/${cleanId}.json`,{method:'PUT',body:JSON.stringify(eventData)});if(res.ok)saved=true;}catch(e){}
   try{if(firebaseDB){await firebaseDB.ref('events/'+cleanId).set(eventData);saved=true;}}catch(e){}
@@ -404,7 +405,7 @@ async function loadCompetitorEvent(){
   if(!data){try{const backup=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');data=backup[eventId];}catch{}}
   if(!data){try{const last=JSON.parse(localStorage.getItem('last_event_'+eventId)||'null');data=last;}catch{}}
   if(!data){document.getElementById('cloudLoadStatus').innerText='❌ Event Not Found! ID:'+eventId+' - Secure - No Breaking - No Misuse! - Nabidinam Special - Check Link! V9.17.2 - All Checked! Secure!';return;}
-  currentEventId='event_'+eventId;questions=data.questions||[];totalMinutes=data.minute||10;eventQuestionCount=data.count||20;showCorrectWrong=data.showCorrect!==false;randomMode=data.randomMode!==false;eventPhoneLock=data.phoneLock!==false;eventDeviceLock=data.deviceLock!==false;currentCertBase64=data.certificate||'';certPos=data.certPos||{x:'50',y:'60',s:'24'};
+  currentEventId='event_'+eventId;questions=data.questions||[];totalMinutes=data.minute||10;eventQuestionCount=data.count||20;showCorrectWrong=data.showCorrect!==false;randomMode=data.randomMode!==false;eventPhoneLock=data.phoneLock!==false;eventDeviceLock=data.deviceLock!==false;currentCertBase64=data.certificate||'';currentCertBgBase64=data.certBg||'';currentCertLogo1Base64=data.certLogo1||'';currentCertLogo2Base64=data.certLogo2||'';currentCertSignBase64=data.certSign||'';certMode=data.certMode||1;certPos=data.certPos||{x:'50',y:'60',s:'24'};if(data.certColor&&document.getElementById('certColor'))document.getElementById('certColor').value=data.certColor;
   document.getElementById('compTitle').innerText=data.title||'🌙 Noor Al Madrasa - Nabidinam Special Secure';
   document.getElementById('compEventNameBelow').innerText=data.title||'Noor Al Madrasa - Nabidinam Special Secure';
   document.getElementById('compPlaceShow').innerText=data.place||'';
@@ -416,7 +417,7 @@ async function loadCompetitorEvent(){
   document.getElementById('cloudLoadStatus').innerText=`✅ Loaded! Secure! No Misuse! - All Checked! - Nabidinam Special Secure! ${data.title} - Logo:${data.logo?'✅ Secure!':'❌'} Banner:${data.banner?'✅ Secure!':'❌'} Place:${data.place} Cert:${data.certificate?'✅ Secure!':'❌'} - Banner Clean Title Below - Secure! No Breaking! Nothing Removed! V9.17.2 - Full Checked! - Ready for Nabidinam Secure!`;
   if(data.logo){const img=document.getElementById('compLogoImg');img.src=data.logo;img.classList.remove('hidden');document.getElementById('compLogoText').classList.add('hidden');}
   if(data.banner){const img=document.getElementById('compBannerImg');img.src=data.banner;img.classList.remove('hidden');document.getElementById('compBannerDefault').classList.add('hidden');}
-  if(data.certificate) localStorage.setItem('certFullImage',data.certificate);
+  if(data.certificate) localStorage.setItem('certFullImage',data.certificate); if(data.certBg)localStorage.setItem('cert_bg',data.certBg); if(data.certLogo1)localStorage.setItem('cert_logo1',data.certLogo1); if(data.certLogo2)localStorage.setItem('cert_logo2',data.certLogo2); if(data.certSign)localStorage.setItem('cert_sign',data.certSign);
   if(data.certPos) localStorage.setItem('certPos_v13',JSON.stringify(data.certPos));
   localStorage.setItem('questions_v13',JSON.stringify(questions));
 }
@@ -436,7 +437,42 @@ function startQuiz(){
 function showQ(){if(currentQ>=questions.length){finishQuiz();return;}const qq=questions[currentQ];document.getElementById('qCount').innerText=`Q ${currentQ+1}/${questions.length} ${randomMode?'🔀 Random Secure!':''}`;document.getElementById('progressBar').style.width=(currentQ/questions.length*100)+'%';document.getElementById('qText').innerText=qq.q;const od=document.getElementById('options');od.innerHTML='';const fb=document.getElementById('quizFeedback');fb.classList.add('hidden');qq.opts.forEach((o,i)=>{const b=document.createElement('button');b.id=`opt-${i}`;b.className='w-full text-left px-4 py-4 border-2 rounded-xl text-sm bg-white hover:bg-green-50 transition-all font-medium shadow-sm';b.innerText=`${String.fromCharCode(65+i)}. ${o}`;b.onclick=()=>{Array.from(od.children).forEach(x=>x.disabled=true);const ok=i===qq.ans;if(ok){b.style.background='#16a34a';b.style.color='white';b.style.borderColor='#16a34a';b.innerText=`✅ ${String.fromCharCode(65+i)}. ${o} - ശരി! - Secure!`;score++;fb.innerText='✅ Excellent! ശരി! - Show Correct Green - Secure! - No Misuse! - Nabidinam Special V9.17.2 Secure';fb.className='text-center font-black mt-4 text-sm p-4 rounded-xl bg-green-100 text-green-700 border-2 border-green-500';}else{b.style.background='#dc2626';b.style.color='white';b.style.borderColor='#dc2626';b.innerText=`❌ ${String.fromCharCode(65+i)}. ${o} - തെറ്റ്! - Secure!`;if(showCorrectWrong){const cb=document.getElementById(`opt-${qq.ans}`);if(cb){cb.style.background='#16a34a';cb.style.color='white';cb.style.borderColor='#16a34a';cb.style.borderWidth='3px';cb.innerText=`✅ ${String.fromCharCode(65+qq.ans)}. ${qq.opts[qq.ans]} - ശരി! - Show Correct Green - Secure! - No Misuse! - Nabidinam Special V9.17.2 Secure`;}}fb.innerText=`❌ തെറ്റ്! ശരി: ${String.fromCharCode(65+qq.ans)}. ${qq.opts[qq.ans]} - Show Correct Green - Secure! - No Misuse! - Nabidinam Special V9.17.2 Secure`;fb.className='text-center font-black mt-4 text-sm p-4 rounded-xl bg-red-100 text-red-700 border-2 border-red-400';}fb.classList.remove('hidden');setTimeout(()=>{currentQ++;showQ();},2200);};od.appendChild(b);});}
 function startTimer(){let t=totalMinutes*60;const el=document.getElementById('timer'),upd=()=>el.innerText=Math.floor(t/60)+':'+String(t%60).padStart(2,'0');upd();clearInterval(timerInt);timerInt=setInterval(()=>{t--;upd();if(t<=0){clearInterval(timerInt);finishQuiz();}},1000);}
 function finishQuiz(){clearInterval(timerInt);const tt=Math.floor((Date.now()-startTime)/1000),m=Math.floor(tt/60),s=tt%60,r={name:window._quizData.name,phone:window._quizData.phone,place:window._quizData.place,score,total:questions.length,time:tt,timeStr:`${m}:${String(s).padStart(2,'0')}`,timestamp:Date.now()};let rs=JSON.parse(localStorage.getItem('results_v13')||'[]');rs.push(r);localStorage.setItem('results_v13',JSON.stringify(rs));const eid=new URLSearchParams(window.location.search).get('event')||currentEventId;if(eventPhoneLock){let up=JSON.parse(localStorage.getItem('usedPhones')||'[]');const k=window._quizData.phone+'_'+eid;if(!up.includes(k))up.push(k);localStorage.setItem('usedPhones',JSON.stringify(up));} if(eventDeviceLock){let ud=JSON.parse(localStorage.getItem('usedDevices')||'[]');if(!ud.includes(eid))ud.push(eid);localStorage.setItem('usedDevices',JSON.stringify(ud));}document.getElementById('quizCard').classList.add('hidden');document.getElementById('resultCard').classList.remove('hidden');document.getElementById('finalScore').innerText=`${score}/${questions.length}`;document.getElementById('finalTime').innerText=`Time: ${m}:${String(s).padStart(2,'0')} ⏱️ - Secure - No Misuse! - Nabidinam Special V9.17.2 Secure`;loadResults();if(firebaseDB){const ee=new URLSearchParams(window.location.search).get('event');if(ee)firebaseDB.ref('results/'+ee).push(r)}setTimeout(()=>generateCertificate(),500);}
-function generateCertificate(){const c=document.getElementById('certCanvas');if(!c)return;const ctx=c.getContext('2d'),imgData=currentCertBase64||localStorage.getItem('certFullImage'),name=window._quizData?.name||'Sample - Nabidinam Secure';c.width=1000;c.height=700;if(imgData){const im=new Image();im.onload=()=>{ctx.drawImage(im,0,0,c.width,c.height);const x=c.width*parseInt(certPos.x)/100,y=c.height*parseInt(certPos.y)/100;ctx.font=`bold ${parseInt(certPos.s)*2}px sans-serif`;ctx.fillStyle=document.getElementById('certColor')?.value||'#14532d';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(name,x,y);document.getElementById('certDownloadArea').classList.remove('hidden');document.getElementById('certDownloadLink').href=c.toDataURL('image/png')};im.src=imgData}else{ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle='#14532d';ctx.font='bold 36px sans-serif';ctx.textAlign='center';ctx.fillText('Certificate - Secure - No Misuse! - Nabidinam Special V9.17.2 Secure',c.width/2,100);ctx.font=`bold ${parseInt(certPos.s)*2}px sans-serif`;ctx.fillStyle=document.getElementById('certColor')?.value||'#14532d';ctx.fillText(name,c.width*parseInt(certPos.x)/100,c.height*parseInt(certPos.y)/100);document.getElementById('certDownloadArea').classList.remove('hidden');document.getElementById('certDownloadLink').href=c.toDataURL('image/png')}}
+function generateCertificate(){
+  const c=document.getElementById('certCanvas');if(!c)return;
+  const ctx=c.getContext('2d');
+  const name=window._quizData?.name||'Sample - Nabidinam Secure';
+  const color=document.getElementById('certColor')?.value||'#14532d';
+  const pos={x:parseInt(certPos.x)||50,y:parseInt(certPos.y)||60,s:parseInt(certPos.s)||24};
+  c.width=1000;c.height=700;
+  const imgData=currentCertBase64||localStorage.getItem('certFullImage');
+  const bgData=currentCertBgBase64||localStorage.getItem('cert_bg')||'';
+  const logo1Data=currentCertLogo1Base64||localStorage.getItem('cert_logo1')||'';
+  const logo2Data=currentCertLogo2Base64||localStorage.getItem('cert_logo2')||'';
+  const signData=currentCertSignBase64||localStorage.getItem('cert_sign')||'';
+  const title=document.getElementById('certTitle')?.value||'Certificate of Appreciation - Nabidinam Special Secure';
+  const sub=document.getElementById('certSub')?.value||'Noor Al Madrasa - Meelad Quiz 2K26 - Nabidinam Secure';
+  const sub2=document.getElementById('certSub2')?.value||'For Excellent Participation - Nabidinam Special Secure';
+  const finish=()=>{document.getElementById('certDownloadArea').classList.remove('hidden');document.getElementById('certDownloadLink').href=c.toDataURL('image/png');};
+  const load=src=>new Promise(resolve=>{if(!src)return resolve(null);const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>resolve(null);im.src=src;});
+  if(imgData){
+    load(imgData).then(im=>{if(im)ctx.drawImage(im,0,0,c.width,c.height);else{ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);}ctx.font=`bold ${pos.s*2}px sans-serif`;ctx.fillStyle=color;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(name,c.width*pos.x/100,c.height*pos.y/100);finish();});
+    return;
+  }
+  Promise.all([load(bgData),load(logo1Data),load(logo2Data),load(signData)]).then(([bg,l1,l2,sign])=>{
+    ctx.fillStyle='#fffdf5';ctx.fillRect(0,0,c.width,c.height);
+    if(bg)ctx.drawImage(bg,0,0,c.width,c.height);
+    ctx.strokeStyle='#14532d';ctx.lineWidth=8;ctx.strokeRect(18,18,c.width-36,c.height-36);
+    if(l1)ctx.drawImage(l1,45,35,120,120);
+    if(l2)ctx.drawImage(l2,c.width-165,35,120,120);
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=color;
+    ctx.font='bold 34px sans-serif';ctx.fillText(title,c.width/2,115);
+    ctx.font='22px sans-serif';ctx.fillText(sub,c.width/2,165);
+    ctx.font=`bold ${pos.s*2}px sans-serif`;ctx.fillStyle=color;ctx.fillText(name,c.width*pos.x/100,c.height*pos.y/100);
+    ctx.font='20px sans-serif';ctx.fillText(sub2,c.width/2,560);
+    if(sign)ctx.drawImage(sign,c.width-260,575,180,80);
+    finish();
+  });
+}
 function downloadCertificate(){generateCertificate();setTimeout(()=>{document.getElementById('certDownloadArea').classList.remove('hidden');document.getElementById('certDownloadArea').scrollIntoView({behavior:'smooth'})},300);}
 function loadResults(){const l=document.getElementById('resultsList');if(!l)return;let r=JSON.parse(localStorage.getItem('results_v13')||'[]');if(!r.length){l.innerHTML='<p class="text-center py-6 text-gray-500">No Results Yet - Secure - No Misuse! - Nabidinam Special V9.17.2 Secure - Ready for Program Secure!</p>';return;}r.sort((a,b)=>{if(b.score!==a.score)return b.score-a.score;return a.time-b.time});l.innerHTML='';r.forEach((x,i)=>{const med=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}.`;l.innerHTML+=`<div class="flex justify-between py-2.5 border-b text-xs hover:bg-yellow-50 px-2 rounded"><span>${med} ${x.name} - ${x.score}/${x.total} - Secure!</span><span class="font-bold">${x.timeStr} - Secure!</span></div>`})}
 function downloadResults(){let r=JSON.parse(localStorage.getItem('results_v13')||'[]');if(!r.length){alert('No Results - Secure - No Misuse! - Nabidinam Special V9.17.2 Secure');return;}let csv='Rank,Name,Phone,Place,Score,Total,Time,Secure,No Misuse,Nabidinam Special,V9.17.2 Secure\n';r.forEach((x,i)=>csv+=`${i+1},${x.name},${x.phone},${x.place||''},${x.score},${x.total},${x.timeStr}\n`);const b=new Blob([csv],{type:'text/csv'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='Results_Nabidinam_Special_Secure_V9.17.2_No_Misuse.csv';a.click();}
@@ -444,6 +480,7 @@ function clearAllResults(){if(!confirm('Delete All Results? Secure! No Misuse! N
 window.addEventListener('load',()=>{
   init();
   loadCompetitorEvent();
+  currentCertBgBase64=localStorage.getItem('cert_bg')||'';currentCertLogo1Base64=localStorage.getItem('cert_logo1')||'';currentCertLogo2Base64=localStorage.getItem('cert_logo2')||'';currentCertSignBase64=localStorage.getItem('cert_sign')||'';
   const sc=localStorage.getItem('certFullImage');
   if(sc){currentCertBase64=sc;const i=document.getElementById('certPreviewImg');if(i){i.src=sc;i.classList.remove('hidden');document.getElementById('certPreviewPlaceholder').classList.add('hidden');}}
   const sp=JSON.parse(localStorage.getItem('certPos_v13')||'{"x":"50","y":"60","s":"24"}');
@@ -457,28 +494,64 @@ window.addEventListener('load',()=>{
 
 <script>
 const MASTER_ADMIN_EMAIL = "master@noorquiz.app";
-const MASTER_ADMIN_PASSWORD = "NoorMaster2026!";
 let masterLoggedIn = false;
+let masterGoogleUser = null;
 
 function openMasterAdmin(){
+  const qs=new URLSearchParams(location.search);
+  if(qs.get('master')!=='1') {
+    location.href=location.pathname+'?master=1';
+    return;
+  }
   document.getElementById('masterOverlay').style.display='flex';
   document.getElementById('masterLoginBox').style.display=masterLoggedIn?'none':'block';
   document.getElementById('masterPanel').style.display=masterLoggedIn?'block':'none';
   if(masterLoggedIn) loadOrganizers();
 }
+
 function closeMaster(){document.getElementById('masterOverlay').style.display='none';}
-function masterLogin(){
-  const e=document.getElementById('masterEmail').value.trim();
-  const p=document.getElementById('masterPassword').value;
-  if(e===MASTER_ADMIN_EMAIL && p===MASTER_ADMIN_PASSWORD){
+
+async function masterLogin(){
+  const msg=document.getElementById('masterGoogleMsg');
+  if(msg)msg.textContent='';
+  if(typeof firebase==='undefined'||!firebase.auth){
+    if(msg)msg.textContent='Google Sign-In service load ആയിട്ടില്ല. Internet check ചെയ്യുക.';
+    return;
+  }
+  try{
+    const provider=new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({prompt:'select_account'});
+    const result=await firebase.auth().signInWithPopup(provider);
+    const user=result.user;
+    const email=(user.email||'').trim().toLowerCase();
+    if(email!==MASTER_ADMIN_EMAIL.toLowerCase()){
+      await firebase.auth().signOut();
+      masterLoggedIn=false;
+      masterGoogleUser=null;
+      if(msg)msg.textContent='❌ ഈ Google account Master Admin account അല്ല.';
+      return;
+    }
     masterLoggedIn=true;
+    masterGoogleUser=user;
     document.getElementById('masterLoginBox').style.display='none';
     document.getElementById('masterPanel').style.display='block';
-    document.getElementById('masterStatus').innerText='✅ Master Admin logged in';
+    document.getElementById('masterStatus').innerText='✅ Google Sign-In success — Master Admin: '+email;
     loadOrganizers();
-  } else alert('Master Admin login failed.');
+  }catch(e){
+    console.error('Master Google Sign-In:',e);
+    if(msg)msg.textContent='❌ Google Sign-In failed: '+(e.message||'Try again.');
+  }
 }
-function masterLogout(){masterLoggedIn=false;document.getElementById('masterLoginBox').style.display='block';document.getElementById('masterPanel').style.display='none';}
+
+async function masterLogout(){
+  try{if(typeof firebase!=='undefined'&&firebase.auth)await firebase.auth().signOut();}catch(e){}
+  masterLoggedIn=false;
+  masterGoogleUser=null;
+  document.getElementById('masterLoginBox').style.display='block';
+  document.getElementById('masterPanel').style.display='none';
+  document.getElementById('masterStatus').innerText='Google Sign-In required. Master access only.';
+}
+
 async function masterDb(path, method='GET', body=null){
   const opts={method,headers:{'Content-Type':'application/json'}};
   if(body!==null) opts.body=JSON.stringify(body);
@@ -486,6 +559,7 @@ async function masterDb(path, method='GET', body=null){
   if(!r.ok) throw new Error('Firebase request failed');
   return r.json();
 }
+
 async function createOrganizer(){
   if(!masterLoggedIn)return;
   const name=document.getElementById('orgName').value.trim();
@@ -499,6 +573,7 @@ async function createOrganizer(){
   document.getElementById('orgCode').value='';
   loadOrganizers();
 }
+
 async function loadOrganizers(){
   const box=document.getElementById('organizerList');
   try{
@@ -507,30 +582,21 @@ async function loadOrganizers(){
     if(!items.length){box.innerHTML='<div style="padding:10px;color:#6b7280">No organizers yet.</div>';return;}
     box.innerHTML=items.map(([id,o])=>`
       <div class="master-item">
-        <div><b>${escapeHtml(o.name||'')}</b><br><small>${escapeHtml(o.email||'')}<br>Code: ${escapeHtml(o.activationCode||'')} · ${o.active?'Active':'Disabled'}</small></div>
+        <div><b>${escapeHtml(o.name||'')}</b><br><small>${escapeHtml(o.email||'')}<br>Code: ${escapeHtml(o.activationCode||'')} · ${o.active?'Active':'Disabled'}<br>Admin Link: ${escapeHtml(location.origin+location.pathname+'?organizer='+id)}</small></div>
         <button class="master-btn ${o.active?'master-danger':'master-primary'}" onclick="toggleOrganizer('${id}',${!!o.active})">${o.active?'Disable':'Enable'}</button>
       </div>`).join('');
   }catch(e){box.innerHTML='<div style="color:#b91c1c">Could not load organizers.</div>';}
 }
+
 async function toggleOrganizer(id,active){
   if(!masterLoggedIn)return;
   await masterDb('masterAdmin/organizers/'+id+'/active','PUT',!active);
   loadOrganizers();
 }
+
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
 
-// Make the Master Admin entry available from the existing admin area.
 window.openMasterAdmin=openMasterAdmin;
-window.addEventListener('load',()=>{
-  const adminView=document.getElementById('adminView');
-  if(adminView){
-    const b=document.createElement('button');
-    b.className='bg-purple-700 text-white py-3 px-4 rounded-xl font-black mt-3';
-    b.textContent='👑 MASTER ADMIN';
-    b.onclick=openMasterAdmin;
-    adminView.prepend(b);
-  }
-});
 </script>
 
 <script>
@@ -634,41 +700,31 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.se
   const qs=new URLSearchParams(location.search);
   const eventMode=!!qs.get('event');
   const organizerId=qs.get('organizer');
-  const rootMode=!eventMode&&!organizerId;
+  const masterMode=qs.get('master')==='1';
+  const adminMode=qs.get('admin')==='1';
+  const rootMode=!eventMode&&!organizerId&&!masterMode&&!adminMode;
   const $=id=>document.getElementById(id);
-  const hide=(el)=>{if(el)el.style.display='none';};
-  const show=(el)=>{if(el)el.style.display='';};
+  const hide=el=>{if(el)el.style.display='none';};
 
   function setModeClass(){
     document.documentElement.classList.toggle('nq-public-mode',eventMode);
     document.documentElement.classList.toggle('nq-organizer-mode',!!organizerId);
+    document.documentElement.classList.toggle('nq-master-mode',masterMode);
+    document.documentElement.classList.toggle('nq-admin-mode',adminMode);
   }
 
-  // Persistent master/admin sessions: logout is the only normal way to clear them.
-  const MASTER_KEY='nq_master_session_v173';
-  const ADMIN_KEY='nq_admin_session_v173';
+  const ADMIN_KEY='nq_admin_session_v174';
   const orgKey=id=>'nq_org_session_'+id;
-  try{ if(localStorage.getItem(MASTER_KEY)==='1') masterLoggedIn=true; }catch(e){}
 
-  const oldMasterLogin=window.masterLogin;
-  window.masterLogin=function(){
-    if(typeof oldMasterLogin==='function') oldMasterLogin();
-    setTimeout(()=>{
-      if(masterLoggedIn){try{localStorage.setItem(MASTER_KEY,'1')}catch(e){}}
-    },0);
-  };
-  const oldMasterLogout=window.masterLogout;
-  window.masterLogout=function(){
-    try{localStorage.removeItem(MASTER_KEY)}catch(e){}
-    if(typeof oldMasterLogout==='function') oldMasterLogout();
-    masterLoggedIn=false;
-  };
+  // Admin session is never restored onto public, organizer, or master pages.
   const oldLoginAdmin=window.loginAdmin;
   window.loginAdmin=function(){
     if(typeof oldLoginAdmin==='function') oldLoginAdmin();
     setTimeout(()=>{
       const av=$('adminView');
-      if(av && !av.classList.contains('hidden')){try{localStorage.setItem(ADMIN_KEY,'1')}catch(e){}}
+      if(av && !av.classList.contains('hidden') && (rootMode||adminMode||!!organizerId)){
+        try{localStorage.setItem(ADMIN_KEY,'1')}catch(e){}
+      }
     },50);
   };
   const oldLogoutAdmin=window.logoutAdmin;
@@ -677,49 +733,67 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.se
     if(typeof oldLogoutAdmin==='function') oldLogoutAdmin();
   };
 
-  // Certificate name color picker persists with the current event and updates preview live.
-  function wireCertColor(){
-    const c=$('certColor'), n=$('certNameOnImage');
-    if(!c)return;
-    const apply=()=>{if(n)n.style.color=c.value;try{localStorage.setItem('certColor_v173',c.value)}catch(e){}};
-    try{const saved=localStorage.getItem('certColor_v173');if(saved)c.value=saved}catch(e){}
-    c.addEventListener('input',apply); apply();
-    ['certX','certY','certS'].forEach(id=>$(id)?.addEventListener('input',()=>setTimeout(apply,0)));
-  }
-
-  // Public event links: quiz only. No Admin/Master controls.
+  // Public event links: competitor quiz only. Hide both login triggers and admin/master UI.
   function enforcePublic(){
     if(!eventMode)return;
     hide($('adminLoginBox'));
+    const adminTrigger=$('adminLoginBox')?.previousElementSibling;
+    hide(adminTrigger);
     hide($('nqMasterEntry'));
-    hide(document.querySelector('[data-nq-master-entry]'));
-    hide(document.querySelector('.nq-root-admin-entry'));
-    // Existing injected Master Admin button inside adminView must never appear on event URLs.
-    document.querySelectorAll('button').forEach(b=>{if(/MASTER ADMIN/i.test(b.textContent||'')) hide(b)});
+    document.querySelectorAll('button').forEach(b=>{
+      if(/MASTER ADMIN|ADMIN LOGIN/i.test(b.textContent||'')) hide(b);
+    });
+    $('adminView')?.classList.add('hidden');
+    $('competitorView')?.classList.remove('hidden');
   }
 
-  // Organizer access page: install app + email/code login; no Master login.
+  // Organizer links: only organizer/admin access. Never show Master Admin.
   function organizerOverlay(){
     if(!organizerId)return;
+    hide($('nqMasterEntry'));
+    document.querySelectorAll('button').forEach(b=>{
+      if(/MASTER ADMIN/i.test(b.textContent||'')) hide(b);
+    });
+    $('adminView')?.classList.add('hidden');
+    $('competitorView')?.classList.remove('hidden');
+
     const savedOrg=(()=>{try{return localStorage.getItem(orgKey(organizerId))==='1'}catch(e){return false}})();
     if(savedOrg){
-      $('competitorView')?.classList.add('hidden'); $('adminView')?.classList.remove('hidden');
+      $('competitorView')?.classList.add('hidden');
+      $('adminView')?.classList.remove('hidden');
       try{localStorage.setItem(ADMIN_KEY,'1')}catch(e){}
-      if(typeof loadPastEvents==='function')loadPastEvents(); if(typeof loadResults==='function')loadResults();
+      if(typeof loadPastEvents==='function')loadPastEvents();
+      if(typeof loadResults==='function')loadResults();
       return;
     }
     if($('nqOrganizerOverlay'))return;
+
     const wrap=document.createElement('div');
     wrap.id='nqOrganizerOverlay';
-    wrap.innerHTML=`<div id="nqOrganizerCard"><h2 style="margin:0;color:#14532d">🏢 Organizer Access</h2><p style="font-size:13px;color:#6b7280">Install Noor Quiz and enter the organizer email + activation code.</p><button id="nqOrganizerInstall">⬇️ Install Noor Quiz App</button><input id="nqOrgEmail" type="email" placeholder="Organizer Email"><input id="nqOrgCode" type="text" placeholder="Activation Code"><button id="nqOrgLogin" style="background:#14532d;color:#fff">🔐 Open Admin Panel</button><button id="nqOrgClose" style="background:#e5e7eb;color:#111">Close</button><p id="nqOrgMsg" style="font-size:12px;font-weight:800;color:#b91c1c"></p></div>`;
+    wrap.innerHTML=`<div id="nqOrganizerCard">
+      <h2 style="margin:0;color:#14532d">🔐 Admin Login</h2>
+      <p style="font-size:13px;color:#6b7280">Organizer account access. Master Admin is not available on this link.</p>
+      <button id="nqOrganizerInstall" style="background:#14532d;color:#fff">⬇️ Install Noor Quiz App</button>
+      <input id="nqOrgEmail" type="email" placeholder="Admin / Organizer Email">
+      <input id="nqOrgCode" type="text" placeholder="Activation Code">
+      <button id="nqOrgLogin" style="background:#14532d;color:#fff">🔐 Admin Login</button>
+      <button id="nqOrgClose" style="background:#e5e7eb;color:#111">Close</button>
+      <p id="nqOrgMsg" style="font-size:12px;font-weight:800;color:#b91c1c"></p>
+    </div>`;
     document.body.appendChild(wrap);
     wrap.style.display='flex';
+
     let deferred=null;
     window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;});
-    $('nqOrganizerInstall').onclick=async()=>{if(deferred){deferred.prompt();await deferred.userChoice;deferred=null;}else alert('ഈ ബ്രൗസറിൽ Install option ലഭ്യമല്ലെങ്കിൽ Chrome menu → Add to Home screen ഉപയോഗിക്കാം.');};
+    $('nqOrganizerInstall').onclick=async()=>{
+      if(deferred){deferred.prompt();await deferred.userChoice;deferred=null;}
+      else alert('ഈ ബ്രൗസറിൽ Install option ലഭ്യമല്ലെങ്കിൽ Chrome menu → Add to Home screen ഉപയോഗിക്കാം.');
+    };
     $('nqOrgClose').onclick=()=>{wrap.style.display='none';};
     $('nqOrgLogin').onclick=async()=>{
-      const email=$('nqOrgEmail').value.trim().toLowerCase(), code=$('nqOrgCode').value.trim(), msg=$('nqOrgMsg');
+      const email=$('nqOrgEmail').value.trim().toLowerCase();
+      const code=$('nqOrgCode').value.trim();
+      const msg=$('nqOrgMsg');
       if(!email||!code){msg.textContent='Email + Activation Code രണ്ടും വേണം.';return;}
       try{
         const r=await fetch((typeof REST_URL!=='undefined'?REST_URL:'')+'/masterAdmin/organizers/'+encodeURIComponent(organizerId)+'.json');
@@ -727,53 +801,75 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.se
         if(o&&o.active!==false&&String(o.email||'').trim().toLowerCase()===email&&String(o.activationCode||'').trim()===code){
           localStorage.setItem(orgKey(organizerId),'1');
           wrap.style.display='none';
-          $('competitorView')?.classList.add('hidden'); $('adminView')?.classList.remove('hidden');
+          $('competitorView')?.classList.add('hidden');
+          $('adminView')?.classList.remove('hidden');
           try{localStorage.setItem(ADMIN_KEY,'1')}catch(e){}
-          if(typeof loadPastEvents==='function')loadPastEvents(); if(typeof loadResults==='function')loadResults();
+          if(typeof loadPastEvents==='function')loadPastEvents();
+          if(typeof loadResults==='function')loadResults();
         }else msg.textContent='Email / Activation Code തെറ്റാണ്.';
       }catch(e){msg.textContent='Organizer account പരിശോധിക്കാൻ കഴിഞ്ഞില്ല.';}
     };
   }
 
-  // Master button is available only on the main app, never on event/organizer links.
-  function addRootMasterEntry(){
-    if(!rootMode||$('nqMasterEntry'))return;
-    const host=$('competitorView'); if(!host)return;
-    const d=document.createElement('div'); d.id='nqMasterEntry'; d.className='nq-root-admin-entry'; d.innerHTML='<button type="button">👑 MASTER ADMIN LOGIN</button>';
-    d.querySelector('button').onclick=()=>window.openMasterAdmin&&window.openMasterAdmin();
-    host.insertBefore(d,host.firstChild);
+  // Dedicated Master Admin page: Google Sign-In only. No admin password login.
+  function masterPage(){
+    if(!masterMode)return;
+    hide($('adminLoginBox'));
+    const adminTrigger=$('adminLoginBox')?.previousElementSibling;
+    hide(adminTrigger);
+    $('adminView')?.classList.add('hidden');
+    $('competitorView')?.classList.add('hidden');
+    if(typeof openMasterAdmin==='function')openMasterAdmin();
   }
 
-  // Restore admin view only on the main app, not on event links.
+  // Dedicated Admin page: Admin login only. No Master button.
+  function adminPage(){
+    if(!adminMode)return;
+    hide($('nqMasterEntry'));
+    $('competitorView')?.classList.remove('hidden');
+    $('adminView')?.classList.add('hidden');
+    const adminTrigger=$('adminLoginBox')?.previousElementSibling;
+    if(adminTrigger)adminTrigger.style.display='';
+    if($('adminLoginBox'))$('adminLoginBox').classList.remove('hidden');
+  }
+
+  // Root page intentionally has no Master Admin button.
+  function rootPage(){
+    if(!rootMode)return;
+    hide($('nqMasterEntry'));
+    document.querySelectorAll('button').forEach(b=>{
+      if(/MASTER ADMIN/i.test(b.textContent||''))hide(b);
+    });
+  }
+
   function restoreSessions(){
-    if(eventMode||organizerId)return;
-    try{
-      if(localStorage.getItem(ADMIN_KEY)==='1'){
-        $('competitorView')?.classList.add('hidden'); $('adminView')?.classList.remove('hidden');
-        if(typeof renderQuestions==='function')renderQuestions(); if(typeof loadPastEvents==='function')loadPastEvents(); if(typeof loadResults==='function')loadResults();
-      }
-      if(localStorage.getItem(MASTER_KEY)==='1') masterLoggedIn=true;
-    }catch(e){}
+    if(eventMode||organizerId||masterMode||adminMode)return;
+    // Root keeps the public competitor page. Admin is entered only through the Admin Login control.
+    try{localStorage.removeItem('nq_master_session_v173');}catch(e){}
   }
 
-  function patchCertSave(){
-    const c=$('certColor'); if(!c)return;
-    // Keep color in localStorage even if older save code does not know this field.
-    c.addEventListener('change',()=>{try{localStorage.setItem('certColor_v173',c.value)}catch(e){}});
+  function wireCertColor(){
+    const c=$('certColor'),n=$('certNameOnImage');
+    if(!c)return;
+    const apply=()=>{
+      if(n)n.style.color=c.value;
+      try{localStorage.setItem('certColor_v174',c.value)}catch(e){}
+    };
+    try{const saved=localStorage.getItem('certColor_v174');if(saved)c.value=saved}catch(e){}
+    c.addEventListener('input',apply);
+    c.addEventListener('change',apply);
+    apply();
   }
 
   window.addEventListener('load',()=>{
     setModeClass();
     enforcePublic();
-    addRootMasterEntry();
-    wireCertColor(); patchCertSave();
-    if(organizerId) organizerOverlay();
+    organizerOverlay();
+    masterPage();
+    adminPage();
+    rootPage();
+    wireCertColor();
     restoreSessions();
-    if(eventMode){
-      // A public event must remain the quiz screen even if this device previously used admin/master.
-      $('adminView')?.classList.add('hidden');
-      $('competitorView')?.classList.remove('hidden');
-    }
   });
 })();
 </script>
