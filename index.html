@@ -154,6 +154,8 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
 </div>
 </div>
 <div id="adminView" class="hidden p-2 pb-24">
+<button id="masterControlBtn" class="bg-purple-700 text-white py-3 px-4 rounded-xl font-black mt-3 w-full" style="display:none" onclick="openMasterAdmin()">👑 MASTER CONTROL</button>
+
 <div class="max-w-[650px] mx-auto">
 <div class="flex justify-between items-center bg-white p-4 rounded-xl border-2 mb-4 shadow-sm"><h2 class="font-black text-[11px]">Admin V9.17.3 FINAL - Nabidinam Special - Password Protected - No Misuse - 100% - Secure</h2><button onclick="logoutAdmin()" class="bg-red-50 text-red-600 border-2 px-5 py-2 rounded-full text-xs font-bold">Logout - Secure</button></div>
 <div class="section-border border-[3px] border-blue-600 bg-blue-50/40">
@@ -232,7 +234,7 @@ function loginAdmin(){
   const isValid=input===saved;
   if(isValid){
     document.getElementById('competitorView').classList.add('hidden');
-    document.getElementById('adminView').classList.remove('hidden');
+    document.getElementById('adminView').classList.remove('hidden'); addMasterControlButton();
     err.classList.add('hidden');
     console.log('✅ Secure Admin Login Success - V9.17.2 - Nabidinam Special - No Misuse!');
     try{renderQuestions();}catch(e){console.log('renderQuestions Error Ignored Secure:',e);}
@@ -245,24 +247,14 @@ function loginAdmin(){
   }
 }
 function addMasterControlButton(){
-  // MASTER-ONLY: show this extra control only after successful Master Google Sign-In.
-  if(!masterLoggedIn){ removeMasterControlButton(); return; }
-  document.documentElement.classList.add('nq-master-mode');
-  const admin=document.getElementById('adminView'); if(!admin)return;
-  removeMasterControlButton();
-  document.documentElement.classList.add('nq-master-mode');
-  const b=document.createElement('button');
-  b.id='masterControlBtn';
-  b.dataset.masterOnly='1';
-  b.className='bg-purple-700 text-white py-3 px-4 rounded-xl font-black mt-3 mb-3 w-full shadow-lg';
-  b.type='button';
-  b.textContent='👑 MASTER CONTROL';
-  b.onclick=()=>{ if(masterLoggedIn) openMasterAdmin(); };
-  const host=admin.querySelector('div.max-w-\[650px\]') || admin.firstElementChild || admin;
-  host.prepend(b);
+  const b=document.getElementById('masterControlBtn');
+  if(b) b.style.display = masterLoggedIn ? 'block' : 'none';
 }
-function removeMasterControlButton(){document.getElementById('masterControlBtn')?.remove();}
-function logoutAdmin(){
+function removeMasterControlButton(){
+  const b=document.getElementById('masterControlBtn');
+  if(b) b.style.display='none';
+}
+function logoutAdmin(){ removeMasterControlButton();
   document.getElementById('adminView').classList.add('hidden');
   document.getElementById('competitorView').classList.remove('hidden');
   if(masterLoggedIn){
