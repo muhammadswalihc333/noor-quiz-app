@@ -1,9 +1,15 @@
 {
-  "name": "Noor Quiz V9.17.3 FINAL",
+  "name": "Noor AI Madrasa - Meelad Quiz 2K26",
   "short_name": "Noor Quiz",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#fdf8e8",
   "theme_color": "#14532d",
-  "description": "Noor Quiz organizer and quiz web app"
+  "description": "Noor AI Madrasa Meelad Quiz organizer and quiz app",
+  "icons": [
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ]
 }
