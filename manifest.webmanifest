@@ -1,0 +1,9 @@
+{
+  "name": "Noor Quiz V9.17.3 FINAL",
+  "short_name": "Noor Quiz",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#fdf8e8",
+  "theme_color": "#14532d",
+  "description": "Noor Quiz organizer and quiz web app"
+}
