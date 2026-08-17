@@ -51,7 +51,7 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
 .nq-organizer-mode #nqMasterEntry{display:none!important}
 .nq-organizer-mode #adminLoginBox{display:none!important}
 #certColor{width:58px;height:38px;padding:2px;border:2px solid #14532d;border-radius:9px;background:#fff}
-.nq-public-mode #competitorView > div.mt-10.text-center > button{display:none!important}.nq-master-mode #competitorView,.nq-master-mode #adminView{display:none!important}.nq-admin-mode #nqMasterEntry{display:none!important}
+.nq-public-mode #competitorView > div.mt-10.text-center > button{display:none!important}.nq-master-mode #competitorView{display:none!important}.nq-admin-mode #nqMasterEntry{display:none!important}
 </style>
 
 </head>
@@ -102,7 +102,7 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
         <input id="orgName" placeholder="Organizer name">
         <input id="orgEmail" type="email" placeholder="Organizer email">
       </div>
-      <input id="orgCode" placeholder="Activation code">
+      <input id="orgCode" placeholder="Activation code" readonly><div id="orgLinkBox" style="display:none;margin:8px 0;padding:10px;background:#f0fdf4;border:1px solid #86efac;border-radius:10px;font-size:12px;word-break:break-word"></div>
       <div class="master-row">
         <button class="master-btn master-primary" onclick="createOrganizer()">Create / Activate</button>
         <button class="master-btn master-muted" onclick="masterLogout()">Logout</button>
@@ -243,7 +243,27 @@ function loginAdmin(){
     console.log('❌ Secure Block - Wrong Password - No Misuse - V9.17.2');
   }
 }
-function logoutAdmin(){document.getElementById('adminView').classList.add('hidden');document.getElementById('competitorView').classList.remove('hidden');}
+function addMasterControlButton(){
+  const admin=document.getElementById('adminView'); if(!admin)return;
+  removeMasterControlButton();
+  const b=document.createElement('button'); b.id='masterControlBtn';
+  b.className='bg-purple-700 text-white py-3 px-4 rounded-xl font-black mt-3 w-full';
+  b.textContent='👑 MASTER CONTROL';
+  b.onclick=openMasterAdmin;
+  admin.querySelector('.max-w-\[650px\]')?.prepend(b);
+}
+function removeMasterControlButton(){document.getElementById('masterControlBtn')?.remove();}
+function logoutAdmin(){
+  document.getElementById('adminView').classList.add('hidden');
+  document.getElementById('competitorView').classList.remove('hidden');
+  if(masterLoggedIn){
+    try{if(typeof firebase!=='undefined'&&firebase.auth)firebase.auth().signOut();}catch(e){}
+    masterLoggedIn=false; masterGoogleUser=null;
+    document.getElementById('masterOverlay').style.display='none';
+  }
+  removeMasterControlButton();
+}
+
 function handleCategoryChange(v){document.getElementById('customCategoryBox').classList.toggle('hidden',v!=='Other');}
 function switchCert(t){certMode=t;document.getElementById('certOpt1').classList.toggle('hidden',t!==1);document.getElementById('certOpt2').classList.toggle('hidden',t!==2);document.getElementById('opt1Btn').className=t===1?'bg-[#14532d] text-white px-5 py-2.5 rounded-xl text-[11px] font-bold shadow':'bg-gray-200 px-5 py-2.5 rounded-xl text-[11px] font-bold';document.getElementById('opt2Btn').className=t===2?'bg-[#14532d] text-white px-5 py-2.5 rounded-xl text-[11px] font-bold shadow':'bg-gray-200 px-5 py-2.5 rounded-xl text-[11px] font-bold';}
 function compressImage(file,maxW,q,cb){const r=new FileReader();r.onload=e=>{const i=new Image();i.onload=()=>{const c=document.createElement('canvas');let w=i.width,h=i.height;if(w>maxW){h=h*(maxW/w);w=maxW}c.width=w;c.height=h;c.getContext('2d').drawImage(i,0,0,w,h);cb(c.toDataURL('image/jpeg',q))};i.src=e.target.result};r.readAsDataURL(file)}
@@ -536,6 +556,13 @@ async function masterLogin(){
     document.getElementById('masterLoginBox').style.display='none';
     document.getElementById('masterPanel').style.display='block';
     document.getElementById('masterStatus').innerText='✅ Google Sign-In success — Master Admin: '+email;
+    document.getElementById('competitorView')?.classList.add('hidden');
+    document.getElementById('adminView')?.classList.remove('hidden');
+    if(typeof addMasterControlButton==='function') addMasterControlButton();
+    try{ if(typeof renderQuestions==='function') renderQuestions(); }catch(e){}
+    try{ if(typeof loadPastEvents==='function') loadPastEvents(); }catch(e){}
+    try{ if(typeof loadResults==='function') loadResults(); }catch(e){}
+    document.getElementById('masterOverlay').style.display='none';
     loadOrganizers();
   }catch(e){
     console.error('Master Google Sign-In:',e);
@@ -560,19 +587,30 @@ async function masterDb(path, method='GET', body=null){
   return r.json();
 }
 
+function generateActivationCode(){
+  return 'NQ-' + Math.random().toString(36).slice(2,6).toUpperCase() + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
+}
+
 async function createOrganizer(){
   if(!masterLoggedIn)return;
   const name=document.getElementById('orgName').value.trim();
-  const email=document.getElementById('orgEmail').value.trim();
-  const code=document.getElementById('orgCode').value.trim();
-  if(!name||!email||!code){alert('Name, email and activation code are required.');return;}
+  const email=document.getElementById('orgEmail').value.trim().toLowerCase();
+  if(!name||!email){alert('Organizer name and Gmail are required.');return;}
+  const code=generateActivationCode();
   const id='org_'+Date.now();
-  await masterDb('masterAdmin/organizers/'+id,'PUT',{name,email,activationCode:code,active:true,created:Date.now()});
-  document.getElementById('orgName').value='';
-  document.getElementById('orgEmail').value='';
-  document.getElementById('orgCode').value='';
-  loadOrganizers();
+  try{
+    await masterDb('masterAdmin/organizers/'+id,'PUT',{name,email,activationCode:code,active:true,activated:false,created:Date.now()});
+    const link=window.location.origin+window.location.pathname+'?organizer='+encodeURIComponent(id);
+    const codeEl=document.getElementById('orgCode'); if(codeEl)codeEl.value=code;
+    const lb=document.getElementById('orgLinkBox');
+    if(lb){lb.style.display='block';lb.innerHTML='<b>Organizer Link:</b><br>'+escapeHtml(link)+'<br><br><b>Gmail:</b> '+escapeHtml(email)+'<br><b>Activation Code:</b> '+escapeHtml(code)+'<br><button class="master-btn master-primary" style="margin-top:8px;width:100%" onclick="navigator.clipboard.writeText('+JSON.stringify(link)+')">📋 Copy Organizer Link</button>';}
+    document.getElementById('orgName').value='';
+    document.getElementById('orgEmail').value='';
+    loadOrganizers();
+    alert('✅ Organizer created. Give them the Organizer Link + Gmail + Activation Code.');
+  }catch(e){alert('Could not create organizer. '+(e.message||''));}
 }
+
 
 async function loadOrganizers(){
   const box=document.getElementById('organizerList');
@@ -597,6 +635,27 @@ async function toggleOrganizer(id,active){
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
 
 window.openMasterAdmin=openMasterAdmin;
+
+// Restore Master Google session after refresh without exposing Master controls on public links.
+window.addEventListener('load',()=>{
+  if(new URLSearchParams(location.search).get('master')!=='1') return;
+  if(typeof firebase==='undefined'||!firebase.auth) return;
+  firebase.auth().onAuthStateChanged(user=>{
+    if(!user) return;
+    const email=(user.email||'').trim().toLowerCase();
+    if(email!==MASTER_ADMIN_EMAIL.toLowerCase()) return;
+    masterLoggedIn=true; masterGoogleUser=user;
+    document.getElementById('masterLoginBox').style.display='none';
+    document.getElementById('masterPanel').style.display='block';
+    document.getElementById('masterOverlay').style.display='none';
+    document.getElementById('competitorView')?.classList.add('hidden');
+    document.getElementById('adminView')?.classList.remove('hidden');
+    addMasterControlButton();
+    try{if(typeof renderQuestions==='function')renderQuestions();}catch(e){}
+    try{if(typeof loadPastEvents==='function')loadPastEvents();}catch(e){}
+    try{if(typeof loadResults==='function')loadResults();}catch(e){}
+  });
+});
 </script>
 
 <script>
@@ -817,8 +876,8 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.se
     hide($('adminLoginBox'));
     const adminTrigger=$('adminLoginBox')?.previousElementSibling;
     hide(adminTrigger);
-    $('adminView')?.classList.add('hidden');
     $('competitorView')?.classList.add('hidden');
+    $('adminView')?.classList.remove('hidden');
     if(typeof openMasterAdmin==='function')openMasterAdmin();
   }
 
