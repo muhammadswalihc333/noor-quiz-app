@@ -51,6 +51,7 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
 .nq-organizer-mode #nqMasterEntry{display:none!important}
 .nq-organizer-mode #adminLoginBox{display:none!important}
 #certColor{width:58px;height:38px;padding:2px;border:2px solid #14532d;border-radius:9px;background:#fff}
+#masterControlBtn{display:none!important}.nq-master-mode #masterControlBtn{display:block!important}
 .nq-public-mode #competitorView > div.mt-10.text-center > button{display:none!important}.nq-master-mode #competitorView{display:none!important}.nq-admin-mode #nqMasterEntry{display:none!important}
 </style>
 
@@ -102,7 +103,7 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
         <input id="orgName" placeholder="Organizer name">
         <input id="orgEmail" type="email" placeholder="Organizer email">
       </div>
-      <input id="orgCode" placeholder="Activation code" readonly><div id="orgLinkBox" style="display:none;margin:8px 0;padding:10px;background:#f0fdf4;border:1px solid #86efac;border-radius:10px;font-size:12px;word-break:break-word"></div>
+      <div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center"><input id="orgCode" placeholder="Activation code (blank = auto generate)"><button type="button" class="master-btn master-muted" onclick="document.getElementById('orgCode').value=generateActivationCode()">🔄 Generate</button></div><div id="orgLinkBox" style="display:none;margin:8px 0;padding:10px;background:#f0fdf4;border:1px solid #86efac;border-radius:10px;font-size:12px;word-break:break-word"></div>
       <div class="master-row">
         <button class="master-btn master-primary" onclick="createOrganizer()">Create / Activate</button>
         <button class="master-btn master-muted" onclick="masterLogout()">Logout</button>
@@ -244,13 +245,19 @@ function loginAdmin(){
   }
 }
 function addMasterControlButton(){
+  // This button is MASTER-ONLY. Never create it from normal Admin login.
+  if(!masterLoggedIn) return;
   const admin=document.getElementById('adminView'); if(!admin)return;
   removeMasterControlButton();
-  const b=document.createElement('button'); b.id='masterControlBtn';
-  b.className='bg-purple-700 text-white py-3 px-4 rounded-xl font-black mt-3 w-full';
+  const b=document.createElement('button');
+  b.id='masterControlBtn';
+  b.dataset.masterOnly='1';
+  b.className='bg-purple-700 text-white py-3 px-4 rounded-xl font-black mt-3 mb-3 w-full shadow-lg';
+  b.type='button';
   b.textContent='👑 MASTER CONTROL';
-  b.onclick=openMasterAdmin;
-  admin.querySelector('.max-w-\[650px\]')?.prepend(b);
+  b.onclick=()=>{ if(masterLoggedIn) openMasterAdmin(); };
+  const host=admin.querySelector('div.max-w-\[650px\]') || admin.firstElementChild || admin;
+  host.prepend(b);
 }
 function removeMasterControlButton(){document.getElementById('masterControlBtn')?.remove();}
 function logoutAdmin(){
@@ -376,6 +383,8 @@ function editCurrentEvent(){if(!currentEventId||currentEventId==='event_'){alert
 function createNewLink(){currentEventId='event_'+Date.now();createOrUpdateLink(true);}
 function saveCloudSameLink(){let eid=document.getElementById('eventIdShow').value.trim()||currentEventId||'';if(eid){eid=eid.replace(/event_/g,'');currentEventId='event_'+eid;}if(!currentEventId||currentEventId==='event_')currentEventId='event_'+Date.now();createOrUpdateLink(false);}
 async function createOrUpdateLink(isNew){
+  const saveBtn=document.getElementById('saveCloudBtn');
+  if(saveBtn) saveBtn.innerText='⏳ SAVING SAME LINK...';
   let minute=parseInt(document.getElementById('setMinute').value)||10;
   if(document.getElementById('setMinute').value==='custom'){const c=document.getElementById('setMinuteCustom').value;if(c) minute=parseInt(c)||10;}
   const title=document.getElementById('eventName').value.trim()||'Noor Quiz - Nabidinam Special Secure';
@@ -406,10 +415,10 @@ async function createOrUpdateLink(isNew){
   if(saved){
     document.getElementById('cloudStatus').innerText=isNew?`✅ SUCCESS! Secure! No Breaking! No Misuse! All Checked! Logo:${currentLogoBase64?'✅ Secure!':'❌'} Banner:${currentBannerBase64?'✅ Secure!':'❌'} Cert:${currentCertBase64?'✅ Secure!':'❌'} Event:${title} Place:${place} Count:${count} Random:${random?'ON Secure!':'OFF Secure!'} ID:${cleanId} - Event Board-ൽ വരും! Secure! No Breaking! Nothing Removed! Nabidinam Special V9.17.2 Secure - Full Checked!`:`✅ SAME LINK UPDATED! Secure! No Breaking! No Misuse! All Checked! Logo:${currentLogoBase64?'✅ Secure!':'❌'} Banner:${currentBannerBase64?'✅ Secure!':'❌'} Cert:${currentCertBase64?'✅ Secure!':'❌'} Event:${title} Place:${place} - Friends Refresh! Secure! No Breaking! Nothing Removed! Nabidinam Special V9.17.2 Secure - Full Checked!`;
     document.getElementById('createLinkBtn').innerText='💚 CREATE NEW LINK - Secure - Nabidinam Special - No Breaking - No Misuse - 100% Working! - V9.17.2 Secure';
-    document.getElementById('saveCloudBtn').innerText='💾 SAVE CLOUD SAME LINK - Secure - No Breaking - No Misuse! - All Keep! - Nothing Removed! - Nabidinam Special V9.17.2 Secure';
+    document.getElementById('saveCloudBtn').innerText='✅ SAVED / UPDATED SAME LINK - വീണ്ടും Save ചെയ്യാം';
     if(navigator.clipboard) navigator.clipboard.writeText(link).catch(()=>{});
     loadPastEvents();renderQuestions();
-  }else{document.getElementById('cloudStatus').innerText='❌ All 3 Layers Failed! Secure! No Breaking! No Misuse! But Link Ready Locally! Rules Check! Nabidinam Special V9.17.2 Secure - Full Checked!';}
+  }else{if(document.getElementById('saveCloudBtn'))document.getElementById('saveCloudBtn').innerText='💾 SAVE CLOUD SAME LINK - വീണ്ടും ശ്രമിക്കുക';document.getElementById('cloudStatus').innerText='❌ All 3 Layers Failed! Secure! No Breaking! No Misuse! But Link Ready Locally! Rules Check! Nabidinam Special V9.17.2 Secure - Full Checked!';}
 }
 function copyLink(){if(!lastGeneratedLink){const l=localStorage.getItem('lastGeneratedLink_v14');if(l)lastGeneratedLink=l;else{alert('Create Link First! Secure! No Misuse! Nabidinam Special');return;}}navigator.clipboard.writeText(lastGeneratedLink).then(()=>alert('✅ Link Copied - Secure - No Misuse! - Nabidinam Special V9.17.2 - 100% Working Secure! - Full Checked!\n\n'+lastGeneratedLink+'\n\nBanner Clean - Logo, Event, Place താഴെ വൃത്തിയായി - Secure! No Breaking! Nothing Removed! - Nabidinam Special Secure!'));}
 function shareWhatsApp(){if(!lastGeneratedLink){const l=localStorage.getItem('lastGeneratedLink_v14');if(l)lastGeneratedLink=l;else return;}window.open('https://wa.me/?text='+encodeURIComponent('🌙 Noor Quiz V9.17.2 - Secure - Nabidinam Special - No Breaking - No Misuse! - Full Checked! - Banner Clean Title Below - Nothing Removed - Nabidinam Special Secure:\n\n'+lastGeneratedLink),'_blank');}
@@ -596,18 +605,19 @@ async function createOrganizer(){
   const name=document.getElementById('orgName').value.trim();
   const email=document.getElementById('orgEmail').value.trim().toLowerCase();
   if(!name||!email){alert('Organizer name and Gmail are required.');return;}
-  const code=generateActivationCode();
+  const code=(document.getElementById('orgCode').value.trim()||generateActivationCode()).toUpperCase();
   const id='org_'+Date.now();
   try{
     await masterDb('masterAdmin/organizers/'+id,'PUT',{name,email,activationCode:code,active:true,activated:false,created:Date.now()});
     const link=window.location.origin+window.location.pathname+'?organizer='+encodeURIComponent(id);
     const codeEl=document.getElementById('orgCode'); if(codeEl)codeEl.value=code;
     const lb=document.getElementById('orgLinkBox');
-    if(lb){lb.style.display='block';lb.innerHTML='<b>Organizer Link:</b><br>'+escapeHtml(link)+'<br><br><b>Gmail:</b> '+escapeHtml(email)+'<br><b>Activation Code:</b> '+escapeHtml(code)+'<br><button class="master-btn master-primary" style="margin-top:8px;width:100%" onclick="navigator.clipboard.writeText('+JSON.stringify(link)+')">📋 Copy Organizer Link</button>';}
+    if(lb){lb.style.display='block';lb.innerHTML='<b>📱 Organizer App / Admin Login Link:</b><br>'+escapeHtml(link)+'<br><br><b>Gmail:</b> '+escapeHtml(email)+'<br><b>Activation Code:</b> '+escapeHtml(code)+'<br><button class="master-btn master-primary" style="margin-top:8px;width:100%" onclick="navigator.clipboard.writeText('+JSON.stringify(link)+')">📋 Copy Organizer Link</button>';}
     document.getElementById('orgName').value='';
     document.getElementById('orgEmail').value='';
+    document.getElementById('orgCode').value='';
     loadOrganizers();
-    alert('✅ Organizer created. Give them the Organizer Link + Gmail + Activation Code.');
+    alert('✅ Organizer created. Give them the Organizer App/Admin Link + Gmail + Activation Code. The link opens their organizer-only app page; from Chrome they can use Install / Add to Home screen.');
   }catch(e){alert('Could not create organizer. '+(e.message||''));}
 }
 
