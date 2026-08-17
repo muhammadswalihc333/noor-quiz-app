@@ -1,13 +1,24 @@
 {
-  "name":"Noor Quiz",
-  "short_name":"Noor Quiz",
-  "start_url":"./",
-  "display":"standalone",
-  "background_color":"#ffffff",
-  "theme_color":"#14532d",
-  "icons":[
-    {"src":"icon.png","sizes":"512x512","type":"image/png"},
-    {"src":"icon-192.png","sizes":"192x192","type":"image/png"},
-    {"src":"icon-512.png","sizes":"512x512","type":"image/png"}
+  "name": "Noor Quiz",
+  "short_name": "Noor Quiz",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fdf8e8",
+  "theme_color": "#14532d",
+  "description": "Noor Quiz - Nabidinam Special",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }
