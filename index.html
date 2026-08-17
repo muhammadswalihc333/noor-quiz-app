@@ -12,11 +12,11 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
 .section-border{border:2.5px solid #14532d;border-radius:14px;background:white;padding:12px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
 .green-header{background:#14532d;color:white;text-align:center;font-weight:900;font-size:11px;padding:8px;border-radius:8px;margin-bottom:12px}
 .banner-bg{background:radial-gradient(ellipse at top,#166534 0%,#052e16 75%,#000 100%)}
-.comp-banner-clean{position:relative;width:100%;height:280px;overflow:hidden;background:#052e16}
+.comp-banner-clean{position:relative;width:100%;height:280px;overflow:visible;background:#052e16;margin-bottom:0}
 .comp-banner-clean img{width:100%;height:100%;object-fit:cover}
 .comp-banner-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05) 0%,rgba(0,0,0,0.8) 100%)}
-.comp-logo-clean{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);width:90px;height:90px;background:white;border-radius:22px;border:4px solid white;box-shadow:0 12px 28px rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;overflow:hidden;font-weight:900;font-size:32px;color:#14532d;z-index:20}
-.comp-title-clean{position:absolute;top:35%;left:50%;transform:translate(-50%,-50%);text-align:center;width:92%;z-index:10}
+.comp-logo-clean{position:absolute;left:50%;bottom:-45px;transform:translateX(-50%);width:90px;height:90px;background:white;border-radius:22px;border:4px solid white;box-shadow:0 12px 28px rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;overflow:hidden;font-weight:900;font-size:32px;color:#14532d;z-index:20}
+.comp-title-clean{position:absolute;bottom:10px;left:12px;transform:none;text-align:left;width:calc(100% - 140px);z-index:12}.comp-title-clean h1{font-size:14px!important;line-height:1.25!important;margin:0}.comp-title-clean p{display:none!important}
 .cert-preview{position:relative;width:100%;height:220px;border:2px dashed #9ca3af;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden}
 </style>
 
@@ -37,9 +37,14 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
 .v4-qbox{border:1px solid #d1d5db;border-radius:12px;padding:10px;margin:8px 0}.v4-qbox textarea,.v4-qbox input{width:100%;padding:8px;border:1px solid #d1d5db;border-radius:8px;margin:4px 0}
 .v4-hidden{display:none}
 @media(max-width:600px){.v4-grid{grid-template-columns:1fr}}
+.competitor-clean-hide{display:none!important}
 </style>
 
 <style id="nq-final-css">
+#compEventNameBelow,#compDetailsBelow,#cloudLoadStatus,#eventNameDisplay,#eventCountDisplay,#eventRandomDisplay{display:none!important}
+#competitorView > .bg-white.border-b-4{padding-top:62px!important;padding-bottom:18px!important}
+#compPlaceShow{font-size:15px!important;color:#374151!important;margin-top:0!important;font-weight:700!important}
+
 #nqMasterEntry{margin:0 auto 14px;max-width:650px;text-align:center;padding:10px 12px;background:#f5f3ff;border-bottom:2px solid #7e22ce}
 #nqMasterEntry button,#nqOrganizerInstall{background:#14532d;color:#fff;border:0;border-radius:12px;padding:12px 18px;font-weight:900}
 #nqOrganizerOverlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:10001;display:none;align-items:center;justify-content:center;padding:18px}
@@ -137,7 +142,7 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
 </div>
 <div class="max-w-[500px] mx-auto px-4 pt-6">
 <div id="registrationBox" class="bg-white rounded-[22px] border-2 border-green-900/20 p-6 shadow-lg">
-<h2 class="font-bold text-center text-green-900 text-[20px]">രജിസ്ട്രേഷൻ - നബിദിന ക്വിസ് - Secure</h2>
+<h2 class="font-bold text-center text-green-900 text-[20px]">രജിസ്ട്രേഷൻ</h2>
 <p id="eventNameDisplay" class="text-xs text-center text-gray-500 mt-1"></p>
 <p id="eventCountDisplay" class="text-[11px] text-center text-blue-600 font-bold mt-1"></p>
 <p id="eventRandomDisplay" class="text-[10px] text-center text-orange-600 font-bold mt-1"></p>
@@ -145,12 +150,12 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
 <input id="nameInput" placeholder="പൂർണ്ണ നാമം *" class="w-full mb-3 px-4 py-4 rounded-xl border-2 border-green-100 outline-none text-[15px]">
 <input id="phoneInput" type="tel" placeholder="ഫോൺ *" class="w-full mb-3 px-4 py-4 rounded-xl border-2 border-green-100 outline-none text-[15px]">
 <input id="placeInput" placeholder="സ്ഥലം / മദ്രസ" class="w-full mb-6 px-4 py-4 rounded-xl border-2 border-gray-200 outline-none text-[15px]">
-<button onclick="startQuiz()" class="w-full bg-green-600 text-white font-black py-4 rounded-xl text-[17px] shadow-lg">🚀 START QUIZ - Nabidinam Special - Secure</button>
+<button onclick="startQuiz()" class="w-full bg-green-600 text-white font-black py-4 rounded-xl text-[17px] shadow-lg">🚀 ക്വിസ് ആരംഭിക്കുക</button>
 <p id="errorMsg" class="hidden text-red-600 text-sm text-center mt-3 font-bold"></p>
 </div>
 <div id="quizCard" class="hidden bg-white rounded-[20px] p-5 border-2 mt-4 shadow-lg"><div class="flex justify-between items-center"><span id="qCount" class="font-bold text-sm bg-gray-100 px-3 py-1.5 rounded-full">Q 1</span><span id="timer" class="bg-yellow-400 px-4 py-1.5 rounded-full font-black">10:00</span></div><div class="w-full bg-gray-200 rounded-full h-2.5 mt-4"><div id="progressBar" class="bg-green-600 h-2.5 rounded-full" style="width:0%"></div></div><h3 id="qText" class="font-bold my-6 text-[17px]"></h3><div id="options" class="space-y-3"></div><p id="quizFeedback" class="hidden text-center font-black mt-4 text-sm p-4 rounded-xl"></p></div>
 <div id="resultCard" class="hidden bg-white rounded-[22px] border-2 p-6 shadow-xl mt-4 text-center"><h2 id="finalScore" class="text-5xl font-black mt-2 text-green-700">0/0</h2><p id="finalTime" class="mt-2 text-sm font-bold"></p><div class="grid grid-cols-2 gap-3 mt-6"><button onclick="location.reload()" class="bg-green-600 text-white py-3.5 rounded-xl font-black text-sm">🏠 Home</button><button onclick="downloadCertificate()" class="bg-blue-600 text-white py-3.5 rounded-xl font-black text-sm">📜 Certificate - Secure</button></div><div id="certDownloadArea" class="hidden mt-5"><canvas id="certCanvas" class="w-full border-2 rounded-xl"></canvas><a id="certDownloadLink" download="Certificate_Nabidinam_Secure.png" class="mt-3 block bg-yellow-400 text-black py-3 rounded-xl font-bold text-sm">⬇️ Download PNG - Nabidinam Secure</a></div></div>
-<div class="mt-10 text-center pb-12"><button onclick="document.getElementById('adminLoginBox').classList.toggle('hidden')" class="text-[11px] text-gray-400 border-2 px-6 py-2.5 rounded-full">Admin Login - Secure - Nabidinam Special - V9.17.2</button><div id="adminLoginBox" class="hidden mt-4 bg-white p-5 rounded-xl border-2 shadow-xl text-left"><input id="adminPass" type="password" placeholder="Admin Password" class="w-full border-2 rounded-xl px-3 py-3 mb-3 text-sm"><button onclick="loginAdmin()" class="w-full bg-slate-800 text-white py-3 rounded-xl font-bold">Login - Secure - No Misuse - V9.17.2</button><p id="loginError" class="hidden text-red-600 text-xs mt-3 font-bold"></p><p class="text-[10px] text-gray-500 mt-2">Admin password login is for Admin only. Master Admin uses Google Sign-In.</p></div></div>
+<div class="mt-10 text-center pb-12"><button onclick="document.getElementById('adminLoginBox').classList.toggle('hidden')" class="text-[11px] text-gray-400 border-2 px-6 py-2.5 rounded-full">Admin Login</button><div id="adminLoginBox" class="hidden mt-4 bg-white p-5 rounded-xl border-2 shadow-xl text-left"><input id="adminPass" type="password" placeholder="Admin Password" class="w-full border-2 rounded-xl px-3 py-3 mb-3 text-sm"><button onclick="loginAdmin()" class="w-full bg-slate-800 text-white py-3 rounded-xl font-bold">Login</button><p id="loginError" class="hidden text-red-600 text-xs mt-3 font-bold"></p><p class="text-[10px] text-gray-500 mt-2">Admin Login</p></div></div>
 </div>
 </div>
 <div id="adminView" class="hidden p-2 pb-24">
@@ -420,7 +425,7 @@ function shareWhatsApp(){if(!lastGeneratedLink){const l=localStorage.getItem('la
 async function loadCompetitorEvent(){
   const params=new URLSearchParams(window.location.search);
   const eventId=params.get('event');
-  if(!eventId){document.getElementById('cloudLoadStatus').innerText='ℹ️ No Event ID - Default View - Secure - No Breaking - No Misuse! - Nabidinam Special - Admin-ൽ Create Link! - All Checked! Secure!';document.getElementById('compEventNameBelow').innerText='Noor Al Madrasa - Nabidinam Special - Secure';document.getElementById('compPlaceShow').innerText='Meelad Quiz 2K26 - Nabidinam Special - Secure - No Misuse!';document.getElementById('compDetailsBelow').innerText='Create Link in Admin - Secure - No Breaking - No Misuse! - All Checked! - Nabidinam Special V9.17.2 Secure';return;}
+  if(!eventId){document.getElementById('cloudLoadStatus').innerText='ℹ️ No Event ID - Default View - Secure - No Breaking - No Misuse! - Nabidinam Special - Admin-ൽ Create Link! - All Checked! Secure!';document.getElementById('compEventNameBelow').innerText='';document.getElementById('compPlaceShow').innerText='';document.getElementById('compDetailsBelow').innerText='';return;}
   document.getElementById('cloudLoadStatus').innerText='☁️ Loading Event: '+eventId+' - Secure - No Breaking - No Misuse! - All Checked! - REST + SDK + Local - V9.17.2 Secure - Nabidinam Special - Logo Banner Event Place Loading - Nothing Removed...';
   let data=null;
   try{const res=await fetch(`${REST_URL}/events/${eventId}.json`);if(res.ok)data=await res.json();}catch(e){}
