@@ -205,7 +205,7 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
 <p id="cloudStatus" class="text-[12px] mt-3 font-black text-center bg-yellow-50 py-3 rounded-xl border-2"></p>
 </div>
 <div class="section-border"><div class="green-header">4 - Questions Bulk - Secure - Count Fixed - Random Mode - All Checked - No Breaking - No Misuse! - Nabidinam Special V9.17.2</div><textarea id="qBulk" rows="5" placeholder="Q | a,b,c,d | ans - Secure - No Misuse! - Ex: നബി ജന്മദേശം? | മക്ക,മദീന,ത്വാഇഫ്,യമൻ | 0" class="w-full border-2 rounded-xl p-4 text-xs"></textarea><button onclick="bulkAdd()" class="w-full mt-3 bg-[#8B5A00] text-white py-3.5 rounded-xl text-xs font-black shadow-lg">📚 Bulk Add - Secure - No Breaking! - No Misuse! - All Checked! - Random + Count Fixed! - Nabidinam Special</button><div class="mt-4"><div class="bg-[#14532d] text-white flex justify-between px-4 py-3 rounded-t-xl"><span class="text-xs font-black">Total: <span id="totalQCount">0</span> | Show: <span id="showQCount">0</span> | Secure - No Misuse! V9.17.2</span><span id="quota" class="bg-yellow-400 text-black px-3 py-1 rounded-full text-[11px] font-black">Quota: 0</span></div><div id="qList" class="bg-yellow-50/50 border-2 border-t-0 rounded-b-xl p-3 min-h-[80px] text-xs">No Questions - Secure - No Misuse! - Nabidinam Special</div></div></div>
-<div class="section-border border-orange-400"><div class="green-header bg-orange-600">5 - Results & Ranking - Secure - All Checked - No Breaking - No Misuse! - Nabidinam Special V9.17.2</div><div class="bg-orange-50 p-4 rounded-xl border-2 mb-4"><div class="grid grid-cols-3 gap-3"><button onclick="refreshResults()" class="bg-slate-800 text-white py-3 rounded-xl text-xs font-black">🔄 Refresh - Secure!</button><button onclick="downloadResults()" class="bg-green-600 text-white py-3 rounded-xl text-xs font-black">📥 CSV - Secure!</button><button onclick="clearAllResults()" class="bg-red-100 text-red-600 border-2 py-3 rounded-xl text-xs font-black">🗑️ Clear My Results</button></div></div><div id="resultsList" class="bg-white border-2 rounded-xl p-3 max-h-[250px] overflow-auto text-xs">No Results - Secure - No Misuse! - Nabidinam Special V9.17.2</div></div>
+<div class="section-border border-orange-400"><div class="green-header bg-orange-600">5 - Results & Ranking - Secure - All Checked - No Breaking - No Misuse! - Nabidinam Special V9.17.2</div><div class="bg-orange-50 p-4 rounded-xl border-2 mb-4"><div class="grid grid-cols-3 gap-3"><button id="refreshResultsBtn" onclick="refreshResults()" class="bg-slate-800 text-white py-3 rounded-xl text-xs font-black">🔄 Refresh - Secure!</button><button onclick="downloadResults()" class="bg-green-600 text-white py-3 rounded-xl text-xs font-black">📥 CSV - Secure!</button><button onclick="clearAllResults()" class="bg-red-100 text-red-600 border-2 py-3 rounded-xl text-xs font-black">🗑️ Clear My Results</button></div></div><div id="resultsList" class="bg-white border-2 rounded-xl p-3 max-h-[250px] overflow-auto text-xs">No Results - Secure - No Misuse! - Nabidinam Special V9.17.2</div></div>
 </div>
 </div>
 <script>
@@ -216,7 +216,25 @@ const LEGACY_ADMIN_EMAIL='';
 async function sha256Hex(v){const b=new TextEncoder().encode(String(v));const h=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join('');}
 function currentOrganizerId(){return new URLSearchParams(location.search).get('organizer')||'';}
 function currentRole(){const u=(typeof firebase!=='undefined'&&firebase.auth)?firebase.auth().currentUser:null;if(u&&u.email&&u.email.toLowerCase()===MASTER_ADMIN_EMAIL.toLowerCase())return 'master';if(currentOrganizerId()&&u&&u.email)return 'organizer';return 'admin';}
-async function ensureAnonymousAuth(){try{if(typeof firebase!=='undefined'&&firebase.auth&&!firebase.auth().currentUser)await firebase.auth().signInAnonymously();}catch(e){console.warn('Anonymous auth failed',e);}}
+async function ensureAnonymousAuth(){
+  if(typeof firebase==='undefined'||!firebase.auth) throw new Error('Firebase Auth unavailable');
+  try{
+    if(firebase.auth().currentUser) return firebase.auth().currentUser;
+    await firebase.auth().signInAnonymously();
+    return firebase.auth().currentUser;
+  }catch(e){
+    console.warn('Anonymous auth failed',e);
+    throw e;
+  }
+}
+async function ensureFirebaseReady(){
+  if(typeof firebase==='undefined'||!firebase.auth||!firebaseDB) throw new Error('Firebase unavailable');
+  try{ await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL); }catch(e){}
+  if(!firebase.auth().currentUser) await ensureAnonymousAuth();
+  const u=firebase.auth().currentUser;
+  if(!u) throw new Error('Firebase authentication not ready');
+  return u;
+}
 async function authRestUrl(path){const u=(typeof firebase!=='undefined'&&firebase.auth)?firebase.auth().currentUser:null;const token=u?await u.getIdToken():'';return `${REST_URL}/${path}.json${token?'?auth='+encodeURIComponent(token):''}`;}
 try{firebase.initializeApp(firebaseConfig);firebaseDB=firebase.database();setTimeout(()=>{const s=document.getElementById('firebaseStatus');if(s)s.innerText='✅ Firebase 8.10.1 + REST + Local - Secure - All Checked - No Breaking - No Misuse - Connected - V9.17.4 FINAL - NABIDINAM SPECIAL - 100% Working Secure!';const si=document.getElementById('storageInfo');if(si)si.innerText='✅ Secure - All Checked - No Breaking - No Misuse - 3 Layer - Event Board + Banner Logo + Login Secure + All Options Fixed - 100% Working Secure for Nabidinam! V9.17.2';},800);}catch(e){document.getElementById('firebaseStatus').innerText='⚠️ SDK Failed REST works - Secure - No Breaking - No Misuse: '+e.message}
 let currentEventId='',questions=[],totalMinutes=10,eventQuestionCount=20,randomMode=true,currentQ=0,score=0,timerInt=null,startTime=null,lastGeneratedLink='',currentLogoBase64='',currentBannerBase64='',currentCertBase64='',currentCertBgBase64='',currentCertLogo1Base64='',currentCertLogo2Base64='',currentCertSignBase64='',certMode=1,showCorrectWrong=true,certPos={x:'50',y:'60',s:'24'},eventPhoneLock=true,eventDeviceLock=true;
@@ -485,13 +503,19 @@ async function finishQuiz(){
   let cloudSaved=false;
   try{
     if(firebaseDB&&eid){
-      await ensureAnonymousAuth();
-      const u=firebase.auth().currentUser;
-      if(!u)throw new Error('Firebase authentication not ready');
-      const phoneHash=await sha256Hex(String(r.phone)+'|'+eid);
+      const u=await ensureFirebaseReady();
+      const normalizedPhone=String(r.phone||'').replace(/\D/g,'');
+      const phoneHash=await sha256Hex(normalizedPhone+'|'+eid);
       r.uid=u.uid;r.phoneHash=phoneHash;r.eventId=eid;
-      await firebaseDB.ref('results/'+eid+'/'+phoneHash).set(r);
-      cloudSaved=true;
+      try{
+        await firebaseDB.ref('results/'+eid+'/'+phoneHash).set(r);
+        cloudSaved=true;
+      }catch(sdkErr){
+        console.warn('SDK result save failed, trying REST',sdkErr);
+        const res=await fetch(await authRestUrl('results/'+encodeURIComponent(eid)+'/'+encodeURIComponent(phoneHash)),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(r)});
+        if(!res.ok)throw new Error('REST result save HTTP '+res.status);
+        cloudSaved=true;
+      }
     }
   }catch(e){console.warn('Cloud result save failed',e);}
   if(!cloudSaved){
@@ -551,14 +575,96 @@ function sortResults(r){return r.sort((a,b)=>{if(Number(b.score)!==Number(a.scor
 function renderResults(r){const l=document.getElementById('resultsList');if(!l)return;if(!r.length){l.innerHTML='<p class="text-center py-6 text-gray-500">No Results Yet</p>';return;}const seen=new Set(),clean=[];r.forEach(x=>{const sig=[x.eventId||'',x.phoneHash||x.phone||'',x.score??'',x.total??'',x.time??''].join('|');if(!seen.has(sig)){seen.add(sig);clean.push(x);}});sortResults(clean);l.innerHTML=clean.map((x,i)=>{const med=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}.`;const when=x.timestamp?new Date(x.timestamp).toLocaleString():'';return `<div class="flex flex-col gap-1 py-2.5 border-b hover:bg-yellow-50 px-2 rounded"><div class="flex justify-between gap-2"><span>${med} <b>${escapeHtml(x.name||'')}</b> - ${x.score}/${x.total}</span><span class="font-bold">${escapeHtml(x.timeStr||'')}</span></div><div class="text-gray-500">${escapeHtml(x.phone||'')} | ${escapeHtml(x.place||'')}${x.eventId?' | Event: '+escapeHtml(x.eventId):''}${when?' | '+escapeHtml(when):''}</div></div>`;}).join('');}
 async function getOwnedEventIds(ownerId){const out=[];if(!ownerId)return out;try{const snap=await firebaseDB.ref('events').once('value');const all=snap.val()||{};Object.entries(all).forEach(([id,e])=>{if(e&&String(e.ownerId||'').trim().toLowerCase()===String(ownerId||'').trim().toLowerCase())out.push(id);});}catch(e){console.warn('Owned event lookup failed',e);}return out;}
 async function resolveOrganizerId(){const fromUrl=currentOrganizerId();if(fromUrl)return fromUrl;try{const u=firebase.auth().currentUser;const email=(u&&u.email||'').trim().toLowerCase();if(!email)return '';const snap=await firebaseDB.ref('masterAdmin/organizers').once('value');const all=snap.val()||{};for(const [id,o] of Object.entries(all)){if(o&&String(o.email||'').trim().toLowerCase()===email&&o.active!==false)return id;}}catch(e){console.warn('Organizer identity lookup failed',e);}return '';}
-async function getResultEventIds(){const role=currentRole();if(role==='master')return Object.keys((await firebaseDB.ref('events').once('value')).val()||{});if(role==='organizer'){const owner=await resolveOrganizerId();if(owner){const ids=await getOwnedEventIds(owner);if(ids.length)return ids;}}const eid=new URLSearchParams(location.search).get('event')||currentEventId||localStorage.getItem('currentEventId_v17')||'';return eid?[eid]:[];}
-async function loadResults(){const l=document.getElementById('resultsList');if(!l)return;l.innerHTML='<p class="text-center py-6 text-gray-500">⏳ Loading Cloud Results…</p>';cloudResultsCache=[];try{if(!firebaseDB)throw new Error('Firebase unavailable');const eventIds=await getResultEventIds();for(const eventId of eventIds){try{const snap=await firebaseDB.ref('results/'+eventId).once('value');const group=snap.val()||{};Object.values(group).forEach(x=>{if(x&&typeof x==='object')cloudResultsCache.push({...x,eventId});});}catch(e){console.warn('Result event read failed',eventId,e);}}if(cloudResultsCache.length){renderResults(cloudResultsCache);return;}if(!eventIds.length&&currentRole()==='admin'){l.innerHTML='<p class="text-center py-6 text-gray-500">🔐 Login through the Organizer/Admin link to view Cloud Results.</p>';return;}renderResults([]);}catch(e){console.warn('Cloud results load failed',e);l.innerHTML='<p class="text-center py-6 text-red-600">⚠️ Cloud Results could not be loaded. Tap Refresh again.</p>';}}
-async function refreshResults(){const b=document.getElementById('refreshResultsBtn');if(b){b.disabled=true;b.innerText='⏳ Refreshing...';}try{await loadResults();}finally{if(b){b.disabled=false;b.innerText='🔄 Refresh Results';}}}
+function localKnownEventIds(){
+  const ids=new Set();
+  try{
+    const p=new URLSearchParams(location.search);
+    const a=[p.get('event'),currentEventId,localStorage.getItem('currentEventId_v17'),localStorage.getItem('currentEventId_v16')];
+    a.forEach(x=>{if(x)ids.add(String(x).replace(/^event_/,'')||x);});
+    const backup=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');
+    Object.keys(backup||{}).forEach(x=>{if(x)ids.add(String(x).replace(/^event_/,'')||x);});
+  }catch(e){}
+  return [...ids].filter(Boolean);
+}
+async function getResultEventIds(){
+  const ids=new Set(localKnownEventIds());
+  const role=currentRole();
+  if(role==='organizer'){
+    const owner=await resolveOrganizerId();
+    if(owner){
+      try{(await getOwnedEventIds(owner)).forEach(x=>ids.add(x));}catch(e){console.warn('Organizer event lookup failed',e);}
+    }
+  }else if(role==='master'){
+    try{
+      const snap=await firebaseDB.ref('events').once('value');
+      Object.keys(snap.val()||{}).forEach(x=>ids.add(x));
+    }catch(e){console.warn('Master event lookup failed; using known event IDs',e);}
+  }
+  return [...ids];
+}
+async function readCloudResultGroup(eventId){
+  let lastErr=null;
+  try{
+    await ensureFirebaseReady();
+    const snap=await firebaseDB.ref('results/'+eventId).once('value');
+    return snap.val()||{};
+  }catch(e){lastErr=e;}
+  try{
+    const url=await authRestUrl('results/'+encodeURIComponent(eventId));
+    const res=await fetch(url,{cache:'no-store'});
+    if(res.ok) return (await res.json())||{};
+    lastErr=new Error('REST read HTTP '+res.status);
+  }catch(e){lastErr=e;}
+  throw lastErr||new Error('Result read failed');
+}
+async function loadResults(){
+  const l=document.getElementById('resultsList');if(!l)return;
+  l.innerHTML='<p class="text-center py-6 text-gray-500">⏳ Loading Cloud Results…</p>';
+  cloudResultsCache=[];
+  const eventIds=await getResultEventIds();
+  let successReads=0, failedReads=0;
+  for(const eventId of eventIds){
+    try{
+      const group=await readCloudResultGroup(eventId);
+      successReads++;
+      Object.values(group||{}).forEach(x=>{if(x&&typeof x==='object')cloudResultsCache.push({...x,eventId});});
+    }catch(e){failedReads++;console.warn('Result event read failed',eventId,e);}
+  }
+  if(cloudResultsCache.length){renderResults(cloudResultsCache);return;}
+  if(successReads>0){renderResults([]);return;}
+  const local=JSON.parse(localStorage.getItem('results_v13')||'[]');
+  const knownLocal=local.filter(x=>!eventIds.length||eventIds.includes(String(x.eventId||'').replace(/^event_/,''))||eventIds.includes(String(x.eventId||'')));
+  if(knownLocal.length){cloudResultsCache=knownLocal;renderResults(knownLocal);return;}
+  if(failedReads>0){l.innerHTML='<p class="text-center py-6 text-red-600">⚠️ Cloud Results could not be loaded. Firebase login/rules are blocking the read. Tap Refresh after login.</p>';return;}
+  if(!eventIds.length){l.innerHTML='<p class="text-center py-6 text-gray-500">No event selected yet. Open the Organizer/Admin event link, then tap Refresh.</p>';return;}
+  renderResults([]);
+}
+async function refreshResults(){
+  const b=document.getElementById('refreshResultsBtn');
+  if(b){b.disabled=true;b.innerText='⏳ Refreshing...';}
+  try{await ensureFirebaseReady();}catch(e){}
+  try{await loadResults();}finally{if(b){b.disabled=false;b.innerText='🔄 Refresh - Secure!';}}
+}
 
 function csvCell(v){const x=String(v??'');return '"'+x.replaceAll('\"','\"\"')+'"';}
 function downloadResults(){const r=cloudResultsCache.length?sortResults([...cloudResultsCache]):sortResults(JSON.parse(localStorage.getItem('results_v13')||'[]'));if(!r.length){alert('No Results Yet');return;}let csv='Rank,Name,Phone,Place,Score,Total,Time,Event ID,Submitted At\n';r.forEach((x,i)=>{csv+=`${i+1},${csvCell(x.name)},${csvCell(x.phone)},${csvCell(x.place||'')},${x.score},${x.total},${csvCell(x.timeStr||'')},${csvCell(x.eventId||'')},${csvCell(x.timestamp?new Date(x.timestamp).toLocaleString():'')}\n`;});const b=new Blob([csv],{type:'text/csv;charset=utf-8'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='Quiz_Results.csv';a.click();URL.revokeObjectURL(u);}
 async function clearResultsForOwner(ownerId,label='these results'){if(currentRole()!=='master'&&currentRole()!=='organizer'){alert('Cloud Result Clear is available only to an authenticated Organizer/Master.');return;}if(currentRole()==='organizer'){const allowedOwner=await resolveOrganizerId();if(!allowedOwner||String(ownerId).toLowerCase()!==String(allowedOwner).toLowerCase()){alert('This Organizer is not authorized for these results.');return;}}if(!confirm('Delete '+label+'? Only this owner\'s results will be deleted.'))return;const ids=await getOwnedEventIds(ownerId);if(!ids.length){alert('No events found for this account. No results were deleted.');return;}let failed=[];for(const id of ids){try{await firebaseDB.ref('results/'+id).remove();}catch(e){failed.push(id);}}if(failed.length){alert('Some results could not be cleared. Firebase Rules may need publishing.\n\nFailed events: '+failed.join(', '));}else{cloudResultsCache=cloudResultsCache.filter(x=>!ids.includes(x.eventId));renderResults(cloudResultsCache);alert('✅ Selected results cleared. Other Admin results were not touched.');}}
-async function clearAllResults(){const role=currentRole();if(role==='master')return clearResultsForOwner(MASTER_ADMIN_EMAIL.toLowerCase(),'Master-owned results');if(role==='organizer'){const owner=await resolveOrganizerId();return clearResultsForOwner(owner,'your Organizer results');}alert('Cloud Result Clear is available only through an Organizer/Admin link.');}
+async function clearAllResults(){
+  const role=currentRole();
+  if(role==='master')return clearResultsForOwner(MASTER_ADMIN_EMAIL.toLowerCase(),'Master-owned results');
+  if(role==='organizer'){const owner=await resolveOrganizerId();return clearResultsForOwner(owner,'your Organizer results');}
+  if(role==='admin'){
+    if(!confirm('Delete only the results for the current Admin event(s)? Other Organizer/Admin results will not be touched.'))return;
+    const ids=localKnownEventIds();
+    if(!ids.length){alert('No current event found. Open the event/admin link first.');return;}
+    let failed=[];
+    for(const id of ids){try{await ensureFirebaseReady();await firebaseDB.ref('results/'+id).remove();}catch(e){failed.push(id);}}
+    if(failed.length)alert('Some results could not be cleared. Check Firebase Rules and tap Refresh.');
+    else{cloudResultsCache=cloudResultsCache.filter(x=>!ids.includes(x.eventId));renderResults(cloudResultsCache);alert('✅ Current Admin event results cleared. Other Admin/Organizer results were not touched.');}
+    return;
+  }
+  alert('Cloud Result Clear requires an authenticated Admin/Organizer/Master session.');
+}
 
 window.addEventListener('load',()=>{
   init();
@@ -1001,9 +1107,27 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.se
   }
 
   function restoreSessions(){
-    if(eventMode||organizerId||masterMode||adminMode)return;
-    // Root keeps the public competitor page. Admin is entered only through the Admin Login control.
-    try{localStorage.removeItem('nq_master_session_v173');}catch(e){}
+    if(eventMode)return;
+    if(masterMode)return;
+    if(organizerId){
+      try{
+        if(localStorage.getItem(orgKey(organizerId))==='1'){
+          $('competitorView')?.classList.add('hidden');$('adminView')?.classList.remove('hidden');
+          if(typeof loadPastEvents==='function')loadPastEvents();
+          if(typeof loadResults==='function')loadResults();
+        }
+      }catch(e){}
+      return;
+    }
+    if(adminMode || (!eventMode&&!organizerId&&!masterMode)) {
+      try{
+        if(localStorage.getItem(ADMIN_KEY)==='1'){
+          $('competitorView')?.classList.add('hidden');$('adminView')?.classList.remove('hidden');
+          if(typeof loadPastEvents==='function')loadPastEvents();
+          if(typeof loadResults==='function')loadResults();
+        }
+      }catch(e){}
+    }
   }
 
   function wireCertColor(){
@@ -1023,6 +1147,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.se
     setModeClass();
     enforcePublic();
     organizerOverlay();
+    restoreSessions();
     masterPage();
     adminPage();
     rootPage();
