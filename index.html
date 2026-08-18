@@ -221,7 +221,8 @@ async function authRestUrl(path){const u=(typeof firebase!=='undefined'&&firebas
 try{firebase.initializeApp(firebaseConfig);firebaseDB=firebase.database();setTimeout(()=>{const s=document.getElementById('firebaseStatus');if(s)s.innerText='✅ Firebase 8.10.1 + REST + Local - Secure - All Checked - No Breaking - No Misuse - Connected - V9.17.4 FINAL - NABIDINAM SPECIAL - 100% Working Secure!';const si=document.getElementById('storageInfo');if(si)si.innerText='✅ Secure - All Checked - No Breaking - No Misuse - 3 Layer - Event Board + Banner Logo + Login Secure + All Options Fixed - 100% Working Secure for Nabidinam! V9.17.2';},800);}catch(e){document.getElementById('firebaseStatus').innerText='⚠️ SDK Failed REST works - Secure - No Breaking - No Misuse: '+e.message}
 let currentEventId='',questions=[],totalMinutes=10,eventQuestionCount=20,randomMode=true,currentQ=0,score=0,timerInt=null,startTime=null,lastGeneratedLink='',currentLogoBase64='',currentBannerBase64='',currentCertBase64='',currentCertBgBase64='',currentCertLogo1Base64='',currentCertLogo2Base64='',currentCertSignBase64='',certMode=1,showCorrectWrong=true,certPos={x:'50',y:'60',s:'24'},eventPhoneLock=true,eventDeviceLock=true;
 
-ensureAnonymousAuth();
+async function initAuthPersistence(){try{if(typeof firebase!=='undefined'&&firebase.auth){await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);}}catch(e){console.warn('Auth persistence setup failed',e);}await ensureAnonymousAuth();}
+initAuthPersistence();
 
 function init(){
   const params=new URLSearchParams(window.location.search);
@@ -246,6 +247,7 @@ function loginAdmin(){
   const err=document.getElementById('loginError');
   const isValid=input===saved;
   if(isValid){
+    try{localStorage.setItem('nq_admin_session_v174','1');localStorage.setItem('noor_admin_last_login','1');}catch(e){}
     document.getElementById('competitorView').classList.add('hidden');
     document.getElementById('adminView').classList.remove('hidden'); addMasterControlButton();
     err.classList.add('hidden');
@@ -267,7 +269,7 @@ function removeMasterControlButton(){
   const b=document.getElementById('masterControlBtn');
   if(b) b.style.display='none';
 }
-function logoutAdmin(){ removeMasterControlButton();
+function logoutAdmin(){ try{localStorage.removeItem('nq_admin_session_v174');localStorage.removeItem('noor_admin_last_login');}catch(e){} removeMasterControlButton();
   document.getElementById('adminView').classList.add('hidden');
   document.getElementById('competitorView').classList.remove('hidden');
   if(masterLoggedIn){
@@ -515,7 +517,7 @@ function sortResults(r){return r.sort((a,b)=>{if(Number(b.score)!==Number(a.scor
 function renderResults(r){const l=document.getElementById('resultsList');if(!l)return;if(!r.length){l.innerHTML='<p class="text-center py-6 text-gray-500">No Results Yet</p>';return;}const seen=new Set(),clean=[];r.forEach(x=>{const sig=[x.eventId||'',x.phoneHash||x.phone||'',x.score??'',x.total??'',x.time??''].join('|');if(!seen.has(sig)){seen.add(sig);clean.push(x);}});sortResults(clean);l.innerHTML=clean.map((x,i)=>{const med=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}.`;const when=x.timestamp?new Date(x.timestamp).toLocaleString():'';return `<div class="flex flex-col gap-1 py-2.5 border-b hover:bg-yellow-50 px-2 rounded"><div class="flex justify-between gap-2"><span>${med} <b>${escapeHtml(x.name||'')}</b> - ${x.score}/${x.total}</span><span class="font-bold">${escapeHtml(x.timeStr||'')}</span></div><div class="text-gray-500">${escapeHtml(x.phone||'')} | ${escapeHtml(x.place||'')}${x.eventId?' | Event: '+escapeHtml(x.eventId):''}${when?' | '+escapeHtml(when):''}</div></div>`;}).join('');}
 async function getOwnedEventIds(ownerId){const out=[];if(!ownerId)return out;try{const snap=await firebaseDB.ref('events').once('value');const all=snap.val()||{};Object.entries(all).forEach(([id,e])=>{if(e&&String(e.ownerId||'').trim().toLowerCase()===String(ownerId||'').trim().toLowerCase())out.push(id);});}catch(e){console.warn('Owned event lookup failed',e);}return out;}
 async function resolveOrganizerId(){const fromUrl=currentOrganizerId();if(fromUrl)return fromUrl;try{const u=firebase.auth().currentUser;const email=(u&&u.email||'').trim().toLowerCase();if(!email)return '';const snap=await firebaseDB.ref('masterAdmin/organizers').once('value');const all=snap.val()||{};for(const [id,o] of Object.entries(all)){if(o&&String(o.email||'').trim().toLowerCase()===email&&o.active!==false)return id;}}catch(e){console.warn('Organizer identity lookup failed',e);}return '';}
-async function getResultEventIds(){const role=currentRole();if(role==='master')return Object.keys((await firebaseDB.ref('events').once('value')).val()||{});if(role==='organizer'){const owner=await resolveOrganizerId();return await getOwnedEventIds(owner);}return [];}
+async function getResultEventIds(){const role=currentRole();if(role==='master')return Object.keys((await firebaseDB.ref('events').once('value')).val()||{});if(role==='organizer'){const owner=await resolveOrganizerId();return await getOwnedEventIds(owner);}const eid=new URLSearchParams(location.search).get('event')||currentEventId||localStorage.getItem('currentEventId_v17')||'';return eid?[eid]:[];}
 async function loadResults(){const l=document.getElementById('resultsList');if(!l)return;l.innerHTML='<p class="text-center py-6 text-gray-500">⏳ Loading Cloud Results…</p>';cloudResultsCache=[];try{if(!firebaseDB)throw new Error('Firebase unavailable');const eventIds=await getResultEventIds();for(const eventId of eventIds){try{const snap=await firebaseDB.ref('results/'+eventId).once('value');const group=snap.val()||{};Object.values(group).forEach(x=>{if(x&&typeof x==='object')cloudResultsCache.push({...x,eventId});});}catch(e){console.warn('Result event read failed',eventId,e);}}if(cloudResultsCache.length){renderResults(cloudResultsCache);return;}if(!eventIds.length&&currentRole()==='admin'){l.innerHTML='<p class="text-center py-6 text-gray-500">🔐 Login through the Organizer/Admin link to view Cloud Results.</p>';return;}renderResults([]);}catch(e){console.warn('Cloud results load failed',e);l.innerHTML='<p class="text-center py-6 text-red-600">⚠️ Cloud Results could not be loaded. Tap Refresh again.</p>';}}
 function csvCell(v){const x=String(v??'');return '"'+x.replaceAll('\"','\"\"')+'"';}
 function downloadResults(){const r=cloudResultsCache.length?sortResults([...cloudResultsCache]):sortResults(JSON.parse(localStorage.getItem('results_v13')||'[]'));if(!r.length){alert('No Results Yet');return;}let csv='Rank,Name,Phone,Place,Score,Total,Time,Event ID,Submitted At\n';r.forEach((x,i)=>{csv+=`${i+1},${csvCell(x.name)},${csvCell(x.phone)},${csvCell(x.place||'')},${x.score},${x.total},${csvCell(x.timeStr||'')},${csvCell(x.eventId||'')},${csvCell(x.timestamp?new Date(x.timestamp).toLocaleString():'')}\n`;});const b=new Blob([csv],{type:'text/csv;charset=utf-8'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='Quiz_Results.csv';a.click();URL.revokeObjectURL(u);}
@@ -690,6 +692,20 @@ window.addEventListener('load',()=>{
     try{if(typeof loadPastEvents==='function')loadPastEvents();}catch(e){}
     try{if(typeof loadResults==='function')loadResults();}catch(e){}
   });
+});
+
+// V17 persistence/restore: keep explicit Admin session across refresh/reopen; never restore on public event links.
+window.addEventListener('load',()=>{
+  try{
+    const p=new URLSearchParams(location.search);
+    const isPublic=!!p.get('event') && !p.get('organizer') && p.get('master')!=='1';
+    const isAdminPage=p.get('admin')==='1' || p.get('organizer') || (!p.get('event')&&!p.get('master'));
+    if(!isPublic && isAdminPage && localStorage.getItem('nq_admin_session_v174')==='1'){
+      const av=document.getElementById('adminView'), cv=document.getElementById('competitorView');
+      if(av&&cv){cv.classList.add('hidden');av.classList.remove('hidden');}
+      try{loadPastEvents();}catch(e){} try{loadResults();}catch(e){}
+    }
+  }catch(e){console.warn('Admin session restore failed',e);}
 });
 </script>
 
