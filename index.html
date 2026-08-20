@@ -584,10 +584,12 @@ async function loadCompetitorEvent(){
   if(!eventId){document.getElementById('cloudLoadStatus').innerText='ℹ️ No Event ID - Default View - Secure - No Breaking - No Misuse! - Nabidinam Special - Admin-ൽ Create Link! - All Checked! Secure!';document.getElementById('compEventNameBelow').innerText='';document.getElementById('compPlaceShow').innerText='';document.getElementById('compDetailsBelow').innerText='';return;}
   document.getElementById('cloudLoadStatus').innerText='☁️ Loading Event: '+eventId+' - Secure - No Breaking - No Misuse! - All Checked! - REST + SDK + Local - V9.17.2 Secure - Nabidinam Special - Logo Banner Event Place Loading - Nothing Removed...';
   let data=null;
-  try{const res=await fetch(`${REST_URL}/events/${eventId}.json`);if(res.ok)data=await res.json();}catch(e){}
+  try{const res=await fetch(`${REST_URL}/events/${encodeURIComponent(eventId)}.json?cb=${Date.now()}`,{cache:'no-store',headers:{'Cache-Control':'no-cache'}});if(res.ok)data=await res.json();}catch(e){}
   if(!data && firebaseDB){try{const snap=await firebaseDB.ref('events/'+eventId).once('value');data=snap.val();}catch(e){}}
   // Public event links MUST use the current cloud event only. Never resurrect deleted events from local backup.
   if(!data && eventMode){document.getElementById('cloudLoadStatus').innerText='❌ This event is no longer available. The link may have been deleted or disabled.';return;}
+  // Public links are cloud-authoritative: never load stale local event data.
+  if(eventMode && !data){return;}
   if(!data){try{const backup=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');data=backup[eventId];}catch{}}
   if(!data){try{const last=JSON.parse(localStorage.getItem('last_event_'+eventId)||'null');data=last;}catch{}}
   if(!data){document.getElementById('cloudLoadStatus').innerText='❌ Event Not Found! ID:'+eventId;return;}
