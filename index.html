@@ -1282,5 +1282,42 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.se
 </script>
 
 <!-- V21 EVENT DELETE FIX: verifies HTTP status, SDK fallback, and prevents local backup from resurrecting deleted events. -->
+<script id="v26-fixes">
+(function(){
+  function getCurrentEventData(){ return window.currentEventData || null; }
+  function showSchedule(data){
+    const box=document.getElementById('cloudLoadStatus'); if(!box||!data)return;
+    const fmt=v=>v?new Date(v).toLocaleString([], {year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+    const parts=[]; if(data.startAt)parts.push('🟢 Opens: '+fmt(data.startAt)); if(data.endAt)parts.push('🔴 Closes: '+fmt(data.endAt));
+    if(parts.length)box.innerText+=' | '+parts.join(' | ');
+  }
+  function scheduleState(data){
+    const now=Date.now(), start=data?.startAt?new Date(data.startAt).getTime():null, end=data?.endAt?new Date(data.endAt).getTime():null;
+    if(start&&Number.isFinite(start)&&now<start)return {state:'before',start};
+    if(end&&Number.isFinite(end)&&now>end)return {state:'after',end};
+    return {state:'open',start,end};
+  }
+  const oldLoad=window.loadCompetitorEvent;
+  window.loadCompetitorEvent=async function(){await oldLoad();const data=getCurrentEventData();if(!data)return;eventDeviceLock=data.deviceLock===true;eventPhoneLock=data.phoneLock===true;showSchedule(data);};
+  const oldStart=window.startQuiz;
+  window.startQuiz=function(){
+    const data=getCurrentEventData();
+    if(data){const st=scheduleState(data),msg=document.getElementById('errorMsg');
+      if(st.state==='before'){if(msg){msg.innerText='⏳ മത്സരം ഇതുവരെ ആരംഭിച്ചിട്ടില്ല. Opening Time: '+new Date(st.start).toLocaleString();msg.classList.remove('hidden');}return;}
+      if(st.state==='after'){if(msg){msg.innerText='⛔ ഈ മത്സരം അവസാനിച്ചു. Closing Time: '+new Date(st.end).toLocaleString();msg.classList.remove('hidden');}return;}
+      eventDeviceLock=data.deviceLock===true; eventPhoneLock=data.phoneLock===true;
+    }
+    return oldStart();
+  };
+  setInterval(()=>{
+    const data=getCurrentEventData(), btn=document.querySelector('#registrationBox button[onclick="startQuiz()"]'), msg=document.getElementById('errorMsg');
+    if(!data||!btn||!document.getElementById('quizCard')?.classList.contains('hidden'))return;
+    const st=scheduleState(data);
+    if(st.state==='before'){btn.disabled=true;btn.style.opacity='.55';btn.innerText='⏳ മത്സരം ആരംഭിക്കുന്ന സമയം കാത്തിരിക്കുക';if(msg){msg.innerText='Opening Time: '+new Date(st.start).toLocaleString();msg.classList.remove('hidden');}}
+    else if(st.state==='after'){btn.disabled=true;btn.style.opacity='.55';btn.innerText='⛔ മത്സരം അവസാനിച്ചു';if(msg){msg.innerText='Closing Time: '+new Date(st.end).toLocaleString();msg.classList.remove('hidden');}}
+    else{btn.disabled=false;btn.style.opacity='';btn.innerText='🚀 ക്വിസ് ആരംഭിക്കുക';if(msg)msg.classList.add('hidden');}
+  },1000);
+})();
+</script>
 </body>
                                                                                                                                                                                                      </html>
