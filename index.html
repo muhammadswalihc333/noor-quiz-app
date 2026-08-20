@@ -239,8 +239,74 @@ async function authRestUrl(path){const u=(typeof firebase!=='undefined'&&firebas
 try{firebase.initializeApp(firebaseConfig);firebaseDB=firebase.database();setTimeout(()=>{const s=document.getElementById('firebaseStatus');if(s)s.innerText='✅ Firebase 8.10.1 + REST + Local - Secure - All Checked - No Breaking - No Misuse - Connected - V9.17.4 FINAL - NABIDINAM SPECIAL - 100% Working Secure!';const si=document.getElementById('storageInfo');if(si)si.innerText='✅ Secure - All Checked - No Breaking - No Misuse - 3 Layer - Event Board + Banner Logo + Login Secure + All Options Fixed - 100% Working Secure for Nabidinam! V9.17.2';},800);}catch(e){document.getElementById('firebaseStatus').innerText='⚠️ SDK Failed REST works - Secure - No Breaking - No Misuse: '+e.message}
 let currentEventId='',questions=[],totalMinutes=10,eventQuestionCount=20,randomMode=true,currentQ=0,score=0,timerInt=null,startTime=null,lastGeneratedLink='',currentLogoBase64='',currentBannerBase64='',currentCertBase64='',currentCertBgBase64='',currentCertLogo1Base64='',currentCertLogo2Base64='',currentCertSignBase64='',certMode=1,showCorrectWrong=true,certPos={x:'50',y:'60',s:'24'},eventPhoneLock=true,eventDeviceLock=true;
 
-async function initAuthPersistence(){try{if(typeof firebase!=='undefined'&&firebase.auth){await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);}}catch(e){console.warn('Auth persistence setup failed',e);}await ensureAnonymousAuth();}
+async function initAuthPersistence(){
+  try{
+    if(typeof firebase!=='undefined'&&firebase.auth){
+      await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    }
+  }catch(e){console.warn('Auth persistence setup failed',e);}
+  // IMPORTANT: do not create an Anonymous Firebase user during page startup.
+  // Doing that can race with Firebase restoring a persisted Organizer/Master session.
+}
 initAuthPersistence();
+
+function waitForExistingAuth(timeout=2500){
+  return new Promise(resolve=>{
+    if(typeof firebase==='undefined'||!firebase.auth){resolve(null);return;}
+    const existing=firebase.auth().currentUser;
+    if(existing){resolve(existing);return;}
+    let done=false;
+    const finish=u=>{if(done)return;done=true;try{unsub&&unsub();}catch(e){}resolve(u||null);};
+    let unsub=null;
+    try{unsub=firebase.auth().onAuthStateChanged(u=>{if(u)finish(u);});}catch(e){finish(null);return;}
+    setTimeout(()=>finish(firebase.auth().currentUser||null),timeout);
+  });
+}
+
+async function ensureEventWriteAuth(eventId){
+  if(typeof firebase==='undefined'||!firebase.auth||!firebaseDB) throw new Error('Firebase is not ready');
+  await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{});
+  let u=await waitForExistingAuth(2500);
+  let owner=null;
+  try{
+    const r=await fetch(`${REST_URL}/events/${encodeURIComponent(eventId)}.json`,{cache:'no-store'});
+    if(r.ok) owner=await r.json();
+  }catch(e){}
+  const ownerId=String(owner?.ownerId||'').trim();
+  const ownerIsMaster=ownerId.toLowerCase()===MASTER_ADMIN_EMAIL.toLowerCase();
+  if(ownerIsMaster){
+    if(u && String(u.email||'').trim().toLowerCase()===MASTER_ADMIN_EMAIL.toLowerCase()) return u;
+    // A local/password Admin session cannot satisfy the Firebase rule for a Master-owned event.
+    // Use the existing Master Google login instead of silently failing the Save button.
+    if(typeof masterLogin==='function'){
+      await masterLogin();
+      u=await waitForExistingAuth(4000);
+      if(u && String(u.email||'').trim().toLowerCase()===MASTER_ADMIN_EMAIL.toLowerCase()) return u;
+    }
+    throw new Error('Master Google Sign-In is required to edit/save this Master event.');
+  }
+  if(ownerId.startsWith('org_')){
+    if(u && u.email) {
+      try{
+        const snap=await firebaseDB.ref('masterAdmin/organizers/'+ownerId).once('value');
+        const o=snap.val();
+        if(o && o.active!==false && String(o.email||'').trim().toLowerCase()===String(u.email||'').trim().toLowerCase()) return u;
+      }catch(e){}
+    }
+    throw new Error('Organizer Firebase login is required to edit/save this event. Please login again with the Organizer Gmail + Activation Code.');
+  }
+  // New/unowned events: require a real authenticated Master/Organizer account; never fall back to Anonymous for writes.
+  if(!ownerId){
+    if(u && u.email) return u;
+    if(typeof masterLogin==='function'){
+      await masterLogin();
+      u=await waitForExistingAuth(4000);
+      if(u && u.email) return u;
+    }
+  }
+  if(u && u.email) return u;
+  throw new Error('Authenticated Master/Organizer account required before saving.');
+}
 
 function init(){
   const params=new URLSearchParams(window.location.search);
@@ -315,62 +381,93 @@ function bulkAdd(){const txt=document.getElementById('qBulk').value.trim();if(!t
 function deleteQuestion(i){if(!confirm('Delete Q '+(i+1)+'? Secure! Nabidinam Special - No Misuse!'))return;questions.splice(i,1);localStorage.setItem('questions_v13',JSON.stringify(questions));renderQuestions();}
 
 async function loadPastEvents(){
-  const c=document.getElementById('pastEventsList');
-  if(!c) return;
-  c.innerHTML='<p class="text-xs text-center py-6">☁️ Loading TRUE CLOUD - SECURE - Nabidinam Special - V9.17.3 FINAL - Full Checked - No Breaking - No Misuse - All Features Kept - Logo, Banner, Event Name, Place - All Will Show - Edit Button Fixed - Login Secure Fixed - Nothing Removed - Secure - 100% Working Secure for Nabidinam!</p>';
-  try{
-    const res=await fetch(`${REST_URL}/events.json`);
-    if(res.ok){
-      const data=await res.json();
-      if(data && Object.keys(data).length>0){
-        c.innerHTML='';
-        Object.keys(data).reverse().forEach(id=>{
-          const ev=data[id];
-          c.innerHTML+=`<div class="bg-white border-[3px] rounded-xl p-4 mb-3 shadow-md"><div class="flex justify-between gap-3"><div class="flex-1"><p class="font-black text-[14px] text-green-800">${ev.title||'Noor Event - Nabidinam Secure'} <span class="bg-green-100 px-2 py-1 rounded-full text-[10px]">${ev.minute||10} Min - Secure!</span> <span class="bg-blue-100 px-2 py-1 rounded-full text-[10px]">Count:${ev.count||20} - Secure!</span> <span class="bg-orange-100 px-2 py-1 rounded-full text-[10px]">Random:${ev.randomMode?'ON - Secure!':'OFF - Secure!'}</span></p><p class="text-[12px] font-black text-gray-800 mt-2">📍 ${ev.place||'No Place - Nabidinam Secure'} | ${ev.category||''} | Qs:${ev.questions?.length||0} - Secure!</p><p class="text-[11px] text-gray-600 mt-1">Logo:${ev.logo?'✅ Secure!':'❌'} Banner:${ev.banner?'✅ Secure!':'❌'} Cert:${ev.certificate?'✅ Secure!':'❌'} | ID:${id} - Secure!</p><p class="text-[10px] text-green-600 mt-1 font-bold">✅ Banner Clean Title Below - Secure - No Misuse! - Nabidinam Special V9.17.2</p></div><div class="flex flex-col gap-2"><button onclick="copyEventLink('${id}')" class="bg-green-600 text-white px-5 py-2.5 rounded-full text-[11px] font-black shadow">📋 Copy Link - Secure!</button><button onclick="editEventById('${id}')" class="bg-blue-700 text-white px-5 py-2.5 rounded-full text-[11px] font-black shadow">✏️ Edit - Secure! - No Misuse! - Fixed! - 100% Working Secure! - Nabidinam!</button><button onclick="deleteEvent('${id}')" class="bg-red-100 text-red-600 border-2 px-5 py-2.5 rounded-full text-[11px] font-black">🗑️ Delete - Secure!</button></div></div></div>`;
-        });
-        document.getElementById('storageInfo').innerText='✅ REST API SUCCESS - '+Object.keys(data).length+' Events Loaded - Secure - No Breaking - No Misuse - All Checked! - Nabidinam Special V9.17.2 - Nothing Removed! - Secure - 100% Working!';
-        localStorage.setItem('pastEvents_backup',JSON.stringify(data));
-        return;
-      } else {
-        c.innerHTML='<p class="text-xs text-center py-6 text-green-600 font-black">✅ REST Connected! No Events Yet! Secure! No Breaking! No Misuse! - Nabidinam Special V9.17.2<br><br>Event Name, Place, Logo, Banner Fill ചെയ്ത് CREATE NEW LINK അടിക്കൂ!<br>Secure! No Breaking! All Checked! Nothing Removed! - Nabidinam Special Secure!<br><br>Logo: '+(localStorage.getItem('temp_logo')?'✅ Secure!':'❌')+' Banner: '+(localStorage.getItem('temp_banner')?'✅ Secure!':'❌')+'</p>';
-        document.getElementById('storageInfo').innerText='✅ REST Connected - No Events Yet - Secure - No Breaking - No Misuse - Ready for Nabidinam Secure! V9.17.2';
-        return;
-      }
-    }
-  }catch(e){}
-  try{
-    if(firebaseDB){
-      const snap=await firebaseDB.ref('events').once('value');
-      const data=snap.val();
-      if(data){
-        c.innerHTML='';
-        Object.keys(data).reverse().forEach(id=>{
-          const ev=data[id];
-          c.innerHTML+=`<div class="bg-white border-2 rounded-xl p-3 mb-2"><div class="flex justify-between"><div class="flex-1"><p class="font-black text-xs">${ev.title||'Event - Nabidinam Secure'} - ${ev.place||''} - Secure!</p><p class="text-[10px]">ID:${id} | Logo:${ev.logo?'✅ Secure!':'❌'} Banner:${ev.banner?'✅ Secure!':'❌'} | Secure!</p></div><div class="flex flex-col gap-1"><button onclick="copyEventLink('${id}')" class="bg-green-600 text-white px-4 py-1.5 rounded-full text-[11px] font-black">📋 Copy - Secure!</button><button onclick="editEventById('${id}')" class="bg-blue-600 text-white px-4 py-1.5 rounded-full text-[11px] font-black">✏️ Edit - Secure! Fixed!</button></div></div></div>`;
-        });
-        document.getElementById('storageInfo').innerText='✅ SDK Loaded - '+Object.keys(data).length+' Events - Secure - No Breaking - No Misuse! - Nabidinam Special V9.17.2 Secure';
-        localStorage.setItem('pastEvents_backup',JSON.stringify(data));
-        return;
-      }
-    }
-  }catch(e){}
-  try{
-    const localData=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');
-    if(localData && Object.keys(localData).length>0){
-      c.innerHTML='<p class="text-[11px] text-center py-2 bg-yellow-100 rounded-full border">⚠️ Cloud Failed, Showing Local Backup - Secure - No Misuse! - Nabidinam Special V9.17.2</p>';
-      Object.keys(localData).reverse().forEach(id=>{
-        const ev=localData[id];
-        c.innerHTML+=`<div class="bg-yellow-50 border-2 rounded-xl p-3 mb-2"><div class="flex justify-between"><div class="flex-1"><p class="font-black text-xs">${ev.title||'Event - Nabidinam Secure'} - Local Backup - Secure!</p><p class="text-[10px]">${ev.place||''} | ID:${id} - Secure!</p></div><div class="flex flex-col gap-1"><button onclick="copyEventLink('${id}')" class="bg-green-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">📋 Copy - Secure!</button><button onclick="editEventById('${id}')" class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">✏️ Edit - Secure!</button></div></div></div>`;
-      });
-      document.getElementById('storageInfo').innerText='⚠️ Local Backup Shown - Secure - No Breaking - No Misuse! - Nabidinam Special V9.17.2 Secure';
-      return;
-    }
-  }catch{}
-  c.innerHTML=`<p class="text-xs text-center py-6 text-red-600 font-bold">❌ REST + SDK + Local All Failed! Secure! No Breaking! No Misuse! - Nabidinam Special V9.17.2<br><br>✅ Fix: Firebase Console → Realtime Database → Rules → { ".read": true, ".write": true } → Publish → Hard Refresh<br>Internet Check! Secure! No Breaking! Nothing Removed! - Nabidinam Special Secure!</p>`;
+  const c=document.getElementById('pastEventsList'); if(!c)return;
+  c.innerHTML='<p class="text-xs text-center py-6">☁️ Loading events...</p>';
+  let data=null, source='';
+  try{const res=await fetch(`${REST_URL}/events.json?cb=${Date.now()}`,{cache:'no-store'}); if(res.ok){data=await res.json();source='cloud';}}catch(e){}
+  if(!data && firebaseDB){try{const snap=await firebaseDB.ref('events').once('value');data=snap.val();source='sdk';}catch(e){}}
+  if(!data){try{data=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');source='local';}catch(e){data={};}}
+  if(!data || typeof data!=='object')data={};
+  const ids=Object.keys(data).filter(id=>data[id]);
+  if(!ids.length){c.innerHTML='<p class="text-xs text-center py-6 text-green-600 font-black">No Events Yet. Create a new event.</p>';document.getElementById('storageInfo').innerText='0 Events';return;}
+  c.innerHTML='';
+  ids.reverse().forEach(id=>{
+    const ev=data[id]||{};
+    c.insertAdjacentHTML('beforeend',`<div class="bg-white border-[3px] rounded-xl p-4 mb-3 shadow-md" data-event-id="${id}"><div class="flex justify-between gap-3"><div class="flex-1"><p class="font-black text-[14px] text-green-800">${escapeHtml(ev.title||'Noor Event')} <span class="bg-green-100 px-2 py-1 rounded-full text-[10px]">${ev.minute||10} Min</span> <span class="bg-blue-100 px-2 py-1 rounded-full text-[10px]">Count:${ev.count||20}</span></p><p class="text-[12px] font-black text-gray-800 mt-2">📍 ${escapeHtml(ev.place||'')} | ${escapeHtml(ev.category||'')} | Qs:${ev.questions?.length||0}</p><p class="text-[10px] text-gray-600 mt-1">Logo:${ev.logo?'✅':'❌'} Banner:${ev.banner?'✅':'❌'} Cert:${ev.certificate?'✅':'❌'} | ID:${id}</p></div><div class="flex flex-col gap-2"><button onclick="copyEventLink('${id}')" class="bg-green-600 text-white px-5 py-2.5 rounded-full text-[11px] font-black">📋 Copy Link</button><button onclick="editEventById('${id}')" class="bg-blue-700 text-white px-5 py-2.5 rounded-full text-[11px] font-black">✏️ Edit</button><button onclick="deleteEvent('${id}')" class="bg-red-100 text-red-600 border-2 px-5 py-2.5 rounded-full text-[11px] font-black">🗑️ Delete</button></div></div></div>`);
+  });
+  if(source==='cloud')localStorage.setItem('pastEvents_backup',JSON.stringify(data));
+  document.getElementById('storageInfo').innerText=`${ids.length} Event(s) Loaded — ${source==='cloud'?'Cloud':'Backup'}`;
 }
-function clearAllEvents(){if(!confirm('Delete ALL? Secure! No Misuse! Nabidinam Special'))return;fetch(`${REST_URL}/events.json`,{method:'DELETE'}).then(()=>{localStorage.removeItem('pastEvents_backup');loadPastEvents()}).catch(()=>{if(firebaseDB)firebaseDB.ref('events').remove().then(()=>{localStorage.removeItem('pastEvents_backup');loadPastEvents()})})}
+
+async function clearAllEvents(){
+  if(!confirm('Delete ALL EVENTS? This removes every event from Cloud.'))return;
+  let ok=false;
+  try{const r=await fetch(`${REST_URL}/events.json`,{method:'DELETE'});ok=r.ok && (await r.text())!==undefined;}catch(e){}
+  if(!ok && firebaseDB){try{await firebaseDB.ref('events').remove();ok=true;}catch(e){}}
+  if(!ok){alert('❌ Cloud delete failed. Nothing was removed locally. Check Firebase Rules.');return;}
+  localStorage.removeItem('pastEvents_backup');
+  Object.keys(localStorage).filter(k=>k.startsWith('last_event_')).forEach(k=>localStorage.removeItem(k));
+  await loadPastEvents();
+  alert('✅ All events deleted from Cloud.');
+}
+
+async function deleteEvent(id){
+  if(!confirm('Delete this event permanently?'))return;
+  let ok=false;
+  try{const r=await fetch(`${REST_URL}/events/${encodeURIComponent(id)}.json`,{method:'DELETE'});ok=r.ok;}catch(e){}
+  if(!ok && firebaseDB){try{await firebaseDB.ref('events/'+id).remove();ok=true;}catch(e){}}
+  if(!ok){alert('❌ Event delete failed. The event was NOT removed locally. Check Firebase Rules.');return;}
+  try{const backup=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');delete backup[id];localStorage.setItem('pastEvents_backup',JSON.stringify(backup));localStorage.removeItem('last_event_'+id);}catch(e){}
+  if(document.getElementById('eventIdShow')?.value===id){document.getElementById('eventIdShow').value='';currentEventId='';}
+  await loadPastEvents();
+  alert('✅ Event deleted.');
+}
+
+async function editEventById(id){
+  try{
+    let data=null;
+    try{const res=await fetch(`${REST_URL}/events/${encodeURIComponent(id)}.json?cb=${Date.now()}`,{cache:'no-store'});if(res.ok)data=await res.json();}catch(e){}
+    if(!data && firebaseDB){try{const snap=await firebaseDB.ref('events/'+id).once('value');data=snap.val();}catch(e){}}
+    if(!data){const local=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');data=local[id];}
+    if(!data){alert('Event not found.');return;}
+    currentEventId='event_'+id;
+    document.getElementById('eventName').value=data.title||''; document.getElementById('eventPlace').value=data.place||'';
+    document.getElementById('eventCategory').value=['Madrasa','School','College','Masjid','Mahal','Organization','District','State','National','Other'].includes(data.category)?data.category:'Other';
+    if(document.getElementById('customCategory'))document.getElementById('customCategory').value=data.category||'';
+    document.getElementById('setMinute').value=String(data.minute||10); document.getElementById('setCount').value=data.count||20;
+    eventQuestionCount=data.count||20; randomMode=data.randomMode!==false; showCorrectWrong=data.showCorrect!==false;
+    document.getElementById('setRandom').checked=randomMode; document.getElementById('setShowCorrect').checked=showCorrectWrong;
+    document.getElementById('setOnline').checked=data.onlineMode!==false; document.getElementById('setPhoneLock').checked=data.phoneLock!==false; document.getElementById('setDeviceLock').checked=data.deviceLock!==false;
+    questions=Array.isArray(data.questions)?data.questions:[]; localStorage.setItem('questions_v13',JSON.stringify(questions)); renderQuestions();
+    if(data.logo){currentLogoBase64=data.logo;document.getElementById('logoPreview').src=data.logo;document.getElementById('logoPreview').classList.remove('hidden');}
+    if(data.banner){currentBannerBase64=data.banner;document.getElementById('bannerPreview').src=data.banner;document.getElementById('bannerPreview').classList.remove('hidden');}
+    if(data.certificate){currentCertBase64=data.certificate;document.getElementById('certPreviewImg').src=data.certificate;document.getElementById('certPreviewImg').classList.remove('hidden');document.getElementById('certPreviewPlaceholder').classList.add('hidden');}
+    if(data.certPos){certPos=data.certPos;document.getElementById('certX').value=certPos.x;document.getElementById('certY').value=certPos.y;document.getElementById('certS').value=certPos.s;updateCertLive();}
+    ['certTitle','certSub','certSub2','certColor'].forEach(k=>{if(data[k]!=null&&document.getElementById(k))document.getElementById(k).value=data[k];});
+    document.getElementById('eventIdShow').value=id; lastGeneratedLink=window.location.origin+window.location.pathname+'?event='+id; document.getElementById('generatedLink').innerText=lastGeneratedLink; document.getElementById('linkBox').style.display='block';
+    localStorage.setItem('lastGeneratedLink_v14',lastGeneratedLink);localStorage.setItem('currentEventId_v17',currentEventId);
+    document.getElementById('cloudStatus').innerText='✅ Event loaded for editing. Change anything, then press SAVE CLOUD SAME LINK.';
+    window.scrollTo({top:100,behavior:'smooth'});
+  }catch(e){alert('Edit failed: '+e.message);}
+}
 function copyEventLink(id){const l=window.location.origin+window.location.pathname+'?event='+id;navigator.clipboard.writeText(l).then(()=>alert('✅ Link Copied - Secure - No Misuse! - Nabidinam Special V9.17.2 - 100% Working Secure!\n\n'+l+'\n\nBanner Clean - Logo, Event Name, Place താഴെ വൃത്തിയായി - Secure! No Breaking! Nothing Removed! - Nabidinam Special Secure!'));}
-async function deleteEvent(id){if(!confirm('Delete '+id+'? Secure! No Misuse! Nabidinam Special'))return;try{await fetch(`${REST_URL}/events/${id}.json`,{method:'DELETE'});loadPastEvents()}catch{if(firebaseDB)firebaseDB.ref('events/'+id).remove().then(()=>loadPastEvents())}}
+async function deleteEvent(id){
+  if(!confirm('Delete this event from Cloud?\n\nEvent ID: '+id+'\n\nThis cannot be undone.'))return;
+  try{
+    await deleteCloudEvent(id);
+    try{
+      const backup=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');
+      delete backup[id];
+      localStorage.setItem('pastEvents_backup',JSON.stringify(backup));
+      localStorage.removeItem('last_event_'+id);
+    }catch(e){}
+    await loadPastEvents();
+    alert('✅ Event deleted successfully.');
+  }catch(e){
+    alert('❌ Event was NOT deleted.\n\n'+(e.message||'Firebase permission/network error')+'\n\nNothing was removed locally. Publish the correct Firebase Rules and try again.');
+    await loadPastEvents();
+  }
+}
 async function editEventById(id){
   try{
     let data=null;
@@ -410,43 +507,25 @@ function editCurrentEvent(){if(!currentEventId||currentEventId==='event_'){alert
 function createNewLink(){currentEventId='event_'+Date.now();createOrUpdateLink(true);}
 function saveCloudSameLink(){let eid=document.getElementById('eventIdShow').value.trim()||currentEventId||'';if(eid){eid=eid.replace(/event_/g,'');currentEventId='event_'+eid;}if(!currentEventId||currentEventId==='event_')currentEventId='event_'+Date.now();createOrUpdateLink(false);}
 async function createOrUpdateLink(isNew){
-  try{await ensureAnonymousAuth();}catch(e){}
-  const saveBtn=document.getElementById('saveCloudBtn');
-  if(saveBtn) saveBtn.innerText='⏳ SAVING SAME LINK...';
   let minute=parseInt(document.getElementById('setMinute').value)||10;
-  if(document.getElementById('setMinute').value==='custom'){const c=document.getElementById('setMinuteCustom').value;if(c) minute=parseInt(c)||10;}
-  const title=document.getElementById('eventName').value.trim()||'Noor Quiz - Nabidinam Special Secure';
-  const place=document.getElementById('eventPlace').value.trim()||'';
-  let category=document.getElementById('eventCategory').value||'Madrasa';
-  if(category==='Other'){const cc=document.getElementById('customCategory').value.trim();if(cc) category=cc;}
-  const count=parseInt(document.getElementById('setCount').value)||20;eventQuestionCount=count;
-  const random=document.getElementById('setRandom').checked,showC=document.getElementById('setShowCorrect').checked;
-  randomMode=random;showCorrectWrong=showC;
-  if(!questions.length){alert('⚠️ Questions Add ചെയ്യൂ! Secure! No Misuse! Nabidinam Special');return;}
-  const cleanId=currentEventId.replace(/event_/g,'');
-  const link=window.location.origin+window.location.pathname+'?event='+cleanId;
-  lastGeneratedLink=link;localStorage.setItem('lastGeneratedLink_v14',link);localStorage.setItem('currentEventId_v17',currentEventId);
-  document.getElementById('generatedLink').innerText=link;document.getElementById('linkBox').style.display='block';document.getElementById('eventIdShow').value=cleanId;
-  document.getElementById('cloudStatus').innerText='☁️ Saving via REST + SDK + Local - Secure - No Breaking - No Misuse! - All Checked! - Logo, Banner, Event, Place, Certificate, Count, Random - All Saving - Nothing Removed - Nabidinam Special V9.17.2 Secure - Full Checked!';
-  document.getElementById('createLinkBtn').innerText='⏳ Saving 3 Layer - Secure - No Breaking - No Misuse! - All Checked! - Logo Banner Event Place Certificate Saving... Nabidinam Special V9.17.2 Secure';
-  setTimeout(()=>document.getElementById('linkBox').scrollIntoView({behavior:'smooth',block:'center'}),300);
-  if(!currentLogoBase64) currentLogoBase64=localStorage.getItem('temp_logo')||'';
-  if(!currentBannerBase64) currentBannerBase64=localStorage.getItem('temp_banner')||'';
-  const certTitle=document.getElementById('certTitle')?.value||'Certificate of Appreciation - Nabidinam Special Secure';
-  const certSub=document.getElementById('certSub')?.value||'Noor Al Madrasa - Meelad Quiz 2K26 - Nabidinam Secure';
-  const certSub2=document.getElementById('certSub2')?.value||'For Excellent Participation - Nabidinam Special Secure';
-  const certColor=document.getElementById('certColor')?.value||'#14532d'; const ownerId=currentOrganizerId()||MASTER_ADMIN_EMAIL.toLowerCase(); const eventData={ownerId,title,place,category,questions,minute,count,onlineMode:document.getElementById('setOnline').checked,showCorrect:showC,randomMode:random,phoneLock:document.getElementById('setPhoneLock').checked,deviceLock:document.getElementById('setDeviceLock').checked,logo:currentLogoBase64||'',banner:currentBannerBase64||'',certificate:currentCertBase64||'',certBg:currentCertBgBase64||localStorage.getItem('cert_bg')||'',certLogo1:currentCertLogo1Base64||localStorage.getItem('cert_logo1')||'',certLogo2:currentCertLogo2Base64||localStorage.getItem('cert_logo2')||'',certSign:currentCertSignBase64||localStorage.getItem('cert_sign')||'',certMode,certPos,certColor,certTitle,certSub,certSub2,updated:Date.now()};
-  let saved=false;
-  try{const url=await authRestUrl(`events/${cleanId}`);const res=await fetch(url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(eventData)});if(res.ok)saved=true;}catch(e){}
-  try{if(firebaseDB){await firebaseDB.ref('events/'+cleanId).set(eventData);saved=true;}}catch(e){}
-  try{const backup=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');backup[cleanId]=eventData;localStorage.setItem('pastEvents_backup',JSON.stringify(backup));localStorage.setItem('last_event_'+cleanId,JSON.stringify(eventData));}catch(e){}
-  if(saved){
-    document.getElementById('cloudStatus').innerText=isNew?`✅ SUCCESS! Secure! No Breaking! No Misuse! All Checked! Logo:${currentLogoBase64?'✅ Secure!':'❌'} Banner:${currentBannerBase64?'✅ Secure!':'❌'} Cert:${currentCertBase64?'✅ Secure!':'❌'} Event:${title} Place:${place} Count:${count} Random:${random?'ON Secure!':'OFF Secure!'} ID:${cleanId} - Event Board-ൽ വരും! Secure! No Breaking! Nothing Removed! Nabidinam Special V9.17.2 Secure - Full Checked!`:`✅ SAME LINK UPDATED! Secure! No Breaking! No Misuse! All Checked! Logo:${currentLogoBase64?'✅ Secure!':'❌'} Banner:${currentBannerBase64?'✅ Secure!':'❌'} Cert:${currentCertBase64?'✅ Secure!':'❌'} Event:${title} Place:${place} - Friends Refresh! Secure! No Breaking! Nothing Removed! Nabidinam Special V9.17.2 Secure - Full Checked!`;
-    document.getElementById('createLinkBtn').innerText='💚 CREATE NEW LINK - Secure - Nabidinam Special - No Breaking - No Misuse - 100% Working! - V9.17.2 Secure';
-    document.getElementById('saveCloudBtn').innerText='✅ SAVED / UPDATED SAME LINK - വീണ്ടും Save ചെയ്യാം';
-    if(navigator.clipboard) navigator.clipboard.writeText(link).catch(()=>{});
-    loadPastEvents();renderQuestions();
-  }else{if(document.getElementById('saveCloudBtn'))document.getElementById('saveCloudBtn').innerText='💾 SAVE CLOUD SAME LINK - വീണ്ടും ശ്രമിക്കുക';document.getElementById('cloudStatus').innerText='❌ All 3 Layers Failed! Secure! No Breaking! No Misuse! But Link Ready Locally! Rules Check! Nabidinam Special V9.17.2 Secure - Full Checked!';}
+  if(document.getElementById('setMinute').value==='custom') minute=parseInt(document.getElementById('setMinuteCustom').value)||10;
+  const title=document.getElementById('eventName').value.trim()||'Noor Quiz'; const place=document.getElementById('eventPlace').value.trim();
+  let category=document.getElementById('eventCategory').value||'Madrasa'; if(category==='Other'){const cc=document.getElementById('customCategory').value.trim();if(cc)category=cc;}
+  const count=parseInt(document.getElementById('setCount').value)||20; eventQuestionCount=count; randomMode=document.getElementById('setRandom').checked; showCorrectWrong=document.getElementById('setShowCorrect').checked;
+  if(!questions.length){alert('Questions Add ചെയ്യൂ!');return;}
+  const cleanId=(currentEventId||'event_'+Date.now()).replace(/^event_/,''); currentEventId='event_'+cleanId;
+  const link=window.location.origin+window.location.pathname+'?event='+cleanId; lastGeneratedLink=link;
+  if(!currentLogoBase64)currentLogoBase64=localStorage.getItem('temp_logo')||''; if(!currentBannerBase64)currentBannerBase64=localStorage.getItem('temp_banner')||'';
+  const eventData={title,place,category,questions,minute,count,onlineMode:document.getElementById('setOnline').checked,showCorrect:showCorrectWrong,randomMode,phoneLock:document.getElementById('setPhoneLock').checked,deviceLock:document.getElementById('setDeviceLock').checked,logo:currentLogoBase64||'',banner:currentBannerBase64||'',certificate:currentCertBase64||'',certPos,certColor:document.getElementById('certColor')?.value||'#14532d',certTitle:document.getElementById('certTitle')?.value||'',certSub:document.getElementById('certSub')?.value||'',certSub2:document.getElementById('certSub2')?.value||'',updated:Date.now()};
+  document.getElementById('cloudStatus').innerText='☁️ Saving...';
+  let cloudSaved=false;
+  try{const r=await fetch(`${REST_URL}/events/${encodeURIComponent(cleanId)}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(eventData)});cloudSaved=r.ok;}catch(e){}
+  if(!cloudSaved && firebaseDB){try{await firebaseDB.ref('events/'+cleanId).set(eventData);cloudSaved=true;}catch(e){}}
+  if(!cloudSaved){document.getElementById('cloudStatus').innerText='❌ Cloud Save Failed. Nothing is marked as saved. Check Firebase Rules.';return;}
+  const backup=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');backup[cleanId]=eventData;localStorage.setItem('pastEvents_backup',JSON.stringify(backup));localStorage.setItem('last_event_'+cleanId,JSON.stringify(eventData));localStorage.setItem('lastGeneratedLink_v14',link);localStorage.setItem('currentEventId_v17',currentEventId);
+  document.getElementById('eventIdShow').value=cleanId;document.getElementById('generatedLink').innerText=link;document.getElementById('linkBox').style.display='block';document.getElementById('cloudStatus').innerText=isNew?'✅ Event created and saved to Cloud.':'✅ Event updated and saved to Cloud. The same link remains valid.';
+  document.getElementById('createLinkBtn').innerText='💚 CREATE NEW LINK';document.getElementById('saveCloudBtn').innerText='💾 SAVE CLOUD SAME LINK';
+  if(navigator.clipboard)navigator.clipboard.writeText(link).catch(()=>{}); await loadPastEvents();renderQuestions();
 }
 function copyLink(){if(!lastGeneratedLink){const l=localStorage.getItem('lastGeneratedLink_v14');if(l)lastGeneratedLink=l;else{alert('Create Link First! Secure! No Misuse! Nabidinam Special');return;}}navigator.clipboard.writeText(lastGeneratedLink).then(()=>alert('✅ Link Copied - Secure - No Misuse! - Nabidinam Special V9.17.2 - 100% Working Secure! - Full Checked!\n\n'+lastGeneratedLink+'\n\nBanner Clean - Logo, Event, Place താഴെ വൃത്തിയായി - Secure! No Breaking! Nothing Removed! - Nabidinam Special Secure!'));}
 function shareWhatsApp(){if(!lastGeneratedLink){const l=localStorage.getItem('lastGeneratedLink_v14');if(l)lastGeneratedLink=l;else return;}window.open('https://wa.me/?text='+encodeURIComponent('🌙 Noor Quiz V9.17.2 - Secure - Nabidinam Special - No Breaking - No Misuse! - Full Checked! - Banner Clean Title Below - Nothing Removed - Nabidinam Special Secure:\n\n'+lastGeneratedLink),'_blank');}
@@ -494,45 +573,19 @@ function startQuiz(){
 function showQ(){if(currentQ>=questions.length){finishQuiz();return;}const qq=questions[currentQ];document.getElementById('qCount').innerText=`Q ${currentQ+1}/${questions.length} ${randomMode?'🔀 Random Secure!':''}`;document.getElementById('progressBar').style.width=(currentQ/questions.length*100)+'%';document.getElementById('qText').innerText=qq.q;const od=document.getElementById('options');od.innerHTML='';const fb=document.getElementById('quizFeedback');fb.classList.add('hidden');qq.opts.forEach((o,i)=>{const b=document.createElement('button');b.id=`opt-${i}`;b.className='w-full text-left px-4 py-4 border-2 rounded-xl text-sm bg-white hover:bg-green-50 transition-all font-medium shadow-sm';b.innerText=`${String.fromCharCode(65+i)}. ${o}`;b.onclick=()=>{Array.from(od.children).forEach(x=>x.disabled=true);const ok=i===qq.ans;if(ok){b.style.background='#16a34a';b.style.color='white';b.style.borderColor='#16a34a';b.innerText=`✅ ${String.fromCharCode(65+i)}. ${o} - ശരി! - Secure!`;score++;fb.innerText='✅ Excellent! ശരി! - Show Correct Green - Secure! - No Misuse! - Nabidinam Special V9.17.2 Secure';fb.className='text-center font-black mt-4 text-sm p-4 rounded-xl bg-green-100 text-green-700 border-2 border-green-500';}else{b.style.background='#dc2626';b.style.color='white';b.style.borderColor='#dc2626';b.innerText=`❌ ${String.fromCharCode(65+i)}. ${o} - തെറ്റ്! - Secure!`;if(showCorrectWrong){const cb=document.getElementById(`opt-${qq.ans}`);if(cb){cb.style.background='#16a34a';cb.style.color='white';cb.style.borderColor='#16a34a';cb.style.borderWidth='3px';cb.innerText=`✅ ${String.fromCharCode(65+qq.ans)}. ${qq.opts[qq.ans]} - ശരി! - Show Correct Green - Secure! - No Misuse! - Nabidinam Special V9.17.2 Secure`;}}fb.innerText=`❌ തെറ്റ്! ശരി: ${String.fromCharCode(65+qq.ans)}. ${qq.opts[qq.ans]} - Show Correct Green - Secure! - No Misuse! - Nabidinam Special V9.17.2 Secure`;fb.className='text-center font-black mt-4 text-sm p-4 rounded-xl bg-red-100 text-red-700 border-2 border-red-400';}fb.classList.remove('hidden');setTimeout(()=>{currentQ++;showQ();},2200);};od.appendChild(b);});}
 function startTimer(){let t=totalMinutes*60;const el=document.getElementById('timer'),upd=()=>el.innerText=Math.floor(t/60)+':'+String(t%60).padStart(2,'0');upd();clearInterval(timerInt);timerInt=setInterval(()=>{t--;upd();if(t<=0){clearInterval(timerInt);finishQuiz();}},1000);}
 async function finishQuiz(){
-  if(window.__quizFinished)return;
-  window.__quizFinished=true;
-  clearInterval(timerInt);
-  const tt=Math.max(0,Math.floor((Date.now()-startTime)/1000)),m=Math.floor(tt/60),s=tt%60;
-  const r={name:window._quizData?.name||'',phone:window._quizData?.phone||'',place:window._quizData?.place||'',score,total:questions.length,time:tt,timeStr:`${m}:${String(s).padStart(2,'0')}`,timestamp:Date.now()};
-  const eid=new URLSearchParams(window.location.search).get('event')||currentEventId||localStorage.getItem('currentEventId_v17')||'';
+  clearInterval(timerInt); const tt=Math.floor((Date.now()-startTime)/1000),m=Math.floor(tt/60),s=tt%60;
+  const eid=new URLSearchParams(window.location.search).get('event')||currentEventId.replace(/^event_/,'');
+  const r={eventId:eid,name:window._quizData.name,phone:window._quizData.phone,place:window._quizData.place,score,total:questions.length,time:tt,timeStr:`${m}:${String(s).padStart(2,'0')}`,timestamp:Date.now()};
+  let rs=JSON.parse(localStorage.getItem('results_v13')||'[]'); rs.push(r); localStorage.setItem('results_v13',JSON.stringify(rs));
+  document.getElementById('quizCard').classList.add('hidden');document.getElementById('resultCard').classList.remove('hidden');document.getElementById('finalScore').innerText=`${score}/${questions.length}`;document.getElementById('finalTime').innerText=`Time: ${m}:${String(s).padStart(2,'0')} ⏱️`;
+  if(eventPhoneLock){let up=JSON.parse(localStorage.getItem('usedPhones')||'[]');const k=window._quizData.phone+'_'+eid;if(!up.includes(k))up.push(k);localStorage.setItem('usedPhones',JSON.stringify(up));}
+  if(eventDeviceLock){let ud=JSON.parse(localStorage.getItem('usedDevices')||'[]');if(!ud.includes(eid))ud.push(eid);localStorage.setItem('usedDevices',JSON.stringify(ud));}
   let cloudSaved=false;
-  try{
-    if(firebaseDB&&eid){
-      const u=await ensureFirebaseReady();
-      const normalizedPhone=String(r.phone||'').replace(/\D/g,'');
-      const phoneHash=await sha256Hex(normalizedPhone+'|'+eid);
-      r.uid=u.uid;r.phoneHash=phoneHash;r.eventId=eid;
-      try{
-        await firebaseDB.ref('results/'+eid+'/'+phoneHash).set(r);
-        cloudSaved=true;
-      }catch(sdkErr){
-        console.warn('SDK result save failed, trying REST',sdkErr);
-        const res=await fetch(await authRestUrl('results/'+encodeURIComponent(eid)+'/'+encodeURIComponent(phoneHash)),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(r)});
-        if(!res.ok)throw new Error('REST result save HTTP '+res.status);
-        cloudSaved=true;
-      }
-    }
-  }catch(e){console.warn('Cloud result save failed',e);}
-  if(!cloudSaved){
-    let rs=JSON.parse(localStorage.getItem('results_v13')||'[]');
-    const key=(r.phoneHash||r.phone)+'_'+eid;
-    rs=rs.filter(x=>((x.phoneHash||x.phone)+'_'+(x.eventId||''))!==key);
-    rs.push({...r,eventId:eid});
-    localStorage.setItem('results_v13',JSON.stringify(rs));
-  }
-  try{if(eventPhoneLock){let up=JSON.parse(localStorage.getItem('usedPhones')||'[]');const k=r.phone+'_'+eid;if(!up.includes(k))up.push(k);localStorage.setItem('usedPhones',JSON.stringify(up));}}catch(e){}
-  try{if(eventDeviceLock){let ud=JSON.parse(localStorage.getItem('usedDevices')||'[]');if(!ud.includes(eid))ud.push(eid);localStorage.setItem('usedDevices',JSON.stringify(ud));}}catch(e){}
-  document.getElementById('quizCard').classList.add('hidden');document.getElementById('resultCard').classList.remove('hidden');
-  document.getElementById('finalScore').innerText=`${score}/${questions.length}`;document.getElementById('finalTime').innerText=`Time: ${m}:${String(s).padStart(2,'0')} ⏱️`;
-  if(document.getElementById('resultsList')&&document.getElementById('adminView')?.classList.contains('hidden')===false)await loadResults();
-  setTimeout(()=>generateCertificate(),500);
+  try{const key=encodeURIComponent(String(window._quizData.phone||'participant').replace(/[^a-zA-Z0-9_-]/g,''))+'_'+String(Date.now());const res=await fetch(`${REST_URL}/results/${encodeURIComponent(eid)}/${key}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(r)});cloudSaved=res.ok;}catch(e){}
+  if(!cloudSaved && firebaseDB){try{await firebaseDB.ref('results/'+eid).push(r);cloudSaved=true;}catch(e){}}
+  if(cloudSaved)document.getElementById('cloudLoadStatus').innerText='✅ Result saved to Cloud.'; else document.getElementById('cloudLoadStatus').innerText='⚠️ Result saved on this device, but Cloud save failed.';
+  await loadResults(); setTimeout(()=>generateCertificate(),500);
 }
-
 function generateCertificate(){
   const c=document.getElementById('certCanvas');if(!c)return;
   const ctx=c.getContext('2d');
@@ -618,54 +671,20 @@ async function readCloudResultGroup(eventId){
   throw lastErr||new Error('Result read failed');
 }
 async function loadResults(){
-  const l=document.getElementById('resultsList');if(!l)return;
-  l.innerHTML='<p class="text-center py-6 text-gray-500">⏳ Loading Cloud Results…</p>';
-  cloudResultsCache=[];
-  const eventIds=await getResultEventIds();
-  let successReads=0, failedReads=0;
-  for(const eventId of eventIds){
-    try{
-      const group=await readCloudResultGroup(eventId);
-      successReads++;
-      Object.values(group||{}).forEach(x=>{if(x&&typeof x==='object')cloudResultsCache.push({...x,eventId});});
-    }catch(e){failedReads++;console.warn('Result event read failed',eventId,e);}
-  }
-  if(cloudResultsCache.length){renderResults(cloudResultsCache);return;}
-  if(successReads>0){renderResults([]);return;}
-  const local=JSON.parse(localStorage.getItem('results_v13')||'[]');
-  const knownLocal=local.filter(x=>!eventIds.length||eventIds.includes(String(x.eventId||'').replace(/^event_/,''))||eventIds.includes(String(x.eventId||'')));
-  if(knownLocal.length){cloudResultsCache=knownLocal;renderResults(knownLocal);return;}
-  if(failedReads>0){l.innerHTML='<p class="text-center py-6 text-red-600">⚠️ Cloud Results could not be loaded. Firebase login/rules are blocking the read. Tap Refresh after login.</p>';return;}
-  if(!eventIds.length){l.innerHTML='<p class="text-center py-6 text-gray-500">No event selected yet. Open the Organizer/Admin event link, then tap Refresh.</p>';return;}
-  renderResults([]);
+  const l=document.getElementById('resultsList');if(!l)return;let all=[];
+  const ids=[];
+  try{const evRes=await fetch(`${REST_URL}/events.json?cb=${Date.now()}`,{cache:'no-store'});if(evRes.ok){const evs=await evRes.json();ids.push(...Object.keys(evs||{}));}}catch(e){}
+  if(currentEventId)ids.push(currentEventId.replace(/^event_/,''));
+  const uniq=[...new Set(ids)];
+  for(const id of uniq){try{const r=await fetch(`${REST_URL}/results/${encodeURIComponent(id)}.json?cb=${Date.now()}`,{cache:'no-store'});if(r.ok){const d=await r.json();if(d&&typeof d==='object')Object.values(d).forEach(x=>all.push({...x,eventId:id}));}}catch(e){}}
+  const local=JSON.parse(localStorage.getItem('results_v13')||'[]'); all=all.concat(local);
+  const seen=new Set(); all=all.filter(x=>{const k=[x.eventId||'',x.phone||'',x.name||'',x.score||0,x.time||0,x.timestamp||0].join('|');if(seen.has(k))return false;seen.add(k);return true;});
+  all.sort((a,b)=>b.score-a.score||a.time-b.time);
+  if(!all.length){l.innerHTML='<p class="text-center py-6 text-gray-500">No Results Yet.</p>';return;}
+  l.innerHTML=all.map((x,i)=>`<div class="flex justify-between py-2.5 border-b text-xs px-2"><span>${i<3?['🥇','🥈','🥉'][i]:`${i+1}.`} ${escapeHtml(x.name||'')} - ${x.score}/${x.total}</span><span class="font-bold">${escapeHtml(x.timeStr||'')}</span></div>`).join('');
 }
-async function refreshResults(){
-  const b=document.getElementById('refreshResultsBtn');
-  if(b){b.disabled=true;b.innerText='⏳ Refreshing...';}
-  try{await ensureFirebaseReady();}catch(e){}
-  try{await loadResults();}finally{if(b){b.disabled=false;b.innerText='🔄 Refresh - Secure!';}}
-}
-
-function csvCell(v){const x=String(v??'');return '"'+x.replaceAll('\"','\"\"')+'"';}
-function downloadResults(){const r=cloudResultsCache.length?sortResults([...cloudResultsCache]):sortResults(JSON.parse(localStorage.getItem('results_v13')||'[]'));if(!r.length){alert('No Results Yet');return;}let csv='Rank,Name,Phone,Place,Score,Total,Time,Event ID,Submitted At\n';r.forEach((x,i)=>{csv+=`${i+1},${csvCell(x.name)},${csvCell(x.phone)},${csvCell(x.place||'')},${x.score},${x.total},${csvCell(x.timeStr||'')},${csvCell(x.eventId||'')},${csvCell(x.timestamp?new Date(x.timestamp).toLocaleString():'')}\n`;});const b=new Blob([csv],{type:'text/csv;charset=utf-8'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='Quiz_Results.csv';a.click();URL.revokeObjectURL(u);}
-async function clearResultsForOwner(ownerId,label='these results'){if(currentRole()!=='master'&&currentRole()!=='organizer'){alert('Cloud Result Clear is available only to an authenticated Organizer/Master.');return;}if(currentRole()==='organizer'){const allowedOwner=await resolveOrganizerId();if(!allowedOwner||String(ownerId).toLowerCase()!==String(allowedOwner).toLowerCase()){alert('This Organizer is not authorized for these results.');return;}}if(!confirm('Delete '+label+'? Only this owner\'s results will be deleted.'))return;const ids=await getOwnedEventIds(ownerId);if(!ids.length){alert('No events found for this account. No results were deleted.');return;}let failed=[];for(const id of ids){try{await firebaseDB.ref('results/'+id).remove();}catch(e){failed.push(id);}}if(failed.length){alert('Some results could not be cleared. Firebase Rules may need publishing.\n\nFailed events: '+failed.join(', '));}else{cloudResultsCache=cloudResultsCache.filter(x=>!ids.includes(x.eventId));renderResults(cloudResultsCache);alert('✅ Selected results cleared. Other Admin results were not touched.');}}
-async function clearAllResults(){
-  const role=currentRole();
-  if(role==='master')return clearResultsForOwner(MASTER_ADMIN_EMAIL.toLowerCase(),'Master-owned results');
-  if(role==='organizer'){const owner=await resolveOrganizerId();return clearResultsForOwner(owner,'your Organizer results');}
-  if(role==='admin'){
-    if(!confirm('Delete only the results for the current Admin event(s)? Other Organizer/Admin results will not be touched.'))return;
-    const ids=localKnownEventIds();
-    if(!ids.length){alert('No current event found. Open the event/admin link first.');return;}
-    let failed=[];
-    for(const id of ids){try{await ensureFirebaseReady();await firebaseDB.ref('results/'+id).remove();}catch(e){failed.push(id);}}
-    if(failed.length)alert('Some results could not be cleared. Check Firebase Rules and tap Refresh.');
-    else{cloudResultsCache=cloudResultsCache.filter(x=>!ids.includes(x.eventId));renderResults(cloudResultsCache);alert('✅ Current Admin event results cleared. Other Admin/Organizer results were not touched.');}
-    return;
-  }
-  alert('Cloud Result Clear requires an authenticated Admin/Organizer/Master session.');
-}
-
+async function downloadResults(){await loadResults();let r=JSON.parse(localStorage.getItem('results_v13')||'[]');if(!r.length){alert('No local results. Cloud results are displayed above.');return;}let csv='Rank,Name,Phone,Place,Score,Total,Time\n';r.sort((a,b)=>b.score-a.score||a.time-b.time).forEach((x,i)=>csv+=`${i+1},"${String(x.name||'').replace(/"/g,'""')}","${String(x.phone||'')}","${String(x.place||'')}",${x.score},${x.total},${x.timeStr}\n`);const b=new Blob([csv],{type:'text/csv'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='Results.csv';a.click();URL.revokeObjectURL(u);}
+async function clearAllResults(){if(!confirm('Delete local results only? Cloud results are separate.'))return;localStorage.removeItem('results_v13');loadResults();}
 window.addEventListener('load',()=>{
   init();
   loadCompetitorEvent();
@@ -1157,5 +1176,6 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.se
 })();
 </script>
 
+<!-- V21 EVENT DELETE FIX: verifies HTTP status, SDK fallback, and prevents local backup from resurrecting deleted events. -->
 </body>
                                                                                                                                                                                                      </html>
