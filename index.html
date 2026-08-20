@@ -401,14 +401,29 @@ async function loadPastEvents(){
 
 async function clearAllEvents(){
   if(!confirm('Delete ALL EVENTS? This removes every event from Cloud.'))return;
-  let ok=false;
-  try{const r=await fetch(`${REST_URL}/events.json`,{method:'DELETE'});ok=r.ok && (await r.text())!==undefined;}catch(e){}
-  if(!ok && firebaseDB){try{await firebaseDB.ref('events').remove();ok=true;}catch(e){}}
-  if(!ok){alert('❌ Cloud delete failed. Nothing was removed locally. Check Firebase Rules.');return;}
+  let ok=false, lastErr=null;
+  try{
+    const r=await fetch(`${REST_URL}/events.json?cb=${Date.now()}`,{method:'DELETE',cache:'no-store'});
+    if(!r.ok) throw new Error(`Cloud clear HTTP ${r.status}`);
+    const check=await fetch(`${REST_URL}/events.json?cb=${Date.now()}`,{cache:'no-store'});
+    if(!check.ok) throw new Error(`Cloud clear verification HTTP ${check.status}`);
+    const remaining=await check.json();
+    if(remaining!==null && Object.keys(remaining||{}).length) throw new Error('Some events still exist in Cloud');
+    ok=true;
+  }catch(e){lastErr=e;}
+  if(!ok && firebaseDB){
+    try{
+      await firebaseDB.ref('events').remove();
+      const snap=await firebaseDB.ref('events').once('value');
+      if(snap.exists()) throw new Error('Firebase verification failed: events still exist');
+      ok=true;
+    }catch(e){lastErr=e;}
+  }
+  if(!ok){alert('❌ Events were NOT cleared. Nothing was removed locally.\n\n'+(lastErr?.message||'Firebase permission/network error'));return;}
   localStorage.removeItem('pastEvents_backup');
   Object.keys(localStorage).filter(k=>k.startsWith('last_event_')).forEach(k=>localStorage.removeItem(k));
   await loadPastEvents();
-  alert('✅ All events deleted from Cloud.');
+  alert('✅ All events deleted from Cloud and verified.');
 }
 
 async function deleteEvent(id){
@@ -451,6 +466,29 @@ async function editEventById(id){
   }catch(e){alert('Edit failed: '+e.message);}
 }
 function copyEventLink(id){const l=window.location.origin+window.location.pathname+'?event='+id;navigator.clipboard.writeText(l).then(()=>alert('✅ Link Copied - Secure - No Misuse! - Nabidinam Special V9.17.2 - 100% Working Secure!\n\n'+l+'\n\nBanner Clean - Logo, Event Name, Place താഴെ വൃത്തിയായി - Secure! No Breaking! Nothing Removed! - Nabidinam Special Secure!'));}
+async function deleteCloudEvent(id){
+  const key=String(id).replace(/^event_/,'');
+  let lastErr=null;
+  // REST attempt
+  try{
+    const r=await fetch(`${REST_URL}/events/${encodeURIComponent(key)}.json?cb=${Date.now()}`,{method:'DELETE',cache:'no-store'});
+    if(!r.ok) throw new Error(`Cloud delete HTTP ${r.status}`);
+    const check=await fetch(`${REST_URL}/events/${encodeURIComponent(key)}.json?cb=${Date.now()}`,{cache:'no-store'});
+    if(check.ok){const remaining=await check.json(); if(remaining!==null) throw new Error('Cloud verification failed: event still exists');}
+    else throw new Error(`Cloud verification HTTP ${check.status}`);
+    return true;
+  }catch(e){ lastErr=e; }
+  // SDK fallback
+  if(firebaseDB){
+    try{
+      await firebaseDB.ref('events/'+key).remove();
+      const snap=await firebaseDB.ref('events/'+key).once('value');
+      if(snap.exists()) throw new Error('Firebase verification failed: event still exists');
+      return true;
+    }catch(e){ lastErr=e; }
+  }
+  throw lastErr || new Error('No cloud delete method available');
+}
 async function deleteEvent(id){
   if(!confirm('Delete this event from Cloud?\n\nEvent ID: '+id+'\n\nThis cannot be undone.'))return;
   try{
