@@ -1,0 +1,38 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "masterAdmin": {
+      "organizers": {
+        ".read": "auth != null && auth.token.email == 'muhammadswalihc333@gmail.com'",
+        "$orgId": {
+          ".read": "auth != null && (auth.token.email == 'muhammadswalihc333@gmail.com' || (data.exists() && data.child('email').val() == auth.token.email && data.child('active').val() == true))",
+          ".write": "auth != null && auth.token.email == 'muhammadswalihc333@gmail.com'",
+          ".validate": "newData.hasChildren(['name','email','codeHash','active','created']) && newData.child('email').isString() && newData.child('codeHash').isString() && newData.child('codeHash').val().length == 64"
+        }
+      }
+    },
+    "organizerLookup": {
+      "$emailHash": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.token.email == 'muhammadswalihc333@gmail.com'",
+        ".validate": "newData.hasChildren(['orgId','active']) && newData.child('orgId').isString() && newData.child('active').isBoolean()"
+      }
+    },
+    "events": {
+      "$eventId": {
+        ".read": "auth != null",
+        ".write": "auth != null && (auth.token.email == 'muhammadswalihc333@gmail.com' || (data.exists() && root.child('masterAdmin/organizers').child(data.child('ownerId').val()).child('email').val() == auth.token.email && root.child('masterAdmin/organizers').child(data.child('ownerId').val()).child('active').val() == true && ((!newData.exists()) || (newData.exists() && newData.child('ownerId').val() == data.child('ownerId').val()))) || (!data.exists() && newData.exists() && newData.child('ownerId').isString() && root.child('masterAdmin/organizers').child(newData.child('ownerId').val()).child('email').val() == auth.token.email && root.child('masterAdmin/organizers').child(newData.child('ownerId').val()).child('active').val() == true))"
+      }
+    },
+    "results": {
+      "$eventId": {
+        ".read": "auth != null && (auth.token.email == 'muhammadswalihc333@gmail.com' || (root.child('events').child($eventId).child('ownerId').val() != null && root.child('masterAdmin').child('organizers').child(root.child('events').child($eventId).child('ownerId').val()).child('email').val() == auth.token.email && root.child('masterAdmin').child('organizers').child(root.child('events').child($eventId).child('ownerId').val()).child('active').val() == true))",
+        "$resultId": {
+          ".write": "auth != null && !data.exists() && newData.exists() && newData.child('uid').val() == auth.uid && root.child('events').child($eventId).exists()",
+          ".validate": "newData.hasChildren(['uid','name','phone','phoneHash','place','score','total','time','timeStr','timestamp']) && newData.child('uid').val() == auth.uid && newData.child('name').isString() && newData.child('name').val().length > 0 && newData.child('phone').isString() && newData.child('phoneHash').isString() && newData.child('phoneHash').val().length == 64 && newData.child('score').isNumber() && newData.child('total').isNumber() && newData.child('score').val() >= 0 && newData.child('score').val() <= newData.child('total').val() && newData.child('total').val() > 0 && newData.child('time').isNumber() && newData.child('time').val() >= 0 && newData.child('timestamp').isNumber()"
+        }
+      }
+    }
+  }
+}

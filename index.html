@@ -239,9 +239,9 @@ async function ensureFirebaseReady(){
   if(!u) throw new Error('Firebase authentication not ready');
   return u;
 }
-async function authRestUrl(path){const u=(typeof firebase!=='undefined'&&firebase.auth)?firebase.auth().currentUser:null;const token=u?await u.getIdToken():'';return `${REST_URL}/${path}.json${token?'?auth='+encodeURIComponent(token):''}`;}
+async function authRestUrl(path){const u=(typeof firebase!=='undefined'&&firebase.auth)?firebase.auth().currentUser:null;const token=u?await u.getIdToken():'';return `${REST_URL}/${path}.json${token?'?auth='+encodeURIComponent(token)+'&cb='+Date.now():'?cb='+Date.now()}`;}
 try{firebase.initializeApp(firebaseConfig);firebaseDB=firebase.database();setTimeout(()=>{const s=document.getElementById('firebaseStatus');if(s)s.innerText='✅ Firebase 8.10.1 + REST + Local - Secure - All Checked - No Breaking - No Misuse - Connected - V9.17.4 FINAL - NABIDINAM SPECIAL - 100% Working Secure!';const si=document.getElementById('storageInfo');if(si)si.innerText='✅ Secure - All Checked - No Breaking - No Misuse - 3 Layer - Event Board + Banner Logo + Login Secure + All Options Fixed - 100% Working Secure for Nabidinam! V9.17.2';},800);}catch(e){document.getElementById('firebaseStatus').innerText='⚠️ SDK Failed REST works - Secure - No Breaking - No Misuse: '+e.message}
-let currentEventId='',questions=[],totalMinutes=10,eventQuestionCount=20,randomMode=true,currentQ=0,score=0,timerInt=null,startTime=null,lastGeneratedLink='',currentLogoBase64='',currentBannerBase64='',currentCertBase64='',currentCertBgBase64='',currentCertLogo1Base64='',currentCertLogo2Base64='',currentCertSignBase64='',certMode=1,showCorrectWrong=true,certPos={x:'50',y:'60',s:'24'},eventPhoneLock=false,eventDeviceLock=false;
+let currentEventId='',currentEventOwnerId='',questions=[],totalMinutes=10,eventQuestionCount=20,randomMode=true,currentQ=0,score=0,timerInt=null,startTime=null,lastGeneratedLink='',currentLogoBase64='',currentBannerBase64='',currentCertBase64='',currentCertBgBase64='',currentCertLogo1Base64='',currentCertLogo2Base64='',currentCertSignBase64='',certMode=1,showCorrectWrong=true,certPos={x:'50',y:'60',s:'24'},eventPhoneLock=false,eventDeviceLock=false;
 
 async function initAuthPersistence(){
   try{
@@ -388,7 +388,7 @@ async function loadPastEvents(){
   const c=document.getElementById('pastEventsList'); if(!c)return;
   c.innerHTML='<p class="text-xs text-center py-6">☁️ Loading events...</p>';
   let data=null, source='';
-  try{const res=await fetch(`${REST_URL}/events.json?cb=${Date.now()}`,{cache:'no-store'}); if(res.ok){data=await res.json();source='cloud';}}catch(e){}
+  try{const res=await fetch(await authRestUrl('events'),{cache:'no-store'}); if(res.ok){data=await res.json();source='cloud';}}catch(e){}
   if(!data && firebaseDB){try{const snap=await firebaseDB.ref('events').once('value');data=snap.val();source='sdk';}catch(e){}}
   if(!data){try{data=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');source='local';}catch(e){data={};}}
   if(!data || typeof data!=='object')data={};
@@ -564,10 +564,17 @@ async function createOrUpdateLink(isNew){
   const cleanId=(currentEventId||'event_'+Date.now()).replace(/^event_/,''); currentEventId='event_'+cleanId;
   const link=window.location.origin+window.location.pathname+'?event='+cleanId; lastGeneratedLink=link;
   if(!currentLogoBase64)currentLogoBase64=localStorage.getItem('temp_logo')||''; if(!currentBannerBase64)currentBannerBase64=localStorage.getItem('temp_banner')||'';
-  const startAt=document.getElementById('setStartAt')?.value||''; const endAt=document.getElementById('setEndAt')?.value||''; const showResults=document.getElementById('setShowResults')?.checked!==false; const eventData={title,place,category,questions,minute,count,onlineMode:document.getElementById('setOnline').checked,showCorrect:showCorrectWrong,randomMode,phoneLock:document.getElementById('setPhoneLock').checked,deviceLock:document.getElementById('setDeviceLock').checked,startAt,endAt,showResults,logo:currentLogoBase64||'',banner:currentBannerBase64||'',certificate:currentCertBase64||'',certPos,certColor:document.getElementById('certColor')?.value||'#14532d',certTitle:document.getElementById('certTitle')?.value||'',certSub:document.getElementById('certSub')?.value||'',certSub2:document.getElementById('certSub2')?.value||'',updated:Date.now()};
+  const startAt=document.getElementById('setStartAt')?.value||''; const endAt=document.getElementById('setEndAt')?.value||''; const showResults=document.getElementById('setShowResults')?.checked!==false;
+   // Preserve the event owner on every edit. New organizer events are owned by that organizer; master-created events are master-owned.
+   let ownerId=currentEventOwnerId||currentOrganizerId()||'';
+   if(!ownerId && masterLoggedIn) ownerId=MASTER_ADMIN_EMAIL;
+   if(!ownerId && !isNew){ try{ const rr=await fetch(await authRestUrl(`events/${encodeURIComponent(cleanId)}`),{cache:'no-store'}); if(rr.ok){const old=await rr.json(); ownerId=String(old?.ownerId||'');} }catch(e){} }
+   if(!ownerId) ownerId=currentOrganizerId()||'';
+   currentEventOwnerId=ownerId;
+   const eventData={ownerId,title,place,category,questions,minute,count,onlineMode:document.getElementById('setOnline').checked,showCorrect:showCorrectWrong,randomMode,phoneLock:document.getElementById('setPhoneLock').checked,deviceLock:document.getElementById('setDeviceLock').checked,startAt,endAt,showResults,logo:currentLogoBase64||'',banner:currentBannerBase64||'',certificate:currentCertBase64||'',certPos,certColor:document.getElementById('certColor')?.value||'#14532d',certTitle:document.getElementById('certTitle')?.value||'',certSub:document.getElementById('certSub')?.value||'',certSub2:document.getElementById('certSub2')?.value||'',updated:Date.now()};
   document.getElementById('cloudStatus').innerText='☁️ Saving...';
   let cloudSaved=false;
-  try{const r=await fetch(`${REST_URL}/events/${encodeURIComponent(cleanId)}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(eventData)});cloudSaved=r.ok;}catch(e){}
+  try{const r=await fetch(await authRestUrl(`events/${encodeURIComponent(cleanId)}`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(eventData)});cloudSaved=r.ok;}catch(e){}
   if(!cloudSaved && firebaseDB){try{await firebaseDB.ref('events/'+cleanId).set(eventData);cloudSaved=true;}catch(e){}}
   if(!cloudSaved){document.getElementById('cloudStatus').innerText='❌ Cloud Save Failed. Nothing is marked as saved. Check Firebase Rules.';return;}
   const backup=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');backup[cleanId]=eventData;localStorage.setItem('pastEvents_backup',JSON.stringify(backup));localStorage.setItem('last_event_'+cleanId,JSON.stringify(eventData));localStorage.setItem('lastGeneratedLink_v14',link);localStorage.setItem('currentEventId_v17',currentEventId);
@@ -581,25 +588,27 @@ function shareWhatsApp(){if(!lastGeneratedLink){const l=localStorage.getItem('la
 async function loadCompetitorEvent(){
   const params=new URLSearchParams(window.location.search);
   const eventId=params.get('event');
+  const isPublicEvent=!!eventId;
   if(!eventId){document.getElementById('cloudLoadStatus').innerText='ℹ️ No Event ID - Default View - Secure - No Breaking - No Misuse! - Nabidinam Special - Admin-ൽ Create Link! - All Checked! Secure!';document.getElementById('compEventNameBelow').innerText='';document.getElementById('compPlaceShow').innerText='';document.getElementById('compDetailsBelow').innerText='';return;}
-  document.getElementById('cloudLoadStatus').innerText='☁️ Loading Event: '+eventId+' - Secure - No Breaking - No Misuse! - All Checked! - REST + SDK + Local - V9.17.2 Secure - Nabidinam Special - Logo Banner Event Place Loading - Nothing Removed...';
+  document.getElementById('cloudLoadStatus').innerText='☁️ Connecting to TRUE CLOUD…';
   let data=null;
-  try{const res=await fetch(`${REST_URL}/events/${encodeURIComponent(eventId)}.json?cb=${Date.now()}`,{cache:'no-store',headers:{'Cache-Control':'no-cache'}});if(res.ok)data=await res.json();}catch(e){}
-  if(!data && firebaseDB){try{const snap=await firebaseDB.ref('events/'+eventId).once('value');data=snap.val();}catch(e){}}
+  try{await ensureAnonymousAuth();}catch(e){console.warn('Anonymous auth unavailable:',e);}
+  try{const res=await fetch(await authRestUrl(`events/${encodeURIComponent(eventId)}`),{cache:'no-store'});if(res.ok)data=await res.json();}catch(e){console.warn('Event REST load failed:',e)}
+  if(!data && firebaseDB){try{await ensureAnonymousAuth();const snap=await firebaseDB.ref('events/'+eventId).once('value');data=snap.val();}catch(e){console.warn('Event SDK load failed:',e)}}
   // Public event links MUST use the current cloud event only. Never resurrect deleted events from local backup.
-  if(!data && eventMode){document.getElementById('cloudLoadStatus').innerText='❌ This event is no longer available. The link may have been deleted or disabled.';return;}
+  if(!data && isPublicEvent){document.getElementById('cloudLoadStatus').innerText='❌ This event is no longer available. The link may have been deleted or disabled.';return;}
   // Public links are cloud-authoritative: never load stale local event data.
-  if(eventMode && !data){return;}
+  if(isPublicEvent && !data){return;}
   if(!data){try{const backup=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');data=backup[eventId];}catch{}}
   if(!data){try{const last=JSON.parse(localStorage.getItem('last_event_'+eventId)||'null');data=last;}catch{}}
   if(!data){document.getElementById('cloudLoadStatus').innerText='❌ Event Not Found! ID:'+eventId;return;}
   // Scheduled opening/closing applies to public participants.
-  if(eventMode){
+  if(isPublicEvent){
     const now=Date.now(), start=data.startAt?new Date(data.startAt).getTime():null, end=data.endAt?new Date(data.endAt).getTime():null;
     if(start && now<start){document.getElementById('cloudLoadStatus').innerText='⏳ This event has not opened yet. Opening: '+new Date(start).toLocaleString();return;}
     if(end && now>end){document.getElementById('cloudLoadStatus').innerText='⛔ This event is closed. Closing time: '+new Date(end).toLocaleString();return;}
   }
-  currentEventId='event_'+eventId;window.currentEventData=data;questions=data.questions||[];totalMinutes=data.minute||10;eventQuestionCount=data.count||20;showCorrectWrong=data.showCorrect!==false;randomMode=data.randomMode!==false;eventPhoneLock=data.phoneLock===true;eventDeviceLock=data.deviceLock===true;currentCertBase64=data.certificate||'';currentCertBgBase64=data.certBg||'';currentCertLogo1Base64=data.certLogo1||'';currentCertLogo2Base64=data.certLogo2||'';currentCertSignBase64=data.certSign||'';certMode=data.certMode||1;certPos=data.certPos||{x:'50',y:'60',s:'24'};if(data.certColor&&document.getElementById('certColor'))document.getElementById('certColor').value=data.certColor;
+  currentEventId='event_'+eventId;currentEventOwnerId=String(data.ownerId||'');window.currentEventData=data;questions=data.questions||[];totalMinutes=data.minute||10;eventQuestionCount=data.count||20;showCorrectWrong=data.showCorrect!==false;randomMode=data.randomMode!==false;eventPhoneLock=data.phoneLock===true;eventDeviceLock=data.deviceLock===true;currentCertBase64=data.certificate||'';currentCertBgBase64=data.certBg||'';currentCertLogo1Base64=data.certLogo1||'';currentCertLogo2Base64=data.certLogo2||'';currentCertSignBase64=data.certSign||'';certMode=data.certMode||1;certPos=data.certPos||{x:'50',y:'60',s:'24'};if(data.certColor&&document.getElementById('certColor'))document.getElementById('certColor').value=data.certColor;
   document.getElementById('compTitle').innerText=data.title||'🌙 Noor Al Madrasa - Nabidinam Special Secure';
   document.getElementById('compEventNameBelow').innerText=data.title||'Noor Al Madrasa - Nabidinam Special Secure';
   document.getElementById('compPlaceShow').innerText=data.place||'';
@@ -646,8 +655,18 @@ async function finishQuiz(){
   if(eventPhoneLock){let up=JSON.parse(localStorage.getItem('usedPhones')||'[]');const k=window._quizData.phone+'_'+eid;if(!up.includes(k))up.push(k);localStorage.setItem('usedPhones',JSON.stringify(up));}
   if(eventDeviceLock){let ud=JSON.parse(localStorage.getItem('usedDevices')||'[]');if(!ud.includes(eid))ud.push(eid);localStorage.setItem('usedDevices',JSON.stringify(ud));}
   let cloudSaved=false;
-  try{const key=encodeURIComponent(String(window._quizData.phone||'participant').replace(/[^a-zA-Z0-9_-]/g,''))+'_'+String(Date.now());const res=await fetch(`${REST_URL}/results/${encodeURIComponent(eid)}/${key}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(r)});cloudSaved=res.ok;}catch(e){}
-  if(!cloudSaved && firebaseDB){try{await firebaseDB.ref('results/'+eid).push(r);cloudSaved=true;}catch(e){}}
+  try{
+    const u=await ensureAnonymousAuth();
+    const phoneHash=await sha256Hex(String(window._quizData.phone||''));
+    r.uid=u.uid; r.phoneHash=phoneHash;
+    const res=await fetch(await authRestUrl(`results/${encodeURIComponent(eid)}/${phoneHash}`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(r),cache:'no-store'});
+    cloudSaved=res.ok;
+  }catch(e){console.warn('Cloud result REST save failed:',e)}
+  if(!cloudSaved && firebaseDB){try{
+    const u=await ensureAnonymousAuth();const phoneHash=await sha256Hex(String(window._quizData.phone||''));
+    r.uid=u.uid;r.phoneHash=phoneHash;
+    await firebaseDB.ref('results/'+eid+'/'+(phoneHash+'_'+Date.now())).set(r);cloudSaved=true;
+  }catch(e){console.warn('Cloud result SDK save failed:',e)}}
   if(cloudSaved)document.getElementById('cloudLoadStatus').innerText='✅ Result saved to Cloud.'; else document.getElementById('cloudLoadStatus').innerText='⚠️ Result saved on this device, but Cloud save failed.';
   await loadResults(); setTimeout(()=>generateCertificate(),500);
 }
@@ -743,7 +762,8 @@ async function loadResults(){
   _currentCloudEvents={};
   // Only events that currently exist in Cloud are eligible. Deleted events are never included.
   try{
-    const evRes=await fetch(`${REST_URL}/events.json?cb=${Date.now()}`,{cache:'no-store'});
+    await ensureFirebaseReady();
+     const evRes=await fetch(await authRestUrl('events'),{cache:'no-store'});
     if(evRes.ok){
       const evs=await evRes.json()||{};
       Object.entries(evs).forEach(([id,e])=>{
@@ -755,7 +775,7 @@ async function loadResults(){
   for(const id of ids){
     if(_currentCloudEvents[id]?.showResults===false)continue;
     try{
-      const r=await fetch(`${REST_URL}/results/${encodeURIComponent(id)}.json?cb=${Date.now()}`,{cache:'no-store'});
+      const r=await fetch(await authRestUrl(`results/${encodeURIComponent(id)}`),{cache:'no-store'});
       if(r.ok){
         const d=await r.json();
         if(d&&typeof d==='object')Object.values(d).forEach(x=>all.push({...x,eventId:id}));
@@ -1078,7 +1098,7 @@ window.addEventListener('load',()=>{
 });
 </script>
 <script id="nq-sw-register">
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(e=>console.warn('PWA SW registration failed',e)));}
+if('serviceWorker' in navigator){window.addEventListener('load',async()=>{try{const regs=await navigator.serviceWorker.getRegistrations();for(const r of regs)await r.unregister();await caches.keys().then(keys=>Promise.all(keys.map(k=>caches.delete(k))));}catch(e){};try{await navigator.serviceWorker.register('./sw.js?v=29',{scope:'./'});}catch(e){console.warn('PWA SW registration failed',e);}});}
 </script>
 <script id="nq-final-layer">
 (function(){
@@ -1326,6 +1346,16 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.se
     else if(st.state==='after'){btn.disabled=true;btn.style.opacity='.55';btn.innerText='⛔ മത്സരം അവസാനിച്ചു';if(msg){msg.innerText='Closing Time: '+new Date(st.end).toLocaleString();msg.classList.remove('hidden');}}
     else{btn.disabled=false;btn.style.opacity='';btn.innerText='🚀 ക്വിസ് ആരംഭിക്കുക';if(msg)msg.classList.add('hidden');}
   },1000);
+})();
+</script>
+
+<script id="nq-v29-runtime-fix">
+(function(){
+  // V29: always hydrate a participant link from Firebase after auth is ready; never substitute the app's default banner/logo.
+  const p=new URLSearchParams(location.search);
+  if(!p.get('event')) return;
+  window.addEventListener('pageshow',()=>setTimeout(()=>{if(typeof loadCompetitorEvent==='function')loadCompetitorEvent().catch(()=>{});},350));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&typeof loadCompetitorEvent==='function')loadCompetitorEvent().catch(()=>{});});
 })();
 </script>
 </body>
