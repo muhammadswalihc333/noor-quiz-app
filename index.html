@@ -188,7 +188,11 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
 <div class="bg-yellow-50 p-4 rounded-xl mt-4 border-2 space-y-3">
 <label class="flex justify-between items-center font-bold bg-white p-3 rounded-xl border-2 border-orange-500"><span>🔀 Random Mode - Secure - No Misuse! - All Checked!</span><input id="setRandom" type="checkbox" checked class="w-6 h-6"></label>
 <label class="flex justify-between items-center font-bold bg-white p-3 rounded-xl border-2 border-green-500"><span>✅ Show Correct Green - Wrong→Correct Green - Secure - No Misuse!</span><input id="setShowCorrect" type="checkbox" checked class="w-6 h-6"></label>
-<label class="flex justify-between items-center font-bold bg-white p-3 rounded-xl border-2 border-blue-500"><span>🌐 TRUE CLOUD - Same Link Update - Secure - No Misuse!</span><input id="setOnline" type="checkbox" checked class="w-6 h-6"></label>
+<label class="flex justify-between items-center font-bold bg-white p-3 rounded-xl border-2 border-blue-500"><span>🌐 TRUE CLOUD - Same Link Update - Secure - No Misuse!</span><input id="setOnline" type="checkbox" checked class="w-6 h-6"></label><div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+<div class="bg-white p-3 rounded-xl border-2"><label class="text-[11px] font-black block mb-1">🕐 Event Opening Time</label><input id="setStartAt" type="datetime-local" class="w-full border-2 rounded-xl px-3 py-2.5 text-xs font-bold"></div>
+<div class="bg-white p-3 rounded-xl border-2"><label class="text-[11px] font-black block mb-1">⏰ Event Closing Time</label><input id="setEndAt" type="datetime-local" class="w-full border-2 rounded-xl px-3 py-2.5 text-xs font-bold"></div>
+</div>
+<label class="flex justify-between items-center font-bold bg-white p-3 rounded-xl border-2 mt-3"><span>📊 Show this Event's Results in Admin Results</span><input id="setShowResults" type="checkbox" checked class="w-6 h-6"></label>
 <label class="flex justify-between items-center font-bold bg-white p-3 rounded-xl border-2"><span>📱 One Phone One Attempt - Secure - No Misuse! - All Checked!</span><input id="setPhoneLock" type="checkbox" checked class="w-6 h-6"></label>
 <label class="flex justify-between items-center font-bold bg-white p-3 rounded-xl border-2"><span>💻 One Device One Attempt - Secure - No Misuse! - All Checked!</span><input id="setDeviceLock" type="checkbox" checked class="w-6 h-6"></label>
 </div>
@@ -205,7 +209,7 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
 <p id="cloudStatus" class="text-[12px] mt-3 font-black text-center bg-yellow-50 py-3 rounded-xl border-2"></p>
 </div>
 <div class="section-border"><div class="green-header">4 - Questions Bulk - Secure - Count Fixed - Random Mode - All Checked - No Breaking - No Misuse! - Nabidinam Special V9.17.2</div><textarea id="qBulk" rows="5" placeholder="Q | a,b,c,d | ans - Secure - No Misuse! - Ex: നബി ജന്മദേശം? | മക്ക,മദീന,ത്വാഇഫ്,യമൻ | 0" class="w-full border-2 rounded-xl p-4 text-xs"></textarea><button onclick="bulkAdd()" class="w-full mt-3 bg-[#8B5A00] text-white py-3.5 rounded-xl text-xs font-black shadow-lg">📚 Bulk Add - Secure - No Breaking! - No Misuse! - All Checked! - Random + Count Fixed! - Nabidinam Special</button><div class="mt-4"><div class="bg-[#14532d] text-white flex justify-between px-4 py-3 rounded-t-xl"><span class="text-xs font-black">Total: <span id="totalQCount">0</span> | Show: <span id="showQCount">0</span> | Secure - No Misuse! V9.17.2</span><span id="quota" class="bg-yellow-400 text-black px-3 py-1 rounded-full text-[11px] font-black">Quota: 0</span></div><div id="qList" class="bg-yellow-50/50 border-2 border-t-0 rounded-b-xl p-3 min-h-[80px] text-xs">No Questions - Secure - No Misuse! - Nabidinam Special</div></div></div>
-<div class="section-border border-orange-400"><div class="green-header bg-orange-600">5 - Results & Ranking - Secure - All Checked - No Breaking - No Misuse! - Nabidinam Special V9.17.2</div><div class="bg-orange-50 p-4 rounded-xl border-2 mb-4"><div class="grid grid-cols-3 gap-3"><button id="refreshResultsBtn" onclick="refreshResults()" class="bg-slate-800 text-white py-3 rounded-xl text-xs font-black">🔄 Refresh - Secure!</button><button onclick="downloadResults()" class="bg-green-600 text-white py-3 rounded-xl text-xs font-black">📥 CSV - Secure!</button><button onclick="clearAllResults()" class="bg-red-100 text-red-600 border-2 py-3 rounded-xl text-xs font-black">🗑️ Clear My Results</button></div></div><div id="resultsList" class="bg-white border-2 rounded-xl p-3 max-h-[250px] overflow-auto text-xs">No Results - Secure - No Misuse! - Nabidinam Special V9.17.2</div></div>
+<div class="section-border border-orange-400"><div class="green-header bg-orange-600">5 - Results & Ranking - Secure - All Checked - No Breaking - No Misuse! - Nabidinam Special V9.17.2</div><div class="bg-orange-50 p-4 rounded-xl border-2 mb-4"><div class="mb-3"><label class="block text-xs font-black mb-1">🎯 Results for Event</label><select id="resultsEventFilter" onchange="applyResultsEventFilter()" class="w-full border-2 rounded-xl px-3 py-3 text-xs font-bold bg-white"><option value="">All Events</option></select></div><div class="grid grid-cols-3 gap-3"><button id="refreshResultsBtn" onclick="refreshResults()" class="bg-slate-800 text-white py-3 rounded-xl text-xs font-black">🔄 Refresh - Secure!</button><button onclick="downloadResults()" class="bg-green-600 text-white py-3 rounded-xl text-xs font-black">📥 CSV - Secure!</button><button onclick="clearAllResults()" class="bg-red-100 text-red-600 border-2 py-3 rounded-xl text-xs font-black">🗑️ Clear My Results</button></div></div><div id="resultsList" class="bg-white border-2 rounded-xl p-3 max-h-[250px] overflow-auto text-xs">No Results - Secure - No Misuse! - Nabidinam Special V9.17.2</div></div>
 </div>
 </div>
 <script>
@@ -453,6 +457,9 @@ async function editEventById(id){
     eventQuestionCount=data.count||20; randomMode=data.randomMode!==false; showCorrectWrong=data.showCorrect!==false;
     document.getElementById('setRandom').checked=randomMode; document.getElementById('setShowCorrect').checked=showCorrectWrong;
     document.getElementById('setOnline').checked=data.onlineMode!==false; document.getElementById('setPhoneLock').checked=data.phoneLock!==false; document.getElementById('setDeviceLock').checked=data.deviceLock!==false;
+    if(document.getElementById('setStartAt'))document.getElementById('setStartAt').value=data.startAt||'';
+    if(document.getElementById('setEndAt'))document.getElementById('setEndAt').value=data.endAt||'';
+    if(document.getElementById('setShowResults'))document.getElementById('setShowResults').checked=data.showResults!==false;
     questions=Array.isArray(data.questions)?data.questions:[]; localStorage.setItem('questions_v13',JSON.stringify(questions)); renderQuestions();
     if(data.logo){currentLogoBase64=data.logo;document.getElementById('logoPreview').src=data.logo;document.getElementById('logoPreview').classList.remove('hidden');}
     if(data.banner){currentBannerBase64=data.banner;document.getElementById('bannerPreview').src=data.banner;document.getElementById('bannerPreview').classList.remove('hidden');}
@@ -522,6 +529,9 @@ async function editEventById(id){
     randomMode=data.randomMode!==false;showCorrectWrong=data.showCorrect!==false;
     document.getElementById('setRandom').checked=randomMode;document.getElementById('setShowCorrect').checked=showCorrectWrong;
     document.getElementById('setOnline').checked=data.onlineMode!==false;document.getElementById('setPhoneLock').checked=data.phoneLock!==false;document.getElementById('setDeviceLock').checked=data.deviceLock!==false;
+    if(document.getElementById('setStartAt'))document.getElementById('setStartAt').value=data.startAt||'';
+    if(document.getElementById('setEndAt'))document.getElementById('setEndAt').value=data.endAt||'';
+    if(document.getElementById('setShowResults'))document.getElementById('setShowResults').checked=data.showResults!==false;
     questions=data.questions||[];localStorage.setItem('questions_v13',JSON.stringify(questions));renderQuestions();
     if(data.logo){currentLogoBase64=data.logo;document.getElementById('logoPreview').src=data.logo;document.getElementById('logoPreview').classList.remove('hidden');document.getElementById('logoSizeInfo').innerText=`✅ Logo Loaded - ${(data.logo.length/1024).toFixed(1)}KB - Secure! V9.17.2`;}
     if(data.banner){currentBannerBase64=data.banner;document.getElementById('bannerPreview').src=data.banner;document.getElementById('bannerPreview').classList.remove('hidden');document.getElementById('bannerSizeInfo').innerText=`✅ Banner Loaded - ${(data.banner.length/1024).toFixed(1)}KB - Secure! V9.17.2`;}
@@ -554,7 +564,7 @@ async function createOrUpdateLink(isNew){
   const cleanId=(currentEventId||'event_'+Date.now()).replace(/^event_/,''); currentEventId='event_'+cleanId;
   const link=window.location.origin+window.location.pathname+'?event='+cleanId; lastGeneratedLink=link;
   if(!currentLogoBase64)currentLogoBase64=localStorage.getItem('temp_logo')||''; if(!currentBannerBase64)currentBannerBase64=localStorage.getItem('temp_banner')||'';
-  const eventData={title,place,category,questions,minute,count,onlineMode:document.getElementById('setOnline').checked,showCorrect:showCorrectWrong,randomMode,phoneLock:document.getElementById('setPhoneLock').checked,deviceLock:document.getElementById('setDeviceLock').checked,logo:currentLogoBase64||'',banner:currentBannerBase64||'',certificate:currentCertBase64||'',certPos,certColor:document.getElementById('certColor')?.value||'#14532d',certTitle:document.getElementById('certTitle')?.value||'',certSub:document.getElementById('certSub')?.value||'',certSub2:document.getElementById('certSub2')?.value||'',updated:Date.now()};
+  const startAt=document.getElementById('setStartAt')?.value||''; const endAt=document.getElementById('setEndAt')?.value||''; const showResults=document.getElementById('setShowResults')?.checked!==false; const eventData={title,place,category,questions,minute,count,onlineMode:document.getElementById('setOnline').checked,showCorrect:showCorrectWrong,randomMode,phoneLock:document.getElementById('setPhoneLock').checked,deviceLock:document.getElementById('setDeviceLock').checked,startAt,endAt,showResults,logo:currentLogoBase64||'',banner:currentBannerBase64||'',certificate:currentCertBase64||'',certPos,certColor:document.getElementById('certColor')?.value||'#14532d',certTitle:document.getElementById('certTitle')?.value||'',certSub:document.getElementById('certSub')?.value||'',certSub2:document.getElementById('certSub2')?.value||'',updated:Date.now()};
   document.getElementById('cloudStatus').innerText='☁️ Saving...';
   let cloudSaved=false;
   try{const r=await fetch(`${REST_URL}/events/${encodeURIComponent(cleanId)}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(eventData)});cloudSaved=r.ok;}catch(e){}
@@ -576,10 +586,18 @@ async function loadCompetitorEvent(){
   let data=null;
   try{const res=await fetch(`${REST_URL}/events/${eventId}.json`);if(res.ok)data=await res.json();}catch(e){}
   if(!data && firebaseDB){try{const snap=await firebaseDB.ref('events/'+eventId).once('value');data=snap.val();}catch(e){}}
+  // Public event links MUST use the current cloud event only. Never resurrect deleted events from local backup.
+  if(!data && eventMode){document.getElementById('cloudLoadStatus').innerText='❌ This event is no longer available. The link may have been deleted or disabled.';return;}
   if(!data){try{const backup=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');data=backup[eventId];}catch{}}
   if(!data){try{const last=JSON.parse(localStorage.getItem('last_event_'+eventId)||'null');data=last;}catch{}}
-  if(!data){document.getElementById('cloudLoadStatus').innerText='❌ Event Not Found! ID:'+eventId+' - Secure - No Breaking - No Misuse! - Nabidinam Special - Check Link! V9.17.2 - All Checked! Secure!';return;}
-  currentEventId='event_'+eventId;questions=data.questions||[];totalMinutes=data.minute||10;eventQuestionCount=data.count||20;showCorrectWrong=data.showCorrect!==false;randomMode=data.randomMode!==false;eventPhoneLock=data.phoneLock!==false;eventDeviceLock=data.deviceLock!==false;currentCertBase64=data.certificate||'';currentCertBgBase64=data.certBg||'';currentCertLogo1Base64=data.certLogo1||'';currentCertLogo2Base64=data.certLogo2||'';currentCertSignBase64=data.certSign||'';certMode=data.certMode||1;certPos=data.certPos||{x:'50',y:'60',s:'24'};if(data.certColor&&document.getElementById('certColor'))document.getElementById('certColor').value=data.certColor;
+  if(!data){document.getElementById('cloudLoadStatus').innerText='❌ Event Not Found! ID:'+eventId;return;}
+  // Scheduled opening/closing applies to public participants.
+  if(eventMode){
+    const now=Date.now(), start=data.startAt?new Date(data.startAt).getTime():null, end=data.endAt?new Date(data.endAt).getTime():null;
+    if(start && now<start){document.getElementById('cloudLoadStatus').innerText='⏳ This event has not opened yet. Opening: '+new Date(start).toLocaleString();return;}
+    if(end && now>end){document.getElementById('cloudLoadStatus').innerText='⛔ This event is closed. Closing time: '+new Date(end).toLocaleString();return;}
+  }
+  currentEventId='event_'+eventId;window.currentEventData=data;questions=data.questions||[];totalMinutes=data.minute||10;eventQuestionCount=data.count||20;showCorrectWrong=data.showCorrect!==false;randomMode=data.randomMode!==false;eventPhoneLock=data.phoneLock!==false;eventDeviceLock=data.deviceLock!==false;currentCertBase64=data.certificate||'';currentCertBgBase64=data.certBg||'';currentCertLogo1Base64=data.certLogo1||'';currentCertLogo2Base64=data.certLogo2||'';currentCertSignBase64=data.certSign||'';certMode=data.certMode||1;certPos=data.certPos||{x:'50',y:'60',s:'24'};if(data.certColor&&document.getElementById('certColor'))document.getElementById('certColor').value=data.certColor;
   document.getElementById('compTitle').innerText=data.title||'🌙 Noor Al Madrasa - Nabidinam Special Secure';
   document.getElementById('compEventNameBelow').innerText=data.title||'Noor Al Madrasa - Nabidinam Special Secure';
   document.getElementById('compPlaceShow').innerText=data.place||'';
@@ -662,67 +680,116 @@ function generateCertificate(){
 }
 function downloadCertificate(){generateCertificate();setTimeout(()=>{document.getElementById('certDownloadArea').classList.remove('hidden');document.getElementById('certDownloadArea').scrollIntoView({behavior:'smooth'})},300);}
 let cloudResultsCache=[];
-function sortResults(r){return r.sort((a,b)=>{if(Number(b.score)!==Number(a.score))return Number(b.score)-Number(a.score);return Number(a.time||0)-Number(b.time||0);});}
-function renderResults(r){const l=document.getElementById('resultsList');if(!l)return;if(!r.length){l.innerHTML='<p class="text-center py-6 text-gray-500">No Results Yet</p>';return;}const seen=new Set(),clean=[];r.forEach(x=>{const sig=[x.eventId||'',x.phoneHash||x.phone||'',x.score??'',x.total??'',x.time??''].join('|');if(!seen.has(sig)){seen.add(sig);clean.push(x);}});sortResults(clean);l.innerHTML=clean.map((x,i)=>{const med=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}.`;const when=x.timestamp?new Date(x.timestamp).toLocaleString():'';return `<div class="flex flex-col gap-1 py-2.5 border-b hover:bg-yellow-50 px-2 rounded"><div class="flex justify-between gap-2"><span>${med} <b>${escapeHtml(x.name||'')}</b> - ${x.score}/${x.total}</span><span class="font-bold">${escapeHtml(x.timeStr||'')}</span></div><div class="text-gray-500">${escapeHtml(x.phone||'')} | ${escapeHtml(x.place||'')}${x.eventId?' | Event: '+escapeHtml(x.eventId):''}${when?' | '+escapeHtml(when):''}</div></div>`;}).join('');}
-async function getOwnedEventIds(ownerId){const out=[];if(!ownerId)return out;try{const snap=await firebaseDB.ref('events').once('value');const all=snap.val()||{};Object.entries(all).forEach(([id,e])=>{if(e&&String(e.ownerId||'').trim().toLowerCase()===String(ownerId||'').trim().toLowerCase())out.push(id);});}catch(e){console.warn('Owned event lookup failed',e);}return out;}
-async function resolveOrganizerId(){const fromUrl=currentOrganizerId();if(fromUrl)return fromUrl;try{const u=firebase.auth().currentUser;const email=(u&&u.email||'').trim().toLowerCase();if(!email)return '';const snap=await firebaseDB.ref('masterAdmin/organizers').once('value');const all=snap.val()||{};for(const [id,o] of Object.entries(all)){if(o&&String(o.email||'').trim().toLowerCase()===email&&o.active!==false)return id;}}catch(e){console.warn('Organizer identity lookup failed',e);}return '';}
-function localKnownEventIds(){
-  const ids=new Set();
-  try{
-    const p=new URLSearchParams(location.search);
-    const a=[p.get('event'),currentEventId,localStorage.getItem('currentEventId_v17'),localStorage.getItem('currentEventId_v16')];
-    a.forEach(x=>{if(x)ids.add(String(x).replace(/^event_/,'')||x);});
-    const backup=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');
-    Object.keys(backup||{}).forEach(x=>{if(x)ids.add(String(x).replace(/^event_/,'')||x);});
-  }catch(e){}
-  return [...ids].filter(Boolean);
+let _allCloudResults=[];
+let _currentCloudEvents={};
+
+function sortResults(r){
+  return r.sort((a,b)=>{
+    if(Number(b.score)!==Number(a.score))return Number(b.score)-Number(a.score);
+    return Number(a.time||0)-Number(b.time||0);
+  });
 }
-async function getResultEventIds(){
-  const ids=new Set(localKnownEventIds());
-  const role=currentRole();
-  if(role==='organizer'){
-    const owner=await resolveOrganizerId();
-    if(owner){
-      try{(await getOwnedEventIds(owner)).forEach(x=>ids.add(x));}catch(e){console.warn('Organizer event lookup failed',e);}
-    }
-  }else if(role==='master'){
-    try{
-      const snap=await firebaseDB.ref('events').once('value');
-      Object.keys(snap.val()||{}).forEach(x=>ids.add(x));
-    }catch(e){console.warn('Master event lookup failed; using known event IDs',e);}
-  }
-  return [...ids];
+function populateResultsEventFilter(results){
+  const sel=document.getElementById('resultsEventFilter'); if(!sel)return;
+  const current=sel.value;
+  const ids=Object.keys(_currentCloudEvents||{});
+  const titles={};
+  ids.forEach(id=>titles[id]=_currentCloudEvents[id]?.title||('Event '+id));
+  sel.innerHTML='<option value="">All Current Events</option>'+
+    ids.map(id=>`<option value="${escapeHtml(id)}">${escapeHtml(titles[id])}</option>`).join('');
+  if(current && ids.includes(current))sel.value=current;
 }
-async function readCloudResultGroup(eventId){
-  let lastErr=null;
-  try{
-    await ensureFirebaseReady();
-    const snap=await firebaseDB.ref('results/'+eventId).once('value');
-    return snap.val()||{};
-  }catch(e){lastErr=e;}
-  try{
-    const url=await authRestUrl('results/'+encodeURIComponent(eventId));
-    const res=await fetch(url,{cache:'no-store'});
-    if(res.ok) return (await res.json())||{};
-    lastErr=new Error('REST read HTTP '+res.status);
-  }catch(e){lastErr=e;}
-  throw lastErr||new Error('Result read failed');
+function renderResults(r){
+  const l=document.getElementById('resultsList'); if(!l)return;
+  _allCloudResults=Array.isArray(r)?r:[];
+  populateResultsEventFilter(_allCloudResults);
+  applyResultsEventFilter();
 }
+function applyResultsEventFilter(){
+  const l=document.getElementById('resultsList'); if(!l)return;
+  const sel=document.getElementById('resultsEventFilter');
+  const filter=sel?String(sel.value||''):'';
+  let r=_allCloudResults.filter(x=>{
+    const id=String(x.eventId||'').replace(/^event_/,'');
+    return _currentCloudEvents[id] && (!filter || id===filter) && _currentCloudEvents[id].showResults!==false;
+  });
+  const seen=new Set(),clean=[];
+  r.forEach(x=>{
+    const k=[String(x.eventId||''),x.phoneHash||x.phone||'',x.score??'',x.total??'',x.time??'',x.timestamp??''].join('|');
+    if(!seen.has(k)){seen.add(k);clean.push(x);}
+  });
+  sortResults(clean);
+  if(!clean.length){l.innerHTML='<p class="text-center py-6 text-gray-500">No visible results for the current event(s).</p>';return;}
+  l.innerHTML=clean.map((x,i)=>{
+    const med=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}.`;
+    const when=x.timestamp?new Date(x.timestamp).toLocaleString():'';
+    const ev=_currentCloudEvents[String(x.eventId||'').replace(/^event_/,'')]?.title||'';
+    return `<div class="flex flex-col gap-1 py-2.5 border-b hover:bg-yellow-50 px-2 rounded"><div class="flex justify-between gap-2"><span>${med} <b>${escapeHtml(x.name||'')}</b> - ${x.score}/${x.total}</span><span class="font-bold">${escapeHtml(x.timeStr||'')}</span></div><div class="text-gray-500">${escapeHtml(ev)} | ${escapeHtml(x.phone||'')} | ${escapeHtml(x.place||'')}${when?' | '+escapeHtml(when):''}</div></div>`;
+  }).join('');
+}
+
 async function loadResults(){
-  const l=document.getElementById('resultsList');if(!l)return;let all=[];
-  const ids=[];
-  try{const evRes=await fetch(`${REST_URL}/events.json?cb=${Date.now()}`,{cache:'no-store'});if(evRes.ok){const evs=await evRes.json();ids.push(...Object.keys(evs||{}));}}catch(e){}
-  if(currentEventId)ids.push(currentEventId.replace(/^event_/,''));
-  const uniq=[...new Set(ids)];
-  for(const id of uniq){try{const r=await fetch(`${REST_URL}/results/${encodeURIComponent(id)}.json?cb=${Date.now()}`,{cache:'no-store'});if(r.ok){const d=await r.json();if(d&&typeof d==='object')Object.values(d).forEach(x=>all.push({...x,eventId:id}));}}catch(e){}}
-  const local=JSON.parse(localStorage.getItem('results_v13')||'[]'); all=all.concat(local);
-  const seen=new Set(); all=all.filter(x=>{const k=[x.eventId||'',x.phone||'',x.name||'',x.score||0,x.time||0,x.timestamp||0].join('|');if(seen.has(k))return false;seen.add(k);return true;});
-  all.sort((a,b)=>b.score-a.score||a.time-b.time);
-  if(!all.length){l.innerHTML='<p class="text-center py-6 text-gray-500">No Results Yet.</p>';return;}
-  l.innerHTML=all.map((x,i)=>`<div class="flex justify-between py-2.5 border-b text-xs px-2"><span>${i<3?['🥇','🥈','🥉'][i]:`${i+1}.`} ${escapeHtml(x.name||'')} - ${x.score}/${x.total}</span><span class="font-bold">${escapeHtml(x.timeStr||'')}</span></div>`).join('');
+  const l=document.getElementById('resultsList');if(!l)return;
+  let all=[];
+  _currentCloudEvents={};
+  // Only events that currently exist in Cloud are eligible. Deleted events are never included.
+  try{
+    const evRes=await fetch(`${REST_URL}/events.json?cb=${Date.now()}`,{cache:'no-store'});
+    if(evRes.ok){
+      const evs=await evRes.json()||{};
+      Object.entries(evs).forEach(([id,e])=>{
+        if(e){_currentCloudEvents[id]=e;}
+      });
+    }
+  }catch(e){}
+  const ids=Object.keys(_currentCloudEvents);
+  for(const id of ids){
+    if(_currentCloudEvents[id]?.showResults===false)continue;
+    try{
+      const r=await fetch(`${REST_URL}/results/${encodeURIComponent(id)}.json?cb=${Date.now()}`,{cache:'no-store'});
+      if(r.ok){
+        const d=await r.json();
+        if(d&&typeof d==='object')Object.values(d).forEach(x=>all.push({...x,eventId:id}));
+      }
+    }catch(e){}
+  }
+  // Local results are allowed only when their event still exists in Cloud.
+  try{
+    const local=JSON.parse(localStorage.getItem('results_v13')||'[]');
+    all=all.concat(local.map(x=>({...x,eventId:String(x.eventId||'').replace(/^event_/,'')})).filter(x=>_currentCloudEvents[x.eventId]));
+  }catch(e){}
+  const seen=new Set();
+  all=all.filter(x=>{
+    const k=[String(x.eventId||''),x.phoneHash||x.phone||'',x.score??'',x.total??'',x.time??'',x.timestamp??''].join('|');
+    if(seen.has(k))return false;seen.add(k);return true;
+  });
+  sortResults(all);
+  renderResults(all);
 }
-async function downloadResults(){await loadResults();let r=JSON.parse(localStorage.getItem('results_v13')||'[]');if(!r.length){alert('No local results. Cloud results are displayed above.');return;}let csv='Rank,Name,Phone,Place,Score,Total,Time\n';r.sort((a,b)=>b.score-a.score||a.time-b.time).forEach((x,i)=>csv+=`${i+1},"${String(x.name||'').replace(/"/g,'""')}","${String(x.phone||'')}","${String(x.place||'')}",${x.score},${x.total},${x.timeStr}\n`);const b=new Blob([csv],{type:'text/csv'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='Results.csv';a.click();URL.revokeObjectURL(u);}
-async function clearAllResults(){if(!confirm('Delete local results only? Cloud results are separate.'))return;localStorage.removeItem('results_v13');loadResults();}
+
+async function downloadResults(){
+  await loadResults();
+  const sel=document.getElementById('resultsEventFilter');
+  const filter=sel?String(sel.value||''):'';
+  let r=_allCloudResults.filter(x=>{
+    const id=String(x.eventId||'').replace(/^event_/,'');
+    return _currentCloudEvents[id] && _currentCloudEvents[id].showResults!==false && (!filter || id===filter);
+  });
+  if(!r.length){alert('No visible results for the selected current event.');return;}
+  sortResults(r);
+  let csv='Rank,Event ID,Event Name,Name,Phone,Place,Score,Total,Time,Timestamp\n';
+  r.forEach((x,i)=>{
+    const id=String(x.eventId||'').replace(/^event_/,'');
+    const title=_currentCloudEvents[id]?.title||'';
+    csv+=`${i+1},"${id}","${String(title).replace(/"/g,'""')}","${String(x.name||'').replace(/"/g,'""')}","${String(x.phone||'')}","${String(x.place||'')}",${x.score},${x.total},"${String(x.timeStr||'')}","${x.timestamp?new Date(x.timestamp).toISOString():''}"\n`;
+  });
+  const b=new Blob([csv],{type:'text/csv'}),u=URL.createObjectURL(b),a=document.createElement('a');
+  a.href=u;a.download=filter?`Results_${filter}.csv`:'Results_Current_Events.csv';a.click();URL.revokeObjectURL(u);
+}
+async function clearAllResults(){
+  if(!confirm('Clear local results only? Cloud results are kept.'))return;
+  localStorage.removeItem('results_v13');await loadResults();
+}
 window.addEventListener('load',()=>{
   init();
   loadCompetitorEvent();
