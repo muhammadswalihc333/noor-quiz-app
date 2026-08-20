@@ -193,8 +193,8 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
 <div class="bg-white p-3 rounded-xl border-2"><label class="text-[11px] font-black block mb-1">⏰ Event Closing Time</label><input id="setEndAt" type="datetime-local" class="w-full border-2 rounded-xl px-3 py-2.5 text-xs font-bold"></div>
 </div>
 <label class="flex justify-between items-center font-bold bg-white p-3 rounded-xl border-2 mt-3"><span>📊 Show this Event's Results in Admin Results</span><input id="setShowResults" type="checkbox" checked class="w-6 h-6"></label>
-<label class="flex justify-between items-center font-bold bg-white p-3 rounded-xl border-2"><span>📱 One Phone One Attempt - Secure - No Misuse! - All Checked!</span><input id="setPhoneLock" type="checkbox" checked class="w-6 h-6"></label>
-<label class="flex justify-between items-center font-bold bg-white p-3 rounded-xl border-2"><span>💻 One Device One Attempt - Secure - No Misuse! - All Checked!</span><input id="setDeviceLock" type="checkbox" checked class="w-6 h-6"></label>
+<label class="flex justify-between items-center font-bold bg-white p-3 rounded-xl border-2"><span>📱 One Phone One Attempt - Secure - No Misuse! - All Checked!</span><input id="setPhoneLock" type="checkbox" class="w-6 h-6"></label>
+<label class="flex justify-between items-center font-bold bg-white p-3 rounded-xl border-2"><span>💻 One Device One Attempt - Secure - No Misuse! - All Checked!</span><input id="setDeviceLock" type="checkbox" class="w-6 h-6"></label>
 </div>
 <input id="eventIdShow" readonly placeholder="Event ID Auto - Same Link-ന് Same ID - Secure - No Misuse! - All Checked!" class="w-full border-2 rounded-xl px-3 py-3 mt-4 text-xs bg-gray-100 font-bold">
 <div class="grid grid-cols-1 gap-3 mt-4">
@@ -241,7 +241,7 @@ async function ensureFirebaseReady(){
 }
 async function authRestUrl(path){const u=(typeof firebase!=='undefined'&&firebase.auth)?firebase.auth().currentUser:null;const token=u?await u.getIdToken():'';return `${REST_URL}/${path}.json${token?'?auth='+encodeURIComponent(token):''}`;}
 try{firebase.initializeApp(firebaseConfig);firebaseDB=firebase.database();setTimeout(()=>{const s=document.getElementById('firebaseStatus');if(s)s.innerText='✅ Firebase 8.10.1 + REST + Local - Secure - All Checked - No Breaking - No Misuse - Connected - V9.17.4 FINAL - NABIDINAM SPECIAL - 100% Working Secure!';const si=document.getElementById('storageInfo');if(si)si.innerText='✅ Secure - All Checked - No Breaking - No Misuse - 3 Layer - Event Board + Banner Logo + Login Secure + All Options Fixed - 100% Working Secure for Nabidinam! V9.17.2';},800);}catch(e){document.getElementById('firebaseStatus').innerText='⚠️ SDK Failed REST works - Secure - No Breaking - No Misuse: '+e.message}
-let currentEventId='',questions=[],totalMinutes=10,eventQuestionCount=20,randomMode=true,currentQ=0,score=0,timerInt=null,startTime=null,lastGeneratedLink='',currentLogoBase64='',currentBannerBase64='',currentCertBase64='',currentCertBgBase64='',currentCertLogo1Base64='',currentCertLogo2Base64='',currentCertSignBase64='',certMode=1,showCorrectWrong=true,certPos={x:'50',y:'60',s:'24'},eventPhoneLock=true,eventDeviceLock=true;
+let currentEventId='',questions=[],totalMinutes=10,eventQuestionCount=20,randomMode=true,currentQ=0,score=0,timerInt=null,startTime=null,lastGeneratedLink='',currentLogoBase64='',currentBannerBase64='',currentCertBase64='',currentCertBgBase64='',currentCertLogo1Base64='',currentCertLogo2Base64='',currentCertSignBase64='',certMode=1,showCorrectWrong=true,certPos={x:'50',y:'60',s:'24'},eventPhoneLock=false,eventDeviceLock=false;
 
 async function initAuthPersistence(){
   try{
@@ -456,7 +456,7 @@ async function editEventById(id){
     document.getElementById('setMinute').value=String(data.minute||10); document.getElementById('setCount').value=data.count||20;
     eventQuestionCount=data.count||20; randomMode=data.randomMode!==false; showCorrectWrong=data.showCorrect!==false;
     document.getElementById('setRandom').checked=randomMode; document.getElementById('setShowCorrect').checked=showCorrectWrong;
-    document.getElementById('setOnline').checked=data.onlineMode!==false; document.getElementById('setPhoneLock').checked=data.phoneLock!==false; document.getElementById('setDeviceLock').checked=data.deviceLock!==false;
+    document.getElementById('setOnline').checked=data.onlineMode!==false; document.getElementById('setPhoneLock').checked=data.phoneLock===true; document.getElementById('setDeviceLock').checked=data.deviceLock===true;
     if(document.getElementById('setStartAt'))document.getElementById('setStartAt').value=data.startAt||'';
     if(document.getElementById('setEndAt'))document.getElementById('setEndAt').value=data.endAt||'';
     if(document.getElementById('setShowResults'))document.getElementById('setShowResults').checked=data.showResults!==false;
@@ -528,7 +528,7 @@ async function editEventById(id){
     document.getElementById('setCount').value=data.count||20;eventQuestionCount=data.count||20;
     randomMode=data.randomMode!==false;showCorrectWrong=data.showCorrect!==false;
     document.getElementById('setRandom').checked=randomMode;document.getElementById('setShowCorrect').checked=showCorrectWrong;
-    document.getElementById('setOnline').checked=data.onlineMode!==false;document.getElementById('setPhoneLock').checked=data.phoneLock!==false;document.getElementById('setDeviceLock').checked=data.deviceLock!==false;
+    document.getElementById('setOnline').checked=data.onlineMode!==false;document.getElementById('setPhoneLock').checked=data.phoneLock===true;document.getElementById('setDeviceLock').checked=data.deviceLock===true;
     if(document.getElementById('setStartAt'))document.getElementById('setStartAt').value=data.startAt||'';
     if(document.getElementById('setEndAt'))document.getElementById('setEndAt').value=data.endAt||'';
     if(document.getElementById('setShowResults'))document.getElementById('setShowResults').checked=data.showResults!==false;
@@ -597,16 +597,23 @@ async function loadCompetitorEvent(){
     if(start && now<start){document.getElementById('cloudLoadStatus').innerText='⏳ This event has not opened yet. Opening: '+new Date(start).toLocaleString();return;}
     if(end && now>end){document.getElementById('cloudLoadStatus').innerText='⛔ This event is closed. Closing time: '+new Date(end).toLocaleString();return;}
   }
-  currentEventId='event_'+eventId;window.currentEventData=data;questions=data.questions||[];totalMinutes=data.minute||10;eventQuestionCount=data.count||20;showCorrectWrong=data.showCorrect!==false;randomMode=data.randomMode!==false;eventPhoneLock=data.phoneLock!==false;eventDeviceLock=data.deviceLock!==false;currentCertBase64=data.certificate||'';currentCertBgBase64=data.certBg||'';currentCertLogo1Base64=data.certLogo1||'';currentCertLogo2Base64=data.certLogo2||'';currentCertSignBase64=data.certSign||'';certMode=data.certMode||1;certPos=data.certPos||{x:'50',y:'60',s:'24'};if(data.certColor&&document.getElementById('certColor'))document.getElementById('certColor').value=data.certColor;
+  currentEventId='event_'+eventId;window.currentEventData=data;questions=data.questions||[];totalMinutes=data.minute||10;eventQuestionCount=data.count||20;showCorrectWrong=data.showCorrect!==false;randomMode=data.randomMode!==false;eventPhoneLock=data.phoneLock===true;eventDeviceLock=data.deviceLock===true;currentCertBase64=data.certificate||'';currentCertBgBase64=data.certBg||'';currentCertLogo1Base64=data.certLogo1||'';currentCertLogo2Base64=data.certLogo2||'';currentCertSignBase64=data.certSign||'';certMode=data.certMode||1;certPos=data.certPos||{x:'50',y:'60',s:'24'};if(data.certColor&&document.getElementById('certColor'))document.getElementById('certColor').value=data.certColor;
   document.getElementById('compTitle').innerText=data.title||'🌙 Noor Al Madrasa - Nabidinam Special Secure';
   document.getElementById('compEventNameBelow').innerText=data.title||'Noor Al Madrasa - Nabidinam Special Secure';
   document.getElementById('compPlaceShow').innerText=data.place||'';
   document.getElementById('compDetailsBelow').innerText=`${data.category||'Madrasa'} | ${totalMinutes} Min - Secure! | ${Math.min(eventQuestionCount,questions.length)} Qs - Secure! | ${randomMode?'🔀 Random Secure!':'📝 Same Secure!'} | ${data.place||''} - Secure! - No Misuse! - Nabidinam Special V9.17.2 Secure`;
+  const scheduleParts=[];
+  if(data.startAt){const d=new Date(data.startAt);if(!isNaN(d))scheduleParts.push('🟢 Opening: '+d.toLocaleString());}
+  if(data.endAt){const d=new Date(data.endAt);if(!isNaN(d))scheduleParts.push('🔴 Closing: '+d.toLocaleString());}
+  const sched=document.getElementById('cloudLoadStatus');
+  if(scheduleParts.length && sched) sched.innerText=scheduleParts.join(' | ');
+
   document.getElementById('eventNameDisplay').innerText=data.title||'';
   document.getElementById('eventCountDisplay').innerText=`📝 Total:${questions.length} - Secure! Show:${Math.min(eventQuestionCount,questions.length)} - Secure! Time:${totalMinutes}Min - Secure!`;
   document.getElementById('eventRandomDisplay').innerText=`${randomMode?'🔀 Random ON - Secure!':'📝 Same - Secure!'} | ${showCorrectWrong?'✅ Show Correct Green - Secure!':''} | Secure! No Misuse! - Nabidinam Special`;
   document.getElementById('compSubTitle').innerText=data.category||'Meelad Quiz 2K26 - Nabidinam Special - Secure!';
-  document.getElementById('cloudLoadStatus').innerText=`✅ Loaded! Secure! No Misuse! - All Checked! - Nabidinam Special Secure! ${data.title} - Logo:${data.logo?'✅ Secure!':'❌'} Banner:${data.banner?'✅ Secure!':'❌'} Place:${data.place} Cert:${data.certificate?'✅ Secure!':'❌'} - Banner Clean Title Below - Secure! No Breaking! Nothing Removed! V9.17.2 - Full Checked! - Ready for Nabidinam Secure!`;
+  const scheduleText=[data.startAt?('🟢 Opening: '+new Date(data.startAt).toLocaleString()):'',data.endAt?('🔴 Closing: '+new Date(data.endAt).toLocaleString()):''].filter(Boolean).join(' | ');
+  document.getElementById('cloudLoadStatus').innerText=`✅ Loaded! ${scheduleText?(' | '+scheduleText):''} - ${data.title} - Logo:${data.logo?'✅':'❌'} Banner:${data.banner?'✅':'❌'} Cert:${data.certificate?'✅':'❌'}`;
   if(data.logo){const img=document.getElementById('compLogoImg');img.src=data.logo;img.classList.remove('hidden');document.getElementById('compLogoText').classList.add('hidden');}
   if(data.banner){const img=document.getElementById('compBannerImg');img.src=data.banner;img.classList.remove('hidden');document.getElementById('compBannerDefault').classList.add('hidden');}
   if(data.certificate) localStorage.setItem('certFullImage',data.certificate); if(data.certBg)localStorage.setItem('cert_bg',data.certBg); if(data.certLogo1)localStorage.setItem('cert_logo1',data.certLogo1); if(data.certLogo2)localStorage.setItem('cert_logo2',data.certLogo2); if(data.certSign)localStorage.setItem('cert_sign',data.certSign);
@@ -1294,7 +1301,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.se
   function scheduleState(data){
     const now=Date.now(), start=data?.startAt?new Date(data.startAt).getTime():null, end=data?.endAt?new Date(data.endAt).getTime():null;
     if(start&&Number.isFinite(start)&&now<start)return {state:'before',start};
-    if(end&&Number.isFinite(end)&&now>end)return {state:'after',end};
+    if(end&&Number.isFinite(end)&&now>=end)return {state:'after',end};
     return {state:'open',start,end};
   }
   const oldLoad=window.loadCompetitorEvent;
