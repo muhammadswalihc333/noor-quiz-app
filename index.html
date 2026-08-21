@@ -66,27 +66,34 @@
 
   <!-- ==================== ADMIN / MASTER PANEL ==================== -->
   <div id="adminOverlay" class="max-w-3xl mx-auto space-y-6 mt-10">
-    <div class="bg-emerald-800 text-white p-4 rounded-2xl flex justify-between items-center shadow">
-      <h1 class="text-lg font-bold">📝 Admin Dashboard</h1>
+    
+    <!-- Top Master Control Bar -->
+    <div class="bg-purple-700 text-white p-4 rounded-2xl flex justify-between items-center shadow">
+      <h1 class="text-lg font-bold">👑 MASTER CONTROL</h1>
       <button onclick="logoutAdmin()" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Logout</button>
     </div>
 
-    <!-- Past Events Cloud List -->
-    <div class="bg-white p-5 rounded-2xl shadow border space-y-4">
-      <h2 class="text-base font-bold text-gray-800 border-b pb-2">📅 Event List</h2>
+    <!-- Past Events Cloud Box -->
+    <div class="bg-white p-5 rounded-2xl shadow border border-blue-200 space-y-4">
+      <div class="bg-blue-600 text-white p-3 rounded-xl text-sm font-bold flex items-center gap-2">
+        <span>📅</span>
+        <span>Past Events</span>
+      </div>
       <div id="pastEventsList" class="space-y-3">
         <p class="text-xs text-gray-500 text-center">Loading events...</p>
       </div>
       <div class="flex gap-2">
-        <button onclick="loadPastEvents()" class="w-1/2 bg-blue-600 text-white py-2.5 rounded-xl text-xs font-bold">Reload Events</button>
-        <button onclick="clearAllCloudEvents()" class="w-1/2 bg-red-100 text-red-600 py-2.5 rounded-xl text-xs font-bold">Clear All</button>
+        <button onclick="loadPastEvents()" class="w-1/2 bg-blue-600 text-white py-3 rounded-xl text-xs font-bold">Force Reload</button>
+        <button onclick="clearAllCloudEvents()" class="w-1/2 bg-red-100 text-red-600 py-3 rounded-xl text-xs font-bold">Clear All Cloud</button>
       </div>
     </div>
 
-    <!-- Event Basic Details Form -->
-    <div class="bg-white p-5 rounded-2xl shadow border space-y-4">
-      <h2 class="text-base font-bold text-gray-800 border-b pb-2">1. Basic Info</h2>
-      <input type="text" id="eventName" placeholder="Event Title" class="w-full p-3 border rounded-xl text-sm" />
+    <!-- 1. Basic Info Section -->
+    <div class="bg-white p-5 rounded-2xl shadow border border-emerald-200 space-y-4">
+      <div class="bg-emerald-800 text-white p-3 rounded-xl text-sm font-bold">
+        1 - Event Basic
+      </div>
+      <input type="text" id="eventName" placeholder="Event Name" class="w-full p-3 border rounded-xl text-sm" />
       <input type="text" id="eventPlace" placeholder="Place / Institution" class="w-full p-3 border rounded-xl text-sm" />
       <select id="eventCategory" class="w-full p-3 border rounded-xl text-sm">
         <option value="Madrasa">Madrasa</option>
@@ -95,16 +102,27 @@
       </select>
     </div>
 
-    <!-- Certificate Upload -->
-    <div class="bg-white p-5 rounded-2xl shadow border space-y-4">
-      <h2 class="text-base font-bold text-gray-800 border-b pb-2">2. Certificate</h2>
-      <input type="file" id="certInput" accept="image/*" class="w-full text-xs" />
+    <!-- 2. Certificate Section -->
+    <div class="bg-white p-5 rounded-2xl shadow border border-emerald-200 space-y-4">
+      <div class="bg-emerald-800 text-white p-3 rounded-xl text-sm font-bold">
+        2 - Certificate
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <button type="button" class="bg-emerald-800 text-white p-2.5 rounded-xl text-xs font-bold">Opt1: Full Upload</button>
+        <button type="button" class="bg-gray-100 text-gray-700 p-2.5 rounded-xl text-xs font-bold">Opt2: Auto Gen</button>
+      </div>
+      <div class="border border-amber-300 bg-amber-50/50 p-4 rounded-xl space-y-2">
+        <label class="block text-xs font-bold text-gray-700">Full Certificate Upload</label>
+        <input type="file" id="certInput" accept="image/*" class="w-full text-xs" />
+      </div>
     </div>
 
-    <!-- Settings & Link Generator -->
-    <div class="bg-white p-5 rounded-2xl shadow border space-y-4">
-      <h2 class="text-base font-bold text-gray-800 border-b pb-2">3. Quiz Settings</h2>
-      
+    <!-- 3. Settings Box -->
+    <div class="bg-white p-5 rounded-2xl shadow border border-emerald-200 space-y-4">
+      <div class="bg-emerald-800 text-white p-3 rounded-xl text-sm font-bold">
+        3 - Settings
+      </div>
+
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="text-xs font-bold text-gray-600">Time (Minutes)</label>
@@ -116,78 +134,94 @@
         </div>
       </div>
 
-      <!-- Switches -->
-      <div class="space-y-2 pt-2 text-xs font-bold text-gray-700">
-        <label class="flex items-center gap-2 border p-3 rounded-xl">
-          <input type="checkbox" id="setRandom" checked /> Random Order
-        </label>
-        <label class="flex items-center gap-2 border p-3 rounded-xl">
-          <input type="checkbox" id="setShowCorrect" checked /> Show Correct Option Green
-        </label>
-        <div>
-          <label class="block mb-1">Opening Time</label>
-          <input type="datetime-local" id="eventOpeningTime" class="w-full p-2.5 border rounded-xl" />
+      <!-- Switches with Clean Labels -->
+      <div class="space-y-3 pt-2 text-xs font-bold text-gray-700">
+        <div class="border border-orange-200 p-3 rounded-xl flex justify-between items-center bg-orange-50/30">
+          <span>🔀 Random Mode</span>
+          <input type="checkbox" id="setRandom" class="w-4 h-4" checked />
         </div>
-        <div>
-          <label class="block mb-1">Closing Time</label>
-          <input type="datetime-local" id="eventEndingTime" class="w-full p-2.5 border rounded-xl" />
+
+        <div class="border border-emerald-200 p-3 rounded-xl flex justify-between items-center bg-emerald-50/30">
+          <span>✅ Show Correct Option Green</span>
+          <input type="checkbox" id="setShowCorrect" class="w-4 h-4" checked />
         </div>
-        <label class="flex items-center gap-2 border p-3 rounded-xl bg-emerald-50">
-          <input type="checkbox" id="setShowResultsToParticipants" checked /> Show Score & Time to Participants After Quiz
-        </label>
-        <label class="flex items-center gap-2 border p-3 rounded-xl">
-          <input type="checkbox" id="setPhoneLock" /> One Phone One Attempt
-        </label>
-        <label class="flex items-center gap-2 border p-3 rounded-xl">
-          <input type="checkbox" id="setDeviceLock" /> One Device One Attempt
-        </label>
+
+        <div class="border border-gray-200 p-3 rounded-xl space-y-2">
+          <label class="block text-gray-600">⏰ Event Opening Time</label>
+          <input type="datetime-local" id="eventOpeningTime" class="w-full p-2 border rounded-xl bg-gray-50" />
+        </div>
+
+        <div class="border border-gray-200 p-3 rounded-xl space-y-2">
+          <label class="block text-gray-600">⏰ Event Closing Time</label>
+          <input type="datetime-local" id="eventEndingTime" class="w-full p-2 border rounded-xl bg-gray-50" />
+        </div>
+
+        <div class="border border-emerald-200 p-3 rounded-xl flex justify-between items-center bg-emerald-50/50">
+          <span>📊 Show Score & Time to Participants After Quiz</span>
+          <input type="checkbox" id="setShowResultsToParticipants" class="w-4 h-4" checked />
+        </div>
+
+        <div class="border border-gray-200 p-3 rounded-xl flex justify-between items-center">
+          <span>📱 One Phone One Attempt</span>
+          <input type="checkbox" id="setPhoneLock" class="w-4 h-4" />
+        </div>
+
+        <div class="border border-gray-200 p-3 rounded-xl flex justify-between items-center">
+          <span>💻 One Device One Attempt</span>
+          <input type="checkbox" id="setDeviceLock" class="w-4 h-4" />
+        </div>
       </div>
 
-      <!-- Actions -->
+      <!-- Main Action Buttons -->
       <div class="space-y-2 pt-3">
-        <button onclick="createOrUpdateLink(true)" class="w-full bg-emerald-600 text-white font-bold py-3.5 rounded-xl shadow">Create New Link</button>
-        <button onclick="createOrUpdateLink(false)" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl shadow">Save Changes</button>
+        <button onclick="createOrUpdateLink(true)" class="w-full bg-emerald-600 text-white font-bold py-3.5 rounded-xl shadow text-sm">💚 CREATE NEW LINK</button>
+        <button onclick="createOrUpdateLink(false)" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl shadow text-sm">💾 SAVE CHANGES</button>
       </div>
 
-      <!-- Generated Link Container -->
-      <div class="bg-gray-50 p-3 rounded-xl border space-y-2 text-center">
-        <input type="text" id="eventLinkOutput" readonly class="w-full p-2 text-xs border rounded bg-white text-center font-mono" />
-        <div class="flex gap-2">
-          <button onclick="copyEventLink()" class="w-1/3 bg-emerald-500 text-white py-2 rounded-lg text-xs font-bold">Copy Link</button>
-          <button onclick="shareWhatsApp()" class="w-1/3 bg-green-600 text-white py-2 rounded-lg text-xs font-bold">Share WhatsApp</button>
-          <button onclick="editLoadedLink()" class="w-1/3 bg-blue-500 text-white py-2 rounded-lg text-xs font-bold">Edit Link</button>
+      <!-- Generated Link Box -->
+      <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 space-y-2 text-center">
+        <input type="text" id="eventLinkOutput" readonly class="w-full p-2.5 text-xs border rounded-xl bg-white text-center font-mono" />
+        <div class="grid grid-cols-3 gap-2">
+          <button onclick="copyEventLink()" class="bg-emerald-600 text-white py-2 rounded-xl text-xs font-bold">📋 Copy</button>
+          <button onclick="shareWhatsApp()" class="bg-emerald-600 text-white py-2 rounded-xl text-xs font-bold">💬 WhatsApp</button>
+          <button onclick="editLoadedLink()" class="bg-blue-600 text-white py-2 rounded-xl text-xs font-bold">✏️ Edit Link</button>
         </div>
       </div>
     </div>
 
-    <!-- Bulk Question Manager -->
-    <div class="bg-white p-5 rounded-2xl shadow border space-y-4">
-      <h2 class="text-base font-bold text-gray-800 border-b pb-2">4. Add Questions (Bulk)</h2>
+    <!-- 4. Questions Bulk Section -->
+    <div class="bg-white p-5 rounded-2xl shadow border border-emerald-200 space-y-4">
+      <div class="bg-emerald-800 text-white p-3 rounded-xl text-sm font-bold">
+        4 - Questions Bulk
+      </div>
       <textarea id="bulkInput" rows="5" placeholder="Q | a,b,c,d | ans" class="w-full p-3 border rounded-xl text-xs font-mono"></textarea>
-      <button onclick="parseBulkQuestions()" class="w-full bg-amber-600 text-white font-bold py-3 rounded-xl">Add Questions</button>
+      <button onclick="parseBulkQuestions()" class="w-full bg-amber-700 text-white font-bold py-3 rounded-xl text-sm shadow">📚 Add Questions</button>
       
       <div id="questionsPreview" class="space-y-2"></div>
     </div>
 
-    <!-- Results Section -->
-    <div class="bg-white p-5 rounded-2xl shadow border space-y-4">
-      <h2 class="text-base font-bold text-gray-800 border-b pb-2">5. Results & Ranking</h2>
+    <!-- 5. Results & Ranking Section -->
+    <div class="bg-white p-5 rounded-2xl shadow border border-orange-200 space-y-4">
+      <div class="bg-orange-600 text-white p-3 rounded-xl text-sm font-bold">
+        5 - Results & Ranking
+      </div>
       
       <div class="space-y-1">
-        <label class="text-xs font-bold text-gray-600">Filter Event</label>
+        <label class="text-xs font-bold text-gray-600">🎯 Results for Event</label>
         <select id="eventFilterSelect" class="w-full p-3 border rounded-xl text-xs bg-gray-50 font-bold">
-          <option value="ALL">All Events</option>
+          <option value="ALL">All Current Events</option>
         </select>
       </div>
 
-      <div class="flex gap-2">
-        <button onclick="loadResults()" class="w-1/3 bg-gray-800 text-white py-2.5 rounded-xl text-xs font-bold">Refresh</button>
-        <button onclick="exportCSV()" class="w-1/3 bg-emerald-600 text-white py-2.5 rounded-xl text-xs font-bold">CSV Export</button>
-        <button onclick="clearEventResults()" class="w-1/3 bg-red-100 text-red-600 py-2.5 rounded-xl text-xs font-bold">Clear Results</button>
+      <div class="grid grid-cols-3 gap-2">
+        <button onclick="loadResults()" class="bg-slate-800 text-white py-2.5 rounded-xl text-xs font-bold">🔄 Refresh</button>
+        <button onclick="exportCSV()" class="bg-emerald-600 text-white py-2.5 rounded-xl text-xs font-bold">📊 CSV</button>
+        <button onclick="clearEventResults()" class="bg-red-100 text-red-600 py-2.5 rounded-xl text-xs font-bold">🗑️ Clear Results</button>
       </div>
 
       <div id="resultsList" class="divide-y max-h-80 overflow-y-auto"></div>
     </div>
+
   </div>
 
   <script src="app.js"></script>
