@@ -2,7 +2,7 @@
 <html lang="ml">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#14532d"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noor Quiz"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png"><link rel="apple-touch-icon" href="./icon-192.png">
-<title>Noor Quiz V9.17.4 FINAL - Nabidinam Special</title>
+<title>Noor Quiz V9.17.5 FINAL FIX - Nabidinam Special</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -138,6 +138,7 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
 <h2 id="compEventNameBelow" class="text-[28px] font-black text-[#14532d] leading-tight">Loading... - Nabidinam Special - Secure</h2>
 <p id="compPlaceShow" class="text-[17px] text-gray-800 mt-2 font-black"></p>
 <p id="compDetailsBelow" class="text-[12px] text-gray-600 mt-3 bg-yellow-50 inline-block px-4 py-2 rounded-full border-2 border-yellow-200"></p>
+<div id="eventScheduleDisplay" style="display:none" class="mt-3 mx-auto max-w-[95%] bg-green-50 border-2 border-green-200 rounded-xl px-4 py-3 text-sm font-black text-green-900"></div>
 <p id="cloudLoadStatus" class="text-[11px] text-white mt-4 font-black bg-green-600 inline-block px-6 py-2 rounded-full shadow-lg">☁️ Loading TRUE CLOUD - Nabidinam Special - Secure - V9.17.2</p>
 </div>
 <div class="max-w-[500px] mx-auto px-4 pt-6">
@@ -253,6 +254,8 @@ async function initAuthPersistence(){
   // Doing that can race with Firebase restoring a persisted Organizer/Master session.
 }
 initAuthPersistence();
+// Keep Firebase's real Google/email session alive across reloads; never replace it with Anonymous on admin pages.
+try{firebase.auth().onIdTokenChanged(u=>{ if(u && u.email){ try{localStorage.setItem('nq_firebase_email',String(u.email).toLowerCase());}catch(e){} } });}catch(e){}
 // Re-load Cloud data after Firebase restores a persisted Master/Organizer session.
 // This prevents the admin page from falling back to stale local events on the first paint.
 try{firebase.auth().onAuthStateChanged(function(user){
@@ -397,7 +400,7 @@ async function loadPastEvents(){
   const c=document.getElementById('pastEventsList'); if(!c)return;
   c.innerHTML='<p class="text-xs text-center py-6">☁️ Loading events...</p>';
   let data=null, source='';
-  try{const res=await fetch(await authRestUrl('events'),{cache:'no-store'}); if(res.ok){data=await res.json();source='cloud';}}catch(e){}
+  try{const res=await fetch(`${REST_URL}/events.json?cb=${Date.now()}`,{cache:'no-store'}); if(res.ok){data=await res.json();source='cloud';}}catch(e){}
   if(!data && firebaseDB){try{const snap=await firebaseDB.ref('events').once('value');data=snap.val();source='sdk';}catch(e){}}
   if(!data){try{data=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');source='local';}catch(e){data={};}}
   if(!data || typeof data!=='object')data={};
@@ -604,7 +607,7 @@ async function loadCompetitorEvent(){
   if(!eventId){document.getElementById('cloudLoadStatus').innerText='ℹ️ No Event ID - Default View - Secure - No Breaking - No Misuse! - Nabidinam Special - Admin-ൽ Create Link! - All Checked! Secure!';document.getElementById('compEventNameBelow').innerText='';document.getElementById('compPlaceShow').innerText='';document.getElementById('compDetailsBelow').innerText='';return;}
   document.getElementById('cloudLoadStatus').innerText='☁️ Connecting to TRUE CLOUD…';
   let data=null;
-  try{await ensureAnonymousAuth();}catch(e){console.warn('Anonymous auth unavailable:',e);}
+  // Public event loading does not require Firebase authentication. Read the event directly from Cloud.
   try{const res=await fetch(await authRestUrl(`events/${encodeURIComponent(eventId)}`),{cache:'no-store'});if(res.ok)data=await res.json();}catch(e){console.warn('Event REST load failed:',e)}
   if(!data && firebaseDB){try{const snap=await firebaseDB.ref('events/'+eventId).once('value');data=snap.val();}catch(e){console.warn('Event SDK load failed:',e)}}
   // Public event links MUST use the current cloud event only. Never resurrect deleted events from local backup.
@@ -631,7 +634,11 @@ async function loadCompetitorEvent(){
   if(data.startAt){const d=new Date(data.startAt);if(!isNaN(d))scheduleParts.push('🟢 Opening: '+d.toLocaleString());}
   if(data.endAt){const d=new Date(data.endAt);if(!isNaN(d))scheduleParts.push('🔴 Closing: '+d.toLocaleString());}
   const sched=document.getElementById('cloudLoadStatus');
-  if(scheduleParts.length && sched) sched.innerText=scheduleParts.join(' | ');
+  const scheduleBox=document.getElementById('eventScheduleDisplay');
+  if(scheduleParts.length){
+    if(sched) sched.innerText=scheduleParts.join(' | ');
+    if(scheduleBox){scheduleBox.innerText=scheduleParts.join('  •  ');scheduleBox.style.display='block';}
+  }else if(scheduleBox){scheduleBox.style.display='none';scheduleBox.innerText='';}
 
   document.getElementById('eventNameDisplay').innerText=data.title||'';
   document.getElementById('eventCountDisplay').innerText=`📝 Total:${questions.length} - Secure! Show:${Math.min(eventQuestionCount,questions.length)} - Secure! Time:${totalMinutes}Min - Secure!`;
@@ -640,12 +647,15 @@ async function loadCompetitorEvent(){
   const scheduleText=[data.startAt?('🟢 Opening: '+new Date(data.startAt).toLocaleString()):'',data.endAt?('🔴 Closing: '+new Date(data.endAt).toLocaleString()):''].filter(Boolean).join(' | ');
   const startBtn=document.querySelector('#registrationBox button[onclick=\"startQuiz()\"]');
   if(scheduleState==='before'){
+    if(document.getElementById('eventScheduleDisplay')) document.getElementById('eventScheduleDisplay').innerText=`⏳ ${scheduleText||'Opening time is set.'}`;
     document.getElementById('cloudLoadStatus').innerText=`⏳ ${scheduleText||'Event opening time is set.'}`;
     if(startBtn){startBtn.disabled=true;startBtn.classList.add('opacity-50','cursor-not-allowed');startBtn.innerText='⏳ ക്വിസ് ആരംഭിക്കുന്നത് വരെ കാത്തിരിക്കുക';}
   }else if(scheduleState==='after'){
+    if(document.getElementById('eventScheduleDisplay')) document.getElementById('eventScheduleDisplay').innerText=`⛔ ${scheduleText||'Event closed.'}`;
     document.getElementById('cloudLoadStatus').innerText=`⛔ ${scheduleText||'Event closed.'}`;
     if(startBtn){startBtn.disabled=true;startBtn.classList.add('opacity-50','cursor-not-allowed');startBtn.innerText='⛔ മത്സരം അവസാനിച്ചു';}
   }else{
+    if(document.getElementById('eventScheduleDisplay') && scheduleText) document.getElementById('eventScheduleDisplay').innerText=`✅ ${scheduleText}`;
     document.getElementById('cloudLoadStatus').innerText=`✅ Loaded! ${scheduleText?(' | '+scheduleText):''} - ${data.title} - Logo:${data.logo?'✅':'❌'} Banner:${data.banner?'✅':'❌'} Cert:${data.certificate?'✅':'❌'}`;
     if(startBtn){startBtn.disabled=false;startBtn.classList.remove('opacity-50','cursor-not-allowed');startBtn.innerText='🚀 ക്വിസ് ആരംഭിക്കുക';}
   }
@@ -794,8 +804,15 @@ async function loadResults(){
   _currentCloudEvents={};
   // Only events that currently exist in Cloud are eligible. Deleted events are never included.
   try{
-    await ensureFirebaseReady();
-     const evRes=await fetch(await authRestUrl('events'),{cache:'no-store'});
+    // Results are protected by Firebase Rules. Never create an Anonymous session here:
+    // Admin/Organizer Results reads require their real authenticated email session.
+    const u=await waitForExistingAuth(2500);
+    if(!u || !u.email){
+      const l=document.getElementById('resultsList');
+      if(l) l.innerHTML='<p class="text-center py-6 text-red-600 font-bold">🔐 Admin/Organizer Firebase session is not active. Login once, then press Refresh.</p>';
+      return;
+    }
+    const evRes=await fetch(await authRestUrl('events'),{cache:'no-store'});
     if(evRes.ok){
       const evs=await evRes.json()||{};
       Object.entries(evs).forEach(([id,e])=>{
@@ -902,10 +919,17 @@ async function masterLogin(){
     return;
   }
   try{
-    const provider=new firebase.auth.GoogleAuthProvider();
-    provider.setCustomParameters({prompt:'select_account'});
-    const result=await firebase.auth().signInWithPopup(provider);
-    const user=result.user;
+    // If the Master Google session is already restored, reuse it. Never open a second popup.
+    let user=firebase.auth().currentUser;
+    if(user && user.email && String(user.email).trim().toLowerCase()===MASTER_ADMIN_EMAIL.toLowerCase()){
+      masterLoggedIn=true; masterGoogleUser=user;
+    }else{
+      if(user && !user.email){try{await firebase.auth().signOut();}catch(e){}}
+      const provider=new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({prompt:'select_account'});
+      const result=await firebase.auth().signInWithPopup(provider);
+      user=result.user;
+    }
     const email=(user.email||'').trim().toLowerCase();
     if(email!==MASTER_ADMIN_EMAIL.toLowerCase()){
       await firebase.auth().signOut();
@@ -1349,6 +1373,8 @@ if('serviceWorker' in navigator){window.addEventListener('load',async()=>{try{co
     restoreSessions();
   });
 })();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){try{if(new URLSearchParams(location.search).get('event'))loadCompetitorEvent();}catch(e){} try{if(document.getElementById('resultsList')&&!document.getElementById('resultsList').closest('.hidden'))loadResults();}catch(e){}}});
+window.addEventListener('focus',()=>{try{if(new URLSearchParams(location.search).get('event'))loadCompetitorEvent();}catch(e){}});
 </script>
 
 <!-- V21 EVENT DELETE FIX: verifies HTTP status, SDK fallback, and prevents local backup from resurrecting deleted events. -->
@@ -1356,10 +1382,10 @@ if('serviceWorker' in navigator){window.addEventListener('load',async()=>{try{co
 (function(){
   function getCurrentEventData(){ return window.currentEventData || null; }
   function showSchedule(data){
-    const box=document.getElementById('cloudLoadStatus'); if(!box||!data)return;
+    const box=document.getElementById('cloudLoadStatus'); const scheduleBox=document.getElementById('eventScheduleDisplay'); if(!data)return;
     const fmt=v=>v?new Date(v).toLocaleString([], {year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
     const parts=[]; if(data.startAt)parts.push('🟢 Opens: '+fmt(data.startAt)); if(data.endAt)parts.push('🔴 Closes: '+fmt(data.endAt));
-    if(parts.length)box.innerText+=' | '+parts.join(' | ');
+    if(parts.length){if(box)box.innerText=parts.join(' | ');if(scheduleBox){scheduleBox.innerText=parts.join('  •  ');scheduleBox.style.display='block';}}
   }
   function scheduleState(data){
     const now=Date.now(), start=data?.startAt?new Date(data.startAt).getTime():null, end=data?.endAt?new Date(data.endAt).getTime():null;
