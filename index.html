@@ -253,6 +253,15 @@ async function initAuthPersistence(){
   // Doing that can race with Firebase restoring a persisted Organizer/Master session.
 }
 initAuthPersistence();
+// Re-load Cloud data after Firebase restores a persisted Master/Organizer session.
+// This prevents the admin page from falling back to stale local events on the first paint.
+try{firebase.auth().onAuthStateChanged(function(user){
+  if(!user)return;
+  setTimeout(function(){
+    try{ if(document.getElementById('adminView') && !document.getElementById('adminView').classList.contains('hidden')) loadPastEvents(); }catch(e){}
+    try{ if(document.getElementById('resultsList') && !document.getElementById('resultsList').closest('.hidden')) loadResults(); }catch(e){}
+  },250);
+});}catch(e){}
 
 function waitForExistingAuth(timeout=2500){
   return new Promise(resolve=>{
@@ -565,7 +574,10 @@ async function createOrUpdateLink(isNew){
   const link=window.location.origin+window.location.pathname+'?event='+cleanId; lastGeneratedLink=link;
   if(!currentLogoBase64)currentLogoBase64=localStorage.getItem('temp_logo')||''; if(!currentBannerBase64)currentBannerBase64=localStorage.getItem('temp_banner')||'';
   const startAt=document.getElementById('setStartAt')?.value||''; const endAt=document.getElementById('setEndAt')?.value||''; const showResults=document.getElementById('setShowResults')?.checked!==false;
-   // Preserve the event owner on every edit. New organizer events are owned by that organizer; master-created events are master-owned.
+  // Cloud writes MUST use the real Master/Organizer Firebase identity.
+  // The old V29 code had ensureEventWriteAuth() but never called it, so Save/New Event could silently fail.
+  try{ await ensureEventWriteAuth(cleanId); }catch(e){ document.getElementById('cloudStatus').innerText='❌ Cloud authentication required: '+(e.message||'Please sign in'); alert('Cloud Save നു Master Google Sign-In / Organizer Login ആവശ്യമാണ്.\n\n'+(e.message||'')); return; }
+  // Preserve the event owner on every edit. New organizer events are owned by that organizer; master-created events are master-owned.
    let ownerId=currentEventOwnerId||currentOrganizerId()||'';
    if(!ownerId && masterLoggedIn) ownerId=MASTER_ADMIN_EMAIL;
    if(!ownerId && !isNew){ try{ const rr=await fetch(await authRestUrl(`events/${encodeURIComponent(cleanId)}`),{cache:'no-store'}); if(rr.ok){const old=await rr.json(); ownerId=String(old?.ownerId||'');} }catch(e){} }
@@ -594,7 +606,7 @@ async function loadCompetitorEvent(){
   let data=null;
   try{await ensureAnonymousAuth();}catch(e){console.warn('Anonymous auth unavailable:',e);}
   try{const res=await fetch(await authRestUrl(`events/${encodeURIComponent(eventId)}`),{cache:'no-store'});if(res.ok)data=await res.json();}catch(e){console.warn('Event REST load failed:',e)}
-  if(!data && firebaseDB){try{await ensureAnonymousAuth();const snap=await firebaseDB.ref('events/'+eventId).once('value');data=snap.val();}catch(e){console.warn('Event SDK load failed:',e)}}
+  if(!data && firebaseDB){try{const snap=await firebaseDB.ref('events/'+eventId).once('value');data=snap.val();}catch(e){console.warn('Event SDK load failed:',e)}}
   // Public event links MUST use the current cloud event only. Never resurrect deleted events from local backup.
   if(!data && isPublicEvent){document.getElementById('cloudLoadStatus').innerText='❌ This event is no longer available. The link may have been deleted or disabled.';return;}
   // Public links are cloud-authoritative: never load stale local event data.
@@ -625,8 +637,10 @@ async function loadCompetitorEvent(){
   document.getElementById('compSubTitle').innerText=data.category||'Meelad Quiz 2K26 - Nabidinam Special - Secure!';
   const scheduleText=[data.startAt?('🟢 Opening: '+new Date(data.startAt).toLocaleString()):'',data.endAt?('🔴 Closing: '+new Date(data.endAt).toLocaleString()):''].filter(Boolean).join(' | ');
   document.getElementById('cloudLoadStatus').innerText=`✅ Loaded! ${scheduleText?(' | '+scheduleText):''} - ${data.title} - Logo:${data.logo?'✅':'❌'} Banner:${data.banner?'✅':'❌'} Cert:${data.certificate?'✅':'❌'}`;
-  if(data.logo){const img=document.getElementById('compLogoImg');img.src=data.logo;img.classList.remove('hidden');document.getElementById('compLogoText').classList.add('hidden');}
-  if(data.banner){const img=document.getElementById('compBannerImg');img.src=data.banner;img.classList.remove('hidden');document.getElementById('compBannerDefault').classList.add('hidden');}
+  const logoImg=document.getElementById('compLogoImg'), logoText=document.getElementById('compLogoText');
+  if(data.logo && logoImg){logoImg.src=data.logo;logoImg.classList.remove('hidden');if(logoText)logoText.classList.add('hidden');}
+  const bannerImg=document.getElementById('compBannerImg'), bannerDefault=document.getElementById('compBannerDefault');
+  if(data.banner && bannerImg){bannerImg.src=data.banner;bannerImg.classList.remove('hidden');if(bannerDefault)bannerDefault.classList.add('hidden');}
   if(data.certificate) localStorage.setItem('certFullImage',data.certificate); if(data.certBg)localStorage.setItem('cert_bg',data.certBg); if(data.certLogo1)localStorage.setItem('cert_logo1',data.certLogo1); if(data.certLogo2)localStorage.setItem('cert_logo2',data.certLogo2); if(data.certSign)localStorage.setItem('cert_sign',data.certSign);
   if(data.certPos) localStorage.setItem('certPos_v13',JSON.stringify(data.certPos));
   localStorage.setItem('questions_v13',JSON.stringify(questions));
@@ -794,6 +808,15 @@ async function loadResults(){
   });
   sortResults(all);
   renderResults(all);
+}
+
+async function refreshResults(){
+  const btn=document.getElementById('refreshResultsBtn');
+  const old=btn?btn.innerText:'';
+  if(btn){btn.disabled=true;btn.innerText='⏳ Loading...';}
+  try{await loadResults();}
+  catch(e){const l=document.getElementById('resultsList');if(l)l.innerHTML='<p class=\"text-center py-6 text-red-600 font-bold\">❌ Cloud Results could not be loaded. Please check Firebase login/rules and try Refresh again.</p>';console.error('refreshResults',e);}
+  finally{if(btn){btn.disabled=false;btn.innerText=old||'🔄 Refresh - Secure!';}}
 }
 
 async function downloadResults(){
