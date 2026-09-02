@@ -3,36 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ക്ലാസ് ടെസ്റ്റ് - പ്രോ മാനേജർ (V9.25)</title>
+    <title>ക്ലാസ് ടെസ്റ്റ് - പ്രോ മാനേജർ (V9.90)</title>
     <style>
         :root { --primary: #14532d; --primary-light: #22c55e; --accent: #2563eb; --danger: #ef4444; --bg: #fcf8f2; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: #333; }
-        .container { max-width: 680px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 2px solid var(--primary); }
-        .header-box { background: linear-gradient(135deg, #14532d, #166534); color: white; padding: 18px; text-align: center; border-radius: 10px; font-weight: bold; font-size: 18px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(20,83,45,0.3); }
-        .sub-box { background: #fff; border: 2px solid #e5e7eb; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
-        .sub-box h3 { margin-top: 0; color: var(--primary); font-size: 16px; border-bottom: 2px solid #f3f4f6; padding-bottom: 8px; }
-        .btn { border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-top: 8px; font-size: 14px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: #333; box-sizing: border-box; }
+        .container { max-width: 680px; width: 100%; margin: 0 auto; background: #fff; padding: 15px; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 2px solid var(--primary); overflow-x: hidden; }
+        .header-box { background: linear-gradient(135deg, #14532d, #166534); color: white; padding: 16px; text-align: center; border-radius: 10px; font-weight: bold; font-size: 17px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(20,83,45,0.3); }
+        .sub-box { background: #fff; border: 2px solid #e5e7eb; border-radius: 12px; padding: 12px; margin-bottom: 15px; word-wrap: break-word; }
+        .sub-box h3 { margin-top: 0; color: var(--primary); font-size: 15px; border-bottom: 2px solid #f3f4f6; padding-bottom: 6px; }
+        .btn { border: none; padding: 10px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-top: 6px; font-size: 14px; box-sizing: border-box; }
         .btn-green { background: var(--primary-light); color: white; }
         .btn-blue { background: var(--accent); color: white; }
         .btn-red { background: var(--danger); color: white; }
         .btn-dark { background: var(--primary); color: white; }
-        input, select, textarea { width: 100%; padding: 11px; margin: 6px 0 14px 0; border: 1px solid #d1d5db; border-radius: 8px; box-sizing: border-box; font-size: 14px; background: #fdfdfd; }
-        .tab-nav { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab-nav button { flex: 1; padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer; border: 2px solid var(--primary); background: #fff; color: var(--primary); }
+        input, select, textarea { width: 100%; padding: 10px; margin: 5px 0 12px 0; border: 1px solid #d1d5db; border-radius: 8px; box-sizing: border-box; font-size: 14px; background: #fdfdfd; }
+        .tab-nav { display: flex; gap: 8px; margin-bottom: 15px; }
+        .tab-nav button { flex: 1; padding: 10px; font-weight: bold; border-radius: 8px; cursor: pointer; border: 2px solid var(--primary); background: #fff; color: var(--primary); font-size: 13px; }
         .tab-nav button.active-tab { background: var(--primary); color: white; }
-        .event-card { background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
-        .flex-row { display: flex; gap: 10px; }
-        .flex-row > * { flex: 1; }
-        .checkbox-group { display: flex; align-items: center; gap: 10px; margin: 10px 0; font-size: 14px; font-weight: 600; }
+        .event-card { background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px; border-radius: 10px; margin-bottom: 12px; }
+        .flex-row { display: flex; gap: 8px; flex-wrap: wrap; }
+        .flex-row > * { flex: 1; min-width: 130px; }
+        .checkbox-group { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 13px; font-weight: 600; }
         .checkbox-group input { width: 18px; height: 18px; margin: 0; }
-        .q-item-admin { background: #fdf2f8; border: 1px solid #fbcfe8; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .q-item-admin { background: #fdf2f8; border: 1px solid #fbcfe8; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+        th, td { padding: 6px; border: 1px solid #cbd5e1; text-align: left; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header-box">
-        🏆 ക്ലാസ് ടെസ്റ്റ് പ്രോ മാനേജർ (V9.25)
+        🏆 ക്ലാസ് ടെസ്റ്റ് പ്രോ മാനേജർ (V9.90)
     </div>
 
     <div class="tab-nav">
@@ -44,7 +46,9 @@
     <div id="adminPanelSection">
         
         <div class="sub-box">
-            <h3>✨ പുതിയ ക്ലാസ് ടെസ്റ്റ് ഇവന്റ് നിർമ്മിക്കുക</h3>
+            <h3 id="formSectionTitle">✨ പുതിയ ക്ലാസ് ടെസ്റ്റ് ഇവന്റ് നിർമ്മിക്കുക</h3>
+            <input type="hidden" id="editingEventId" value="">
+            
             <label>ഇവന്റ് പേര്:</label>
             <input type="text" id="eventName" placeholder="ഉദാ: മീലാദ് ക്ലാസ് ടെസ്റ്റ് 2026">
             
@@ -55,9 +59,26 @@
                 </div>
                 <div>
                     <label>ടെസ്റ്റ് സമയം (Minutes):</label>
-                    <input type="number" id="eventTimer" value="10" placeholder="മിനിറ്റ്">
+                    <input type="number" id="eventTimer" value="10">
                 </div>
             </div>
+
+            <div class="flex-row">
+                <div>
+                    <label>ആരംഭിക്കുന്ന തീയതി & സമയം:</label>
+                    <input type="datetime-local" id="eventStartDT">
+                </div>
+                <div>
+                    <label>അവസാനിക്കുന്ന തീയതി & സമയം (Closing):</label>
+                    <input type="datetime-local" id="eventEndDT">
+                </div>
+            </div>
+
+            <label>വാല്യുവേഷൻ രീതി:</label>
+            <select id="eventEvalType">
+                <option value="auto">ഓട്ടോമാറ്റിക് വാല്യുവേഷൻ (Key Match)</option>
+                <option value="teacher">മാസ്റ്റർ (ടീച്ചർ) മാനുവൽ വാല്യുവേഷൻ</option>
+            </select>
 
             <div class="checkbox-group">
                 <input type="checkbox" id="randMode" checked>
@@ -67,55 +88,120 @@
                 <input type="checkbox" id="oneDeviceCheck">
                 <label for="oneDeviceCheck">ഒരു ഡിവൈസിൽ നിന്ന് ഒരു തവണ മാത്രം</label>
             </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="showResultCheck" checked>
+                <label for="showResultCheck">കുട്ടികൾക്ക് റിസൾട്ട് കാണാൻ അനുവാദം (Enable/Disable Result)</label>
+            </div>
 
-            <hr style="margin: 15px 0; border:0; border-top:1px solid #e5e7eb;">
+            <!-- CERTIFICATE SETUP SECTION -->
+            <hr style="margin: 12px 0; border:0; border-top:1px solid #e5e7eb;">
+            <h4 style="color:var(--primary); margin-bottom:5px;">🎓 സർട്ടിഫിക്കറ്റ് ക്രമീകരണങ്ങൾ</h4>
+            
+            <label>സർട്ടിഫിക്കറ്റ് മോഡൽ തിരഞ്ഞെടുക്കുക:</label>
+            <select id="certModelType" onchange="toggleCertFields()">
+                <option value="none">വേണ്ട</option>
+                <option value="upload">മോഡൽ 1: സർട്ടിഫിക്കറ്റ് ചിത്രം അപ്ലോഡ് ചെയ്ത് പേര് സെറ്റ് ചെയ്യൽ</option>
+                <option value="manual">മോഡൽ 2: സൈറ്റിൽ ഓട്ടോമാറ്റിക് സർട്ടിഫിക്കറ്റ് (ലോഗോ & ഒപ്പ്)</option>
+            </select>
 
-            <!-- ADD QUESTIONS BUILDER -->
+            <div id="certUploadBox" style="display:none; background:#f0fdf4; padding:10px; border-radius:8px; border:1px solid #bbf7d0; margin-top:8px;">
+                <label>സർട്ടിഫിക്കറ്റ് ചിത്രം (Background Image):</label>
+                <input type="file" id="certImageFile" accept="image/*">
+                <div class="flex-row">
+                    <div>
+                        <label>പേര് വരേണ്ട Top Position (%):</label>
+                        <input type="number" id="certTopPos" value="50">
+                    </div>
+                    <div>
+                        <label>പേര് വരേണ്ട Left Position (%):</label>
+                        <input type="number" id="certLeftPos" value="50">
+                    </div>
+                </div>
+            </div>
+
+            <div id="certManualBox" style="display:none; background:#eff6ff; padding:10px; border-radius:8px; border:1px solid #bfdbfe; margin-top:8px;">
+                <label>സ്ഥാപനത്തിന്റെ ലോഗോ (Logo):</label>
+                <input type="file" id="certLogoFile" accept="image/*">
+                <label>മാസ്റ്ററുടെ ഒപ്പ് (Signature Image):</label>
+                <input type="file" id="certSignFile" accept="image/*">
+            </div>
+
+            <!-- BULK ADD SECTIONS -->
+            <hr style="margin: 12px 0; border:0; border-top:1px solid #e5e7eb;">
             <h4 style="color:var(--primary); margin-bottom:5px;">📌 ചോദ്യങ്ങൾ ചേർക്കാനുള്ള വിഭാഗം</h4>
             
-            <div style="background:#f0fdf4; padding:12px; border-radius:8px; border:1px solid #bbf7d0; margin-bottom:12px;">
-                <b style="color:var(--primary);">1. മൾട്ടിപ്പിൾ ചോയ്സ് (MCQ) ചോദ്യങ്ങൾ ചേർക്കാൻ:</b>
-                <input type="text" id="mcqText" placeholder="ചോദ്യം എഴുതുക">
-                <input type="text" id="mcqOptions" placeholder="ഓപ്ഷനുകൾ കോമ ഇട്ട് നൽകുക (ഉദാ: മക്ക,മദീന,ത്വാഇഫ്)">
-                <input type="text" id="mcqAnswer" placeholder="ശരിയായ ഉത്തരം കൃത്യമായി എഴുതുക">
-                <input type="number" id="mcqMarks" value="5" placeholder="മാർക്ക്">
-                <div style="display:flex; gap:8px;">
-                    <button class="btn btn-blue" onclick="addSingleMCQ()">➕ ഒറ്റ MCQ ചേർക്കുക</button>
-                    <button class="btn btn-dark" onclick="addBulkMCQPrompt()">📦 ബൾക്ക് MCQ ചേർക്കുക</button>
-                </div>
+            <div style="background:#f0fdf4; padding:10px; border-radius:8px; border:1px solid #bbf7d0; margin-bottom:10px;">
+                <b style="color:var(--primary); font-size:13px;">1. മൾട്ടിപ്പിൾ ചോയ്സ് (MCQ) ബൾക്ക് ആയി ചേർക്കാൻ:</b>
+                <textarea id="bulkMCQText" rows="3" placeholder="നബി ജന്മദേശം ഏത്? - മക്ക,മദീന,ത്വാഇഫ് - മക്ക - 5"></textarea>
+                <button class="btn btn-dark" onclick="processBulkMCQ()">📦 ബൾക്ക് MCQ ആഡ് ചെയ്യുക</button>
             </div>
 
-            <div style="background:#eff6ff; padding:12px; border-radius:8px; border:1px solid #bfdbfe; margin-bottom:12px;">
-                <b style="color:var(--accent);">2. എഴുതി ഉത്തരം നൽകേണ്ട ചോദ്യങ്ങൾ (Descriptive/Written):</b>
-                <input type="text" id="descText" placeholder="ചോദ്യം എഴുതുക (ഉദാ: നബി ജീവിതം വിവരിക്കുക)">
-                <input type="number" id="descMarks" value="10" placeholder="മാർക്ക്">
-                <div style="display:flex; gap:8px;">
-                    <button class="btn btn-blue" onclick="addSingleDesc()">➕ ഒറ്റ എഴുത്തുചോദ്യം ചേർക്കുക</button>
-                    <button class="btn btn-dark" onclick="addBulkDescPrompt()">📦 ബൾക്ക് എഴുത്തുചോദ്യങ്ങൾ ചേർക്കുക</button>
-                </div>
+            <div style="background:#eff6ff; padding:10px; border-radius:8px; border:1px solid #bfdbfe; margin-bottom:10px;">
+                <b style="color:var(--accent); font-size:13px;">2. എഴുതി ഉത്തരം നൽകേണ്ട ചോദ്യങ്ങൾ ബൾക്ക് ആയി ചേർക്കാൻ:</b>
+                <textarea id="bulkDescText" rows="3" placeholder="നബി ജീവിതം വിവരിക്കുക - 10"></textarea>
+                <button class="btn btn-dark" onclick="processBulkDesc()">📦 ബൾക്ക് എഴുത്തുചോദ്യങ്ങൾ ആഡ് ചെയ്യുക</button>
             </div>
 
-            <!-- Added Questions Preview List -->
-            <h5 style="margin:10px 0 5px 0;">ചേർത്ത ചോദ്യങ്ങളുടെ ലിസ്റ്റ്:</h5>
-            <div id="adminQuestionsPreview" style="max-height:200px; overflow-y:auto; margin-bottom:15px;"></div>
+            <h5 style="margin:8px 0 4px 0; font-size:13px;">ചേർത്ത ചോദ്യങ്ങളുടെ ലിസ്റ്റ്:</h5>
+            <div id="adminQuestionsPreview" style="max-height:180px; overflow-y:auto; margin-bottom:12px;"></div>
 
-            <button class="btn btn-green" onclick="saveNewTestEvent()">🚀 ഇവന്റ് പൂർണ്ണമായി സേവ് & ലിങ്ക് ക്രിയേറ്റ് ചെയ്യുക</button>
+            <button id="saveEventBtn" class="btn btn-green" onclick="saveNewTestEvent()">🚀 പുതിയ ഇവന്റ് ലിങ്ക് ക്രിയേറ്റ് ചെയ്യുക</button>
+            <button id="cancelEditBtn" class="btn btn-red" style="display:none;" onclick="resetEventForm()">❌ എഡിറ്റിംഗ് കാൻസൽ ചെയ്യുക</button>
         </div>
 
         <!-- Events Board -->
         <div class="sub-box">
-            <h3>📋 ഇവന്റുകൾ ബോർഡ്</h3>
-            <button class="btn btn-dark" onclick="renderEventsList()" style="margin-bottom: 12px;">🔄 ലിസ്റ്റ് റിഫ്രഷ് ചെയ്യുക</button>
+            <h3>📋 ഇവന്റുകൾ ബോർഡ് (ചില മാറ്റങ്ങൾ വരുത്താൻ Edit ചെയ്യാവുന്നതാണ്)</h3>
             <div id="eventsListContainer"></div>
+        </div>
+
+        <!-- Teacher Evaluation Panel -->
+        <div class="sub-box" style="border-color: #d97706;">
+            <h3>📝 ടീച്ചർ പേപ്പർ വാല്യുവേഷൻ & മാർക്കിങ്</h3>
+            <select id="selectEventForEval" onchange="loadStudentSubmissionsForEval()">
+                <option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>
+            </select>
+            <div id="studentPapersContainer"></div>
+        </div>
+
+        <!-- Answer Key Upload Box -->
+        <div class="sub-box" style="border-color: #2563eb;">
+            <h3>🔑 മാസ്റ്റർ ആൻസർ കീ അപ്ലോഡ്</h3>
+            <select id="selectEventForKey" onchange="loadAnswerKeyUploader()">
+                <option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>
+            </select>
+            <div id="answerKeyUploadContainer" style="margin-top: 8px;"></div>
+        </div>
+
+        <!-- Results & Ranking Dashboard -->
+        <div class="sub-box" style="border-color: var(--accent);">
+            <h3>📊 റിസൾട്ട്, റാങ്കിംഗ് & റാങ്ക് ഹോൾഡേഴ്സ് പോസ്റ്റർ</h3>
+            <select id="selectEventForResult" onchange="renderResultsBoard()">
+                <option value="ALL">എല്ലാ ഇവന്റുകളുടെയും റിസൾട്ട്</option>
+            </select>
+            <div id="resultsBoardContainer" style="margin-top: 10px; overflow-x:auto;"></div>
+            
+            <!-- Poster Maker Section -->
+            <div style="background:#fdf2f8; border:1px solid #fbcfe8; padding:12px; border-radius:8px; margin-top:12px;">
+                <h4 style="color:#db2777; margin-top:0;">🖼️ റാങ്ക് ഹോൾഡേഴ്സ് പോസ്റ്റർ ജനറേറ്റർ</h4>
+                <label>വിജയിയുടെ പേര്:</label>
+                <input type="text" id="posterStudentName" placeholder="കുട്ടിയുടെ പേര്">
+                <label>സ്ഥാനം / റാങ്ക് (ഉദാ: First Place, Rank 1):</label>
+                <input type="text" id="posterRank" placeholder="Rank 1">
+                <label>കുട്ടിയുടെ ഫോട്ടോ അപ്ലോഡ് ചെയ്യുക (ഡാറ്റാബേസിൽ സേവ് ആകില്ല, ഡൗൺലോഡിന് മാത്രം):</label>
+                <input type="file" id="posterStudentPhoto" accept="image/*">
+                <button class="btn btn-blue" onclick="generateAndDownloadPoster()">📥 പോസ്റ്റർ ഡൗൺലോഡ് ചെയ്യുക</button>
+            </div>
         </div>
 
     </div>
 
     <!-- ================= STUDENT PANEL ================= -->
     <div id="studentPanelSection" style="display:none;">
+        
         <div class="sub-box" id="studentLoginBox">
             <h3 id="studEventTitle">ക്ലാസ് ടെസ്റ്റിലേക്ക് സ്വാഗതം</h3>
-            <p id="studEventDetails" style="color: #4b5563; font-size: 14px;"></p>
+            <p id="studEventDetails" style="color: #4b5563; font-size: 13px;"></p>
             
             <label>മുഴുവൻ പേര്:</label>
             <input type="text" id="studentNameInput" placeholder="പേര് നൽകുക">
@@ -130,26 +216,38 @@
             <input type="text" id="studentPlaceInput" placeholder="സ്ഥലം">
             
             <button class="btn btn-green" onclick="startStudentTest()">▶️ ടെസ്റ്റ് ആരംഭിക്കുക</button>
+            
+            <hr style="margin: 15px 0; border:0; border-top:1px solid #e5e7eb;">
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn btn-blue" style="flex:1; min-width:140px;" onclick="checkStudentResultPanel()">🔍 റിസൾട്ട് പരിശോധിക്കുക</button>
+                <button class="btn btn-dark" style="flex:1; min-width:140px;" onclick="checkStudentAnswerKeyPanel()">🔑 ആൻസർ കീ കാണുക</button>
+            </div>
         </div>
 
         <div id="studentTestBox" style="display:none;">
-            <div id="timerDisplay" style="background: #fee2e2; color: #991b1b; padding: 10px; text-align: center; font-weight: bold; border-radius: 8px; margin-bottom: 15px;">⏳ സമയം ബാക്കി: <span id="timeLeft">10:00</span></div>
+            <div id="timerDisplay" style="background: #fee2e2; color: #991b1b; padding: 10px; text-align: center; font-weight: bold; border-radius: 8px; margin-bottom: 12px;">⏳ സമയം ബാക്കി: <span id="timeLeft">10:00</span></div>
             <div id="studentQuestionsArea"></div>
             <button class="btn btn-blue" onclick="submitStudentAnswers()">📤 ഉത്തരങ്ങൾ സബ്മിറ്റ് ചെയ്യുക</button>
         </div>
 
-        <div id="studentResultBox" style="display:none; text-align:center;">
-            <h3>🎉 ടെസ്റ്റ് വിജയകരമായി സബ്മിറ്റ് ചെയ്തു!</h3>
-            <button class="btn btn-dark" onclick="location.reload()">🏠 ഹോമിലേക്ക് മടങ്ങുക</button>
+        <div id="studentResultBox" style="display:none;" class="sub-box">
+            <h3>📋 നിങ്ങളുടെ സബ്മിഷൻ & റിസൾട്ട്</h3>
+            <div id="studentScoreCardContent"></div>
+            <div id="studentCertificateArea" style="margin-top: 15px; text-align: center;"></div>
+            <button class="btn btn-dark" onclick="location.reload()" style="margin-top: 10px;">🏠 തിരികെ ഹോമിലേക്ക്</button>
         </div>
+
     </div>
 </div>
 
 <script>
     let eventsData = JSON.parse(localStorage.getItem('classTestEvents')) || [];
-    let tempQuestionsList = []; // Temporary holder while creating an event
+    let submissionsData = JSON.parse(localStorage.getItem('classTestSubs')) || {};
+    let answerKeysData = JSON.parse(localStorage.getItem('classTestKeys')) || {};
+    let tempQuestionsList = [];
     let activeTestEvent = null;
     let timerInterval = null;
+    let currentStudentSession = null;
 
     function switchMainTab(tab) {
         if(tab === 'admin') {
@@ -158,6 +256,7 @@
             document.getElementById('tabAdminBtn').classList.add('active-tab');
             document.getElementById('tabStudentBtn').classList.remove('active-tab');
             renderEventsList();
+            loadAdminDropdowns();
         } else {
             document.getElementById('adminPanelSection').style.display = 'none';
             document.getElementById('studentPanelSection').style.display = 'block';
@@ -166,199 +265,194 @@
         }
     }
 
-    // Add Single MCQ
-    function addSingleMCQ() {
-        let q = document.getElementById('mcqText').value.trim();
-        let opts = document.getElementById('mcqOptions').value.trim();
-        let ans = document.getElementById('mcqAnswer').value.trim();
-        let marks = parseInt(document.getElementById('mcqMarks').value) || 5;
-
-        if(!q || !opts || !ans) {
-            alert("ദയവായി MCQ ചോദ്യം, ഓപ്ഷനുകൾ, ഉത്തരം എന്നിവ പൂരിപ്പിക്കുക!");
-            return;
-        }
-
-        tempQuestionsList.push({
-            type: 'mcq',
-            q: q,
-            options: opts.split(',').map(o => o.trim()),
-            answer: ans,
-            marks: marks
-        });
-
-        document.getElementById('mcqText').value = '';
-        document.getElementById('mcqOptions').value = '';
-        document.getElementById('mcqAnswer').value = '';
-        renderAdminQuestionsPreview();
+    function toggleCertFields() {
+        let type = document.getElementById('certModelType').value;
+        document.getElementById('certUploadBox').style.display = type === 'upload' ? 'block' : 'none';
+        document.getElementById('certManualBox').style.display = type === 'manual' ? 'block' : 'none';
     }
 
-    // Add Bulk MCQ via Prompt
-    function addBulkMCQPrompt() {
-        let raw = prompt("ബൾക്ക് MCQ ചോദ്യങ്ങൾ നൽകുക.\nഫോർമാറ്റ്: ചോദ്യം | ഓപ്ഷൻ1,ഓപ്ഷൻ2,ഓപ്ഷൻ3 | ഉത്തരം | മാർക്ക്\n(ഓരോ വരിയിലും ഓരോ ചോദ്യം വീതം നൽകുക)");
+    function processBulkMCQ() {
+        let raw = document.getElementById('bulkMCQText').value.trim();
         if(!raw) return;
-
-        let lines = raw.split('\n');
-        lines.forEach(line => {
-            let p = line.split('|');
+        raw.split('\n').forEach(line => {
+            let p = line.split('-').map(x => x.trim());
             if(p.length >= 3) {
-                tempQuestionsList.push({
-                    type: 'mcq',
-                    q: p[0].trim(),
-                    options: p[1].split(',').map(o => o.trim()),
-                    answer: p[2].trim(),
-                    marks: p[3] ? parseInt(p[3].trim()) : 5
-                });
+                tempQuestionsList.push({ type: 'mcq', q: p[0], options: p[1].split(',').map(o => o.trim()), answer: p[2], marks: p[3] ? parseInt(p[3]) : 5 });
             }
         });
+        document.getElementById('bulkMCQText').value = '';
         renderAdminQuestionsPreview();
     }
 
-    // Add Single Descriptive Question
-    function addSingleDesc() {
-        let q = document.getElementById('descText').value.trim();
-        let marks = parseInt(document.getElementById('descMarks').value) || 10;
-
-        if(!q) {
-            alert("ദയവായി ചോദ്യം എഴുതുക!");
-            return;
-        }
-
-        tempQuestionsList.push({
-            type: 'desc',
-            q: q,
-            options: [],
-            answer: 'Manual Evaluation',
-            marks: marks
-        });
-
-        document.getElementById('descText').value = '';
-        renderAdminQuestionsPreview();
-    }
-
-    // Add Bulk Descriptive via Prompt
-    function addBulkDescPrompt() {
-        let raw = prompt("ബൾക്ക് എഴുത്തുചോദ്യങ്ങൾ നൽകുക.\nഫോർമാറ്റ്: ചോദ്യം | മാർക്ക്\n(ഓരോ വരിയിലും ഓരോ ചോദ്യം വീതം)");
+    function processBulkDesc() {
+        let raw = document.getElementById('bulkDescText').value.trim();
         if(!raw) return;
-
-        let lines = raw.split('\n');
-        lines.forEach(line => {
-            let p = line.split('|');
+        raw.split('\n').forEach(line => {
+            let p = line.split('-').map(x => x.trim());
             if(p[0]) {
-                tempQuestionsList.push({
-                    type: 'desc',
-                    q: p[0].trim(),
-                    options: [],
-                    answer: 'Manual Evaluation',
-                    marks: p[1] ? parseInt(p[1].trim()) : 10
-                });
+                tempQuestionsList.push({ type: 'desc', q: p[0], options: [], answer: 'Manual Evaluation', marks: p[1] ? parseInt(p[1]) : 10 });
             }
         });
+        document.getElementById('bulkDescText').value = '';
         renderAdminQuestionsPreview();
     }
 
     function renderAdminQuestionsPreview() {
         let container = document.getElementById('adminQuestionsPreview');
         container.innerHTML = "";
-        if(tempQuestionsList.length === 0) {
-            container.innerHTML = "<p style='color:#6b7280; font-size:13px;'>ചോദ്യങ്ങൾ ചേർത്തിട്ടില്ല.</p>";
-            return;
-        }
-
         tempQuestionsList.forEach((item, idx) => {
             container.innerHTML += `
                 <div class="q-item-admin">
-                    <div>
-                        <b>Q${idx+1} [${item.type.toUpperCase()}]:</b> ${item.q} <span style="color:green;">(${item.marks} M)</span>
-                    </div>
-                    <div style="display:flex; gap:5px;">
-                        <button class="btn btn-blue" style="padding:4px 8px; margin:0; font-size:12px;" onclick="editQuestion(${idx})">✏️</button>
-                        <button class="btn btn-red" style="padding:4px 8px; margin:0; font-size:12px;" onclick="deleteQuestion(${idx})">🗑️</button>
-                    </div>
-                </div>
-            `;
+                    <div style="font-size:13px;"><b>Q${idx+1} [${item.type.toUpperCase()}]:</b> ${item.q}</div>
+                    <button class="btn btn-red" style="padding:4px 8px; margin:0; font-size:11px;" onclick="tempQuestionsList.splice(${idx},1); renderAdminQuestionsPreview();">🗑️</button>
+                </div>`;
         });
-    }
-
-    function deleteQuestion(idx) {
-        tempQuestionsList.splice(idx, 1);
-        renderAdminQuestionsPreview();
-    }
-
-    function editQuestion(idx) {
-        let item = tempQuestionsList[idx];
-        let newQ = prompt("ചോദ്യം എഡിറ്റ് ചെയ്യുക:", item.q);
-        if(newQ !== null) {
-            item.q = newQ;
-            if(item.type === 'mcq') {
-                let newAns = prompt("ശരിയായ ഉത്തരം എഡിറ്റ് ചെയ്യുക:", item.answer);
-                if(newAns !== null) item.answer = newAns;
-            }
-            let newMarks = prompt("മാർക്ക് എഡിറ്റ് ചെയ്യുക:", item.marks);
-            if(newMarks !== null) item.marks = parseInt(newMarks) || item.marks;
-            renderAdminQuestionsPreview();
-        }
     }
 
     function saveNewTestEvent() {
         let name = document.getElementById('eventName').value.trim();
-        let place = document.getElementById('eventPlace').value.trim();
-        let timer = document.getElementById('eventTimer').value || 10;
+        if(!name || tempQuestionsList.length === 0) { alert("പേരും ചോദ്യങ്ങളും നൽകുക!"); return; }
 
-        if(!name || tempQuestionsList.length === 0) {
-            alert("ദയവായി ഇവന്റ് പേരും കുറഞ്ഞത് ഒരു ചോദ്യമെങ്കിലും നൽകുക!");
-            return;
+        let editingId = document.getElementById('editingEventId').value;
+        let certType = document.getElementById('certModelType').value;
+        let certData = { type: certType };
+
+        if(certType === 'upload') {
+            let fileInput = document.getElementById('certImageFile');
+            if(fileInput.files && fileInput.files[0]) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    certData.image = e.target.result;
+                    certData.top = document.getElementById('certTopPos').value;
+                    certData.left = document.getElementById('certLeftPos').value;
+                    commitEventData(editingId, name, certData);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+                return;
+            } else if(editingId) {
+                let oldEv = eventsData.find(e => e.id === editingId);
+                if(oldEv && oldEv.certificate) certData = oldEv.certificate;
+            }
+        } else if(certType === 'manual') {
+            let logoInput = document.getElementById('certLogoFile');
+            let signInput = document.getElementById('certSignFile');
+            certData.logo = logoInput.files[0] ? URL.createObjectURL(logoInput.files[0]) : '';
+            certData.sign = signInput.files[0] ? URL.createObjectURL(signInput.files[0]) : '';
         }
 
-        let newEvent = {
-            id: 'EV_' + Date.now(),
-            name: name,
-            place: place,
-            timer: parseInt(timer),
+        commitEventData(editingId, name, certData);
+    }
+
+    function commitEventData(editingId, name, certData) {
+        let payload = {
+            id: editingId ? editingId : ('EV_' + Date.now()),
+            name,
+            place: document.getElementById('eventPlace').value.trim(),
+            timer: parseInt(document.getElementById('eventTimer').value) || 10,
+            startDT: document.getElementById('eventStartDT').value,
+            endDT: document.getElementById('eventEndDT').value,
+            evalType: document.getElementById('eventEvalType').value,
+            showResult: document.getElementById('showResultCheck').checked,
             rand: document.getElementById('randMode').checked,
             oneDevice: document.getElementById('oneDeviceCheck').checked,
+            certificate: certData,
             questions: [...tempQuestionsList],
             date: new Date().toLocaleDateString()
         };
 
-        eventsData.push(newEvent);
+        if(editingId) {
+            let idx = eventsData.findIndex(e => e.id === editingId);
+            if(idx !== -1) eventsData[idx] = payload;
+            alert("ഇവന്റ് അതേ ലിങ്കിൽ വിജയകരമായി അപ്ഡേറ്റ് ചെയ്തു!");
+        } else {
+            eventsData.push(payload);
+            alert("പുതിയ ഇവന്റ് ലിങ്ക് ക്രിയേറ്റ് ചെയ്തു!");
+        }
+
         localStorage.setItem('classTestEvents', JSON.stringify(eventsData));
-        alert("ഇവന്റ് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു!");
+        resetEventForm();
+        renderEventsList();
+        loadAdminDropdowns();
+    }
+
+    function editEvent(id) {
+        let ev = eventsData.find(e => e.id === id);
+        if(!ev) return;
+        document.getElementById('editingEventId').value = ev.id;
+        document.getElementById('formSectionTitle').innerText = "✏️ ഇവന്റ് എഡിറ്റ് ചെയ്യുക (സെയിം ലിങ്ക് നിലനിർത്തുന്നു)";
+        document.getElementById('eventName').value = ev.name;
+        document.getElementById('eventPlace').value = ev.place || '';
+        document.getElementById('eventTimer').value = ev.timer || 10;
+        document.getElementById('eventStartDT').value = ev.startDT || '';
+        document.getElementById('eventEndDT').value = ev.endDT || '';
+        document.getElementById('eventEvalType').value = ev.evalType || 'auto';
+        document.getElementById('randMode').checked = ev.rand;
+        document.getElementById('oneDeviceCheck').checked = ev.oneDevice;
+        document.getElementById('showResultCheck').checked = ev.showResult !== false;
+        
+        if(ev.certificate) {
+            document.getElementById('certModelType').value = ev.certificate.type || 'none';
+            toggleCertFields();
+        }
+
+        tempQuestionsList = [...ev.questions];
+        renderAdminQuestionsPreview();
+        document.getElementById('saveEventBtn').innerText = "💾 മാറ്റങ്ങൾ അതേ ലിങ്കിൽ സേവ് ചെയ്യുക";
+        document.getElementById('cancelEditBtn').style.display = 'inline-flex';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetEventForm() {
+        document.getElementById('editingEventId').value = "";
+        document.getElementById('formSectionTitle').innerText = "✨ പുതിയ ക്ലാസ് ടെസ്റ്റ് ഇവന്റ് നിർമ്മിക്കുക";
+        document.getElementById('eventName').value = "";
+        document.getElementById('eventPlace').value = "";
+        document.getElementById('eventTimer').value = "10";
+        document.getElementById('eventStartDT').value = "";
+        document.getElementById('eventEndDT').value = "";
+        document.getElementById('bulkMCQText').value = "";
+        document.getElementById('bulkDescText').value = "";
         tempQuestionsList = [];
         renderAdminQuestionsPreview();
-        renderEventsList();
-        document.getElementById('eventName').value = "";
+        document.getElementById('saveEventBtn').innerText = "🚀 പുതിയ ഇവന്റ് ലിങ്ക് ക്രിയേറ്റ് ചെയ്യുക";
+        document.getElementById('cancelEditBtn').style.display = 'none';
     }
 
     function renderEventsList() {
         let container = document.getElementById('eventsListContainer');
         container.innerHTML = "";
-        if(eventsData.length === 0) {
-            container.innerHTML = "<p style='color:#6b7280;'>ഇവന്റുകൾ ഒന്നും നിലവിലില്ല.</p>";
-            return;
-        }
-
         eventsData.forEach((ev, idx) => {
             let shareLink = window.location.href.split('?')[0] + "?event=" + ev.id;
             container.innerHTML += `
                 <div class="event-card">
-                    <b>${ev.name}</b> (${ev.place || 'ഓൺലൈൻ'})<br>
-                    <small style="color:#4b5563;">ആകെ ചോദ്യങ്ങൾ: ${ev.questions.length} | സമയം: ${ev.timer} മിനിറ്റ്</small><br>
-                    <input type="text" value="${shareLink}" readonly style="margin:8px 0; background:#fff;">
-                    <button class="btn btn-red" style="margin:0;" onclick="deleteEvent(${idx})">🗑️ ഇവന്റ് ഡിലീറ്റ് ചെയ്യുക</button>
-                </div>
-            `;
+                    <b>${ev.name}</b><br>
+                    <input type="text" value="${shareLink}" readonly style="margin:6px 0; background:#fff;">
+                    <div style="display:flex; gap:6px;">
+                        <button class="btn btn-blue" style="margin:0; font-size:12px; flex:1;" onclick="editEvent('${ev.id}')">✏️ എഡിറ്റ്</button>
+                        <button class="btn btn-red" style="margin:0; font-size:12px; flex:1;" onclick="eventsData.splice(${idx},1); localStorage.setItem('classTestEvents', JSON.stringify(eventsData)); renderEventsList();">🗑️ ഡിലീറ്റ്</button>
+                    </div>
+                </div>`;
         });
     }
 
-    function deleteEvent(idx) {
-        if(confirm("ഈ ഇവന്റ് ഡിലീറ്റ് ചെയ്യണമെന്നുറപ്പാണോ?")) {
-            eventsData.splice(idx, 1);
-            localStorage.setItem('classTestEvents', JSON.stringify(eventsData));
-            renderEventsList();
-        }
+    function loadAdminDropdowns() {
+        ['selectEventForEval', 'selectEventForKey', 'selectEventForResult'].forEach(id => {
+            let el = document.getElementById(id);
+            if(el) {
+                let firstOpt = el.options[0].outerHTML;
+                el.innerHTML = firstOpt;
+                eventsData.forEach(ev => { el.innerHTML += `<option value="${ev.id}">${ev.name}</option>`; });
+            }
+        });
+        renderResultsBoard();
     }
 
-    // Student View Loader via URL
+    function loadAnswerKeyUploader() {
+        let evId = document.getElementById('selectEventForKey').value;
+        let container = document.getElementById('answerKeyUploadContainer');
+        container.innerHTML = evId ? `<textarea id="masterKey" rows="3">${answerKeysData[evId] || ''}</textarea><button class="btn btn-green" onclick="answerKeysData['${evId}']=document.getElementById('masterKey').value; localStorage.setItem('classTestKeys', JSON.stringify(answerKeysData)); alert('സേവ് ചെയ്തു!');">💾 സേവ് ചെയ്യുക</button>` : '';
+    }
+
     window.onload = function() {
         const urlParams = new URLSearchParams(window.location.search);
         const eventId = urlParams.get('event');
@@ -369,11 +463,10 @@
                 activeTestEvent = ev;
                 document.getElementById('studEventTitle').innerText = ev.name;
                 document.getElementById('studEventDetails').innerText = `സ്ഥലം: ${ev.place || 'ഓൺലൈൻ'} | സമയം: ${ev.timer} മിനിറ്റ്`;
-            } else {
-                document.getElementById('studEventTitle').innerText = "ഇവന്റ് കണ്ടെത്താനായില്ല!";
             }
         } else {
             renderEventsList();
+            loadAdminDropdowns();
         }
     };
 
@@ -383,35 +476,28 @@
         let sClass = document.getElementById('studentClassInput').value.trim();
         let sPlace = document.getElementById('studentPlaceInput').value.trim();
 
-        if(!name || !phone || !sClass || !sPlace) {
-            alert("എല്ലാ വിവരങ്ങളും പൂരിപ്പിക്കുക!");
+        if(!name || !phone || !sClass || !sPlace) { alert("എല്ലാ വിവരങ്ങളും പൂരിപ്പിക്കുക!"); return; }
+        if(!activeTestEvent) { alert("ഇവന്റ് ലഭ്യമല്ല!"); return; }
+
+        if(activeTestEvent.endDT && Date.now() > new Date(activeTestEvent.endDT).getTime()) {
+            alert("ഈ ടെസ്റ്റിന്റെ സമയം അവസാനിച്ചു!");
             return;
         }
 
-        if(!activeTestEvent) {
-            alert("ഇവന്റ് ലഭ്യമല്ല!");
-            return;
-        }
-
+        currentStudentSession = { name, phone, class: sClass, place: sPlace };
         document.getElementById('studentLoginBox').style.display = 'none';
         document.getElementById('studentTestBox').style.display = 'block';
 
         let qArea = document.getElementById('studentQuestionsArea');
         qArea.innerHTML = "";
+        window.currentStudentQuestions = [...activeTestEvent.questions];
 
-        let qList = [...activeTestEvent.questions];
-        if(activeTestEvent.rand) qList.sort(() => Math.random() - 0.5);
-        window.currentStudentQuestions = qList;
-
-        qList.forEach((q, qIdx) => {
-            let html = `<div class="sub-box"><p><b>Q${qIdx+1} (${q.type.toUpperCase()}):</b> ${q.q} <span style="float:right; color:var(--primary);">(${q.marks} M)</span></p>`;
-            
+        window.currentStudentQuestions.forEach((q, qIdx) => {
+            let html = `<div class="sub-box"><p><b>Q${qIdx+1}:</b> ${q.q}</p>`;
             if(q.type === 'mcq') {
-                q.options.forEach(opt => {
-                    html += `<label style="display:block; margin:6px 0;"><input type="radio" name="sq_${qIdx}" value="${opt}"> ${opt}</label>`;
-                });
+                q.options.forEach(opt => { html += `<label style="display:block; margin:4px 0;"><input type="radio" name="sq_${qIdx}" value="${opt}"> ${opt}</label>`; });
             } else {
-                html += `<textarea id="ans_desc_${qIdx}" rows="3" placeholder="നിങ്ങളുടെ ഉത്തരം ഇവിടെ എഴുതുക..."></textarea>`;
+                html += `<textarea id="ans_desc_${qIdx}" rows="2" placeholder="ഉത്തരം എഴുതുക..."></textarea>`;
             }
             html += `</div>`;
             qArea.innerHTML += html;
@@ -419,22 +505,243 @@
 
         let totalSec = activeTestEvent.timer * 60;
         timerInterval = setInterval(() => {
-            let m = Math.floor(totalSec / 60);
-            let s = totalSec % 60;
+            let m = Math.floor(totalSec / 60), s = totalSec % 60;
             document.getElementById('timeLeft').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-            if(totalSec <= 0) {
-                clearInterval(timerInterval);
-                alert("സമയം അവസാനിച്ചു!");
-                submitStudentAnswers();
-            }
+            if(totalSec <= 0) { clearInterval(timerInterval); submitStudentAnswers(); }
             totalSec--;
         }, 1000);
     }
 
     function submitStudentAnswers() {
         if(timerInterval) clearInterval(timerInterval);
+        let answers = [];
+        window.currentStudentQuestions.forEach((q, qIdx) => {
+            let ans = "";
+            let radios = document.getElementsByName(`sq_${qIdx}`);
+            for(let r of radios) { if(r.checked) ans = r.value; }
+            let txt = document.getElementById(`ans_desc_${qIdx}`);
+            if(txt) ans = txt.value;
+            answers.push({ q: q.q, studentAns: ans, correctAns: q.answer, marks: q.marks });
+        });
+
+        let isAuto = activeTestEvent.evalType === 'auto';
+        let submission = {
+            id: 'SUB_' + Date.now(),
+            eventId: activeTestEvent.id,
+            name: currentStudentSession.name,
+            phone: currentStudentSession.phone,
+            class: currentStudentSession.class,
+            answers,
+            evalStatus: isAuto ? 'Evaluated' : 'Pending',
+            score: isAuto ? answers.reduce((acc, curr) => acc + (curr.studentAns.trim().toLowerCase() === curr.correctAns.trim().toLowerCase() ? curr.marks : 0), 0) : 'Pending',
+            submitTime: new Date().toISOString()
+        };
+
+        if(!submissionsData[activeTestEvent.id]) submissionsData[activeTestEvent.id] = [];
+        submissionsData[activeTestEvent.id].push(submission);
+        localStorage.setItem('classTestSubs', JSON.stringify(submissionsData));
+
         document.getElementById('studentTestBox').style.display = 'none';
+        renderStudentResultCard(submission);
+    }
+
+    function checkStudentResultPanel() {
+        let phone = document.getElementById('studentPhoneInput').value.trim();
+        if(!phone || !activeTestEvent) return;
+        let sub = (submissionsData[activeTestEvent.id] || []).find(s => s.phone === phone);
+        if(!sub) { alert("സബ്മിഷൻ ഇല്ല!"); return; }
+        document.getElementById('studentLoginBox').style.display = 'none';
+        renderStudentResultCard(sub);
+    }
+
+    function renderStudentResultCard(sub) {
         document.getElementById('studentResultBox').style.display = 'block';
+        let content = document.getElementById('studentScoreCardContent');
+        let certArea = document.getElementById('studentCertificateArea');
+
+        if(!activeTestEvent.showResult) {
+            content.innerHTML = `<p style="color:red; font-weight:bold;">റിസൾട്ട് പ്രസിദ്ധീകരിക്കുന്നത് താൽക്കാലികമായി ഡിസേബിൾ ചെയ്തിരിക്കുന്നു.</p>`;
+            return;
+        }
+
+        content.innerHTML = `<p><b>പേര്:</b> ${sub.name} | <b>സ്കോർ:</b> <span style="color:green; font-weight:bold;">${sub.score}</span></p>`;
+
+        let cert = activeTestEvent.certificate;
+        if(cert && cert.type !== 'none' && sub.evalStatus === 'Evaluated') {
+            if(cert.type === 'upload' && cert.image) {
+                certArea.innerHTML = `
+                    <div style="position:relative; display:inline-block; max-width:100%; border:2px solid #ccc;">
+                        <img src="${cert.image}" style="width:100%; display:block;">
+                        <div style="position:absolute; top:${cert.top}%; left:${cert.left}%; transform:translate(-50%, -50%); font-weight:bold; font-size:18px; color:#000; background:rgba(255,255,255,0.7); padding:4px 10px; border-radius:4px;">${sub.name}</div>
+                    </div>`;
+            } else if(cert.type === 'manual') {
+                certArea.innerHTML = `
+                    <div style="background:#fffbeb; border:2px solid #f59e0b; padding:20px; border-radius:10px; text-align:center;">
+                        <h3>🏆 സർട്ടിഫിക്കറ്റ് ഓഫ് അച്ചീവ്മെന്റ്</h3>
+                        <p>ഇതുവക്ഷം സാക്ഷ്യപ്പെടുത്തുന്നത്</p>
+                        <h2 style="color:var(--primary);">${sub.name} (${sub.class})</h2>
+                        <p>ഈ ക്ലാസ് ടെസ്റ്റിൽ മികച്ച വിജയം കൈവരിച്ചിരിക്കുന്നു.</p>
+                        <div style="display:flex; justify-content:space-between; margin-top:30px; align-items:center;">
+                            <div><b>തീയതി:</b> ${new Date().toLocaleDateString()}</div>
+                            <div><b>മാസ്റ്റർ സിഗ്നേച്ചർ</b></div>
+                        </div>
+                    </div>`;
+            }
+        }
+    }
+
+    function checkStudentAnswerKeyPanel() {
+        if(!activeTestEvent) return;
+        document.getElementById('studentLoginBox').style.display = 'none';
+        document.getElementById('studentResultBox').style.display = 'block';
+        document.getElementById('studentScoreCardContent').innerHTML = `<h4>🔑 ആൻസർ കീ:</h4><p>${answerKeysData[activeTestEvent.id] || 'ഇതുവരെ അപ്ലോഡ് ചെയ്തിട്ടില്ല (Pending).'}</p>`;
+    }
+
+    function loadStudentSubmissionsForEval() {
+        let evId = document.getElementById('selectEventForEval').value;
+        let container = document.getElementById('studentPapersContainer');
+        container.innerHTML = "";
+        if(!evId || !submissionsData[evId]) return;
+
+        submissionsData[evId].forEach((sub, sIdx) => {
+            let html = `<div style="background:#fffbeb; padding:8px; margin-bottom:8px; border:1px solid #fde68a;"><b>${sub.name}</b> (${sub.phone})<br>`;
+            sub.answers.forEach((ans, aIdx) => {
+                html += `Q: ${ans.q} | ഉത്തരം: <b>${ans.studentAns}</b><br>മാർക്ക്: <input type="number" id="m_${sIdx}_${aIdx}" value="${ans.awardedMarks || 0}" style="width:50px;"><br>`;
+            });
+            html += `<button class="btn btn-green" onclick="saveEval('${evId}', ${sIdx})">സേവ് ചെയ്യുക</button></div>`;
+            container.innerHTML += html;
+        });
+    }
+
+    function saveEval(evId, sIdx) {
+        let sub = submissionsData[evId][sIdx];
+        let total = 0;
+        sub.answers.forEach((ans, aIdx) => {
+            let m = parseInt(document.getElementById(`m_${sIdx}_${aIdx}`).value) || 0;
+            ans.awardedMarks = m;
+            total += m;
+        });
+        sub.score = total;
+        sub.evalStatus = 'Evaluated';
+        localStorage.setItem('classTestSubs', JSON.stringify(submissionsData));
+        alert("വാല്യുവേഷൻ സേവ് ചെയ്തു!");
+        loadStudentSubmissionsForEval();
+        renderResultsBoard();
+    }
+
+    function renderResultsBoard() {
+        let evId = document.getElementById('selectEventForResult').value;
+        let container = document.getElementById('resultsBoardContainer');
+        let subs = [];
+        if(evId === 'ALL') { Object.keys(submissionsData).forEach(k => subs = subs.concat(submissionsData[k])); }
+        else { subs = submissionsData[evId] || []; }
+
+        subs = subs.filter(s => s.evalStatus === 'Evaluated');
+        subs.sort((a, b) => (b.score !== a.score) ? b.score - a.score : new Date(a.submitTime) - new Date(b.submitTime));
+
+        if(subs.length === 0) { container.innerHTML = "<p>റിസൾട്ടുകൾ ഇല്ല.</p>"; return; }
+        let html = `<table><tr><th>Rank</th><th>Name</th><th>Score</th><th>Action</th></tr>`;
+        subs.forEach((s, i) => {
+            html += `<tr><td>#${i+1}</td><td>${s.name}</td><td>${s.score}</td><td><button class="btn btn-blue" style="padding:2px 6px; font-size:11px;" onclick="fillPosterData('${s.name}', 'Rank ${i+1}')">പോസ്റ്റർ തയ്യാറാക്കൂ</button></td></tr>`;
+        });
+        container.innerHTML = html + `</table>`;
+    }
+
+    function fillPosterData(name, rank) {
+        document.getElementById('posterStudentName').value = name;
+        document.getElementById('posterRank').value = rank;
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    function generateAndDownloadPoster() {
+        let name = document.getElementById('posterStudentName').value.trim();
+        let rank = document.getElementById('posterRank').value.trim();
+        let photoInput = document.getElementById('posterStudentPhoto');
+
+        if(!name || !rank) { alert("പേരും റാങ്കും നൽകുക!"); return; }
+
+        let canvas = document.createElement('canvas');
+        canvas.width = 800;
+        canvas.height = 800;
+        let ctx = canvas.getContext('2d');
+
+        // Background Gradient
+        let grad = ctx.createLinearGradient(0, 0, 800, 800);
+        grad.addColorStop(0, '#14532d');
+        grad.addColorStop(1, '#064e3b');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 800, 800);
+
+        // Border
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 10;
+        ctx.strokeRect(30, 30, 740, 740);
+
+        // Header Text
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 36px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🏆 WINNER / വിജയി 🏆', 400, 100);
+
+        // Rank Badge
+        ctx.fillStyle = '#f59e0b';
+        ctx.font = 'bold 28px sans-serif';
+        ctx.fillText(rank.toUpperCase(), 400, 160);
+
+        // Draw Student Photo if uploaded (Temporary use only, not saved in DB)
+        if(photoInput.files && photoInput.files[0]) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let img = new Image();
+                img.onload = function() {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(400, 350, 120, 0, Math.PI * 2, true);
+                    ctx.closePath();
+                    ctx.clip();
+                    ctx.drawImage(img, 280, 230, 240, 240);
+                    ctx.restore();
+
+                    // Circle border
+                    ctx.beginPath();
+                    ctx.arc(400, 350, 120, 0, Math.PI * 2, true);
+                    ctx.lineWidth = 6;
+                    ctx.strokeStyle = '#f59e0b';
+                    ctx.stroke();
+
+                    drawPosterFooter(ctx, name, canvas);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(photoInput.files[0]);
+        } else {
+            // Default placeholder if no photo
+            ctx.fillStyle = '#374151';
+            ctx.beginPath();
+            ctx.arc(400, 350, 120, 0, Math.PI * 2, true);
+            ctx.fill();
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '20px sans-serif';
+            ctx.fillText('Photo', 400, 355);
+
+            drawPosterFooter(ctx, name, canvas);
+        }
+    }
+
+    function drawPosterFooter(ctx, name, canvas) {
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 42px sans-serif';
+        ctx.fillText(name, 400, 560);
+
+        ctx.font = '22px sans-serif';
+        ctx.fillStyle = '#d1d5db';
+        ctx.fillText('അഭിനന്ദനങ്ങൾ! ആശംസകളോടെ...', 400, 630);
+
+        // Trigger Download
+        let link = document.createElement('a');
+        link.download = name + '_Rank_Poster.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
     }
 </script>
 
