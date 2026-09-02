@@ -1567,24 +1567,6 @@ window.addEventListener('focus',()=>{try{if(new URLSearchParams(location.search)
         }, 2000); // 2 സെക്കൻഡിനു ശേഷം മെയിൻ സ്ക്രീനിലേക്ക് മാറും
     });
         <script>
-<script>
-// പേജ് റീഫ്രഷ് ചെയ്യുമ്പോൾ ഓട്ടോ സബ്മിറ്റ് ആവുന്ന കോഡ്
-window.addEventListener('load', function() {
-    if (sessionStorage.getItem("quiz_in_progress") === "true" && sessionStorage.getItem("quiz_submitted") !== "true") {
-        sessionStorage.setItem("quiz_submitted", "true");
-        sessionStorage.removeItem("quiz_in_progress");
-        alert("പേജ് റീഫ്രഷ് ചെയ്തതിനാൽ ക്വിസ് സബ്മിറ്റ് ചെയ്യപ്പെട്ടിരിക്കുന്നു!");
-        let subBtn = document.getElementById("submitBtn") || document.querySelector("[onclick*='submit']");
-        if(subBtn) subBtn.click();
-    }
-});
 
-// ക്വിസ് സ്റ്റാർട്ട് ചെയ്യുമ്പോൾ ട്രാക്ക് ചെയ്യാൻ
-document.addEventListener('click', function(e) {
-    if(e.target && e.target.getAttribute('onclick') && e.target.getAttribute('onclick').includes('startQuiz')) {
-        sessionStorage.setItem("quiz_in_progress", "true");
-    }
-});
-    </script>
 </body>        
 </html>
