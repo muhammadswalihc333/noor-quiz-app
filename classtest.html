@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ക്ലാസ് ടെസ്റ്റ് - പ്രോ മാനേജർ (V9.90)</title>
+    <title>ക്ലാസ് ടെസ്റ്റ് - പ്രോ മാനേജർ (V9.96)</title>
     <style>
         :root { --primary: #14532d; --primary-light: #22c55e; --accent: #2563eb; --danger: #ef4444; --bg: #fcf8f2; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: #333; box-sizing: border-box; }
@@ -16,6 +16,7 @@
         .btn-blue { background: var(--accent); color: white; }
         .btn-red { background: var(--danger); color: white; }
         .btn-dark { background: var(--primary); color: white; }
+        .btn:disabled { background: #9ca3af !important; cursor: not-allowed; opacity: 0.7; }
         input, select, textarea { width: 100%; padding: 10px; margin: 5px 0 12px 0; border: 1px solid #d1d5db; border-radius: 8px; box-sizing: border-box; font-size: 14px; background: #fdfdfd; }
         .tab-nav { display: flex; gap: 8px; margin-bottom: 15px; }
         .tab-nav button { flex: 1; padding: 10px; font-weight: bold; border-radius: 8px; cursor: pointer; border: 2px solid var(--primary); background: #fff; color: var(--primary); font-size: 13px; }
@@ -28,13 +29,21 @@
         .q-item-admin { background: #fdf2f8; border: 1px solid #fbcfe8; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
         table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
         th, td { padding: 6px; border: 1px solid #cbd5e1; text-align: left; }
+
+        /* Student Visual Styling matching image & requirements */
+        .student-banner-container { position: relative; width: 100%; height: 180px; border-radius: 10px; overflow: hidden; background: #e5e7eb; margin-bottom: 40px; }
+        .student-banner-img { width: 100%; height: 100%; object-fit: cover; }
+        .student-logo-wrapper { position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%); width: 75px; height: 75px; border-radius: 50%; background: #fff; border: 3px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.15); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .student-logo-img { width: 100%; height: 100%; object-fit: cover; }
+        .student-event-title { text-align: center; font-size: 18px; font-weight: bold; color: #1f2937; margin-top: 10px; margin-bottom: 12px; }
+        .timing-badge { background: #f0fdf4; border: 1.5px solid #bbf7d0; padding: 10px; border-radius: 12px; text-align: center; font-size: 12px; font-weight: 600; color: #166534; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header-box">
-        🏆 ക്ലാസ് ടെസ്റ്റ് പ്രോ മാനേജർ (V9.90)
+        📚 ക്ലാസ് ടെസ്റ്റ് സെക്ഷൻ (പ്രോ മാനേജർ)
     </div>
 
     <div class="tab-nav">
@@ -65,12 +74,24 @@
 
             <div class="flex-row">
                 <div>
-                    <label>ആരംഭിക്കുന്ന തീയതി & സമയം:</label>
+                    <label>ആരംഭിക്കുന്ന തീയതി & സമയം (Opens):</label>
                     <input type="datetime-local" id="eventStartDT">
                 </div>
                 <div>
-                    <label>അവസാനിക്കുന്ന തീയതി & സമയം (Closing):</label>
+                    <label>അവസാനിക്കുന്ന തീയതി & സമയം (Closes):</label>
                     <input type="datetime-local" id="eventEndDT">
+                </div>
+            </div>
+
+            <!-- BANNER & LOGO UPLOAD -->
+            <div class="flex-row" style="background:#f0fdf4; padding:10px; border-radius:8px; border:1px solid #bbf7d0; margin:10px 0;">
+                <div>
+                    <label>🖼️ ബാനർ ചിത്രം (Banner Image):</label>
+                    <input type="file" id="eventBannerFile" accept="image/*">
+                </div>
+                <div>
+                    <label>🛡️ ലോഗോ ചിത്രം (Logo Image):</label>
+                    <input type="file" id="eventLogoFile" accept="image/*">
                 </div>
             </div>
 
@@ -151,7 +172,7 @@
 
         <!-- Events Board -->
         <div class="sub-box">
-            <h3>📋 ഇവന്റുകൾ ബോർഡ് (ചില മാറ്റങ്ങൾ വരുത്താൻ Edit ചെയ്യാവുന്നതാണ്)</h3>
+            <h3>📋 ഇവന്റുകൾ ബോർഡ് (എഡിറ്റ് ചെയ്യാൻ സാധിക്കും)</h3>
             <div id="eventsListContainer"></div>
         </div>
 
@@ -188,7 +209,7 @@
                 <input type="text" id="posterStudentName" placeholder="കുട്ടിയുടെ പേര്">
                 <label>സ്ഥാനം / റാങ്ക് (ഉദാ: First Place, Rank 1):</label>
                 <input type="text" id="posterRank" placeholder="Rank 1">
-                <label>കുട്ടിയുടെ ഫോട്ടോ അപ്ലോഡ് ചെയ്യുക (ഡാറ്റാബേസിൽ സേവ് ആകില്ല, ഡൗൺലോഡിന് മാത്രം):</label>
+                <label>കുട്ടിയുടെ ഫോട്ടോ അപ്ലോഡ് ചെയ്യുക (ഡാറ്റാബേസിൽ സേവ് ആകില്ല):</label>
                 <input type="file" id="posterStudentPhoto" accept="image/*">
                 <button class="btn btn-blue" onclick="generateAndDownloadPoster()">📥 പോസ്റ്റർ ഡൗൺലോഡ് ചെയ്യുക</button>
             </div>
@@ -200,13 +221,25 @@
     <div id="studentPanelSection" style="display:none;">
         
         <div class="sub-box" id="studentLoginBox">
-            <h3 id="studEventTitle">ക്ലാസ് ടെസ്റ്റിലേക്ക് സ്വാഗതം</h3>
-            <p id="studEventDetails" style="color: #4b5563; font-size: 13px;"></p>
             
-            <label>മുഴുവൻ പേര്:</label>
+            <!-- Banner & Logo Header Layout -->
+            <div class="student-banner-container">
+                <img id="studBannerImg" src="" class="student-banner-img" style="display:none;">
+                <div class="student-logo-wrapper">
+                    <img id="studLogoImg" src="" class="student-logo-img" style="display:none;">
+                </div>
+            </div>
+
+            <div id="studEventTitle" class="student-event-title">ക്ലാസ് ടെസ്റ്റ്</div>
+            
+            <div id="studTimingBadge" class="timing-badge">
+                🟢 Opens: -- 🔴 Closes: --
+            </div>
+            
+            <label>പൂർണ്ണ നാമം *:</label>
             <input type="text" id="studentNameInput" placeholder="പേര് നൽകുക">
             
-            <label>ഫോൺ നമ്പർ:</label>
+            <label>ഫോൺ *:</label>
             <input type="tel" id="studentPhoneInput" placeholder="ഫോൺ നമ്പർ">
 
             <label>ക്ലാസ് / ഡിവിഷൻ:</label>
@@ -215,7 +248,8 @@
             <label>സ്ഥലം:</label>
             <input type="text" id="studentPlaceInput" placeholder="സ്ഥലം">
             
-            <button class="btn btn-green" onclick="startStudentTest()">▶️ ടെസ്റ്റ് ആരംഭിക്കുക</button>
+            <button id="startTestBtn" class="btn btn-green" onclick="startStudentTest()">▶️ ടെസ്റ്റ് ആരംഭിക്കുക</button>
+            <p id="timingNoticeText" style="text-align:center; font-size:12px; color:red; font-weight:bold; margin-top:6px;"></p>
             
             <hr style="margin: 15px 0; border:0; border-top:1px solid #e5e7eb;">
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -314,36 +348,86 @@
         if(!name || tempQuestionsList.length === 0) { alert("പേരും ചോദ്യങ്ങളും നൽകുക!"); return; }
 
         let editingId = document.getElementById('editingEventId').value;
-        let certType = document.getElementById('certModelType').value;
-        let certData = { type: certType };
+        let bannerFile = document.getElementById('eventBannerFile').files[0];
+        let logoFile = document.getElementById('eventLogoFile').files[0];
 
-        if(certType === 'upload') {
-            let fileInput = document.getElementById('certImageFile');
-            if(fileInput.files && fileInput.files[0]) {
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    certData.image = e.target.result;
-                    certData.top = document.getElementById('certTopPos').value;
-                    certData.left = document.getElementById('certLeftPos').value;
-                    commitEventData(editingId, name, certData);
-                };
-                reader.readAsDataURL(fileInput.files[0]);
-                return;
-            } else if(editingId) {
-                let oldEv = eventsData.find(e => e.id === editingId);
-                if(oldEv && oldEv.certificate) certData = oldEv.certificate;
-            }
-        } else if(certType === 'manual') {
-            let logoInput = document.getElementById('certLogoFile');
-            let signInput = document.getElementById('certSignFile');
-            certData.logo = logoInput.files[0] ? URL.createObjectURL(logoInput.files[0]) : '';
-            certData.sign = signInput.files[0] ? URL.createObjectURL(signInput.files[0]) : '';
+        let bannerUrl = "";
+        let logoUrl = "";
+
+        let existingEv = editingId ? eventsData.find(e => e.id === editingId) : null;
+        if(existingEv) {
+            bannerUrl = existingEv.banner || "";
+            logoUrl = existingEv.logo || "";
         }
 
-        commitEventData(editingId, name, certData);
+        let processAndSave = () => {
+            let certType = document.getElementById('certModelType').value;
+            let certData = { type: certType };
+            if(existingEv && existingEv.certificate) certData = existingEv.certificate;
+
+            certData.top = parseFloat(document.getElementById('certTopPos').value) || 50;
+            certData.left = parseFloat(document.getElementById('certLeftPos').value) || 50;
+
+            let certImgFile = document.getElementById('certImageFile').files[0];
+            let certLogoFile = document.getElementById('certLogoFile').files[0];
+            let certSignFile = document.getElementById('certSignFile').files[0];
+
+            let finishCommit = () => {
+                commitEventData(editingId, name, bannerUrl, logoUrl, certData);
+            };
+
+            let pendingImageLoads = (certImgFile ? 1 : 0) + (certLogoFile ? 1 : 0) + (certSignFile ? 1 : 0);
+            if(pendingImageLoads === 0) {
+                finishCommit();
+                return;
+            }
+
+            let loadedCounter = 0;
+            if(certImgFile) {
+                let fr = new FileReader();
+                fr.onload = e => { certData.image = e.target.result; loadedCounter++; if(loadedCounter === pendingImageLoads) finishCommit(); };
+                fr.readAsDataURL(certImgFile);
+            }
+            if(certLogoFile) {
+                let fr = new FileReader();
+                fr.onload = e => { certData.logo = e.target.result; loadedCounter++; if(loadedCounter === pendingImageLoads) finishCommit(); };
+                fr.readAsDataURL(certLogoFile);
+            }
+            if(certSignFile) {
+                let fr = new FileReader();
+                fr.onload = e => { certData.sign = e.target.result; loadedCounter++; if(loadedCounter === pendingImageLoads) finishCommit(); };
+                fr.readAsDataURL(certSignFile);
+            }
+        };
+
+        if(bannerFile || logoFile) {
+            let loadedCount = 0;
+            let totalToLoad = (bannerFile ? 1 : 0) + (logoFile ? 1 : 0);
+
+            if(bannerFile) {
+                let r1 = new FileReader();
+                r1.onload = function(e) {
+                    bannerUrl = e.target.result;
+                    loadedCount++;
+                    if(loadedCount === totalToLoad) processAndSave();
+                };
+                r1.readAsDataURL(bannerFile);
+            }
+            if(logoFile) {
+                let r2 = new FileReader();
+                r2.onload = function(e) {
+                    logoUrl = e.target.result;
+                    loadedCount++;
+                    if(loadedCount === totalToLoad) processAndSave();
+                };
+                r2.readAsDataURL(logoFile);
+            }
+        } else {
+            processAndSave();
+        }
     }
 
-    function commitEventData(editingId, name, certData) {
+    function commitEventData(editingId, name, bannerUrl, logoUrl, certData) {
         let payload = {
             id: editingId ? editingId : ('EV_' + Date.now()),
             name,
@@ -351,6 +435,8 @@
             timer: parseInt(document.getElementById('eventTimer').value) || 10,
             startDT: document.getElementById('eventStartDT').value,
             endDT: document.getElementById('eventEndDT').value,
+            banner: bannerUrl,
+            logo: logoUrl,
             evalType: document.getElementById('eventEvalType').value,
             showResult: document.getElementById('showResultCheck').checked,
             rand: document.getElementById('randMode').checked,
@@ -389,9 +475,11 @@
         document.getElementById('randMode').checked = ev.rand;
         document.getElementById('oneDeviceCheck').checked = ev.oneDevice;
         document.getElementById('showResultCheck').checked = ev.showResult !== false;
-        
+
         if(ev.certificate) {
             document.getElementById('certModelType').value = ev.certificate.type || 'none';
+            document.getElementById('certTopPos').value = ev.certificate.top || 50;
+            document.getElementById('certLeftPos').value = ev.certificate.left || 50;
             toggleCertFields();
         }
 
@@ -410,8 +498,12 @@
         document.getElementById('eventTimer').value = "10";
         document.getElementById('eventStartDT').value = "";
         document.getElementById('eventEndDT').value = "";
+        document.getElementById('eventBannerFile').value = "";
+        document.getElementById('eventLogoFile').value = "";
         document.getElementById('bulkMCQText').value = "";
         document.getElementById('bulkDescText').value = "";
+        document.getElementById('certModelType').value = "none";
+        toggleCertFields();
         tempQuestionsList = [];
         renderAdminQuestionsPreview();
         document.getElementById('saveEventBtn').innerText = "🚀 പുതിയ ഇവന്റ് ലിങ്ക് ക്രിയേറ്റ് ചെയ്യുക";
@@ -462,7 +554,23 @@
             if(ev) {
                 activeTestEvent = ev;
                 document.getElementById('studEventTitle').innerText = ev.name;
-                document.getElementById('studEventDetails').innerText = `സ്ഥലം: ${ev.place || 'ഓൺലൈൻ'} | സമയം: ${ev.timer} മിനിറ്റ്`;
+
+                if(ev.banner) {
+                    let bImg = document.getElementById('studBannerImg');
+                    bImg.src = ev.banner;
+                    bImg.style.display = 'block';
+                }
+                if(ev.logo) {
+                    let lImg = document.getElementById('studLogoImg');
+                    lImg.src = ev.logo;
+                    lImg.style.display = 'block';
+                }
+
+                let startFormatted = ev.startDT ? new Date(ev.startDT).toLocaleString() : 'ഉടൻ';
+                let endFormatted = ev.endDT ? new Date(ev.endDT).toLocaleString() : 'നിശ്ചിത സമയം';
+                document.getElementById('studTimingBadge').innerHTML = `🟢 Opens: ${startFormatted} • 🔴 Closes: ${endFormatted}`;
+
+                checkTestTimingStatus(ev);
             }
         } else {
             renderEventsList();
@@ -470,19 +578,34 @@
         }
     };
 
+    function checkTestTimingStatus(ev) {
+        let now = Date.now();
+        let startMs = ev.startDT ? new Date(ev.startDT).getTime() : 0;
+        let endMs = ev.endDT ? new Date(ev.endDT).getTime() : Infinity;
+
+        let startBtn = document.getElementById('startTestBtn');
+        let noticeTxt = document.getElementById('timingNoticeText');
+
+        if(now < startMs) {
+            startBtn.disabled = true;
+            noticeTxt.innerText = "⏳ ടെസ്റ്റ് ആരംഭിച്ചിട്ടില്ല. നിശ്ചിത സമയത്ത് മാത്രമേ ബട്ടൺ പ്രവർത്തിക്കൂ.";
+        } else if(now > endMs) {
+            startBtn.disabled = true;
+            noticeTxt.innerText = "❌ ഈ ടെസ്റ്റിന്റെ സമയം അവസാനിച്ചിരിക്കുന്നു (Closed).";
+        } else {
+            startBtn.disabled = false;
+            noticeTxt.innerText = "";
+        }
+    }
+
     function startStudentTest() {
         let name = document.getElementById('studentNameInput').value.trim();
         let phone = document.getElementById('studentPhoneInput').value.trim();
         let sClass = document.getElementById('studentClassInput').value.trim();
         let sPlace = document.getElementById('studentPlaceInput').value.trim();
 
-        if(!name || !phone || !sClass || !sPlace) { alert("എല്ലാ വിവരങ്ങളും പൂരിപ്പിക്കുക!"); return; }
-        if(!activeTestEvent) { alert("ഇവന്റ് ലഭ്യമല്ല!"); return; }
-
-        if(activeTestEvent.endDT && Date.now() > new Date(activeTestEvent.endDT).getTime()) {
-            alert("ഈ ടെസ്റ്റിന്റെ സമയം അവസാനിച്ചു!");
-            return;
-        }
+        if(!name || !phone) { alert("പേരും ഫോൺ നമ്പറും നൽകുക!"); return; }
+        if(!activeTestEvent) return;
 
         currentStudentSession = { name, phone, class: sClass, place: sPlace };
         document.getElementById('studentLoginBox').style.display = 'none';
@@ -572,18 +695,22 @@
                 certArea.innerHTML = `
                     <div style="position:relative; display:inline-block; max-width:100%; border:2px solid #ccc;">
                         <img src="${cert.image}" style="width:100%; display:block;">
-                        <div style="position:absolute; top:${cert.top}%; left:${cert.left}%; transform:translate(-50%, -50%); font-weight:bold; font-size:18px; color:#000; background:rgba(255,255,255,0.7); padding:4px 10px; border-radius:4px;">${sub.name}</div>
+                        <div style="position:absolute; top:${cert.top}%; left:${cert.left}%; transform:translate(-50%, -50%); font-weight:bold; font-size:18px; color:#000; background:rgba(255,255,255,0.8); padding:4px 10px; border-radius:4px;">${sub.name}</div>
                     </div>`;
             } else if(cert.type === 'manual') {
                 certArea.innerHTML = `
                     <div style="background:#fffbeb; border:2px solid #f59e0b; padding:20px; border-radius:10px; text-align:center;">
+                        ${cert.logo ? `<img src="${cert.logo}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; margin-bottom:10px;">` : ''}
                         <h3>🏆 സർട്ടിഫിക്കറ്റ് ഓഫ് അച്ചീവ്മെന്റ്</h3>
-                        <p>ഇതുവക്ഷം സാക്ഷ്യപ്പെടുത്തുന്നത്</p>
-                        <h2 style="color:var(--primary);">${sub.name} (${sub.class})</h2>
+                        <p>ഇതുവഴി സാക്ഷ്യപ്പെടുത്തുന്നത്</p>
+                        <h2 style="color:var(--primary);">${sub.name} (${sub.class || ''})</h2>
                         <p>ഈ ക്ലാസ് ടെസ്റ്റിൽ മികച്ച വിജയം കൈവരിച്ചിരിക്കുന്നു.</p>
                         <div style="display:flex; justify-content:space-between; margin-top:30px; align-items:center;">
                             <div><b>തീയതി:</b> ${new Date().toLocaleDateString()}</div>
-                            <div><b>മാസ്റ്റർ സിഗ്നേച്ചർ</b></div>
+                            <div>
+                                ${cert.sign ? `<img src="${cert.sign}" style="height:40px; display:block; margin:0 auto;"><br>` : ''}
+                                <b>മാസ്റ്റർ സിഗ്നേച്ചർ</b>
+                            </div>
                         </div>
                     </div>`;
             }
@@ -606,7 +733,7 @@
         submissionsData[evId].forEach((sub, sIdx) => {
             let html = `<div style="background:#fffbeb; padding:8px; margin-bottom:8px; border:1px solid #fde68a;"><b>${sub.name}</b> (${sub.phone})<br>`;
             sub.answers.forEach((ans, aIdx) => {
-                html += `Q: ${ans.q} | ഉത്തരം: <b>${ans.studentAns}</b><br>മാർക്ക്: <input type="number" id="m_${sIdx}_${aIdx}" value="${ans.awardedMarks || 0}" style="width:50px;"><br>`;
+                html += `Q: ${ans.q} | ഉത്തരം: <b>${ans.studentAns}</b> (ശരിയുത്തരം: ${ans.correctAns})<br>മാർക്ക് നൽകുക: <input type="number" id="m_${sIdx}_${aIdx}" value="${ans.awardedMarks || 0}" style="width:60px;"><br>`;
             });
             html += `<button class="btn btn-green" onclick="saveEval('${evId}', ${sIdx})">സേവ് ചെയ്യുക</button></div>`;
             container.innerHTML += html;
@@ -665,30 +792,25 @@
         canvas.height = 800;
         let ctx = canvas.getContext('2d');
 
-        // Background Gradient
         let grad = ctx.createLinearGradient(0, 0, 800, 800);
         grad.addColorStop(0, '#14532d');
         grad.addColorStop(1, '#064e3b');
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, 800, 800);
 
-        // Border
         ctx.strokeStyle = '#f59e0b';
         ctx.lineWidth = 10;
         ctx.strokeRect(30, 30, 740, 740);
 
-        // Header Text
         ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 36px sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText('🏆 WINNER / വിജയി 🏆', 400, 100);
 
-        // Rank Badge
         ctx.fillStyle = '#f59e0b';
         ctx.font = 'bold 28px sans-serif';
         ctx.fillText(rank.toUpperCase(), 400, 160);
 
-        // Draw Student Photo if uploaded (Temporary use only, not saved in DB)
         if(photoInput.files && photoInput.files[0]) {
             let reader = new FileReader();
             reader.onload = function(e) {
@@ -702,7 +824,6 @@
                     ctx.drawImage(img, 280, 230, 240, 240);
                     ctx.restore();
 
-                    // Circle border
                     ctx.beginPath();
                     ctx.arc(400, 350, 120, 0, Math.PI * 2, true);
                     ctx.lineWidth = 6;
@@ -715,7 +836,6 @@
             };
             reader.readAsDataURL(photoInput.files[0]);
         } else {
-            // Default placeholder if no photo
             ctx.fillStyle = '#374151';
             ctx.beginPath();
             ctx.arc(400, 350, 120, 0, Math.PI * 2, true);
@@ -737,7 +857,6 @@
         ctx.fillStyle = '#d1d5db';
         ctx.fillText('അഭിനന്ദനങ്ങൾ! ആശംസകളോടെ...', 400, 630);
 
-        // Trigger Download
         let link = document.createElement('a');
         link.download = name + '_Rank_Poster.png';
         link.href = canvas.toDataURL('image/png');
