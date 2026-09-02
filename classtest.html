@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ക്ലാസ് ടെസ്റ്റ് - പ്രോ മാനേജർ (V10.1 - Isolated Mode)</title>
+    <title>ക്ലാസ് ടെസ്റ്റ് - പ്രോ മാനേജർ (V10.2 - Live Preview Mode)</title>
     <style>
         :root { --primary: #14532d; --primary-light: #22c55e; --accent: #2563eb; --danger: #ef4444; --bg: #fcf8f2; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: #333; box-sizing: border-box; }
@@ -30,6 +30,17 @@
         table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
         th, td { padding: 6px; border: 1px solid #cbd5e1; text-align: left; }
 
+        /* Overview Stats Cards CSS */
+        .overview-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px; }
+        .overview-card { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px; border-radius: 10px; text-align: center; }
+        .overview-card h4 { margin: 0; font-size: 12px; color: #166534; }
+        .overview-card span { font-size: 20px; font-weight: bold; color: #14532d; }
+
+        /* Live Certificate Preview Box Styles */
+        .cert-preview-container { position: relative; width: 100%; height: 200px; background: #e5e7eb; border: 2px dashed #9ca3af; border-radius: 8px; overflow: hidden; margin-top: 10px; display: flex; align-items: center; justify-content: center; }
+        .cert-preview-bg { position: absolute; width: 100%; height: 100%; object-fit: cover; top: 0; left: 0; }
+        .cert-preview-name-tag { position: absolute; transform: translate(-50%, -50%); font-weight: bold; pointer-events: none; text-shadow: 1px 1px 2px rgba(255,255,255,0.8); white-space: nowrap; }
+
         .student-banner-container { position: relative; width: 100%; height: 180px; border-radius: 10px; overflow: hidden; background: #e5e7eb; margin-bottom: 40px; }
         .student-banner-img { width: 100%; height: 100%; object-fit: cover; }
         .student-logo-wrapper { position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%); width: 75px; height: 75px; border-radius: 50%; background: #fff; border: 3px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.15); overflow: hidden; display: flex; align-items: center; justify-content: center; }
@@ -42,7 +53,7 @@
 
 <div class="container">
     <div class="header-box">
-        📚 ക്ലാസ് ടെസ്റ്റ് സെക്ഷൻ (പ്രോ മാനേജർ V10.1 - Isolated)
+        📚 ക്ലാസ് ടെസ്റ്റ് സെക്ഷൻ (പ്രോ മാനേജർ V10.2 - Live Preview)
     </div>
 
     <div class="tab-nav">
@@ -52,6 +63,21 @@
 
     <div id="adminPanelSection">
         
+        <!-- OVERVIEW / DASHBOARD STATS SECTION -->
+        <div class="sub-box" style="border-color: var(--primary-light);">
+            <h3>📈 ഡാഷ്‌ബോർഡ് ഓവർവ്യൂ (Overview)</h3>
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <h4>ആകെ ഇവന്റുകൾ</h4>
+                    <span id="statTotalEvents">0</span>
+                </div>
+                <div class="overview-card">
+                    <h4>ആകെ സബ്മിഷനുകൾ</h4>
+                    <span id="statTotalSubs">0</span>
+                </div>
+            </div>
+        </div>
+
         <div class="sub-box">
             <h3 id="formSectionTitle">✨ പുതിയ ക്ലാസ് ടെസ്റ്റ് ഇവന്റ് നിർമ്മിക്കുക</h3>
             <input type="hidden" id="editingEventId" value="">
@@ -112,7 +138,7 @@
             </div>
 
             <hr style="margin: 12px 0; border:0; border-top:1px solid #e5e7eb;">
-            <h4 style="color:var(--primary); margin-bottom:5px;">🎓 സർട്ടിഫിക്കറ്റ് കോൺഫിഗറേഷൻ (രണ്ട് തരങ്ങൾ)</h4>
+            <h4 style="color:var(--primary); margin-bottom:5px;">🎓 സർട്ടിഫിക്കറ്റ് കോൺഫിഗറേഷൻ & ലൈവ് പ്രിവ്യൂ</h4>
             
             <div style="background:#f0fdf4; padding:10px; border-radius:8px; border:1px solid #bbf7d0; margin-bottom:10px;">
                 <div class="checkbox-group">
@@ -126,7 +152,7 @@
                         <option value="manual">മാനുവൽ ബാക്ക്ഗ്രൗണ്ട് അപ്‌ലോഡ് & പൊസിഷൻ</option>
                     </select>
                     <label>ബാക്ക്ഗ്രൗണ്ട് ഫയൽ (Manual ആണെങ്കിൽ മാത്രം):</label>
-                    <input type="file" id="partCertFile" accept="image/*">
+                    <input type="file" id="partCertFile" accept="image/*" onchange="previewCertificateBg(event)">
                 </div>
             </div>
 
@@ -142,22 +168,31 @@
                         <option value="manual">മാനുവൽ ബാക്ക്ഗ്രൗണ്ട് അപ്‌ലോഡ് & പൊസിഷൻ</option>
                     </select>
                     <label>ബാക്ക്ഗ്രൗണ്ട് ഫയൽ (Manual ആണെങ്കിൽ മാത്രം):</label>
-                    <input type="file" id="meritCertFile" accept="image/*">
+                    <input type="file" id="meritCertFile" accept="image/*" onchange="previewCertificateBg(event)">
                 </div>
             </div>
 
-            <div style="background:#fdf4ff; padding:10px; border-radius:8px; border:1px solid #f5d0fe;">
-                <label>Name X Position (<span id="valX">50</span>%):</label>
-                <input type="range" id="certXPos" min="0" max="100" value="50" oninput="document.getElementById('valX').innerText=this.value;">
+            <!-- LIVE CERTIFICATE PREVIEW BOX -->
+            <div style="background:#fdf4ff; padding:12px; border-radius:8px; border:1px solid #f5d0fe;">
+                <h4 style="color:#db2777; margin-top:0; font-size:13px;">👁️ സർട്ടിഫിക്കറ്റ് ലൈവ് പ്രിവ്യൂ (പേര് എവിടെ വരുന്നു എന്ന് കാണുക)</h4>
+                
+                <div id="certPreviewBox" class="cert-preview-container">
+                    <img id="certPreviewImg" class="cert-preview-bg" style="display:none;">
+                    <div id="certPreviewDefaultText" style="color:#6b7280; font-size:12px; text-align:center; z-index:1;">ബാക്ക്ഗ്രൗണ്ട് ഫയൽ അപ്‌ലോഡ് ചെയ്യുമ്പോൾ ഇവിടെ പ്രിവ്യൂ കാണാം</div>
+                    <div id="certPreviewName" class="cert-preview-name-tag" style="left: 50%; top: 50%; font-size: 16px; color: #14532d;">മുഹമ്മദ് സാലിഹ് (ഉദാഹരണം)</div>
+                </div>
+
+                <label style="margin-top:10px;">Name X Position (<span id="valX">50</span>%):</label>
+                <input type="range" id="certXPos" min="0" max="100" value="50" oninput="updateCertPreviewCoords()">
 
                 <label>Name Y Position (<span id="valY">50</span>%):</label>
-                <input type="range" id="certYPos" min="0" max="100" value="50" oninput="document.getElementById('valY').innerText=this.value;">
+                <input type="range" id="certYPos" min="0" max="100" value="50" oninput="updateCertPreviewCoords()">
 
                 <label>Font Size (<span id="valSize">24</span>px):</label>
-                <input type="range" id="certFontSize" min="12" max="60" value="24" oninput="document.getElementById('valSize').innerText=this.value;">
+                <input type="range" id="certFontSize" min="12" max="60" value="24" oninput="updateCertPreviewCoords()">
 
                 <label>Certificate Name Color:</label>
-                <input type="color" id="certColorPicker" value="#14532d" style="height:40px; padding:2px;">
+                <input type="color" id="certColorPicker" value="#14532d" style="height:40px; padding:2px;" oninput="updateCertPreviewCoords()">
             </div>
 
             <hr style="margin: 12px 0; border:0; border-top:1px solid #e5e7eb;">
@@ -316,12 +351,25 @@
             document.getElementById('tabStudentBtn').classList.remove('active-tab');
             renderEventsList();
             loadAdminDropdowns();
+            updateDashboardOverview();
         } else {
             document.getElementById('adminPanelSection').style.display = 'none';
             document.getElementById('studentPanelSection').style.display = 'block';
             document.getElementById('tabStudentBtn').classList.add('active-tab');
             document.getElementById('tabAdminBtn').classList.remove('active-tab');
         }
+    }
+
+    function updateDashboardOverview() {
+        let totalEvents = eventsData.length;
+        let totalSubs = 0;
+        Object.keys(submissionsData).forEach(k => {
+            if(Array.isArray(submissionsData[k])) {
+                totalSubs += submissionsData[k].length;
+            }
+        });
+        document.getElementById('statTotalEvents').innerText = totalEvents;
+        document.getElementById('statTotalSubs').innerText = totalSubs;
     }
 
     function toggleCertSubBox(type) {
@@ -332,6 +380,37 @@
             let chk = document.getElementById('enableMeritCert').checked;
             document.getElementById('meritCertBox').style.display = chk ? 'block' : 'none';
         }
+    }
+
+    function previewCertificateBg(event) {
+        let file = event.target.files[0];
+        if(file) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let imgEl = document.getElementById('certPreviewImg');
+                imgEl.src = e.target.result;
+                imgEl.style.display = 'block';
+                document.getElementById('certPreviewDefaultText').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function updateCertPreviewCoords() {
+        let x = document.getElementById('certXPos').value;
+        let y = document.getElementById('certYPos').value;
+        let size = document.getElementById('certFontSize').value;
+        let color = document.getElementById('certColorPicker').value;
+
+        document.getElementById('valX').innerText = x;
+        document.getElementById('valY').innerText = y;
+        document.getElementById('valSize').innerText = size;
+
+        let nameTag = document.getElementById('certPreviewName');
+        nameTag.style.left = x + '%';
+        nameTag.style.top = y + '%';
+        nameTag.style.fontSize = (size * 0.8) + 'px';
+        nameTag.style.color = color;
     }
 
     function processBulkMCQ() {
@@ -477,6 +556,7 @@
         resetEventForm();
         renderEventsList();
         loadAdminDropdowns();
+        updateDashboardOverview();
     }
 
     function editEvent(id) {
@@ -507,12 +587,17 @@
             toggleCertSubBox('merit');
 
             document.getElementById('certXPos').value = ev.certificates.x || 50;
-            document.getElementById('valX').innerText = ev.certificates.x || 50;
             document.getElementById('certYPos').value = ev.certificates.y || 50;
-            document.getElementById('valY').innerText = ev.certificates.y || 50;
             document.getElementById('certFontSize').value = ev.certificates.size || 24;
-            document.getElementById('valSize').innerText = ev.certificates.size || 24;
             document.getElementById('certColorPicker').value = ev.certificates.color || '#14532d';
+
+            if(p.bgUrl || m.bgUrl) {
+                let imgEl = document.getElementById('certPreviewImg');
+                imgEl.src = p.bgUrl || m.bgUrl;
+                imgEl.style.display = 'block';
+                document.getElementById('certPreviewDefaultText').style.display = 'none';
+            }
+            updateCertPreviewCoords();
         }
 
         tempQuestionsList = [...ev.questions];
@@ -540,6 +625,8 @@
         document.getElementById('enableMeritCert').checked = false;
         toggleCertSubBox('part');
         toggleCertSubBox('merit');
+        document.getElementById('certPreviewImg').style.display = 'none';
+        document.getElementById('certPreviewDefaultText').style.display = 'block';
         tempQuestionsList = [];
         renderAdminQuestionsPreview();
         document.getElementById('saveEventBtn').innerText = "🚀 പുതിയ ഇവന്റ് ലിങ്ക് ക്രിയേറ്റ് ചെയ്യുക";
@@ -557,7 +644,7 @@
                     <input type="text" value="${shareLink}" readonly style="margin:6px 0; background:#fff;">
                     <div style="display:flex; gap:6px;">
                         <button class="btn btn-blue" style="margin:0; font-size:12px; flex:1;" onclick="editEvent('${ev.id}')">✏️ എഡിറ്റ്</button>
-                        <button class="btn btn-red" style="margin:0; font-size:12px; flex:1;" onclick="eventsData.splice(${idx},1); localStorage.setItem('isolated_classTestEvents_v10', JSON.stringify(eventsData)); renderEventsList();">🗑️ ഡിലീറ്റ്</button>
+                        <button class="btn btn-red" style="margin:0; font-size:12px; flex:1;" onclick="eventsData.splice(${idx},1); localStorage.setItem('isolated_classTestEvents_v10', JSON.stringify(eventsData)); renderEventsList(); updateDashboardOverview();">🗑️ ഡിലീറ്റ്</button>
                     </div>
                 </div>`;
         });
@@ -611,6 +698,7 @@
         } else {
             renderEventsList();
             loadAdminDropdowns();
+            updateDashboardOverview();
         }
     };
 
@@ -756,12 +844,10 @@
         let cfg = activeTestEvent.certificates;
         if(!cfg) return;
 
-        // 1. Participation Certificate (Available to all evaluated/submitted students if enabled)
         if(cfg.participation && cfg.participation.enabled) {
             certArea.innerHTML += `<button class="btn btn-green" onclick="generateStudentCertificate('participation', '${sub.name}')">🎓 ഡൗൺലോഡ് പങ്കാളിത്ത സർട്ടിഫിക്കറ്റ്</button><br>`;
         }
 
-        // 2. Merit Certificate (Available only if student is in Top 3 and evaluation is done)
         if(cfg.merit && cfg.merit.enabled && sub.evalStatus === 'Evaluated') {
             let allSubs = [...(submissionsData[activeTestEvent.id] || [])].filter(s => s.evalStatus === 'Evaluated');
             allSubs.sort((a, b) => {
@@ -807,7 +893,6 @@
             };
             img.src = bgUrl;
         } else {
-            // Auto Generated Casual Template Style
             ctx.fillStyle = '#fcf8f2';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.strokeStyle = '#14532d';
