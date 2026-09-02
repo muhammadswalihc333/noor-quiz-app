@@ -1567,29 +1567,24 @@ window.addEventListener('focus',()=>{try{if(new URLSearchParams(location.search)
         }, 2000); // 2 സെക്കൻഡിനു ശേഷം മെയിൻ സ്ക്രീനിലേക്ക് മാറും
     });
         <script>
-// പേജ് ലോഡ് ചെയ്യുമ്പോൾ ക്വിസ് നടന്നുകൊണ്ടിരിക്കുകയാണോ എന്ന് പരിശോധിക്കുന്നു
+<script>
+// പേജ് റീഫ്രഷ് ചെയ്യുമ്പോൾ ഓട്ടോ സബ്മിറ്റ് ആവുന്ന കോഡ്
 window.addEventListener('load', function() {
-    // യൂസർ ഇതിനകം ക്വിസ് സബ്മിറ്റ് ചെയ്തിട്ടില്ലെങ്കിൽ മാത്രം പരിശോധിക്കുക
     if (sessionStorage.getItem("quiz_in_progress") === "true" && sessionStorage.getItem("quiz_submitted") !== "true") {
         sessionStorage.setItem("quiz_submitted", "true");
         sessionStorage.removeItem("quiz_in_progress");
-        
-        // നിലവിലുള്ള സബ്മിറ്റ് ബട്ടൺ ഓട്ടോമാറ്റിക്കായി ക്ലിക്ക് ചെയ്യുകയോ അല്ലെങ്കിൽ സബ്മിറ്റ് ഫങ്ഷൻ വിളിക്കുകയോ ചെയ്യാം
         alert("പേജ് റീഫ്രഷ് ചെയ്തതിനാൽ ക്വിസ് സബ്മിറ്റ് ചെയ്യപ്പെട്ടിരിക്കുന്നു!");
-        
-        // നിങ്ങളുടെ ആപ്പിലെ സബ്മിറ്റ് ബട്ടൺ ഐഡി കൊടുത്ത് ഓട്ടോ ക്ലിക്ക് ചെയ്യാം (ഉദാഹരണത്തിന്: submitBtn)
         let subBtn = document.getElementById("submitBtn") || document.querySelector("[onclick*='submit']");
         if(subBtn) subBtn.click();
     }
 });
 
-// ക്വിസ് സ്റ്റാർട്ട് ചെയ്യുന്ന ബട്ടണിൽ ക്ലിക്ക് ചെയ്യുമ്പോൾ ഇത് ആക്ടീവ് ആവാൻ (ആപ്പിന്റെ ഒറിജിനൽ സ്റ്റാർട്ട് ഫങ്ഷനോടൊപ്പം ഇത് പ്രവർത്തിക്കും)
+// ക്വിസ് സ്റ്റാർട്ട് ചെയ്യുമ്പോൾ ട്രാക്ക് ചെയ്യാൻ
 document.addEventListener('click', function(e) {
     if(e.target && e.target.getAttribute('onclick') && e.target.getAttribute('onclick').includes('startQuiz')) {
         sessionStorage.setItem("quiz_in_progress", "true");
     }
 });
-
     </script>
 </body>        
 </html>
