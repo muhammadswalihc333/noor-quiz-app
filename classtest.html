@@ -524,7 +524,7 @@
         if(pendingFiles === 0) checkAndCommit();
     }
 
-    function commitEventData(editingId, name, bannerUrl, logoUrl, certConfig) {
+        function commitEventData(editingId, name, bannerUrl, logoUrl, certConfig) {
         let payload = {
             id: editingId ? editingId : ('EV_' + Date.now()),
             name,
@@ -549,14 +549,33 @@
             alert("ഇവന്റ് അതേ ലിങ്കിൽ വിജയകരമായി അപ്ഡേറ്റ് ചെയ്തു!");
         } else {
             eventsData.push(payload);
-            alert("പുതിയ ഇവന്റ് ലിങ്ക് ക്രിയേറ്റ് ചെയ്തു!");
+            alert("പുതിയ ഇവന്റ് ലിങ്ക് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു!");
         }
 
         localStorage.setItem('isolated_classTestEvents_v10', JSON.stringify(eventsData));
-        resetEventForm();
+        
         renderEventsList();
         loadAdminDropdowns();
         updateDashboardOverview();
+
+        let generatedLink = window.location.href.split('?')[0] + "?event=" + payload.id;
+        let successBoxHtml = `
+            <div style="background:#f0fdf4; border:2px dashed #22c55e; padding:12px; border-radius:8px; margin-top:10px;">
+                <b style="color:#14532d; font-size:13px;">🔗 ഇവന്റ് ലിങ്ക് റെഡി! (ഇത് കോപ്പി ചെയ്ത് കുട്ടികൾക്ക് അയക്കുക):</b>
+                <input type="text" value="${generatedLink}" readonly style="margin:6px 0; background:#fff; font-weight:bold; color:#2563eb;" onclick="this.select();">
+            </div>
+        `;
+        
+        let formBox = document.getElementById('formSectionTitle').parentElement;
+        let oldBox = document.getElementById('tempGeneratedLinkBox');
+        if(oldBox) oldBox.remove();
+        
+        let linkDiv = document.createElement('div');
+        linkDiv.id = 'tempGeneratedLinkBox';
+        linkDiv.innerHTML = successBoxHtml;
+        formBox.appendChild(linkDiv);
+
+        resetEventForm();
     }
 
     function editEvent(id) {
