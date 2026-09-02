@@ -3,114 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ക്ലാസ് ടെസ്റ്റ് - അഡ്മിൻ & സ്റ്റുഡന്റ് പാനൽ</title>
+    <title>ക്ലാസ് ടെസ്റ്റ് - പ്രോ മാനേജർ (V9.25)</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fcf8f2; margin: 0; padding: 10px; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 2px solid #14532d; }
-        .header-box { background: #14532d; color: white; padding: 15px; text-align: center; border-radius: 8px; font-weight: bold; margin-bottom: 15px; }
-        .sub-box { background: #fff; border: 2px solid #14532d; border-radius: 10px; padding: 12px; margin-bottom: 15px; }
-        .btn-green { background: #22c55e; color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 5px; }
-        .btn-blue { background: #2563eb; color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 5px; }
-        .btn-red { background: #ef4444; color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 5px; }
-        input, select, textarea { width: 100%; padding: 10px; margin: 6px 0 12px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        .tab-nav { display: flex; justify-content: space-between; margin-bottom: 15px; }
-        .tab-nav button { width: 48%; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; border: 2px solid #14532d; }
-        .active-tab { background: #14532d; color: white; }
-        .eval-card { background: #f9fafb; border: 1px solid #d1d5db; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+        :root { --primary: #14532d; --primary-light: #22c55e; --accent: #2563eb; --danger: #ef4444; --bg: #fcf8f2; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: #333; }
+        .container { max-width: 680px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 2px solid var(--primary); }
+        .header-box { background: linear-gradient(135deg, #14532d, #166534); color: white; padding: 18px; text-align: center; border-radius: 10px; font-weight: bold; font-size: 18px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(20,83,45,0.3); }
+        .sub-box { background: #fff; border: 2px solid #e5e7eb; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
+        .sub-box h3 { margin-top: 0; color: var(--primary); font-size: 16px; border-bottom: 2px solid #f3f4f6; padding-bottom: 8px; }
+        .btn { border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-top: 8px; font-size: 14px; }
+        .btn-green { background: var(--primary-light); color: white; }
+        .btn-blue { background: var(--accent); color: white; }
+        .btn-red { background: var(--danger); color: white; }
+        .btn-dark { background: var(--primary); color: white; }
+        input, select, textarea { width: 100%; padding: 11px; margin: 6px 0 14px 0; border: 1px solid #d1d5db; border-radius: 8px; box-sizing: border-box; font-size: 14px; background: #fdfdfd; }
+        .tab-nav { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-nav button { flex: 1; padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer; border: 2px solid var(--primary); background: #fff; color: var(--primary); }
+        .tab-nav button.active-tab { background: var(--primary); color: white; }
+        .event-card { background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+        .flex-row { display: flex; gap: 10px; }
+        .flex-row > * { flex: 1; }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; margin: 10px 0; font-size: 14px; font-weight: 600; }
+        .checkbox-group input { width: 18px; height: 18px; margin: 0; }
+        .q-item-admin { background: #fdf2f8; border: 1px solid #fbcfe8; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header-box">
-        📚 ക്ലാസ് ടെസ്റ്റ് & ഇവന്റ് മാനേജർ (Secure V9.17.4)
+        🏆 ക്ലാസ് ടെസ്റ്റ് പ്രോ മാനേജർ (V9.25)
     </div>
 
-    <!-- Navigation Tabs -->
     <div class="tab-nav">
-        <button id="tabAdminBtn" class="active-tab" onclick="switchMainTab('admin')">അഡ്മിൻ ഡാഷ്‌ബോർഡ്</button>
-        <button id="tabStudentBtn" onclick="switchMainTab('student')">വിദ്യാർത്ഥി മോഡ്</button>
+        <button id="tabAdminBtn" class="active-tab" onclick="switchMainTab('admin')">👑 അഡ്മിൻ പാനൽ</button>
+        <button id="tabStudentBtn" onclick="switchMainTab('student')">👨‍🎓 വിദ്യാർത്ഥി മോഡ്</button>
     </div>
 
-    <!-- ================= ADMIN SECTION ================= -->
+    <!-- ================= ADMIN PANEL ================= -->
     <div id="adminPanelSection">
-        <div class="sub-box" style="border-color: #14532d;">
-            <h3>1. പുതിയ ക്ലാസ് ടെസ്റ്റ് ഇവന്റ് നിർമ്മിക്കുക</h3>
-            <label>ഇവന്റ് പേര് (ഉദാ: നിബ്രസൂൽ ഉലൂം മദ്രസ 8th Standard Class Test):</label>
-            <input type="text" id="eventName" placeholder="ഇവന്റ് പേര് നൽകുക">
-            
-            <label>സ്ഥലം / സ്ഥാപനം:</label>
-            <input type="text" id="eventPlace" placeholder="സ്ഥലം നൽകുക">
-
-            <label>ലോഗോ അപ്‌ലോഡ് ചെയ്യുക:</label>
-            <input type="file" id="eventLogo" accept="image/*">
-
-            <label>ബാനർ അപ്‌ലോഡ് ചെയ്യുക:</label>
-            <input type="file" id="eventBanner" accept="image/*">
-
-            <label>വാല്യുവേഷൻ മോഡ്:</label>
-            <select id="evalMode">
-                <option value="auto">ഓട്ടോമാറ്റിക് വാല്യുവേഷൻ (Key Match)</option>
-                <option value="manual">മാനുവൽ വാല്യുവേഷൻ (അധ്യാപകൻ ടിക്ക് ഇടേണ്ടത്)</option>
-            </select>
-
-            <label>ചോദ്യങ്ങളും ഉത്തരങ്ങളും ബൾക്ക് ആയി ചേർക്കുക (Format: Q | a,b,c,d | Answer | Marks):</label>
-            <textarea id="bulkQuestions" rows="4" placeholder="ഉദാ: ഇന്ത്യയുടെ തലസ്ഥാനം ഏത്? | ഡൽഹി,മുംബൈ,കൊൽക്കത്ത,ചെന്നൈ | ഡൽഹി | 5"></textarea>
-
-            <button class="btn-green" onclick="createNewTestEvent()">🚀 പുതിയ ലിങ്ക് ക്രിയേറ്റ് ചെയ്യുക</button>
-        </div>
-
-        <!-- Created Events List (Like Screenshot 1) -->
+        
         <div class="sub-box">
-            <h3>📋 നിലവിലുള്ള ഇവന്റുകൾ (Events Board)</h3>
-            <div id="eventsListContainer">
-                <!-- Dynamic Events Will Load Here -->
+            <h3>✨ പുതിയ ക്ലാസ് ടെസ്റ്റ് ഇവന്റ് നിർമ്മിക്കുക</h3>
+            <label>ഇവന്റ് പേര്:</label>
+            <input type="text" id="eventName" placeholder="ഉദാ: മീലാദ് ക്ലാസ് ടെസ്റ്റ് 2026">
+            
+            <div class="flex-row">
+                <div>
+                    <label>സ്ഥലം / സ്ഥാപനം:</label>
+                    <input type="text" id="eventPlace" placeholder="സ്ഥലം">
+                </div>
+                <div>
+                    <label>ടെസ്റ്റ് സമയം (Minutes):</label>
+                    <input type="number" id="eventTimer" value="10" placeholder="മിനിറ്റ്">
+                </div>
             </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="randMode" checked>
+                <label for="randMode">റാൻഡം മോഡ് (ചോദ്യങ്ങൾ മാറിമാറി വരാൻ)</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="oneDeviceCheck">
+                <label for="oneDeviceCheck">ഒരു ഡിവൈസിൽ നിന്ന് ഒരു തവണ മാത്രം</label>
+            </div>
+
+            <hr style="margin: 15px 0; border:0; border-top:1px solid #e5e7eb;">
+
+            <!-- ADD QUESTIONS BUILDER -->
+            <h4 style="color:var(--primary); margin-bottom:5px;">📌 ചോദ്യങ്ങൾ ചേർക്കാനുള്ള വിഭാഗം</h4>
+            
+            <div style="background:#f0fdf4; padding:12px; border-radius:8px; border:1px solid #bbf7d0; margin-bottom:12px;">
+                <b style="color:var(--primary);">1. മൾട്ടിപ്പിൾ ചോയ്സ് (MCQ) ചോദ്യങ്ങൾ ചേർക്കാൻ:</b>
+                <input type="text" id="mcqText" placeholder="ചോദ്യം എഴുതുക">
+                <input type="text" id="mcqOptions" placeholder="ഓപ്ഷനുകൾ കോമ ഇട്ട് നൽകുക (ഉദാ: മക്ക,മദീന,ത്വാഇഫ്)">
+                <input type="text" id="mcqAnswer" placeholder="ശരിയായ ഉത്തരം കൃത്യമായി എഴുതുക">
+                <input type="number" id="mcqMarks" value="5" placeholder="മാർക്ക്">
+                <div style="display:flex; gap:8px;">
+                    <button class="btn btn-blue" onclick="addSingleMCQ()">➕ ഒറ്റ MCQ ചേർക്കുക</button>
+                    <button class="btn btn-dark" onclick="addBulkMCQPrompt()">📦 ബൾക്ക് MCQ ചേർക്കുക</button>
+                </div>
+            </div>
+
+            <div style="background:#eff6ff; padding:12px; border-radius:8px; border:1px solid #bfdbfe; margin-bottom:12px;">
+                <b style="color:var(--accent);">2. എഴുതി ഉത്തരം നൽകേണ്ട ചോദ്യങ്ങൾ (Descriptive/Written):</b>
+                <input type="text" id="descText" placeholder="ചോദ്യം എഴുതുക (ഉദാ: നബി ജീവിതം വിവരിക്കുക)">
+                <input type="number" id="descMarks" value="10" placeholder="മാർക്ക്">
+                <div style="display:flex; gap:8px;">
+                    <button class="btn btn-blue" onclick="addSingleDesc()">➕ ഒറ്റ എഴുത്തുചോദ്യം ചേർക്കുക</button>
+                    <button class="btn btn-dark" onclick="addBulkDescPrompt()">📦 ബൾക്ക് എഴുത്തുചോദ്യങ്ങൾ ചേർക്കുക</button>
+                </div>
+            </div>
+
+            <!-- Added Questions Preview List -->
+            <h5 style="margin:10px 0 5px 0;">ചേർത്ത ചോദ്യങ്ങളുടെ ലിസ്റ്റ്:</h5>
+            <div id="adminQuestionsPreview" style="max-height:200px; overflow-y:auto; margin-bottom:15px;"></div>
+
+            <button class="btn btn-green" onclick="saveNewTestEvent()">🚀 ഇവന്റ് പൂർണ്ണമായി സേവ് & ലിങ്ക് ക്രിയേറ്റ് ചെയ്യുക</button>
         </div>
 
-        <!-- Manual Evaluation Section -->
-        <div class="sub-box" style="border-color: #d97706;">
-            <h3>📝 മാനുവൽ പേപ്പർ വാല്യുവേഷൻ (Teacher Check)</h3>
-            <select id="selectEventForEval" onchange="loadStudentSubmissions()">
-                <option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>
-            </select>
-            <div id="studentPapersContainer">
-                <!-- Student submissions for checking will appear here -->
-            </div>
+        <!-- Events Board -->
+        <div class="sub-box">
+            <h3>📋 ഇവന്റുകൾ ബോർഡ്</h3>
+            <button class="btn btn-dark" onclick="renderEventsList()" style="margin-bottom: 12px;">🔄 ലിസ്റ്റ് റിഫ്രഷ് ചെയ്യുക</button>
+            <div id="eventsListContainer"></div>
         </div>
+
     </div>
 
-    <!-- ================= STUDENT SECTION ================= -->
+    <!-- ================= STUDENT PANEL ================= -->
     <div id="studentPanelSection" style="display:none;">
         <div class="sub-box" id="studentLoginBox">
             <h3 id="studEventTitle">ക്ലാസ് ടെസ്റ്റിലേക്ക് സ്വാഗതം</h3>
-            <p id="studEventDetails"></p>
-            <input type="text" id="studentNameInput" placeholder="നിങ്ങളുടെ മുഴുവൻ പേര്">
-            <input type="text" id="studentPhoneInput" placeholder="ഫോൺ നമ്പർ / റോൾ നമ്പർ">
-            <button class="btn-green" onclick="startStudentTest()">ടെസ്റ്റ് ആരംഭിക്കുക</button>
+            <p id="studEventDetails" style="color: #4b5563; font-size: 14px;"></p>
+            
+            <label>മുഴുവൻ പേര്:</label>
+            <input type="text" id="studentNameInput" placeholder="പേര് നൽകുക">
+            
+            <label>ഫോൺ നമ്പർ:</label>
+            <input type="tel" id="studentPhoneInput" placeholder="ഫോൺ നമ്പർ">
+
+            <label>ക്ലാസ് / ഡിവിഷൻ:</label>
+            <input type="text" id="studentClassInput" placeholder="ക്ലാസ്">
+
+            <label>സ്ഥലം:</label>
+            <input type="text" id="studentPlaceInput" placeholder="സ്ഥലം">
+            
+            <button class="btn btn-green" onclick="startStudentTest()">▶️ ടെസ്റ്റ് ആരംഭിക്കുക</button>
         </div>
 
         <div id="studentTestBox" style="display:none;">
+            <div id="timerDisplay" style="background: #fee2e2; color: #991b1b; padding: 10px; text-align: center; font-weight: bold; border-radius: 8px; margin-bottom: 15px;">⏳ സമയം ബാക്കി: <span id="timeLeft">10:00</span></div>
             <div id="studentQuestionsArea"></div>
-            <label>ഫോട്ടോ അല്ലെങ്കിൽ ഡോക്യുമെന്റ് അപ്‌ലോഡ് ചെയ്യുക (ആവശ്യമെങ്കിൽ - Compressed):</label>
-            <input type="file" id="studentDocUpload" accept="image/*">
-            <button class="btn-blue" onclick="submitStudentAnswers()">ഉത്തരങ്ങൾ സമർപ്പിക്കുക</button>
+            <button class="btn btn-blue" onclick="submitStudentAnswers()">📤 ഉത്തരങ്ങൾ സബ്മിറ്റ് ചെയ്യുക</button>
         </div>
 
         <div id="studentResultBox" style="display:none; text-align:center;">
-            <h3>🎉 ടെസ്റ്റ് പൂർത്തിയായി!</h3>
-            <p id="resultStatusText" style="color: green; font-weight: bold;"></p>
-            <p id="detailedScoreCard"></p>
-            <button class="btn-green" onclick="downloadCertificate()">🏆 സർട്ടിഫിക്കറ്റ് ഡൗൺലോഡ് ചെയ്യുക</button>
-            <button class="btn-blue" onclick="viewAnswerKey()" style="margin-top: 10px;">🔑 ആൻസർ കീ കാണുക</button>
+            <h3>🎉 ടെസ്റ്റ് വിജയകരമായി സബ്മിറ്റ് ചെയ്തു!</h3>
+            <button class="btn btn-dark" onclick="location.reload()">🏠 ഹോമിലേക്ക് മടങ്ങുക</button>
         </div>
     </div>
 </div>
 
 <script>
-    // Local Database Simulation for Events & Submissions
     let eventsData = JSON.parse(localStorage.getItem('classTestEvents')) || [];
-    let submissionsData = JSON.parse(localStorage.getItem('classTestSubs')) || {};
+    let tempQuestionsList = []; // Temporary holder while creating an event
+    let activeTestEvent = null;
+    let timerInterval = null;
 
     function switchMainTab(tab) {
         if(tab === 'admin') {
@@ -119,7 +158,6 @@
             document.getElementById('tabAdminBtn').classList.add('active-tab');
             document.getElementById('tabStudentBtn').classList.remove('active-tab');
             renderEventsList();
-            loadEvalDropdown();
         } else {
             document.getElementById('adminPanelSection').style.display = 'none';
             document.getElementById('studentPanelSection').style.display = 'block';
@@ -128,105 +166,199 @@
         }
     }
 
-    function createNewTestEvent() {
-        let name = document.getElementById('eventName').value;
-        let place = document.getElementById('eventPlace').value;
-        let mode = document.getElementById('evalMode').value;
-        let rawQ = document.getElementById('bulkQuestions').value;
+    // Add Single MCQ
+    function addSingleMCQ() {
+        let q = document.getElementById('mcqText').value.trim();
+        let opts = document.getElementById('mcqOptions').value.trim();
+        let ans = document.getElementById('mcqAnswer').value.trim();
+        let marks = parseInt(document.getElementById('mcqMarks').value) || 5;
 
-        if(!name || !rawQ) {
-            alert("ദയവായി ഇവന്റ് പേരും ചോദ്യങ്ങളും നൽകുക!");
+        if(!q || !opts || !ans) {
+            alert("ദയവായി MCQ ചോദ്യം, ഓപ്ഷനുകൾ, ഉത്തരം എന്നിവ പൂരിപ്പിക്കുക!");
             return;
         }
 
-        let questions = rawQ.split('\n').map(line => {
-            let parts = line.split('|');
-            return {
-                q: parts[0] ? parts[0].trim() : '',
-                options: parts[1] ? parts[1].split(',').map(o => o.trim()) : [],
-                answer: parts[2] ? parts[2].trim() : '',
-                marks: parts[3] ? parseInt(parts[3].trim()) : 5
-            };
+        tempQuestionsList.push({
+            type: 'mcq',
+            q: q,
+            options: opts.split(',').map(o => o.trim()),
+            answer: ans,
+            marks: marks
         });
 
+        document.getElementById('mcqText').value = '';
+        document.getElementById('mcqOptions').value = '';
+        document.getElementById('mcqAnswer').value = '';
+        renderAdminQuestionsPreview();
+    }
+
+    // Add Bulk MCQ via Prompt
+    function addBulkMCQPrompt() {
+        let raw = prompt("ബൾക്ക് MCQ ചോദ്യങ്ങൾ നൽകുക.\nഫോർമാറ്റ്: ചോദ്യം | ഓപ്ഷൻ1,ഓപ്ഷൻ2,ഓപ്ഷൻ3 | ഉത്തരം | മാർക്ക്\n(ഓരോ വരിയിലും ഓരോ ചോദ്യം വീതം നൽകുക)");
+        if(!raw) return;
+
+        let lines = raw.split('\n');
+        lines.forEach(line => {
+            let p = line.split('|');
+            if(p.length >= 3) {
+                tempQuestionsList.push({
+                    type: 'mcq',
+                    q: p[0].trim(),
+                    options: p[1].split(',').map(o => o.trim()),
+                    answer: p[2].trim(),
+                    marks: p[3] ? parseInt(p[3].trim()) : 5
+                });
+            }
+        });
+        renderAdminQuestionsPreview();
+    }
+
+    // Add Single Descriptive Question
+    function addSingleDesc() {
+        let q = document.getElementById('descText').value.trim();
+        let marks = parseInt(document.getElementById('descMarks').value) || 10;
+
+        if(!q) {
+            alert("ദയവായി ചോദ്യം എഴുതുക!");
+            return;
+        }
+
+        tempQuestionsList.push({
+            type: 'desc',
+            q: q,
+            options: [],
+            answer: 'Manual Evaluation',
+            marks: marks
+        });
+
+        document.getElementById('descText').value = '';
+        renderAdminQuestionsPreview();
+    }
+
+    // Add Bulk Descriptive via Prompt
+    function addBulkDescPrompt() {
+        let raw = prompt("ബൾക്ക് എഴുത്തുചോദ്യങ്ങൾ നൽകുക.\nഫോർമാറ്റ്: ചോദ്യം | മാർക്ക്\n(ഓരോ വരിയിലും ഓരോ ചോദ്യം വീതം)");
+        if(!raw) return;
+
+        let lines = raw.split('\n');
+        lines.forEach(line => {
+            let p = line.split('|');
+            if(p[0]) {
+                tempQuestionsList.push({
+                    type: 'desc',
+                    q: p[0].trim(),
+                    options: [],
+                    answer: 'Manual Evaluation',
+                    marks: p[1] ? parseInt(p[1].trim()) : 10
+                });
+            }
+        });
+        renderAdminQuestionsPreview();
+    }
+
+    function renderAdminQuestionsPreview() {
+        let container = document.getElementById('adminQuestionsPreview');
+        container.innerHTML = "";
+        if(tempQuestionsList.length === 0) {
+            container.innerHTML = "<p style='color:#6b7280; font-size:13px;'>ചോദ്യങ്ങൾ ചേർത്തിട്ടില്ല.</p>";
+            return;
+        }
+
+        tempQuestionsList.forEach((item, idx) => {
+            container.innerHTML += `
+                <div class="q-item-admin">
+                    <div>
+                        <b>Q${idx+1} [${item.type.toUpperCase()}]:</b> ${item.q} <span style="color:green;">(${item.marks} M)</span>
+                    </div>
+                    <div style="display:flex; gap:5px;">
+                        <button class="btn btn-blue" style="padding:4px 8px; margin:0; font-size:12px;" onclick="editQuestion(${idx})">✏️</button>
+                        <button class="btn btn-red" style="padding:4px 8px; margin:0; font-size:12px;" onclick="deleteQuestion(${idx})">🗑️</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function deleteQuestion(idx) {
+        tempQuestionsList.splice(idx, 1);
+        renderAdminQuestionsPreview();
+    }
+
+    function editQuestion(idx) {
+        let item = tempQuestionsList[idx];
+        let newQ = prompt("ചോദ്യം എഡിറ്റ് ചെയ്യുക:", item.q);
+        if(newQ !== null) {
+            item.q = newQ;
+            if(item.type === 'mcq') {
+                let newAns = prompt("ശരിയായ ഉത്തരം എഡിറ്റ് ചെയ്യുക:", item.answer);
+                if(newAns !== null) item.answer = newAns;
+            }
+            let newMarks = prompt("മാർക്ക് എഡിറ്റ് ചെയ്യുക:", item.marks);
+            if(newMarks !== null) item.marks = parseInt(newMarks) || item.marks;
+            renderAdminQuestionsPreview();
+        }
+    }
+
+    function saveNewTestEvent() {
+        let name = document.getElementById('eventName').value.trim();
+        let place = document.getElementById('eventPlace').value.trim();
+        let timer = document.getElementById('eventTimer').value || 10;
+
+        if(!name || tempQuestionsList.length === 0) {
+            alert("ദയവായി ഇവന്റ് പേരും കുറഞ്ഞത് ഒരു ചോദ്യമെങ്കിലും നൽകുക!");
+            return;
+        }
+
         let newEvent = {
-            id: 'ID_' + Date.now(),
+            id: 'EV_' + Date.now(),
             name: name,
             place: place,
-            mode: mode,
-            questions: questions,
+            timer: parseInt(timer),
+            rand: document.getElementById('randMode').checked,
+            oneDevice: document.getElementById('oneDeviceCheck').checked,
+            questions: [...tempQuestionsList],
             date: new Date().toLocaleDateString()
         };
 
         eventsData.push(newEvent);
         localStorage.setItem('classTestEvents', JSON.stringify(eventsData));
         alert("ഇവന്റ് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു!");
+        tempQuestionsList = [];
+        renderAdminQuestionsPreview();
         renderEventsList();
-        loadEvalDropdown();
+        document.getElementById('eventName').value = "";
     }
 
     function renderEventsList() {
         let container = document.getElementById('eventsListContainer');
         container.innerHTML = "";
         if(eventsData.length === 0) {
-            container.innerHTML = "<p>ഇവന്റുകൾ ഒന്നുംമില്ല.</p>";
+            container.innerHTML = "<p style='color:#6b7280;'>ഇവന്റുകൾ ഒന്നും നിലവിലില്ല.</p>";
             return;
         }
 
         eventsData.forEach((ev, idx) => {
             let shareLink = window.location.href.split('?')[0] + "?event=" + ev.id;
             container.innerHTML += `
-                <div style="background:#f3f4f6; padding:10px; border-radius:8px; margin-bottom:10px; border:1px solid #cbd5e1;">
-                    <b>${ev.name}</b> (${ev.place})<br>
-                    <small>ചോദ്യങ്ങൾ: ${ev.questions.length} | മോഡ്: ${ev.mode}</small><br>
-                    <input type="text" value="${shareLink}" readonly style="background:#fff; margin:5px 0;">
-                    <button class="btn-green" onclick="navigator.clipboard.writeText('${shareLink}'); alert('ലിങ്ക് കോപ്പി ചെയ്തു!');">📋 കോപ്പി ലിങ്ക്</button>
-                    <button class="btn-red" onclick="deleteEvent(${idx})" style="margin-top:5px;">🗑️ ഡിലീറ്റ് ചെയ്യുക</button>
+                <div class="event-card">
+                    <b>${ev.name}</b> (${ev.place || 'ഓൺലൈൻ'})<br>
+                    <small style="color:#4b5563;">ആകെ ചോദ്യങ്ങൾ: ${ev.questions.length} | സമയം: ${ev.timer} മിനിറ്റ്</small><br>
+                    <input type="text" value="${shareLink}" readonly style="margin:8px 0; background:#fff;">
+                    <button class="btn btn-red" style="margin:0;" onclick="deleteEvent(${idx})">🗑️ ഇവന്റ് ഡിലീറ്റ് ചെയ്യുക</button>
                 </div>
             `;
         });
     }
 
-    function deleteEvent(index) {
+    function deleteEvent(idx) {
         if(confirm("ഈ ഇവന്റ് ഡിലീറ്റ് ചെയ്യണമെന്നുറപ്പാണോ?")) {
-            eventsData.splice(index, 1);
+            eventsData.splice(idx, 1);
             localStorage.setItem('classTestEvents', JSON.stringify(eventsData));
             renderEventsList();
-            loadEvalDropdown();
         }
     }
 
-    function loadEvalDropdown() {
-        let select = document.getElementById('selectEventForEval');
-        select.innerHTML = '<option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>';
-        eventsData.forEach(ev => {
-            select.innerHTML += `<option value="${ev.id}">${ev.name}</option>`;
-        });
-    }
-
-    function loadStudentSubmissions() {
-        let eventId = document.getElementById('selectEventForEval').value;
-        let container = document.getElementById('studentPapersContainer');
-        container.innerHTML = "";
-        
-        let subs = submissionsData[eventId] || [];
-        if(subs.length === 0) {
-            container.innerHTML = "<p>കുട്ടികളുടെ സബ്മിഷനുകൾ ഒന്നും ലഭ്യമല്ല.</p>";
-            return;
-        }
-
-        subs.forEach((sub, sIdx) => {
-            container.innerHTML += `
-                <div class="eval-card">
-                    <p><b>വിദ്യാർത്ഥി:</b> ${sub.name} (${sub.phone})</p>
-                    <p><b>സ്റ്റാറ്റസ്:</b> <span style="color:green;">🟢 വാല്യുവേഷൻ കഴിഞ്ഞു / പരിശോധനയിലുണ്ട്</span></p>
-                    <p><b>ലഭിച്ച മാർക്ക്:</b> ${sub.score || 'പെൻഡിങ്'}</p>
-                </div>
-            `;
-        });
-    }
-
-    // URL Check to load Student View Directly if Link is Clicked
+    // Student View Loader via URL
     window.onload = function() {
         const urlParams = new URLSearchParams(window.location.search);
         const eventId = urlParams.get('event');
@@ -234,24 +366,30 @@
             switchMainTab('student');
             let ev = eventsData.find(e => e.id === eventId);
             if(ev) {
+                activeTestEvent = ev;
                 document.getElementById('studEventTitle').innerText = ev.name;
-                document.getElementById('studEventDetails').innerText = `സ്ഥലം: ${ev.place}`;
-                window.currentActiveEvent = ev;
+                document.getElementById('studEventDetails').innerText = `സ്ഥലം: ${ev.place || 'ഓൺലൈൻ'} | സമയം: ${ev.timer} മിനിറ്റ്`;
             } else {
                 document.getElementById('studEventTitle').innerText = "ഇവന്റ് കണ്ടെത്താനായില്ല!";
             }
         } else {
             renderEventsList();
-            loadEvalDropdown();
         }
     };
 
-    let activeStudentAnswers = {};
     function startStudentTest() {
-        let name = document.getElementById('studentNameInput').value;
-        let phone = document.getElementById('studentPhoneInput').value;
-        if(!name || !phone) {
-            alert("പേരും ഫോൺ നമ്പറും നൽകുക!");
+        let name = document.getElementById('studentNameInput').value.trim();
+        let phone = document.getElementById('studentPhoneInput').value.trim();
+        let sClass = document.getElementById('studentClassInput').value.trim();
+        let sPlace = document.getElementById('studentPlaceInput').value.trim();
+
+        if(!name || !phone || !sClass || !sPlace) {
+            alert("എല്ലാ വിവരങ്ങളും പൂരിപ്പിക്കുക!");
+            return;
+        }
+
+        if(!activeTestEvent) {
+            alert("ഇവന്റ് ലഭ്യമല്ല!");
             return;
         }
 
@@ -261,35 +399,42 @@
         let qArea = document.getElementById('studentQuestionsArea');
         qArea.innerHTML = "";
 
-        window.currentActiveEvent.questions.forEach((q, qIdx) => {
-            let html = `<div style="background:#fafaf9; padding:10px; margin-bottom:10px; border-radius:6px; border:1px solid #e7e5e4;">
-                <p><b>ചോദ്യം ${qIdx+1}:</b> ${q.q} (${q.marks} മാർക്ക്)</p>`;
+        let qList = [...activeTestEvent.questions];
+        if(activeTestEvent.rand) qList.sort(() => Math.random() - 0.5);
+        window.currentStudentQuestions = qList;
+
+        qList.forEach((q, qIdx) => {
+            let html = `<div class="sub-box"><p><b>Q${qIdx+1} (${q.type.toUpperCase()}):</b> ${q.q} <span style="float:right; color:var(--primary);">(${q.marks} M)</span></p>`;
             
-            if(q.options && q.options.length > 0) {
+            if(q.type === 'mcq') {
                 q.options.forEach(opt => {
-                    html += `<label><input type="radio" name="sq_${qIdx}" value="${opt}"> ${opt}</label><br>`;
+                    html += `<label style="display:block; margin:6px 0;"><input type="radio" name="sq_${qIdx}" value="${opt}"> ${opt}</label>`;
                 });
             } else {
-                html += `<input type="text" id="ans_input_${qIdx}" placeholder="ഉത്തരം ടൈപ്പ് ചെയ്യുക...">`;
+                html += `<textarea id="ans_desc_${qIdx}" rows="3" placeholder="നിങ്ങളുടെ ഉത്തരം ഇവിടെ എഴുതുക..."></textarea>`;
             }
             html += `</div>`;
             qArea.innerHTML += html;
         });
+
+        let totalSec = activeTestEvent.timer * 60;
+        timerInterval = setInterval(() => {
+            let m = Math.floor(totalSec / 60);
+            let s = totalSec % 60;
+            document.getElementById('timeLeft').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+            if(totalSec <= 0) {
+                clearInterval(timerInterval);
+                alert("സമയം അവസാനിച്ചു!");
+                submitStudentAnswers();
+            }
+            totalSec--;
+        }, 1000);
     }
 
     function submitStudentAnswers() {
-        alert("നിങ്ങളുടെ ഉത്തരങ്ങൾ വിജയകരമായി സബ്മിറ്റ് ചെയ്തു! 🟢 അപ്‌ലോഡഡ്.");
+        if(timerInterval) clearInterval(timerInterval);
         document.getElementById('studentTestBox').style.display = 'none';
         document.getElementById('studentResultBox').style.display = 'block';
-        document.getElementById('resultStatusText').innerText = "🟢 അപ്‌ലോഡ് ചെയ്തു - വാല്യുവേഷൻ ഉടൻ ലഭ്യമാകും";
-    }
-
-    function downloadCertificate() {
-        alert("🏆 സർട്ടിഫിക്കറ്റ് ഡൗൺലോഡ് ചെയ്യുന്നു...");
-    }
-
-    function viewAnswerKey() {
-        alert("🔑 ആൻസർ കീ പ്രസിദ്ധീകരിച്ചിരിക്കുന്നു!");
     }
 </script>
 
