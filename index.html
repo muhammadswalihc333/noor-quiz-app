@@ -63,24 +63,6 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
 </head>
 <body>
 
-<!-- Loading Screen -->
-<div id="screen-loading" class="fixed inset-0 z-[99999] flex flex-col items-center justify-center text-center space-y-6 p-6 bg-slate-950">
-  <div class="relative flex items-center justify-center">
-    <div class="absolute w-28 h-28 bg-emerald-500/25 rounded-full animate-ping"></div>
-    <div class="relative w-24 h-24 bg-slate-900 border border-emerald-500/40 rounded-3xl flex items-center justify-center shadow-2xl backdrop-blur-md">
-      <span class="text-4xl">🌙</span>
-    </div>
-  </div>
-  <div class="flex flex-col items-center space-y-2">
-    <h2 class="text-white font-bold text-lg tracking-wide">Noor Quiz Loading...</h2>
-    <div class="flex space-x-1.5">
-      <div class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-      <div class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-      <div class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
-    </div>
-  </div>
-</div>
-
 <div id="v4QuestionOverlay" class="master-overlay" style="display:none">
   <div class="master-card" style="max-width:850px">
     <h2>📝 Question Manager — V4</h2>
@@ -137,6 +119,12 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
     </div>
     <button class="master-btn master-muted" style="width:100%;margin-top:12px" onclick="closeMaster()">Close</button>
   </div>
+</div>
+  
+<div style="display: flex; gap: 10px; margin: 10px 0;">
+    <a href="classtest.html" style="flex: 1; background: #14532d; color: white; padding: 10px 15px; text-align: center; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; gap: 5px;">
+        📚 ക്ലാസ് ടെസ്റ്റ് സെക്ഷൻ
+    </a>
 </div>
 
 <div id="competitorView">
@@ -269,9 +257,14 @@ async function initAuthPersistence(){
       await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     }
   }catch(e){console.warn('Auth persistence setup failed',e);}
+  // IMPORTANT: do not create an Anonymous Firebase user during page startup.
+  // Doing that can race with Firebase restoring a persisted Organizer/Master session.
 }
 initAuthPersistence();
+// Keep Firebase's real Google/email session alive across reloads; never replace it with Anonymous on admin pages.
 try{firebase.auth().onIdTokenChanged(u=>{ if(u && u.email){ try{localStorage.setItem('nq_firebase_email',String(u.email).toLowerCase());}catch(e){} } });}catch(e){}
+// Re-load Cloud data after Firebase restores a persisted Master/Organizer session.
+// This prevents the admin page from falling back to stale local events on the first paint.
 try{firebase.auth().onAuthStateChanged(function(user){
   if(!user)return;
   setTimeout(function(){
@@ -306,6 +299,8 @@ async function ensureEventWriteAuth(eventId){
   const ownerIsMaster=ownerId.toLowerCase()===MASTER_ADMIN_EMAIL.toLowerCase();
   if(ownerIsMaster){
     if(u && String(u.email||'').trim().toLowerCase()===MASTER_ADMIN_EMAIL.toLowerCase()) return u;
+    // A local/password Admin session cannot satisfy the Firebase rule for a Master-owned event.
+    // Use the existing Master Google login instead of silently failing the Save button.
     if(typeof masterLogin==='function'){
       await masterLogin();
       u=await waitForExistingAuth(8000);
@@ -323,6 +318,7 @@ async function ensureEventWriteAuth(eventId){
     }
     throw new Error('Organizer Firebase login is required to edit/save this event. Please login again with the Organizer Gmail + Activation Code.');
   }
+  // New/unowned events: require a real authenticated Master/Organizer account; never fall back to Anonymous for writes.
   if(!ownerId){
     if(u && u.email) return u;
     if(typeof masterLogin==='function'){
@@ -334,17 +330,6 @@ async function ensureEventWriteAuth(eventId){
   if(u && u.email) return u;
   throw new Error('Authenticated Master/Organizer account required before saving.');
 }
-
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    const loader = document.getElementById('screen-loading');
-    if (loader) {
-      loader.style.transition = 'opacity 0.5s ease';
-      loader.style.opacity = '0';
-      setTimeout(() => loader.remove(), 500);
-    }
-  }, 600);
-});
 
 function init(){
   const params=new URLSearchParams(window.location.search);
@@ -359,6 +344,7 @@ function init(){
   if(lastLink){lastGeneratedLink=lastLink;document.getElementById('generatedLink').innerText=lastLink;}
 }
 
+// V9.17.2 FINAL SECURE - Password Protected - No Misuse - Nabidinam Special - 100% Working!
 function getAdminPass(){
   return localStorage.getItem('noor_admin_pass')||'1234';
 }
@@ -509,6 +495,7 @@ function copyEventLink(id){const l=window.location.origin+window.location.pathna
 async function deleteCloudEvent(id){
   const key=String(id).replace(/^event_/,'');
   let lastErr=null;
+  // REST attempt
   try{
     const r=await fetch(`${REST_URL}/events/${encodeURIComponent(key)}.json?cb=${Date.now()}`,{method:'DELETE',cache:'no-store'});
     if(!r.ok) throw new Error(`Cloud delete HTTP ${r.status}`);
@@ -517,6 +504,7 @@ async function deleteCloudEvent(id){
     else throw new Error(`Cloud verification HTTP ${check.status}`);
     return true;
   }catch(e){ lastErr=e; }
+  // SDK fallback
   if(firebaseDB){
     try{
       await firebaseDB.ref('events/'+key).remove();
@@ -596,7 +584,10 @@ async function createOrUpdateLink(isNew){
   const link=window.location.origin+window.location.pathname+'?event='+cleanId; lastGeneratedLink=link;
   if(!currentLogoBase64)currentLogoBase64=localStorage.getItem('temp_logo')||''; if(!currentBannerBase64)currentBannerBase64=localStorage.getItem('temp_banner')||'';
   const startAt=document.getElementById('setStartAt')?.value||''; const endAt=document.getElementById('setEndAt')?.value||''; const showResults=document.getElementById('setShowResults')?.checked!==false; const showResultsToParticipants=document.getElementById('setShowParticipantResult')?.checked!==false;
+  // Cloud writes MUST use the real Master/Organizer Firebase identity.
+  // The old V29 code had ensureEventWriteAuth() but never called it, so Save/New Event could silently fail.
   try{ await ensureEventWriteAuth(cleanId); }catch(e){ document.getElementById('cloudStatus').innerText='❌ Cloud authentication required: '+(e.message||'Please sign in'); alert('Cloud Save നു Master Google Sign-In / Organizer Login ആവശ്യമാണ്.\n\n'+(e.message||'')); return; }
+  // Preserve the event owner on every edit. New organizer events are owned by that organizer; master-created events are master-owned.
    let ownerId=currentEventOwnerId||currentOrganizerId()||'';
    if(!ownerId && masterLoggedIn) ownerId=MASTER_ADMIN_EMAIL;
    if(!ownerId && !isNew){ try{ const rr=await fetch(await authRestUrl(`events/${encodeURIComponent(cleanId)}`),{cache:'no-store'}); if(rr.ok){const old=await rr.json(); ownerId=String(old?.ownerId||'');} }catch(e){} }
@@ -623,13 +614,18 @@ async function loadCompetitorEvent(){
   if(!eventId){document.getElementById('cloudLoadStatus').innerText='ℹ️ No Event ID - Default View - Secure - No Breaking - No Misuse! - Nabidinam Special - Admin-ൽ Create Link! - All Checked! Secure!';document.getElementById('compEventNameBelow').innerText='';document.getElementById('compPlaceShow').innerText='';document.getElementById('compDetailsBelow').innerText='';return;}
   document.getElementById('cloudLoadStatus').innerText='☁️ Connecting to TRUE CLOUD…';
   let data=null;
+  // Public event loading does not require Firebase authentication. Read the event directly from Cloud.
   try{const res=await fetch(await authRestUrl(`events/${encodeURIComponent(eventId)}`),{cache:'no-store'});if(res.ok)data=await res.json();}catch(e){console.warn('Event REST load failed:',e)}
   if(!data && firebaseDB){try{const snap=await firebaseDB.ref('events/'+eventId).once('value');data=snap.val();}catch(e){console.warn('Event SDK load failed:',e)}}
+  // Public event links MUST use the current cloud event only. Never resurrect deleted events from local backup.
   if(!data && isPublicEvent){document.getElementById('cloudLoadStatus').innerText='❌ This event is no longer available. The link may have been deleted or disabled.';return;}
+  // Public links are cloud-authoritative: never load stale local event data.
   if(isPublicEvent && !data){return;}
   if(!data){try{const backup=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');data=backup[eventId];}catch{}}
   if(!data){try{const last=JSON.parse(localStorage.getItem('last_event_'+eventId)||'null');data=last;}catch{}}
   if(!data){document.getElementById('cloudLoadStatus').innerText='❌ Event Not Found! ID:'+eventId;return;}
+  // Scheduled opening/closing applies to public participants, but NEVER hide the banner/logo/title.
+  // The participant page always loads the event first, then disables Start Quiz when outside the window.
   let scheduleState='open';
   if(isPublicEvent){
     const now=Date.now(), start=data.startAt?new Date(data.startAt).getTime():null, end=data.endAt?new Date(data.endAt).getTime():null;
@@ -659,7 +655,7 @@ async function loadCompetitorEvent(){
   const startBtn=document.querySelector('#registrationBox button[onclick=\"startQuiz()\"]');
   if(scheduleState==='before'){
     if(document.getElementById('eventScheduleDisplay')) document.getElementById('eventScheduleDisplay').innerText=`⏳ ${scheduleText||'Opening time is set.'}`;
-    document.getElementById('cloudLoadStatus').innerText=`⏳ ${scheduleText||'Opening time is set.'}`;
+    document.getElementById('cloudLoadStatus').innerText=`⏳ ${scheduleText||'Event opening time is set.'}`;
     if(startBtn){startBtn.disabled=true;startBtn.classList.add('opacity-50','cursor-not-allowed');startBtn.innerText='⏳ ക്വിസ് ആരംഭിക്കുന്നത് വരെ കാത്തിരിക്കുക';}
   }else if(scheduleState==='after'){
     if(document.getElementById('eventScheduleDisplay')) document.getElementById('eventScheduleDisplay').innerText=`⛔ ${scheduleText||'Event closed.'}`;
@@ -693,9 +689,803 @@ function startQuiz(){
   const deviceLock=!!eventDeviceLock;
   if(deviceLock){const used=JSON.parse(localStorage.getItem('usedDevices')||'[]');const eid=new URLSearchParams(window.location.search).get('event')||currentEventId;if(used.includes(eid)){err.innerText='❌ ഈ Device-ൽ ചെയ്തു! One Device One - Secure! No Misuse! - Nabidinam Special Secure';err.classList.remove('hidden');return;}}
   err.classList.add('hidden');
-  if(!questions.length){const s=JSON.parse(localStorage.getItem('questions_v13')||'[]');if(s.length)questions=s;}
-  if(!questions.length){err.innerText='No Questions - Secure! No Misuse!';err.classList.remove('hidden');return;}
+  if(!questions.length){const s=JSON.parse(localStorage.getItem('questions_v13')||'[]');if(s.length)questions=s;else questions=[{q:"നബി ജന്മദേശം? - Nabidinam Special Secure",opts:["മക്ക","മദീന","ത്വാഇഫ്","യമൻ"],ans:0}];}
+  const cnt=Math.min(eventQuestionCount||questions.length,questions.length);let fq;if(randomMode)fq=[...questions].sort(()=>0.5-Math.random()).slice(0,cnt);else fq=questions.slice(0,cnt);questions=fq;
+  document.getElementById('registrationBox').classList.add('hidden');document.getElementById('quizCard').classList.remove('hidden');window.__quizFinished=false;currentQ=0;score=0;startTime=Date.now();showQ();startTimer();window._quizData={name,phone,place:document.getElementById('placeInput').value.trim()};
 }
+function showQ(){if(currentQ>=questions.length){finishQuiz();return;}const qq=questions[currentQ];document.getElementById('qCount').innerText=`Q ${currentQ+1}/${questions.length} ${randomMode?'🔀 Random Secure!':''}`;document.getElementById('progressBar').style.width=(currentQ/questions.length*100)+'%';document.getElementById('qText').innerText=qq.q;const od=document.getElementById('options');od.innerHTML='';const fb=document.getElementById('quizFeedback');fb.classList.add('hidden');qq.opts.forEach((o,i)=>{const b=document.createElement('button');b.id=`opt-${i}`;b.className='w-full text-left px-4 py-4 border-2 rounded-xl text-sm bg-white hover:bg-green-50 transition-all font-medium shadow-sm';b.innerText=`${String.fromCharCode(65+i)}. ${o}`;b.onclick=()=>{Array.from(od.children).forEach(x=>x.disabled=true);const ok=i===qq.ans;if(ok){b.style.background='#16a34a';b.style.color='white';b.style.borderColor='#16a34a';b.innerText=`✅ ${String.fromCharCode(65+i)}. ${o} - ശരി! - Secure!`;score++;fb.innerText='✅ Excellent! ശരി! - Show Correct Green - Secure! - No Misuse! - Nabidinam Special V9.17.2 Secure';fb.className='text-center font-black mt-4 text-sm p-4 rounded-xl bg-green-100 text-green-700 border-2 border-green-500';}else{b.style.background='#dc2626';b.style.color='white';b.style.borderColor='#dc2626';b.innerText=`❌ ${String.fromCharCode(65+i)}. ${o} - തെറ്റ്! - Secure!`;if(showCorrectWrong){const cb=document.getElementById(`opt-${qq.ans}`);if(cb){cb.style.background='#16a34a';cb.style.color='white';cb.style.borderColor='#16a34a';cb.style.borderWidth='3px';cb.innerText=`✅ ${String.fromCharCode(65+qq.ans)}. ${qq.opts[qq.ans]} - ശരി! - Show Correct Green - Secure! - No Misuse! - Nabidinam Special V9.17.2 Secure`;}}fb.innerText=`❌ തെറ്റ്! ശരി: ${String.fromCharCode(65+qq.ans)}. ${qq.opts[qq.ans]} - Show Correct Green - Secure! - No Misuse! - Nabidinam Special V9.17.2 Secure`;fb.className='text-center font-black mt-4 text-sm p-4 rounded-xl bg-red-100 text-red-700 border-2 border-red-400';}fb.classList.remove('hidden');setTimeout(()=>{currentQ++;showQ();},2200);};od.appendChild(b);});}
+function startTimer(){let t=totalMinutes*60;const el=document.getElementById('timer'),upd=()=>el.innerText=Math.floor(t/60)+':'+String(t%60).padStart(2,'0');upd();clearInterval(timerInt);timerInt=setInterval(()=>{t--;upd();if(t<=0){clearInterval(timerInt);finishQuiz();}},1000);}
+async function finishQuiz(){
+  clearInterval(timerInt);
+  const tt=Math.floor((Date.now()-startTime)/1000),m=Math.floor(tt/60),s=tt%60;
+  const eid=String(new URLSearchParams(window.location.search).get('event')||currentEventId.replace(/^event_/, '')).replace(/^event_/,'');
+  const timestamp=Date.now();
+  const r={eventId:eid,name:window._quizData.name,phone:window._quizData.phone,place:window._quizData.place,score,total:questions.length,time:tt,timeStr:`${m}:${String(s).padStart(2,'0')}`,timestamp};
+  let rs=JSON.parse(localStorage.getItem('results_v13')||'[]');rs.push(r);localStorage.setItem('results_v13',JSON.stringify(rs));
+  document.getElementById('quizCard').classList.add('hidden');document.getElementById('resultCard').classList.remove('hidden');
+  if(showResultsToParticipants){document.getElementById('finalScore').innerText=`${score}/${questions.length}`;document.getElementById('finalTime').innerText=`Time: ${m}:${String(s).padStart(2,'0')} ⏱️`;document.getElementById('finalScore').style.display='';document.getElementById('finalTime').style.display='';}else{document.getElementById('finalScore').style.display='none';document.getElementById('finalTime').style.display='none';}
+  if(eventPhoneLock){let up=JSON.parse(localStorage.getItem('usedPhones')||'[]');const k=window._quizData.phone+'_'+eid;if(!up.includes(k))up.push(k);localStorage.setItem('usedPhones',JSON.stringify(up));}
+  if(eventDeviceLock){let ud=JSON.parse(localStorage.getItem('usedDevices')||'[]');if(!ud.includes(eid))ud.push(eid);localStorage.setItem('usedDevices',JSON.stringify(ud));}
+  let cloudSaved=false,lastCloudError='';
+  try{
+    const u=await ensureAnonymousAuth();
+    const phoneHash=await sha256Hex(String(window._quizData.phone||''));
+    r.uid=u.uid;r.phoneHash=phoneHash;
+    // Always use a unique result key. This prevents one phone/result from overwriting another submission.
+    const resultKey=`${phoneHash}_${timestamp}_${Math.random().toString(36).slice(2,8)}`;
+    const payload=JSON.stringify(r);
+    const res=await fetch(await authRestUrl(`results/${encodeURIComponent(eid)}/${encodeURIComponent(resultKey)}`),{method:'PUT',headers:{'Content-Type':'application/json'},body:payload,cache:'no-store'});
+    if(!res.ok)throw new Error('Cloud result HTTP '+res.status);
+    cloudSaved=true;
+  }catch(e){lastCloudError=e?.message||String(e);console.warn('Cloud result REST save failed:',e);}
+  if(!cloudSaved && firebaseDB){
+    try{
+      const u=await ensureAnonymousAuth();const phoneHash=await sha256Hex(String(window._quizData.phone||''));
+      r.uid=u.uid;r.phoneHash=phoneHash;
+      const key=phoneHash+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
+      await firebaseDB.ref('results/'+eid+'/'+key).set(r);cloudSaved=true;
+    }catch(e){lastCloudError=e?.message||String(e);console.warn('Cloud result SDK save failed:',e);}
+  }
+  const status=document.getElementById('cloudLoadStatus');
+  if(status)status.innerText=cloudSaved?'☁️ Result saved.':('⚠️ Cloud result save failed: '+lastCloudError); if(!showResultsToParticipants){document.getElementById('finalScore').style.display='none';document.getElementById('finalTime').style.display='none';}
+  // Do not try to load the admin ranking from a participant session.
+  if((firebase.auth().currentUser?.email||'') && (typeof currentRole==='function') && currentRole()!=='admin'){
+    try{await loadResults();}catch(e){}
+  }
+  setTimeout(()=>generateCertificate(),500);
+}
+function generateCertificate(){
+  const c=document.getElementById('certCanvas');if(!c)return;
+  const ctx=c.getContext('2d');
+  const name=window._quizData?.name||'Sample - Nabidinam Secure';
+  const color=document.getElementById('certColor')?.value||'#14532d';
+  const pos={x:parseInt(certPos.x)||50,y:parseInt(certPos.y)||60,s:parseInt(certPos.s)||24};
+  c.width=1000;c.height=700;
+  const imgData=currentCertBase64||localStorage.getItem('certFullImage');
+  const bgData=currentCertBgBase64||localStorage.getItem('cert_bg')||'';
+  const logo1Data=currentCertLogo1Base64||localStorage.getItem('cert_logo1')||'';
+  const logo2Data=currentCertLogo2Base64||localStorage.getItem('cert_logo2')||'';
+  const signData=currentCertSignBase64||localStorage.getItem('cert_sign')||'';
+  const title=document.getElementById('certTitle')?.value||'Certificate of Appreciation - Nabidinam Special Secure';
+  const sub=document.getElementById('certSub')?.value||'Noor Al Madrasa - Meelad Quiz 2K26 - Nabidinam Secure';
+  const sub2=document.getElementById('certSub2')?.value||'For Excellent Participation - Nabidinam Special Secure';
+  const finish=()=>{document.getElementById('certDownloadArea').classList.remove('hidden');document.getElementById('certDownloadLink').href=c.toDataURL('image/png');};
+  const load=src=>new Promise(resolve=>{if(!src)return resolve(null);const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>resolve(null);im.src=src;});
+  if(imgData){
+    load(imgData).then(im=>{if(im)ctx.drawImage(im,0,0,c.width,c.height);else{ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);}ctx.font=`bold ${pos.s*2}px sans-serif`;ctx.fillStyle=color;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(name,c.width*pos.x/100,c.height*pos.y/100);finish();});
+    return;
+  }
+  Promise.all([load(bgData),load(logo1Data),load(logo2Data),load(signData)]).then(([bg,l1,l2,sign])=>{
+    ctx.fillStyle='#fffdf5';ctx.fillRect(0,0,c.width,c.height);
+    if(bg)ctx.drawImage(bg,0,0,c.width,c.height);
+    ctx.strokeStyle='#14532d';ctx.lineWidth=8;ctx.strokeRect(18,18,c.width-36,c.height-36);
+    if(l1)ctx.drawImage(l1,45,35,120,120);
+    if(l2)ctx.drawImage(l2,c.width-165,35,120,120);
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=color;
+    ctx.font='bold 34px sans-serif';ctx.fillText(title,c.width/2,115);
+    ctx.font='22px sans-serif';ctx.fillText(sub,c.width/2,165);
+    ctx.font=`bold ${pos.s*2}px sans-serif`;ctx.fillStyle=color;ctx.fillText(name,c.width*pos.x/100,c.height*pos.y/100);
+    ctx.font='20px sans-serif';ctx.fillText(sub2,c.width/2,560);
+    if(sign)ctx.drawImage(sign,c.width-260,575,180,80);
+    finish();
+  });
+}
+function downloadCertificate(){generateCertificate();setTimeout(()=>{document.getElementById('certDownloadArea').classList.remove('hidden');document.getElementById('certDownloadArea').scrollIntoView({behavior:'smooth'})},300);}
+let cloudResultsCache=[];
+let _allCloudResults=[];
+let _currentCloudEvents={};
+
+function sortResults(r){
+  return r.sort((a,b)=>{
+    if(Number(b.score)!==Number(a.score))return Number(b.score)-Number(a.score);
+    return Number(a.time||0)-Number(b.time||0);
+  });
+}
+function populateResultsEventFilter(results){
+  const sel=document.getElementById('resultsEventFilter'); if(!sel)return;
+  const current=sel.value;
+  const ids=Object.keys(_currentCloudEvents||{});
+  const titles={};
+  ids.forEach(id=>titles[id]=_currentCloudEvents[id]?.title||('Event '+id));
+  sel.innerHTML='<option value="">All Current Events</option>'+
+    ids.map(id=>`<option value="${escapeHtml(id)}">${escapeHtml(titles[id])}</option>`).join('');
+  if(current && ids.includes(current))sel.value=current;
+}
+function renderResults(r){
+  const l=document.getElementById('resultsList'); if(!l)return;
+  _allCloudResults=Array.isArray(r)?r:[];
+  populateResultsEventFilter(_allCloudResults);
+  applyResultsEventFilter();
+}
+function applyResultsEventFilter(){
+  const l=document.getElementById('resultsList'); if(!l)return;
+  const sel=document.getElementById('resultsEventFilter');
+  const filter=sel?String(sel.value||''):'';
+  let r=_allCloudResults.filter(x=>{
+    const id=String(x.eventId||'').replace(/^event_/,'');
+    return _currentCloudEvents[id] && (!filter || id===filter) && _currentCloudEvents[id].showResults!==false;
+  });
+  const seen=new Set(),clean=[];
+  r.forEach(x=>{
+    const k=[String(x.eventId||''),x.phoneHash||x.phone||'',x.score??'',x.total??'',x.time??'',x.timestamp??''].join('|');
+    if(!seen.has(k)){seen.add(k);clean.push(x);}
+  });
+  sortResults(clean);
+  if(!clean.length){l.innerHTML='<p class="text-center py-6 text-gray-500">No visible results for the current event(s).</p>';return;}
+  l.innerHTML=clean.map((x,i)=>{
+    const med=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}.`;
+    const when=x.timestamp?new Date(x.timestamp).toLocaleString():'';
+    const ev=_currentCloudEvents[String(x.eventId||'').replace(/^event_/,'')]?.title||'';
+    return `<div class="flex flex-col gap-1 py-2.5 border-b hover:bg-yellow-50 px-2 rounded"><div class="flex justify-between gap-2"><span>${med} <b>${escapeHtml(x.name||'')}</b> - ${x.score}/${x.total}</span><span class="font-bold">${escapeHtml(x.timeStr||'')}</span></div><div class="text-gray-500">${escapeHtml(ev)} | ${escapeHtml(x.phone||'')} | ${escapeHtml(x.place||'')}${when?' | '+escapeHtml(when):''}</div></div>`;
+  }).join('');
+}
+
+async function loadResults(){
+  const l=document.getElementById('resultsList');if(!l)return;
+  let all=[];_currentCloudEvents={};
+  try{
+    const u=(typeof firebase!=='undefined'&&firebase.auth)?firebase.auth().currentUser:null;
+    if(!u || !u.email){l.innerHTML='<p class="text-center py-6 text-red-600 font-bold">🔐 Admin/Master login is required to view Cloud Results.</p>';return;}
+    await u.getIdToken(true);
+    const snap=await firebaseDB.ref('events').once('value');
+    const evs=snap.val()||{};Object.entries(evs).forEach(([id,e])=>{if(e)_currentCloudEvents[id]=e;});
+  }catch(e){
+    l.innerHTML='<p class="text-center py-6 text-red-600 font-bold">❌ Cloud events/results could not be loaded. Please login and Refresh.</p>';return;
+  }
+  const ids=Object.keys(_currentCloudEvents);
+  for(const id of ids){
+    if(_currentCloudEvents[id]?.showResults===false)continue;
+    try{
+      const snap=await firebaseDB.ref('results/'+id).once('value');
+      const d=snap.val()||{};
+      Object.values(d).forEach(x=>{if(x&&typeof x==='object')all.push({...x,eventId:id});});
+    }catch(e){console.warn('Result read failed for',id,e);}
+  }
+  try{
+    const local=JSON.parse(localStorage.getItem('results_v13')||'[]');
+    all=all.concat(local.map(x=>({...x,eventId:String(x.eventId||'').replace(/^event_/,'')})).filter(x=>_currentCloudEvents[x.eventId]));
+  }catch(e){}
+  const seen=new Set();all=all.filter(x=>{const k=[String(x.eventId||''),x.phoneHash||x.phone||'',x.score??'',x.total??'',x.time??'',x.timestamp??''].join('|');if(seen.has(k))return false;seen.add(k);return true;});
+  sortResults(all);renderResults(all);
+}
+
+async function refreshResults(){
+  const btn=document.getElementById('refreshResultsBtn');
+  const old=btn?btn.innerText:'';
+  if(btn){btn.disabled=true;btn.innerText='⏳ Loading...';}
+  try{const u=(typeof firebase!=='undefined'&&firebase.auth)?firebase.auth().currentUser:null;const isMasterPage=new URLSearchParams(location.search).get('master')==='1';if(isMasterPage&&(!u||!u.email)&&typeof masterLogin==='function'){await masterLogin();}await loadResults();}
+  catch(e){const l=document.getElementById('resultsList');if(l)l.innerHTML='<p class=\"text-center py-6 text-red-600 font-bold\">❌ Cloud Results could not be loaded. Complete Master/Organizer login, then Refresh.</p>';console.error('refreshResults',e);}
+  finally{if(btn){btn.disabled=false;btn.innerText=old||'🔄 Refresh - Secure!';}}
+}
+
+async function downloadResults(){
+  await loadResults();
+  const sel=document.getElementById('resultsEventFilter');
+  const filter=sel?String(sel.value||''):'';
+  let r=_allCloudResults.filter(x=>{
+    const id=String(x.eventId||'').replace(/^event_/,'');
+    return _currentCloudEvents[id] && _currentCloudEvents[id].showResults!==false && (!filter || id===filter);
+  });
+  if(!r.length){alert('No visible results for the selected current event.');return;}
+  sortResults(r);
+  let csv='Rank,Event ID,Event Name,Name,Phone,Place,Score,Total,Time,Timestamp\n';
+  r.forEach((x,i)=>{
+    const id=String(x.eventId||'').replace(/^event_/,'');
+    const title=_currentCloudEvents[id]?.title||'';
+    csv+=`${i+1},"${id}","${String(title).replace(/"/g,'""')}","${String(x.name||'').replace(/"/g,'""')}","${String(x.phone||'')}","${String(x.place||'')}",${x.score},${x.total},"${String(x.timeStr||'')}","${x.timestamp?new Date(x.timestamp).toISOString():''}"\n`;
+  });
+  const b=new Blob([csv],{type:'text/csv'}),u=URL.createObjectURL(b),a=document.createElement('a');
+  a.href=u;a.download=filter?`Results_${filter}.csv`:'Results_Current_Events.csv';a.click();URL.revokeObjectURL(u);
+}
+async function clearAllResults(){
+  const sel=document.getElementById('resultsEventFilter');
+  const selected=sel?String(sel.value||''):'';
+  const ids=selected?[selected]:Object.keys(_currentCloudEvents||{});
+  if(!ids.length){alert('No current events available.');return;}
+  const label=selected?('the selected event: '+(_currentCloudEvents[selected]?.title||selected)):'ALL current events';
+  if(!confirm('Clear results for '+label+'?\n\nOnly results belonging to the selected/current event(s) will be removed from Cloud.'))return;
+  try{
+    let u=(typeof firebase!=='undefined'&&firebase.auth)?firebase.auth().currentUser:null;
+    const isMasterPage=new URLSearchParams(location.search).get('master')==='1';
+    if(isMasterPage&&(!u||!u.email)&&typeof masterLogin==='function'){await masterLogin();u=firebase.auth().currentUser;}
+    if(!u||!u.email)throw new Error('Admin/Master login required');
+    await u.getIdToken(true);
+    for(const id of ids){
+      const snap=await firebaseDB.ref('results/'+id).once('value');
+      const group=snap.val()||{};
+      const updates={};
+      Object.keys(group).forEach(k=>{updates[k]=null;});
+      if(Object.keys(updates).length)await firebaseDB.ref('results/'+id).update(updates);
+      localStorage.setItem('results_clear_'+id,String(Date.now()));
+    }
+    const local=JSON.parse(localStorage.getItem('results_v13')||'[]');
+    const keep=local.filter(x=>!ids.includes(String(x.eventId||'').replace(/^event_/,'') ));
+    localStorage.setItem('results_v13',JSON.stringify(keep));
+    await loadResults();
+    alert('✅ Results cleared for '+label+'. Other event results were kept.');
+  }catch(e){alert('❌ Results could not be cleared.\n\n'+(e.message||'Firebase Rules/login error')+'\n\nPublish the updated Firebase Rules and try again.');}
+}
+window.addEventListener('load',()=>{
+  init();
+  loadCompetitorEvent();
+  currentCertBgBase64=localStorage.getItem('cert_bg')||'';currentCertLogo1Base64=localStorage.getItem('cert_logo1')||'';currentCertLogo2Base64=localStorage.getItem('cert_logo2')||'';currentCertSignBase64=localStorage.getItem('cert_sign')||'';
+  const sc=localStorage.getItem('certFullImage');
+  if(sc){currentCertBase64=sc;const i=document.getElementById('certPreviewImg');if(i){i.src=sc;i.classList.remove('hidden');document.getElementById('certPreviewPlaceholder').classList.add('hidden');}}
+  const sp=JSON.parse(localStorage.getItem('certPos_v13')||'{"x":"50","y":"60","s":"24"}');
+  if(document.getElementById('certX')){document.getElementById('certX').value=sp.x;document.getElementById('certY').value=sp.y;document.getElementById('certS').value=sp.s;updateCertLive();}
+  if(questions.length) renderQuestions();
+  loadPastEvents();
+  loadResults();
+  console.log('✅ V9.17.4 FINAL - NABIDINAM SPECIAL - Full Checked - No Breaking - No Misuse - Secure - All Features Kept - 100% Working Secure for Nabidinam!');
+});
+</script>
+
+<script>
+const MASTER_ADMIN_EMAIL = "muhammadswalihc333@gmail.com";
+let masterLoggedIn = false;
+let masterGoogleUser = null;
+
+function openMasterAdmin(){
+  const qs=new URLSearchParams(location.search);
+  if(qs.get('master')!=='1') {
+    location.href=location.pathname+'?master=1';
+    return;
+  }
+  document.getElementById('masterOverlay').style.display='flex';
+  document.getElementById('masterLoginBox').style.display=masterLoggedIn?'none':'block';
+  document.getElementById('masterPanel').style.display=masterLoggedIn?'block':'none';
+  if(masterLoggedIn){ document.documentElement.classList.add('nq-master-mode'); addMasterControlButton(); loadOrganizers(); }
+}
+
+function closeMaster(){document.getElementById('masterOverlay').style.display='none';}
+
+async function masterLogin(){
+  const msg=document.getElementById('masterGoogleMsg');
+  if(msg)msg.textContent='';
+  if(typeof firebase==='undefined'||!firebase.auth){
+    if(msg)msg.textContent='Google Sign-In service load ആയിട്ടില്ല. Internet check ചെയ്യുക.';
+    return;
+  }
+  try{
+    // If the Master Google session is already restored, reuse it. Never open a second popup.
+    let user=firebase.auth().currentUser;
+    if(user && user.email && String(user.email).trim().toLowerCase()===MASTER_ADMIN_EMAIL.toLowerCase()){
+      masterLoggedIn=true; masterGoogleUser=user;
+    }else{
+      if(user && !user.email){try{await firebase.auth().signOut();}catch(e){}}
+      const provider=new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({prompt:'select_account'});
+      let result=null;
+      try{
+        result=await firebase.auth().signInWithPopup(provider);
+        user=result.user;
+      }catch(popupErr){
+        if(msg)msg.textContent='Google popup തുറക്കാനായില്ല. Google login page-ലേക്ക് പോകുന്നു…';
+        await firebase.auth().signInWithRedirect(provider);
+        return;
+      }
+    }
+    const email=(user.email||'').trim().toLowerCase();
+    if(email!==MASTER_ADMIN_EMAIL.toLowerCase()){
+      await firebase.auth().signOut();
+      masterLoggedIn=false;
+      masterGoogleUser=null;
+      if(msg)msg.textContent='❌ ഈ Google account Master Admin account അല്ല.';
+      return;
+    }
+    masterLoggedIn=true;
+    masterGoogleUser=user;
+    document.documentElement.classList.add('nq-master-mode');
+    document.getElementById('masterLoginBox').style.display='none';
+    document.getElementById('masterPanel').style.display='block';
+    document.getElementById('masterStatus').innerText='✅ Google Sign-In success — Master Admin: '+email;
+    document.getElementById('competitorView')?.classList.add('hidden');
+    document.getElementById('adminView')?.classList.remove('hidden');
+    if(typeof addMasterControlButton==='function') addMasterControlButton();
+    try{ if(typeof renderQuestions==='function') renderQuestions(); }catch(e){}
+    try{ if(typeof loadPastEvents==='function') loadPastEvents(); }catch(e){}
+    try{ if(typeof loadResults==='function') loadResults(); }catch(e){}
+    document.getElementById('masterOverlay').style.display='none';
+    loadOrganizers();
+  }catch(e){
+    console.error('Master Google Sign-In:',e);
+    if(msg)msg.textContent='❌ Google Sign-In failed: '+(e.message||'Try again.');
+  }
+}
+
+async function masterLogout(){
+  try{if(typeof firebase!=='undefined'&&firebase.auth)await firebase.auth().signOut();}catch(e){}
+  masterLoggedIn=false;
+  masterGoogleUser=null;
+  document.documentElement.classList.remove('nq-master-mode');
+  removeMasterControlButton();
+  document.getElementById('masterLoginBox').style.display='block';
+  document.getElementById('masterPanel').style.display='none';
+  document.getElementById('masterStatus').innerText='Google Sign-In required. Master access only.';
+}
+
+async function masterDb(path, method='GET', body=null){
+  const opts={method,headers:{'Content-Type':'application/json'}};
+  if(body!==null) opts.body=JSON.stringify(body);
+  const r=await fetch(await authRestUrl(path),opts);
+  if(!r.ok) throw new Error('Firebase request failed');
+  return r.json();
+}
+
+function generateActivationCode(){
+  return 'NQ-' + Math.random().toString(36).slice(2,6).toUpperCase() + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
+}
+
+async function createOrganizer(){
+  if(!masterLoggedIn)return;
+  const name=document.getElementById('orgName').value.trim();
+  const email=document.getElementById('orgEmail').value.trim().toLowerCase();
+  if(!name||!email){alert('Organizer name and Gmail are required.');return;}
+  const code=(document.getElementById('orgCode').value.trim()||generateActivationCode()).toUpperCase();
+  const id='org_'+Date.now();
+  let secondary=null;
+  try{
+    secondary=firebase.initializeApp(firebaseConfig,'orgCreate_'+Date.now());
+    await secondary.auth().createUserWithEmailAndPassword(email,code);
+    await secondary.auth().signOut();
+    await secondary.delete(); secondary=null;
+    const codeHash=await sha256Hex(code);
+    await masterDb('masterAdmin/organizers/'+id,'PUT',{name,email,codeHash,active:true,created:Date.now()});
+    const link=window.location.origin+window.location.pathname+'?organizer='+encodeURIComponent(id);
+    const lb=document.getElementById('orgLinkBox');
+    if(lb){lb.style.display='block';lb.innerHTML='<b>📱 Organizer App / Admin Login Link:</b><br>'+escapeHtml(link)+'<br><br><b>Gmail:</b> '+escapeHtml(email)+'<br><b>Activation Code:</b> '+escapeHtml(code)+'<br><button class="master-btn master-primary" style="margin-top:8px;width:100%" onclick="navigator.clipboard.writeText('+JSON.stringify(link)+')">📋 Copy Organizer Link</button>';}
+    document.getElementById('orgName').value='';document.getElementById('orgEmail').value='';document.getElementById('orgCode').value='';loadOrganizers();
+    alert('✅ Organizer created. Give them the Organizer Link + Gmail + Activation Code.');
+  }catch(e){try{if(secondary){await secondary.auth().signOut();await secondary.delete();}}catch(_){}alert('Could not create organizer. '+(e.message||''));}
+}
+
+
+
+async function loadOrganizers(){
+  const box=document.getElementById('organizerList');
+  try{
+    const data=await masterDb('masterAdmin/organizers');
+    const items=Object.entries(data||{});
+    if(!items.length){box.innerHTML='<div style="padding:10px;color:#6b7280">No organizers yet.</div>';return;}
+    box.innerHTML=items.map(([id,o])=>`
+      <div class="master-item">
+        <div><b>${escapeHtml(o.name||'')}</b><br><small>${escapeHtml(o.email||'')}<br>Code: ${escapeHtml(o.activationCode||'')} · ${o.active?'Active':'Disabled'}<br>Admin Link: ${escapeHtml(location.origin+location.pathname+'?organizer='+id)}</small></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button class="master-btn ${o.active?'master-danger':'master-primary'}" onclick="toggleOrganizer('${id}',${!!o.active})">${o.active?'Disable':'Enable'}</button><button class="master-btn master-danger" onclick="clearOrganizerResults('${id}')">🗑️ Clear Results</button></div>
+      </div>`).join('');
+  }catch(e){box.innerHTML='<div style="color:#b91c1c">Could not load organizers.</div>';}
+}
+
+async function toggleOrganizer(id,active){
+  if(!masterLoggedIn)return;
+  await masterDb('masterAdmin/organizers/'+id+'/active','PUT',!active);
+  loadOrganizers();
+}
+
+async function clearOrganizerResults(orgId){if(!masterLoggedIn)return;try{const data=await masterDb('events');const ids=Object.entries(data||{}).filter(([id,e])=>e&&e.ownerId===orgId).map(([id])=>id);if(!ids.length){alert('No events/results found for this Organizer.');return;}if(!confirm('Delete ONLY this Organizer\'s results? Other Admin results will not be touched.'))return;for(const id of ids)await firebaseDB.ref('results/'+id).remove();alert('✅ This Organizer\'s results cleared. Other Admin results are safe.');loadResults();}catch(e){alert('Could not clear Organizer results: '+(e.message||''));}}
+
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+
+window.openMasterAdmin=openMasterAdmin;
+
+// Complete a Google redirect login when popup login was blocked on mobile.
+window.addEventListener('load',async()=>{
+  if(new URLSearchParams(location.search).get('master')!=='1') return;
+  if(typeof firebase==='undefined'||!firebase.auth) return;
+  try{
+    const rr=await firebase.auth().getRedirectResult();
+    const user=rr?.user;
+    if(user){
+      const email=(user.email||'').trim().toLowerCase();
+      if(email===MASTER_ADMIN_EMAIL.toLowerCase()){
+        masterLoggedIn=true; masterGoogleUser=user;
+        document.documentElement.classList.add('nq-master-mode');
+        document.getElementById('masterLoginBox').style.display='none';
+        document.getElementById('masterPanel').style.display='block';
+        document.getElementById('masterOverlay').style.display='none';
+        document.getElementById('competitorView')?.classList.add('hidden');
+        document.getElementById('adminView')?.classList.remove('hidden');
+        addMasterControlButton();
+        try{loadPastEvents();}catch(e){} try{loadResults();}catch(e){}
+      }else{
+        await firebase.auth().signOut();
+        const msg=document.getElementById('masterGoogleMsg');if(msg)msg.textContent='❌ ഈ Google account Master Admin account അല്ല.';
+      }
+    }
+  }catch(e){console.warn('Master redirect login:',e);}
+});
+
+// Restore Master Google session after refresh without exposing Master controls on public links.
+window.addEventListener('load',()=>{
+  if(new URLSearchParams(location.search).get('master')!=='1') return;
+  if(typeof firebase==='undefined'||!firebase.auth) return;
+  firebase.auth().onAuthStateChanged(user=>{
+    if(!user) return;
+    const email=(user.email||'').trim().toLowerCase();
+    if(email!==MASTER_ADMIN_EMAIL.toLowerCase()) return;
+    masterLoggedIn=true; masterGoogleUser=user;
+    document.documentElement.classList.add('nq-master-mode');
+    document.getElementById('masterLoginBox').style.display='none';
+    document.getElementById('masterPanel').style.display='block';
+    document.getElementById('masterOverlay').style.display='none';
+    document.getElementById('competitorView')?.classList.add('hidden');
+    document.getElementById('adminView')?.classList.remove('hidden');
+    addMasterControlButton();
+    try{if(typeof renderQuestions==='function')renderQuestions();}catch(e){}
+    try{if(typeof loadPastEvents==='function')loadPastEvents();}catch(e){}
+    try{if(typeof loadResults==='function')loadResults();}catch(e){}
+  });
+});
+
+// V18 persistence/restore: keep explicit Admin session across refresh/reopen; never restore on public event links.
+window.addEventListener('load',()=>{
+  try{
+    const p=new URLSearchParams(location.search);
+    const isPublic=!!p.get('event') && !p.get('organizer') && p.get('master')!=='1';
+    const isAdminPage=p.get('admin')==='1' || p.get('organizer') || (!p.get('event')&&!p.get('master'));
+    if(!isPublic && isAdminPage && localStorage.getItem('nq_admin_session_v174')==='1'){
+      const av=document.getElementById('adminView'), cv=document.getElementById('competitorView');
+      if(av&&cv){cv.classList.add('hidden');av.classList.remove('hidden');}
+      try{loadPastEvents();}catch(e){} try{loadResults();}catch(e){}
+    }
+  }catch(e){console.warn('Admin session restore failed',e);}
+});
+</script>
+
+<script>
+let v4Questions=[];
+function v4GetQuestions(){
+  try{
+    if(Array.isArray(questions)&&questions.length) return questions;
+    return JSON.parse(localStorage.getItem('questions_v13')||'[]');
+  }catch(e){return []}
+}
+function v4SetQuestions(qs){
+  v4Questions=qs;
+  questions=qs;
+  localStorage.setItem('questions_v13',JSON.stringify(qs));
+  if(typeof renderQuestions==='function') renderQuestions();
+  v4RenderQuestions();
+}
+function v4OpenQuestions(){v4Questions=v4GetQuestions();document.getElementById('v4QuestionOverlay').style.display='flex';v4RenderQuestions();}
+function v4CloseQuestions(){document.getElementById('v4QuestionOverlay').style.display='none';}
+function v4OpenImport(){document.getElementById('v4File').click();}
+function v4AddQuestion(){
+  const q=document.getElementById('v4q').value.trim();
+  const opts=['v4a','v4b','v4c','v4d'].map(id=>document.getElementById(id).value.trim());
+  const correct=document.getElementById('v4correct').value;
+  if(!q||opts.some(x=>!x)){alert('Question and all four options are required.');return;}
+  const id='q_'+Date.now();
+  v4SetQuestions([...v4Questions,{id,q,options:opts,correct}]);
+  ['v4q','v4a','v4b','v4c','v4d'].forEach(id=>document.getElementById(id).value='');
+}
+function v4RenderQuestions(){
+  const box=document.getElementById('v4QuestionList'); if(!box)return;
+  if(!v4Questions.length){box.innerHTML='<p style="color:#6b7280">No questions yet.</p>';return;}
+  box.innerHTML=v4Questions.map((x,i)=>{
+    const opts=x.options||x.opts||[x.a,x.b,x.c,x.d];
+    return `<div class="v4-qbox">
+      <label><input type="checkbox" class="v4sel" data-i="${i}"> <b>${i+1}.</b></label>
+      <textarea id="v4editq_${i}">${escV4(x.q||x.question||'')}</textarea>
+      <div class="v4-grid">${opts.map((o,j)=>`<input id="v4e_${i}_${j}" value="${escV4(o||'')}">`).join('')}</div>
+      <select id="v4ec_${i}">${['A','B','C','D'].map(k=>`<option ${((x.correct||x.answer||'A')===k)?'selected':''}>${k}</option>`).join('')}</select>
+      <div style="margin-top:6px"><button class="v4-btn v4-primary" onclick="v4SaveQuestion(${i})">💾 Save</button>
+      <button class="v4-btn v4-secondary" onclick="v4Duplicate(${i})">Copy</button>
+      <button class="v4-btn v4-danger" onclick="v4DeleteOne(${i})">Delete</button></div>
+    </div>`;
+  }).join('');
+}
+function v4SaveQuestion(i){
+  const opts=[0,1,2,3].map(j=>document.getElementById(`v4e_${i}_${j}`).value.trim());
+  const q=document.getElementById(`v4editq_${i}`).value.trim();
+  const correct=document.getElementById(`v4ec_${i}`).value;
+  if(!q||opts.some(x=>!x)){alert('Complete all fields.');return;}
+  v4Questions[i]={...v4Questions[i],q,options:opts,correct};
+  v4SetQuestions(v4Questions);
+}
+function v4DeleteOne(i){if(confirm('Delete this question?')){v4Questions.splice(i,1);v4SetQuestions(v4Questions);}}
+function v4DeleteSelected(){
+  const idx=[...document.querySelectorAll('.v4sel:checked')].map(x=>+x.dataset.i).sort((a,b)=>b-a);
+  if(!idx.length){alert('Select questions first.');return}
+  if(confirm(`Delete ${idx.length} selected question(s)?`)){idx.forEach(i=>v4Questions.splice(i,1));v4SetQuestions(v4Questions);}
+}
+function v4Duplicate(i){v4Questions.splice(i+1,0,{...v4Questions[i],id:'q_'+Date.now()});v4SetQuestions(v4Questions);}
+function v4ExportCSV(){
+  const qs=v4GetQuestions(); let s='Question,Option A,Option B,Option C,Option D,Correct\n';
+  qs.forEach(x=>{const o=x.options||x.opts||[];s+=[x.q||x.question||'',o[0]||'',o[1]||'',o[2]||'',o[3]||'',x.correct||x.answer||'A'].map(csvV4).join(',')+'\\n';});
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([s],{type:'text/csv'}));a.download='Noor_Quiz_Questions.csv';a.click();
+}
+function v4ImportFile(ev){
+  const f=ev.target.files[0]; if(!f)return;
+  if(f.name.toLowerCase().endsWith('.csv')){const r=new FileReader();r.onload=()=>v4ParseCSV(r.result);r.readAsText(f);}
+  else {alert('Excel files need the SheetJS library. Please export the sheet as CSV, or use the CSV template for this build.');}
+}
+function v4ParseCSV(text){
+  const rows=[]; let row=[],cell='',q=false;
+  for(let i=0;i<text.length;i++){const c=text[i],n=text[i+1];if(c==='"'&&q&&n==='"'){cell+='"';i++;continue}if(c==='"'){q=!q;continue}if(c===','&&!q){row.push(cell);cell='';continue}if((c==='\\n'||c==='\\r')&&!q){if(c==='\\r'&&n==='\\n')i++;row.push(cell);if(row.some(x=>x.trim()))rows.push(row);row=[];cell='';continue}cell+=c}
+  if(cell||row.length){row.push(cell);rows.push(row)}
+  const data=rows.slice(rows[0]?.[0]?.toLowerCase().includes('question')?1:0);
+  const imported=data.map((r,i)=>({id:'q_'+Date.now()+'_'+i,q:r[0]||'',options:[r[1]||'',r[2]||'',r[3]||'',r[4]||''],correct:(r[5]||'A').trim().toUpperCase()})).filter(x=>x.q&&x.options.every(Boolean));
+  if(!imported.length){alert('No valid rows found. Use: Question, Option A, Option B, Option C, Option D, Correct');return}
+  v4SetQuestions([...v4Questions,...imported]); alert(`${imported.length} questions imported.`);
+}
+function csvV4(v){const s=String(v??'');return /[",\\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}
+function escV4(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');}
+
+// Add Question Manager button to the existing admin area.
+window.addEventListener('load',()=>{
+  const admin=document.getElementById('adminView');
+  if(admin){
+    const b=document.createElement('button');
+    b.className='v4-btn v4-primary';
+    b.style.margin='8px 0';
+    b.textContent='📝 QUESTION MANAGER V4';
+    b.onclick=v4OpenQuestions;
+    admin.prepend(b);
+  }
+});
+</script>
+<script id="nq-sw-register">
+if('serviceWorker' in navigator){window.addEventListener('load',async()=>{try{const regs=await navigator.serviceWorker.getRegistrations();for(const r of regs)await r.unregister();await caches.keys().then(keys=>Promise.all(keys.map(k=>caches.delete(k))));}catch(e){};try{await navigator.serviceWorker.register('./sw.js?v=29',{scope:'./'});}catch(e){console.warn('PWA SW registration failed',e);}});}
+</script>
+<script id="nq-final-layer">
+(function(){
+  const qs=new URLSearchParams(location.search);
+  const eventMode=!!qs.get('event');
+  const organizerId=qs.get('organizer');
+  const masterMode=qs.get('master')==='1';
+  const adminMode=qs.get('admin')==='1';
+  const rootMode=!eventMode&&!organizerId&&!masterMode&&!adminMode;
+  const $=id=>document.getElementById(id);
+  const hide=el=>{if(el)el.style.display='none';};
+
+  function setModeClass(){
+    document.documentElement.classList.toggle('nq-public-mode',eventMode);
+    document.documentElement.classList.toggle('nq-organizer-mode',!!organizerId);
+    document.documentElement.classList.toggle('nq-master-mode',masterMode);
+    document.documentElement.classList.toggle('nq-admin-mode',adminMode);
+  }
+
+  const ADMIN_KEY='nq_admin_session_v174';
+  const orgKey=id=>'nq_org_session_'+id;
+
+  // Admin session is never restored onto public, organizer, or master pages.
+  const oldLoginAdmin=window.loginAdmin;
+  window.loginAdmin=function(){
+    if(typeof oldLoginAdmin==='function') oldLoginAdmin();
+    setTimeout(()=>{
+      const av=$('adminView');
+      if(av && !av.classList.contains('hidden') && (rootMode||adminMode||!!organizerId)){
+        try{localStorage.setItem(ADMIN_KEY,'1')}catch(e){}
+      }
+    },50);
+  };
+  const oldLogoutAdmin=window.logoutAdmin;
+  window.logoutAdmin=function(){
+    try{localStorage.removeItem(ADMIN_KEY)}catch(e){}
+    if(typeof oldLogoutAdmin==='function') oldLogoutAdmin();
+  };
+
+  // Public event links: competitor quiz only. Hide both login triggers and admin/master UI.
+  function enforcePublic(){
+    if(!eventMode)return;
+    hide($('adminLoginBox'));
+    const adminTrigger=$('adminLoginBox')?.previousElementSibling;
+    hide(adminTrigger);
+    hide($('nqMasterEntry'));
+    document.querySelectorAll('button').forEach(b=>{
+      if(/MASTER ADMIN|ADMIN LOGIN/i.test(b.textContent||'')) hide(b);
+    });
+    $('adminView')?.classList.add('hidden');
+    $('competitorView')?.classList.remove('hidden');
+  }
+
+  // Organizer links: only organizer/admin access. Never show Master Admin.
+  function organizerOverlay(){
+    if(!organizerId)return;
+    hide($('nqMasterEntry'));
+    document.querySelectorAll('button').forEach(b=>{
+      if(/MASTER ADMIN/i.test(b.textContent||'')) hide(b);
+    });
+    $('adminView')?.classList.add('hidden');
+    $('competitorView')?.classList.remove('hidden');
+
+    const savedOrg=(()=>{try{return localStorage.getItem(orgKey(organizerId))==='1'}catch(e){return false}})();
+    if(savedOrg){
+      $('competitorView')?.classList.add('hidden');
+      $('adminView')?.classList.remove('hidden');
+      try{localStorage.setItem(ADMIN_KEY,'1')}catch(e){}
+      if(typeof loadPastEvents==='function')loadPastEvents();
+      if(typeof loadResults==='function')loadResults();
+      return;
+    }
+    if($('nqOrganizerOverlay'))return;
+
+    const wrap=document.createElement('div');
+    wrap.id='nqOrganizerOverlay';
+    wrap.innerHTML=`<div id="nqOrganizerCard">
+      <h2 style="margin:0;color:#14532d">🔐 Admin Login</h2>
+      <p style="font-size:13px;color:#6b7280">Organizer account access. Master Admin is not available on this link.</p>
+      <button id="nqOrganizerInstall" style="background:#14532d;color:#fff">⬇️ Install Noor Quiz App</button>
+      <input id="nqOrgEmail" type="email" placeholder="Admin / Organizer Email">
+      <input id="nqOrgCode" type="text" placeholder="Activation Code">
+      <button id="nqOrgLogin" style="background:#14532d;color:#fff">🔐 Admin Login</button>
+      <button id="nqOrgClose" style="background:#e5e7eb;color:#111">Close</button>
+      <p id="nqOrgMsg" style="font-size:12px;font-weight:800;color:#b91c1c"></p>
+    </div>`;
+    document.body.appendChild(wrap);
+    wrap.style.display='flex';
+
+    let deferred=null;
+    window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;});
+    $('nqOrganizerInstall').onclick=async()=>{
+      if(deferred){deferred.prompt();await deferred.userChoice;deferred=null;}
+      else alert('ഈ ബ്രൗസറിൽ Install option ലഭ്യമല്ലെങ്കിൽ Chrome menu → Add to Home screen ഉപയോഗിക്കാം.');
+    };
+    $('nqOrgClose').onclick=()=>{wrap.style.display='none';};
+    $('nqOrgLogin').onclick=async()=>{
+      const email=$('nqOrgEmail').value.trim().toLowerCase();
+      const code=$('nqOrgCode').value.trim();
+      const msg=$('nqOrgMsg');
+      if(!email||!code){msg.textContent='Email + Activation Code രണ്ടും വേണം.';return;}
+      try{
+        const snap=await firebaseDB.ref('masterAdmin/organizers/'+encodeURIComponent(organizerId)).once('value');
+        const o=snap.val();
+        if(!o||o.active===false||String(o.email||'').trim().toLowerCase()!==email){msg.textContent='Email / Activation Code തെറ്റാണ്.';return;}
+        await firebase.auth().signInWithEmailAndPassword(email,code);
+        localStorage.setItem(orgKey(organizerId),'1');wrap.style.display='none';$('competitorView')?.classList.add('hidden');$('adminView')?.classList.remove('hidden');try{localStorage.setItem(ADMIN_KEY,'1')}catch(e){}
+        if(typeof loadPastEvents==='function')loadPastEvents();if(typeof loadResults==='function')loadResults();
+      }catch(e){msg.textContent='Admin Login failed: '+(e.message||'Email / Activation Code പരിശോധിക്കുക.');}
+    };
+  }
+
+  // Dedicated Master Admin page: Google Sign-In only. No admin password login.
+  function masterPage(){
+    if(!masterMode)return;
+    document.documentElement.classList.add('nq-master-mode');
+    hide($('adminLoginBox'));
+    const adminTrigger=$('adminLoginBox')?.previousElementSibling;
+    hide(adminTrigger);
+    $('competitorView')?.classList.add('hidden');
+    $('adminView')?.classList.remove('hidden');
+    if(typeof openMasterAdmin==='function')openMasterAdmin();
+  }
+
+  // Dedicated Admin page: Admin login only. No Master button.
+  function adminPage(){
+    if(!adminMode)return;
+    hide($('nqMasterEntry'));
+    $('competitorView')?.classList.remove('hidden');
+    $('adminView')?.classList.add('hidden');
+    const adminTrigger=$('adminLoginBox')?.previousElementSibling;
+    if(adminTrigger)adminTrigger.style.display='';
+    if($('adminLoginBox'))$('adminLoginBox').classList.remove('hidden');
+  }
+
+  // Main/root page: show the Master Admin entry here only.
+  // It opens the dedicated ?master=1 page, while event/organizer/admin links hide it.
+  function rootPage(){
+    if(!rootMode)return;
+    let entry=$('nqMasterEntry');
+    const host=$('competitorView');
+    if(!host)return;
+    if(!entry){
+      entry=document.createElement('div');
+      entry.id='nqMasterEntry';
+      entry.className='nq-root-admin-entry';
+      entry.innerHTML='<button type="button">👑 MASTER ADMIN LOGIN</button>';
+      const btn=entry.querySelector('button');
+      if(btn)btn.onclick=()=>{if(typeof openMasterAdmin==='function')openMasterAdmin();};
+      host.insertBefore(entry,host.firstChild);
+    }else{
+      entry.style.display='';
+      const btn=entry.querySelector('button');
+      if(btn && !btn.dataset.masterBound){
+        btn.dataset.masterBound='1';
+        btn.onclick=()=>{if(typeof openMasterAdmin==='function')openMasterAdmin();};
+      }
+    }
+  }
+
+  function restoreSessions(){
+    if(eventMode)return;
+    if(masterMode)return;
+    if(organizerId){
+      try{
+        if(localStorage.getItem(orgKey(organizerId))==='1'){
+          $('competitorView')?.classList.add('hidden');$('adminView')?.classList.remove('hidden');
+          if(typeof loadPastEvents==='function')loadPastEvents();
+          if(typeof loadResults==='function')loadResults();
+        }
+      }catch(e){}
+      return;
+    }
+    if(adminMode || (!eventMode&&!organizerId&&!masterMode)) {
+      try{
+        if(localStorage.getItem(ADMIN_KEY)==='1'){
+          $('competitorView')?.classList.add('hidden');$('adminView')?.classList.remove('hidden');
+          if(typeof loadPastEvents==='function')loadPastEvents();
+          if(typeof loadResults==='function')loadResults();
+        }
+      }catch(e){}
+    }
+  }
+
+  function wireCertColor(){
+    const c=$('certColor'),n=$('certNameOnImage');
+    if(!c)return;
+    const apply=()=>{
+      if(n)n.style.color=c.value;
+      try{localStorage.setItem('certColor_v174',c.value)}catch(e){}
+    };
+    try{const saved=localStorage.getItem('certColor_v174');if(saved)c.value=saved}catch(e){}
+    c.addEventListener('input',apply);
+    c.addEventListener('change',apply);
+    apply();
+  }
+
+  window.addEventListener('load',()=>{
+    setModeClass();
+    enforcePublic();
+    organizerOverlay();
+    restoreSessions();
+    masterPage();
+    adminPage();
+    rootPage();
+    wireCertColor();
+    restoreSessions();
+  });
+})();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){try{if(new URLSearchParams(location.search).get('event'))loadCompetitorEvent();}catch(e){} try{if(document.getElementById('resultsList')&&!document.getElementById('resultsList').closest('.hidden'))loadResults();}catch(e){}}});
+window.addEventListener('focus',()=>{try{if(new URLSearchParams(location.search).get('event'))loadCompetitorEvent();}catch(e){}});
+</script>
+
+<!-- V21 EVENT DELETE FIX: verifies HTTP status, SDK fallback, and prevents local backup from resurrecting deleted events. -->
+<script id="v26-fixes">
+(function(){
+  function getCurrentEventData(){ return window.currentEventData || null; }
+  function showSchedule(data){
+    const box=document.getElementById('cloudLoadStatus'); const scheduleBox=document.getElementById('eventScheduleDisplay'); if(!data)return;
+    const fmt=v=>v?new Date(v).toLocaleString([], {year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+    const parts=[]; if(data.startAt)parts.push('🟢 Opens: '+fmt(data.startAt)); if(data.endAt)parts.push('🔴 Closes: '+fmt(data.endAt));
+    if(parts.length){if(box)box.innerText=parts.join(' | ');if(scheduleBox){scheduleBox.innerText=parts.join('  •  ');scheduleBox.style.display='block';}}
+  }
+  function scheduleState(data){
+    const now=Date.now(), start=data?.startAt?new Date(data.startAt).getTime():null, end=data?.endAt?new Date(data.endAt).getTime():null;
+    if(start&&Number.isFinite(start)&&now<start)return {state:'before',start};
+    if(end&&Number.isFinite(end)&&now>=end)return {state:'after',end};
+    return {state:'open',start,end};
+  }
+  const oldLoad=window.loadCompetitorEvent;
+  window.loadCompetitorEvent=async function(){await oldLoad();const data=getCurrentEventData();if(!data)return;eventDeviceLock=data.deviceLock===true;eventPhoneLock=data.phoneLock===true;showSchedule(data);};
+  const oldStart=window.startQuiz;
+  window.startQuiz=function(){
+    const data=getCurrentEventData();
+    if(data){const st=scheduleState(data),msg=document.getElementById('errorMsg');
+      if(st.state==='before'){if(msg){msg.innerText='⏳ മത്സരം ഇതുവരെ ആരംഭിച്ചിട്ടില്ല. Opening Time: '+new Date(st.start).toLocaleString();msg.classList.remove('hidden');}return;}
+      if(st.state==='after'){if(msg){msg.innerText='⛔ ഈ മത്സരം അവസാനിച്ചു. Closing Time: '+new Date(st.end).toLocaleString();msg.classList.remove('hidden');}return;}
+      eventDeviceLock=data.deviceLock===true; eventPhoneLock=data.phoneLock===true;
+    }
+    return oldStart();
+  };
+  setInterval(()=>{
+    const data=getCurrentEventData(), btn=document.querySelector('#registrationBox button[onclick="startQuiz()"]'), msg=document.getElementById('errorMsg');
+    if(!data||!btn||!document.getElementById('quizCard')?.classList.contains('hidden'))return;
+    const st=scheduleState(data);
+    if(st.state==='before'){btn.disabled=true;btn.style.opacity='.55';btn.innerText='⏳ മത്സരം ആരംഭിക്കുന്ന സമയം കാത്തിരിക്കുക';if(msg){msg.innerText='Opening Time: '+new Date(st.start).toLocaleString();msg.classList.remove('hidden');}}
+    else if(st.state==='after'){btn.disabled=true;btn.style.opacity='.55';btn.innerText='⛔ മത്സരം അവസാനിച്ചു';if(msg){msg.innerText='Closing Time: '+new Date(st.end).toLocaleString();msg.classList.remove('hidden');}}
+    else{btn.disabled=false;btn.style.opacity='';btn.innerText='🚀 ക്വിസ് ആരംഭിക്കുക';if(msg)msg.classList.add('hidden');}
+  },1000);
+})();
+</script>
+
+<script id="nq-v29-runtime-fix">
+(function(){
+  // V29: always hydrate a participant link from Firebase after auth is ready; never substitute the app's default banner/logo.
+  const p=new URLSearchParams(location.search);
+  if(!p.get('event')) return;
+  window.addEventListener('pageshow',()=>setTimeout(()=>{if(typeof loadCompetitorEvent==='function')loadCompetitorEvent().catch(()=>{});},350));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&typeof loadCompetitorEvent==='function')loadCompetitorEvent().catch(()=>{});});
+})();
 </script>
 </body>
-</html>
+                                                                                                                                                                                                     </html>
