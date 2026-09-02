@@ -74,8 +74,7 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
     align-items: center;
     z-index: 99999;
     
-}
-
+   
 }
 
 /* ഗ്ലോ ആനിമേഷനോട് കൂടിയ ഐക്കൺ */
@@ -290,6 +289,18 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
 </div>
 </div>
 <script>
+    // പേജ് ലോഡ് ആയാൽ സ്പ്ലാഷ് സ്ക്രീൻ മാറ്റാൻ
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        const splash = document.getElementById('splash-screen');
+        if(splash) {
+            splash.style.transition = 'opacity 0.5s ease';
+            splash.style.opacity = '0';
+            setTimeout(() => splash.style.display = 'none', 500);
+        }
+    }, 1000);
+});
+
 const firebaseConfig = {apiKey:"AIzaSyD-vcPSpB3LVCBObQsrHvBQ8N_Zyty0pgg",authDomain:"noor-ai-madrasa-app.firebaseapp.com",databaseURL:"https://noor-ai-madrasa-app-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"noor-ai-madrasa-app",storageBucket:"noor-ai-madrasa-app.firebasestorage.app",messagingSenderId:"150380342282",appId:"1:150380342282:web:5f5c459e30a072cf1dc3f3"};
 const REST_URL="https://noor-ai-madrasa-app-default-rtdb.asia-southeast1.firebasedatabase.app";
 let firebaseDB=null;
@@ -1567,6 +1578,25 @@ window.addEventListener('focus',()=>{try{if(new URLSearchParams(location.search)
         }, 2000); // 2 സെക്കൻഡിനു ശേഷം മെയിൻ സ്ക്രീനിലേക്ക് മാറും
     });
         <script>
+<script>
+// പേജ് റീഫ്രഷ് ചെയ്യുമ്പോൾ ഓട്ടോ സബ്മിറ്റ് ആവുന്ന കോഡ്
+window.addEventListener('load', function() {
+    if (sessionStorage.getItem("quiz_in_progress") === "true" && sessionStorage.getItem("quiz_submitted") !== "true") {
+        sessionStorage.setItem("quiz_submitted", "true");
+        sessionStorage.removeItem("quiz_in_progress");
+        alert("പേജ് റീഫ്രഷ് ചെയ്തതിനാൽ ക്വിസ് സബ്മിറ്റ് ചെയ്യപ്പെട്ടിരിക്കുന്നു!");
+        let subBtn = document.getElementById("submitBtn") || document.querySelector("[onclick*='submit']");
+        if(subBtn) subBtn.click();
+    }
+});
+
+// ക്വിസ് സ്റ്റാർട്ട് ചെയ്യുമ്പോൾ ട്രാക്ക് ചെയ്യാൻ
+document.addEventListener('click', function(e) {
+    if(e.target && e.target.getAttribute('onclick') && e.target.getAttribute('onclick').includes('startQuiz')) {
+        sessionStorage.setItem("quiz_in_progress", "true");
+    }
+});
+</script>
 
 </body>        
 </html>
