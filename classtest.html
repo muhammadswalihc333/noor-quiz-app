@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ക്ലാസ് ടെസ്റ്റ് - പ്രോ മാനേജർ (V9.96)</title>
+    <title>ക്ലാസ് ടെസ്റ്റ് - പ്രോ മാനേജർ (V9.98)</title>
     <style>
         :root { --primary: #14532d; --primary-light: #22c55e; --accent: #2563eb; --danger: #ef4444; --bg: #fcf8f2; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: #333; box-sizing: border-box; }
@@ -30,7 +30,6 @@
         table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
         th, td { padding: 6px; border: 1px solid #cbd5e1; text-align: left; }
 
-        /* Student Visual Styling matching image & requirements */
         .student-banner-container { position: relative; width: 100%; height: 180px; border-radius: 10px; overflow: hidden; background: #e5e7eb; margin-bottom: 40px; }
         .student-banner-img { width: 100%; height: 100%; object-fit: cover; }
         .student-logo-wrapper { position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%); width: 75px; height: 75px; border-radius: 50%; background: #fff; border: 3px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.15); overflow: hidden; display: flex; align-items: center; justify-content: center; }
@@ -83,14 +82,13 @@
                 </div>
             </div>
 
-            <!-- BANNER & LOGO UPLOAD -->
             <div class="flex-row" style="background:#f0fdf4; padding:10px; border-radius:8px; border:1px solid #bbf7d0; margin:10px 0;">
                 <div>
-                    <label>🖼️ ബാനർ ചിത്രം (Banner Image):</label>
+                    <label>🖼️ ബാനർ ചിത്രം:</label>
                     <input type="file" id="eventBannerFile" accept="image/*">
                 </div>
                 <div>
-                    <label>🛡️ ലോഗോ ചിത്രം (Logo Image):</label>
+                    <label>🛡️ ലോഗോ ചിത്രം:</label>
                     <input type="file" id="eventLogoFile" accept="image/*">
                 </div>
             </div>
@@ -114,37 +112,40 @@
                 <label for="showResultCheck">കുട്ടികൾക്ക് റിസൾട്ട് കാണാൻ അനുവാദം (Enable/Disable Result)</label>
             </div>
 
-            <!-- CERTIFICATE SETUP SECTION -->
+            <!-- CERTIFICATE SETUP SECTION WITH SLIDERS, COLOR & PREVIEW -->
             <hr style="margin: 12px 0; border:0; border-top:1px solid #e5e7eb;">
-            <h4 style="color:var(--primary); margin-bottom:5px;">🎓 സർട്ടിഫിക്കറ്റ് ക്രമീകരണങ്ങൾ</h4>
+            <h4 style="color:var(--primary); margin-bottom:5px;">🎓 സർട്ടിഫിക്കറ്റ് കോൺഫിഗറേഷൻ & ഓവർവ്യൂ</h4>
             
-            <label>സർട്ടിഫിക്കറ്റ് മോഡൽ തിരഞ്ഞെടുക്കുക:</label>
+            <label>സർട്ടിഫിക്കറ്റ് തരം:</label>
             <select id="certModelType" onchange="toggleCertFields()">
                 <option value="none">വേണ്ട</option>
-                <option value="upload">മോഡൽ 1: സർട്ടിഫിക്കറ്റ് ചിത്രം അപ്ലോഡ് ചെയ്ത് പേര് സെറ്റ് ചെയ്യൽ</option>
-                <option value="manual">മോഡൽ 2: സൈറ്റിൽ ഓട്ടോമാറ്റിക് സർട്ടിഫിക്കറ്റ് (ലോഗോ & ഒപ്പ്)</option>
+                <option value="participation">പങ്കെടുത്തതിനുള്ള സർട്ടിഫിക്കറ്റ് (Participation Certificate)</option>
+                <option value="merit">വിജയികൾ/മികവ് തെളിയിച്ചവർക്കുള്ള സർട്ടിഫിക്കറ്റ് (Merit Certificate)</option>
             </select>
 
-            <div id="certUploadBox" style="display:none; background:#f0fdf4; padding:10px; border-radius:8px; border:1px solid #bbf7d0; margin-top:8px;">
-                <label>സർട്ടിഫിക്കറ്റ് ചിത്രം (Background Image):</label>
-                <input type="file" id="certImageFile" accept="image/*">
-                <div class="flex-row">
-                    <div>
-                        <label>പേര് വരേണ്ട Top Position (%):</label>
-                        <input type="number" id="certTopPos" value="50">
-                    </div>
-                    <div>
-                        <label>പേര് വരേണ്ട Left Position (%):</label>
-                        <input type="number" id="certLeftPos" value="50">
+            <div id="certConfigBox" style="display:none; background:#f0fdf4; padding:10px; border-radius:8px; border:1px solid #bbf7d0; margin-top:8px;">
+                <label>സർട്ടിഫിക്കറ്റ് ബാക്ക്ഗ്രൗണ്ട് ചിത്രം (Bg Image):</label>
+                <input type="file" id="certImageFile" accept="image/*" onchange="previewCertificateTemplate()">
+                
+                <label>Name X Position (<span id="valX">50</span>%):</label>
+                <input type="range" id="certXPos" min="0" max="100" value="50" oninput="document.getElementById('valX').innerText=this.value; previewCertificateTemplate();">
+
+                <label>Name Y Position (<span id="valY">50</span>%):</label>
+                <input type="range" id="certYPos" min="0" max="100" value="50" oninput="document.getElementById('valY').innerText=this.value; previewCertificateTemplate();">
+
+                <label>Font Size (<span id="valSize">24</span>px):</label>
+                <input type="range" id="certFontSize" min="12" max="60" value="24" oninput="document.getElementById('valSize').innerText=this.value; previewCertificateTemplate();">
+
+                <label>Certificate Name Color:</label>
+                <input type="color" id="certColorPicker" value="#14532d" style="height:40px; padding:2px;" onchange="previewCertificateTemplate()">
+
+                <!-- Live Overview Box -->
+                <div style="margin-top:10px; border:2px dashed var(--primary); padding:8px; border-radius:8px; background:#fff; text-align:center;">
+                    <b style="font-size:12px; color:var(--primary);">Sample Live Overview:</b>
+                    <div id="certPreviewContainer" style="position:relative; width:100%; height:140px; background:#e5e7eb; border-radius:6px; overflow:hidden; margin-top:5px; display:flex; align-items:center; justify-content:center;">
+                        <span id="previewSampleText" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-weight:bold; color:#14532d; font-size:24px;">Sample Name</span>
                     </div>
                 </div>
-            </div>
-
-            <div id="certManualBox" style="display:none; background:#eff6ff; padding:10px; border-radius:8px; border:1px solid #bfdbfe; margin-top:8px;">
-                <label>സ്ഥാപനത്തിന്റെ ലോഗോ (Logo):</label>
-                <input type="file" id="certLogoFile" accept="image/*">
-                <label>മാസ്റ്ററുടെ ഒപ്പ് (Signature Image):</label>
-                <input type="file" id="certSignFile" accept="image/*">
             </div>
 
             <!-- BULK ADD SECTIONS -->
@@ -196,22 +197,40 @@
 
         <!-- Results & Ranking Dashboard -->
         <div class="sub-box" style="border-color: var(--accent);">
-            <h3>📊 റിസൾട്ട്, റാങ്കിംഗ് & റാങ്ക് ഹോൾഡേഴ്സ് പോസ്റ്റർ</h3>
-            <select id="selectEventForResult" onchange="renderResultsBoard()">
-                <option value="ALL">എല്ലാ ഇവന്റുകളുടെയും റിസൾട്ട്</option>
-            </select>
+            <h3>📊 റിസൾട്ട്, ടൈം-ബേസ്ഡ് റാങ്കിംഗ് & പോസ്റ്റർ</h3>
+            <p style="font-size:12px; color:#555;">* അധ്യാപകൻ ഇവാലുവേഷൻ ചെയ്ത് സേവ് ചെയ്താൽ മാത്രമേ റാങ്ക് ലിസ്റ്റ് ദൃശ്യമാകൂ (തുല്യ മാർക്കെങ്കിൽ കുറഞ്ഞ സമയത്ത് തീർത്തവർക്ക് മുൻഗണന).</p>
+            <div class="flex-row" style="margin-bottom: 8px;">
+                <select id="selectEventForResult" onchange="renderResultsBoard()">
+                    <option value="ALL">എല്ലാ ഇവന്റുകളുടെയും റിസൾട്ട്</option>
+                </select>
+                <button class="btn btn-green" style="margin-top:0; width:auto;" onclick="exportResultsToCSV()">📥 ഡൗൺലോഡ് എക്സൽ (CSV)</button>
+            </div>
             <div id="resultsBoardContainer" style="margin-top: 10px; overflow-x:auto;"></div>
             
-            <!-- Poster Maker Section -->
+            <!-- Winners Poster Maker Section (1st, 2nd, 3rd Single Poster with Photo Upload) -->
             <div style="background:#fdf2f8; border:1px solid #fbcfe8; padding:12px; border-radius:8px; margin-top:12px;">
-                <h4 style="color:#db2777; margin-top:0;">🖼️ റാങ്ക് ഹോൾഡേഴ്സ് പോസ്റ്റർ ജനറേറ്റർ</h4>
-                <label>വിജയിയുടെ പേര്:</label>
-                <input type="text" id="posterStudentName" placeholder="കുട്ടിയുടെ പേര്">
-                <label>സ്ഥാനം / റാങ്ക് (ഉദാ: First Place, Rank 1):</label>
-                <input type="text" id="posterRank" placeholder="Rank 1">
-                <label>കുട്ടിയുടെ ഫോട്ടോ അപ്ലോഡ് ചെയ്യുക (ഡാറ്റാബേസിൽ സേവ് ആകില്ല):</label>
-                <input type="file" id="posterStudentPhoto" accept="image/*">
-                <button class="btn btn-blue" onclick="generateAndDownloadPoster()">📥 പോസ്റ്റർ ഡൗൺലോഡ് ചെയ്യുക</button>
+                <h4 style="color:#db2777; margin-top:0;">🖼️ വിന്നേഴ്സ് പോസ്റ്റർ ജനറേറ്റർ (1st, 2nd, 3rd)</h4>
+                <p style="font-size:12px; color:#555;">ഇവന്റ് തിരഞ്ഞെടുക്കുക, വിജയികളുടെ ഫോട്ടോകൾ വേണമെങ്കിൽ അപ്‌ലോഡ് ചെയ്ത് ഒറ്റ പോസ്റ്ററായി ഡൗൺലോഡ് ചെയ്യാം.</p>
+                <select id="posterEventSelect" style="margin-bottom:8px;">
+                    <option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>
+                </select>
+                
+                <div class="flex-row">
+                    <div>
+                        <label>🥇 1st Place ഫോട്ടോ:</label>
+                        <input type="file" id="posterPhoto1" accept="image/*">
+                    </div>
+                    <div>
+                        <label>🥈 2nd Place ഫോട്ടോ:</label>
+                        <input type="file" id="posterPhoto2" accept="image/*">
+                    </div>
+                </div>
+                <div>
+                    <label>🥉 3rd Place ഫോട്ടോ:</label>
+                    <input type="file" id="posterPhoto3" accept="image/*">
+                </div>
+
+                <button class="btn btn-blue" onclick="generateWinnersPoster()">📥 വിന്നേഴ്സ് പോസ്റ്റർ ഡൗൺലോഡ് ചെയ്യുക</button>
             </div>
         </div>
 
@@ -222,7 +241,6 @@
         
         <div class="sub-box" id="studentLoginBox">
             
-            <!-- Banner & Logo Header Layout -->
             <div class="student-banner-container">
                 <img id="studBannerImg" src="" class="student-banner-img" style="display:none;">
                 <div class="student-logo-wrapper">
@@ -253,7 +271,7 @@
             
             <hr style="margin: 15px 0; border:0; border-top:1px solid #e5e7eb;">
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <button class="btn btn-blue" style="flex:1; min-width:140px;" onclick="checkStudentResultPanel()">🔍 റിസൾട്ട് പരിശോധിക്കുക</button>
+                <button class="btn btn-blue" style="flex:1; min-width:140px;" onclick="checkStudentResultPanel()">🔍 റിസൾട്ട് & സർട്ടിഫിക്കറ്റ്</button>
                 <button class="btn btn-dark" style="flex:1; min-width:140px;" onclick="checkStudentAnswerKeyPanel()">🔑 ആൻസർ കീ കാണുക</button>
             </div>
         </div>
@@ -265,7 +283,7 @@
         </div>
 
         <div id="studentResultBox" style="display:none;" class="sub-box">
-            <h3>📋 നിങ്ങളുടെ സബ്മിഷൻ & റിസൾട്ട്</h3>
+            <h3>📋 നിങ്ങളുടെ സബ്മിഷൻ, റിസൾട്ട് & സർട്ടിഫിക്കറ്റ്</h3>
             <div id="studentScoreCardContent"></div>
             <div id="studentCertificateArea" style="margin-top: 15px; text-align: center;"></div>
             <button class="btn btn-dark" onclick="location.reload()" style="margin-top: 10px;">🏠 തിരികെ ഹോമിലേക്ക്</button>
@@ -301,8 +319,33 @@
 
     function toggleCertFields() {
         let type = document.getElementById('certModelType').value;
-        document.getElementById('certUploadBox').style.display = type === 'upload' ? 'block' : 'none';
-        document.getElementById('certManualBox').style.display = type === 'manual' ? 'block' : 'none';
+        document.getElementById('certConfigBox').style.display = type !== 'none' ? 'block' : 'none';
+    }
+
+    function previewCertificateTemplate() {
+        let fileInput = document.getElementById('certImageFile');
+        let sampleText = document.getElementById('previewSampleText');
+        let container = document.getElementById('certPreviewContainer');
+        
+        let x = document.getElementById('certXPos').value;
+        let y = document.getElementById('certYPos').value;
+        let size = document.getElementById('certFontSize').value;
+        let color = document.getElementById('certColorPicker').value;
+
+        sampleText.style.left = x + '%';
+        sampleText.style.top = y + '%';
+        sampleText.style.fontSize = (size * 0.6) + 'px';
+        sampleText.style.color = color;
+
+        if(fileInput.files && fileInput.files[0]) {
+            let r = new FileReader();
+            r.onload = function(e) {
+                container.style.backgroundImage = `url(${e.target.result})`;
+                container.style.backgroundSize = 'cover';
+                container.style.backgroundPosition = 'center';
+            }
+            r.readAsDataURL(fileInput.files[0]);
+        }
     }
 
     function processBulkMCQ() {
@@ -350,81 +393,53 @@
         let editingId = document.getElementById('editingEventId').value;
         let bannerFile = document.getElementById('eventBannerFile').files[0];
         let logoFile = document.getElementById('eventLogoFile').files[0];
+        let certFile = document.getElementById('certImageFile').files[0];
 
         let bannerUrl = "";
         let logoUrl = "";
+        let certBgUrl = "";
 
         let existingEv = editingId ? eventsData.find(e => e.id === editingId) : null;
         if(existingEv) {
             bannerUrl = existingEv.banner || "";
             logoUrl = existingEv.logo || "";
+            certBgUrl = existingEv.certificate ? existingEv.certificate.bgUrl : "";
         }
 
-        let processAndSave = () => {
-            let certType = document.getElementById('certModelType').value;
-            let certData = { type: certType };
-            if(existingEv && existingEv.certificate) certData = existingEv.certificate;
-
-            certData.top = parseFloat(document.getElementById('certTopPos').value) || 50;
-            certData.left = parseFloat(document.getElementById('certLeftPos').value) || 50;
-
-            let certImgFile = document.getElementById('certImageFile').files[0];
-            let certLogoFile = document.getElementById('certLogoFile').files[0];
-            let certSignFile = document.getElementById('certSignFile').files[0];
-
-            let finishCommit = () => {
+        let pendingFiles = 0;
+        let checkAndCommit = () => {
+            if(pendingFiles === 0) {
+                let certData = {
+                    type: document.getElementById('certModelType').value,
+                    bgUrl: certBgUrl,
+                    x: document.getElementById('certXPos').value,
+                    y: document.getElementById('certYPos').value,
+                    size: document.getElementById('certFontSize').value,
+                    color: document.getElementById('certColorPicker').value
+                };
                 commitEventData(editingId, name, bannerUrl, logoUrl, certData);
-            };
-
-            let pendingImageLoads = (certImgFile ? 1 : 0) + (certLogoFile ? 1 : 0) + (certSignFile ? 1 : 0);
-            if(pendingImageLoads === 0) {
-                finishCommit();
-                return;
-            }
-
-            let loadedCounter = 0;
-            if(certImgFile) {
-                let fr = new FileReader();
-                fr.onload = e => { certData.image = e.target.result; loadedCounter++; if(loadedCounter === pendingImageLoads) finishCommit(); };
-                fr.readAsDataURL(certImgFile);
-            }
-            if(certLogoFile) {
-                let fr = new FileReader();
-                fr.onload = e => { certData.logo = e.target.result; loadedCounter++; if(loadedCounter === pendingImageLoads) finishCommit(); };
-                fr.readAsDataURL(certLogoFile);
-            }
-            if(certSignFile) {
-                let fr = new FileReader();
-                fr.onload = e => { certData.sign = e.target.result; loadedCounter++; if(loadedCounter === pendingImageLoads) finishCommit(); };
-                fr.readAsDataURL(certSignFile);
             }
         };
 
-        if(bannerFile || logoFile) {
-            let loadedCount = 0;
-            let totalToLoad = (bannerFile ? 1 : 0) + (logoFile ? 1 : 0);
-
-            if(bannerFile) {
-                let r1 = new FileReader();
-                r1.onload = function(e) {
-                    bannerUrl = e.target.result;
-                    loadedCount++;
-                    if(loadedCount === totalToLoad) processAndSave();
-                };
-                r1.readAsDataURL(bannerFile);
-            }
-            if(logoFile) {
-                let r2 = new FileReader();
-                r2.onload = function(e) {
-                    logoUrl = e.target.result;
-                    loadedCount++;
-                    if(loadedCount === totalToLoad) processAndSave();
-                };
-                r2.readAsDataURL(logoFile);
-            }
-        } else {
-            processAndSave();
+        if(bannerFile) {
+            pendingFiles++;
+            let r = new FileReader();
+            r.onload = function(e) { bannerUrl = e.target.result; pendingFiles--; checkAndCommit(); };
+            r.readAsDataURL(bannerFile);
         }
+        if(logoFile) {
+            pendingFiles++;
+            let r = new FileReader();
+            r.onload = function(e) { logoUrl = e.target.result; pendingFiles--; checkAndCommit(); };
+            r.readAsDataURL(logoFile);
+        }
+        if(certFile) {
+            pendingFiles++;
+            let r = new FileReader();
+            r.onload = function(e) { certBgUrl = e.target.result; pendingFiles--; checkAndCommit(); };
+            r.readAsDataURL(certFile);
+        }
+        if(pendingFiles === 0) checkAndCommit();
     }
 
     function commitEventData(editingId, name, bannerUrl, logoUrl, certData) {
@@ -478,8 +493,13 @@
 
         if(ev.certificate) {
             document.getElementById('certModelType').value = ev.certificate.type || 'none';
-            document.getElementById('certTopPos').value = ev.certificate.top || 50;
-            document.getElementById('certLeftPos').value = ev.certificate.left || 50;
+            document.getElementById('certXPos').value = ev.certificate.x || 50;
+            document.getElementById('valX').innerText = ev.certificate.x || 50;
+            document.getElementById('certYPos').value = ev.certificate.y || 50;
+            document.getElementById('valY').innerText = ev.certificate.y || 50;
+            document.getElementById('certFontSize').value = ev.certificate.size || 24;
+            document.getElementById('valSize').innerText = ev.certificate.size || 24;
+            document.getElementById('certColorPicker').value = ev.certificate.color || '#14532d';
             toggleCertFields();
         }
 
@@ -500,10 +520,9 @@
         document.getElementById('eventEndDT').value = "";
         document.getElementById('eventBannerFile').value = "";
         document.getElementById('eventLogoFile').value = "";
+        document.getElementById('certImageFile').value = "";
         document.getElementById('bulkMCQText').value = "";
         document.getElementById('bulkDescText').value = "";
-        document.getElementById('certModelType').value = "none";
-        toggleCertFields();
         tempQuestionsList = [];
         renderAdminQuestionsPreview();
         document.getElementById('saveEventBtn').innerText = "🚀 പുതിയ ഇവന്റ് ലിങ്ക് ക്രിയേറ്റ് ചെയ്യുക";
@@ -528,7 +547,7 @@
     }
 
     function loadAdminDropdowns() {
-        ['selectEventForEval', 'selectEventForKey', 'selectEventForResult'].forEach(id => {
+        ['selectEventForEval', 'selectEventForKey', 'selectEventForResult', 'posterEventSelect'].forEach(id => {
             let el = document.getElementById(id);
             if(el) {
                 let firstOpt = el.options[0].outerHTML;
@@ -607,13 +626,27 @@
         if(!name || !phone) { alert("പേരും ഫോൺ നമ്പറും നൽകുക!"); return; }
         if(!activeTestEvent) return;
 
-        currentStudentSession = { name, phone, class: sClass, place: sPlace };
+        if(activeTestEvent.oneDevice) {
+            let subs = submissionsData[activeTestEvent.id] || [];
+            let found = subs.find(s => s.phone === phone);
+            if(found) {
+                alert("ഈ ഡിവൈസ്/ഫോൺ നമ്പർ ഉപയോഗിച്ച് ഇതിനകം ടെസ്റ്റ് എഴുതിയിട്ടുണ്ട്!");
+                return;
+            }
+        }
+
+        currentStudentSession = { name, phone, class: sClass, place: sPlace, startTime: Date.now() };
         document.getElementById('studentLoginBox').style.display = 'none';
         document.getElementById('studentTestBox').style.display = 'block';
 
         let qArea = document.getElementById('studentQuestionsArea');
         qArea.innerHTML = "";
-        window.currentStudentQuestions = [...activeTestEvent.questions];
+        
+        let qList = [...activeTestEvent.questions];
+        if(activeTestEvent.rand) {
+            qList.sort(() => Math.random() - 0.5);
+        }
+        window.currentStudentQuestions = qList;
 
         window.currentStudentQuestions.forEach((q, qIdx) => {
             let html = `<div class="sub-box"><p><b>Q${qIdx+1}:</b> ${q.q}</p>`;
@@ -648,15 +681,28 @@
         });
 
         let isAuto = activeTestEvent.evalType === 'auto';
+        let scoreVal = 0;
+        if(isAuto) {
+            answers.forEach(curr => {
+                if(curr.studentAns.trim().toLowerCase() === curr.correctAns.trim().toLowerCase()) {
+                    scoreVal += curr.marks;
+                }
+            });
+        }
+
+        let timeTaken = Date.now() - currentStudentSession.startTime;
+
         let submission = {
             id: 'SUB_' + Date.now(),
             eventId: activeTestEvent.id,
             name: currentStudentSession.name,
             phone: currentStudentSession.phone,
             class: currentStudentSession.class,
+            place: currentStudentSession.place,
             answers,
             evalStatus: isAuto ? 'Evaluated' : 'Pending',
-            score: isAuto ? answers.reduce((acc, curr) => acc + (curr.studentAns.trim().toLowerCase() === curr.correctAns.trim().toLowerCase() ? curr.marks : 0), 0) : 'Pending',
+            score: isAuto ? scoreVal : 'Pending',
+            timeTaken,
             submitTime: new Date().toISOString()
         };
 
@@ -690,30 +736,51 @@
         content.innerHTML = `<p><b>പേര്:</b> ${sub.name} | <b>സ്കോർ:</b> <span style="color:green; font-weight:bold;">${sub.score}</span></p>`;
 
         let cert = activeTestEvent.certificate;
-        if(cert && cert.type !== 'none' && sub.evalStatus === 'Evaluated') {
-            if(cert.type === 'upload' && cert.image) {
-                certArea.innerHTML = `
-                    <div style="position:relative; display:inline-block; max-width:100%; border:2px solid #ccc;">
-                        <img src="${cert.image}" style="width:100%; display:block;">
-                        <div style="position:absolute; top:${cert.top}%; left:${cert.left}%; transform:translate(-50%, -50%); font-weight:bold; font-size:18px; color:#000; background:rgba(255,255,255,0.8); padding:4px 10px; border-radius:4px;">${sub.name}</div>
-                    </div>`;
-            } else if(cert.type === 'manual') {
-                certArea.innerHTML = `
-                    <div style="background:#fffbeb; border:2px solid #f59e0b; padding:20px; border-radius:10px; text-align:center;">
-                        ${cert.logo ? `<img src="${cert.logo}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; margin-bottom:10px;">` : ''}
-                        <h3>🏆 സർട്ടിഫിക്കറ്റ് ഓഫ് അച്ചീവ്മെന്റ്</h3>
-                        <p>ഇതുവഴി സാക്ഷ്യപ്പെടുത്തുന്നത്</p>
-                        <h2 style="color:var(--primary);">${sub.name} (${sub.class || ''})</h2>
-                        <p>ഈ ക്ലാസ് ടെസ്റ്റിൽ മികച്ച വിജയം കൈവരിച്ചിരിക്കുന്നു.</p>
-                        <div style="display:flex; justify-content:space-between; margin-top:30px; align-items:center;">
-                            <div><b>തീയതി:</b> ${new Date().toLocaleDateString()}</div>
-                            <div>
-                                ${cert.sign ? `<img src="${cert.sign}" style="height:40px; display:block; margin:0 auto;"><br>` : ''}
-                                <b>മാസ്റ്റർ സിഗ്നേച്ചർ</b>
-                            </div>
-                        </div>
-                    </div>`;
-            }
+        if(cert && cert.type !== 'none') {
+            certArea.innerHTML = `<button class="btn btn-green" onclick="downloadStudentCertificate('${sub.name}')">🎓 ഡൗൺലോഡ് സർട്ടിഫിക്കറ്റ്</button>`;
+        }
+    }
+
+    function downloadStudentCertificate(studentName) {
+        let cert = activeTestEvent.certificate;
+        let canvas = document.createElement('canvas');
+        canvas.width = 1000;
+        canvas.height = 700;
+        let ctx = canvas.getContext('2d');
+
+        let proceedCert = () => {
+            ctx.fillStyle = cert.color || '#14532d';
+            ctx.font = `bold ${cert.size * 2}px sans-serif`;
+            ctx.textAlign = 'center';
+            let xCoord = (cert.x / 100) * canvas.width;
+            let yCoord = (cert.y / 100) * canvas.height;
+            ctx.fillText(studentName, xCoord, yCoord);
+
+            let link = document.createElement('a');
+            link.download = studentName + '_Certificate.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        };
+
+        if(cert.bgUrl) {
+            let img = new Image();
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                proceedCert();
+            };
+            img.src = cert.bgUrl;
+        } else {
+            ctx.fillStyle = '#fcf8f2';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#14532d';
+            ctx.lineWidth = 15;
+            ctx.strokeRect(20, 20, 960, 660);
+            
+            ctx.fillStyle = '#14532d';
+            ctx.font = 'bold 36px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(cert.type === 'participation' ? 'CERTIFICATE OF PARTICIPATION' : 'CERTIFICATE OF MERIT', 500, 150);
+            proceedCert();
         }
     }
 
@@ -733,7 +800,7 @@
         submissionsData[evId].forEach((sub, sIdx) => {
             let html = `<div style="background:#fffbeb; padding:8px; margin-bottom:8px; border:1px solid #fde68a;"><b>${sub.name}</b> (${sub.phone})<br>`;
             sub.answers.forEach((ans, aIdx) => {
-                html += `Q: ${ans.q} | ഉത്തരം: <b>${ans.studentAns}</b> (ശരിയുത്തരം: ${ans.correctAns})<br>മാർക്ക് നൽകുക: <input type="number" id="m_${sIdx}_${aIdx}" value="${ans.awardedMarks || 0}" style="width:60px;"><br>`;
+                html += `Q: ${ans.q} | ഉത്തരം: <b>${ans.studentAns}</b><br>മാർക്ക്: <input type="number" id="m_${sIdx}_${aIdx}" value="${ans.awardedMarks || 0}" style="width:50px;"><br>`;
             });
             html += `<button class="btn btn-green" onclick="saveEval('${evId}', ${sIdx})">സേവ് ചെയ്യുക</button></div>`;
             container.innerHTML += html;
@@ -764,103 +831,165 @@
         else { subs = submissionsData[evId] || []; }
 
         subs = subs.filter(s => s.evalStatus === 'Evaluated');
-        subs.sort((a, b) => (b.score !== a.score) ? b.score - a.score : new Date(a.submitTime) - new Date(b.submitTime));
+        // Time-based sorting: High score first, if tie then lower timeTaken first
+        subs.sort((a, b) => {
+            if(b.score !== a.score) return b.score - a.score;
+            return (a.timeTaken || 0) - (b.timeTaken || 0);
+        });
 
-        if(subs.length === 0) { container.innerHTML = "<p>റിസൾട്ടുകൾ ഇല്ല.</p>"; return; }
-        let html = `<table><tr><th>Rank</th><th>Name</th><th>Score</th><th>Action</th></tr>`;
+        if(subs.length === 0) { container.innerHTML = "<p>വാല്യുവേഷൻ പൂർത്തിയായ റിസൾട്ടുകൾ ഇല്ല.</p>"; return; }
+        let html = `<table><tr><th>Rank</th><th>Name</th><th>Class</th><th>Score</th></tr>`;
         subs.forEach((s, i) => {
-            html += `<tr><td>#${i+1}</td><td>${s.name}</td><td>${s.score}</td><td><button class="btn btn-blue" style="padding:2px 6px; font-size:11px;" onclick="fillPosterData('${s.name}', 'Rank ${i+1}')">പോസ്റ്റർ തയ്യാറാക്കൂ</button></td></tr>`;
+            html += `<tr><td>#${i+1}</td><td>${s.name}</td><td>${s.class || '-'}</td><td>${s.score}</td></tr>`;
         });
         container.innerHTML = html + `</table>`;
     }
 
-    function fillPosterData(name, rank) {
-        document.getElementById('posterStudentName').value = name;
-        document.getElementById('posterRank').value = rank;
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    function exportResultsToCSV() {
+        let evId = document.getElementById('selectEventForResult').value;
+        let subs = [];
+        if(evId === 'ALL') { Object.keys(submissionsData).forEach(k => subs = subs.concat(submissionsData[k])); }
+        else { subs = submissionsData[evId] || []; }
+
+        subs = subs.filter(s => s.evalStatus === 'Evaluated');
+        subs.sort((a, b) => {
+            if(b.score !== a.score) return b.score - a.score;
+            return (a.timeTaken || 0) - (b.timeTaken || 0);
+        });
+
+        if(subs.length === 0) { alert("എക്സ്പോർട്ട് ചെയ്യാൻ വാല്യുവേറ്റ് ചെയ്ത റിസൾട്ടുകൾ ലഭ്യമല്ല!"); return; }
+
+        let csvContent = "data:text/csv;charset=utf-8,Rank,Name,Phone,Class,Place,Score\n";
+        subs.forEach((s, i) => {
+            csvContent += `#${i+1},"${s.name}","${s.phone}","${s.class || ''}","${s.place || ''}",${s.score}\n`;
+        });
+
+        let encodedUri = encodeURI(csvContent);
+        let link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "class_test_results.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
-    function generateAndDownloadPoster() {
-        let name = document.getElementById('posterStudentName').value.trim();
-        let rank = document.getElementById('posterRank').value.trim();
-        let photoInput = document.getElementById('posterStudentPhoto');
+    function generateWinnersPoster() {
+        let evId = document.getElementById('posterEventSelect').value;
+        if(!evId) { alert("പോസ്റ്ററിനായി ഇവന്റ് തിരഞ്ഞെടുക്കുക!"); return; }
+        let ev = eventsData.find(e => e.id === evId);
+        let subs = (submissionsData[evId] || []).filter(s => s.evalStatus === 'Evaluated');
+        
+        subs.sort((a, b) => {
+            if(b.score !== a.score) return b.score - a.score;
+            return (a.timeTaken || 0) - (b.timeTaken || 0);
+        });
 
-        if(!name || !rank) { alert("പേരും റാങ്കും നൽകുക!"); return; }
+        if(subs.length === 0) { alert("ഈ ഇവന്റിൽ വാല്യുവേറ്റ് ചെയ്ത വിജയികൾ ഇല്ല!"); return; }
 
         let canvas = document.createElement('canvas');
         canvas.width = 800;
-        canvas.height = 800;
+        canvas.height = 1000;
         let ctx = canvas.getContext('2d');
 
-        let grad = ctx.createLinearGradient(0, 0, 800, 800);
+        let grad = ctx.createLinearGradient(0, 0, 800, 1000);
         grad.addColorStop(0, '#14532d');
         grad.addColorStop(1, '#064e3b');
         ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, 800, 800);
+        ctx.fillRect(0, 0, 800, 1000);
 
         ctx.strokeStyle = '#f59e0b';
-        ctx.lineWidth = 10;
-        ctx.strokeRect(30, 30, 740, 740);
+        ctx.lineWidth = 8;
+        ctx.strokeRect(20, 20, 760, 960);
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 36px sans-serif';
+        ctx.font = 'bold 32px sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('🏆 WINNER / വിജയി 🏆', 400, 100);
-
+        ctx.fillText('🏆 RANK HOLDERS / വിജയികൾ 🏆', 400, 80);
+        ctx.font = 'bold 20px sans-serif';
         ctx.fillStyle = '#f59e0b';
-        ctx.font = 'bold 28px sans-serif';
-        ctx.fillText(rank.toUpperCase(), 400, 160);
+        ctx.fillText(ev.name, 400, 120);
 
-        if(photoInput.files && photoInput.files[0]) {
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                let img = new Image();
-                img.onload = function() {
+        let rankPositions = [
+            { x: 400, y: 280, radius: 70, nameY: 380, label: '1st Place' },
+            { x: 230, y: 560, radius: 55, nameY: 645, label: '2nd Place' },
+            { x: 570, y: 560, radius: 55, nameY: 645, label: '3rd Place' }
+        ];
+
+        let loadedImagesCount = 0;
+        let totalImagesToLoad = Math.min(subs.length, 3);
+
+        let drawAllRanks = () => {
+            rankPositions.forEach((pos, idx) => {
+                if(idx < subs.length) {
+                    let student = subs[idx];
+                    
+                    ctx.fillStyle = '#f59e0b';
+                    ctx.font = 'bold 18px sans-serif';
+                    ctx.fillText(pos.label, pos.x, pos.y - pos.radius - 15);
+
                     ctx.save();
                     ctx.beginPath();
-                    ctx.arc(400, 350, 120, 0, Math.PI * 2, true);
+                    ctx.arc(pos.x, pos.y, pos.radius, 0, Math.PI * 2, true);
                     ctx.closePath();
                     ctx.clip();
-                    ctx.drawImage(img, 280, 230, 240, 240);
+                    
+                    if(window[`posterImgObj${idx+1}`]) {
+                        ctx.drawImage(window[`posterImgObj${idx+1}"`], pos.x - pos.radius, pos.y - pos.radius, pos.radius * 2, pos.radius * 2);
+                    } else {
+                        ctx.fillStyle = '#374151';
+                        ctx.fill();
+                    }
                     ctx.restore();
 
                     ctx.beginPath();
-                    ctx.arc(400, 350, 120, 0, Math.PI * 2, true);
-                    ctx.lineWidth = 6;
+                    ctx.arc(pos.x, pos.y, pos.radius, 0, Math.PI * 2, true);
+                    ctx.lineWidth = 4;
                     ctx.strokeStyle = '#f59e0b';
                     ctx.stroke();
 
-                    drawPosterFooter(ctx, name, canvas);
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(photoInput.files[0]);
-        } else {
-            ctx.fillStyle = '#374151';
-            ctx.beginPath();
-            ctx.arc(400, 350, 120, 0, Math.PI * 2, true);
-            ctx.fill();
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '20px sans-serif';
-            ctx.fillText('Photo', 400, 355);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 20px sans-serif';
+                    ctx.fillText(student.name, pos.x, pos.nameY);
+                    ctx.font = '16px sans-serif';
+                    ctx.fillStyle = '#d1d5db';
+                    ctx.fillText(`Score: ${student.score}`, pos.x, pos.nameY + 24);
+                }
+            });
 
-            drawPosterFooter(ctx, name, canvas);
+            ctx.fillStyle = '#f59e0b';
+            ctx.font = 'bold 22px sans-serif';
+            ctx.fillText('അഭിനന്ദനങ്ങൾ! ആശംസകളോടെ...', 400, 920);
+
+            let link = document.createElement('a');
+            link.download = ev.name + '_Rank_Holders_Poster.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        };
+
+        for(let i=1; i<=3; i++) {
+            let photoInput = document.getElementById(`posterPhoto${i}`);
+            if(photoInput && photoInput.files && photoInput.files[0]) {
+                let r = new FileReader();
+                r.onload = (function(index) {
+                    return function(e) {
+                        let img = new Image();
+                        img.onload = function() {
+                            window[`posterImgObj${index}`] = img;
+                            loadedImagesCount++;
+                            if(loadedImagesCount === totalImagesToLoad) drawAllRanks();
+                        };
+                        img.src = e.target.result;
+                    };
+                })(i);
+                r.readAsDataURL(photoInput.files[0]);
+            } else {
+                totalImagesToLoad = Math.max(0, totalImagesToLoad - 1);
+            }
         }
-    }
 
-    function drawPosterFooter(ctx, name, canvas) {
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 42px sans-serif';
-        ctx.fillText(name, 400, 560);
-
-        ctx.font = '22px sans-serif';
-        ctx.fillStyle = '#d1d5db';
-        ctx.fillText('അഭിനന്ദനങ്ങൾ! ആശംസകളോടെ...', 400, 630);
-
-        let link = document.createElement('a');
-        link.download = name + '_Rank_Poster.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
+        if(totalImagesToLoad === 0) {
+            drawAllRanks();
+        }
     }
 </script>
 
