@@ -73,6 +73,10 @@ body{background:#fdf8e8;font-family:sans-serif;margin:0}
     justify-content: center;
     align-items: center;
     z-index: 99999;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
 }
 
 /* ഗ്ലോ ആനിമേഷനോട് കൂടിയ ഐക്കൺ */
@@ -1554,5 +1558,16 @@ window.addEventListener('focus',()=>{try{if(new URLSearchParams(location.search)
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&typeof loadCompetitorEvent==='function')loadCompetitorEvent().catch(()=>{});});
 })();
 </script>
+    <script>
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            const splash = document.getElementById('splash-screen');
+            if(splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => splash.style.display = 'none', 500);
+            }
+        }, 2000); // 2 സെക്കൻഡിനു ശേഷം മെയിൻ സ്ക്രീനിലേക്ക് മാറും
+    });
+    </script>
 </body>
                                                                                                                                                                                                      </html>
