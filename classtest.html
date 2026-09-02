@@ -3,248 +3,293 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ക്ലാസ് ടെസ്റ്റ് മോഡ്യൂൾ</title>
+    <title>ക്ലാസ് ടെസ്റ്റ് - അഡ്മിൻ & സ്റ്റുഡന്റ് പാനൽ</title>
     <style>
-        :root {
-            --primary-color: #0b3c5d;
-            --secondary-color: #328cc1;
-            --accent-color: #d9b310;
-            --bg-color: #f4f6f9;
-            --text-color: #333;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            max-width: 600px;
-            margin: 20px auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        .header-banner {
-            background: var(--primary-color);
-            color: white;
-            padding: 15px;
-            text-align: center;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .section-box {
-            display: none;
-        }
-        .section-box.active {
-            display: block;
-        }
-        .btn {
-            background: var(--secondary-color);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-            margin-top: 10px;
-        }
-        .btn:hover {
-            background: var(--primary-color);
-        }
-        input, textarea, select {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0 15px 0;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-        }
-        .question-card {
-            background: #fafafa;
-            border: 1px solid #e1e1e1;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-        .nav-links {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        .nav-links button {
-            width: 48%;
-            background: #e2e8f0;
-            color: #333;
-        }
-        .nav-links button.active-tab {
-            background: var(--primary-color);
-            color: white;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fcf8f2; margin: 0; padding: 10px; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 2px solid #14532d; }
+        .header-box { background: #14532d; color: white; padding: 15px; text-align: center; border-radius: 8px; font-weight: bold; margin-bottom: 15px; }
+        .sub-box { background: #fff; border: 2px solid #14532d; border-radius: 10px; padding: 12px; margin-bottom: 15px; }
+        .btn-green { background: #22c55e; color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        .btn-blue { background: #2563eb; color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        .btn-red { background: #ef4444; color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        input, select, textarea { width: 100%; padding: 10px; margin: 6px 0 12px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        .tab-nav { display: flex; justify-content: space-between; margin-bottom: 15px; }
+        .tab-nav button { width: 48%; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; border: 2px solid #14532d; }
+        .active-tab { background: #14532d; color: white; }
+        .eval-card { background: #f9fafb; border: 1px solid #d1d5db; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Navigation between Student View and Admin Panel -->
-    <div class="nav-links">
-        <button id="btnStudentTab" class="active-tab" onclick="switchTab('student')">വിദ്യാർത്ഥി പേജ്</button>
-        <button id="btnAdminTab" onclick="switchTab('admin')">അഡ്മിൻ പാനൽ</button>
+    <div class="header-box">
+        📚 ക്ലാസ് ടെസ്റ്റ് & ഇവന്റ് മാനേജർ (Secure V9.17.4)
     </div>
 
-    <!-- ================= STUDENT SECTION ================= -->
-    <div id="studentSection" class="section-box active">
-        <div class="header-banner">
-            <h2 id="displayTestTitle">ഗവൺമെന്റ് ഹൈസ്കൂൾ - ക്ലാസ് ടെസ്റ്റ്</h2>
-            <p>വിഷയം: <span id="displaySubject">-</span> | തീയതി: <span id="displayDate">-</span></p>
-        </div>
-
-        <div id="studentLoginForm">
-            <h3>പരീക്ഷ എഴുതാൻ വിവരങ്ങൾ നൽകുക</h3>
-            <input type="text" id="studentName" placeholder="നിങ്ങളുടെ പേര്" required>
-            <input type="text" id="studentRoll" placeholder="റോൾ നമ്പർ / ക്ലാസ്" required>
-            <button class="btn" onclick="startTest()">ടെസ്റ്റ് ആരംഭിക്കുക</button>
-        </div>
-
-        <div id="testInterface" style="display:none;">
-            <div id="questionsContainer">
-                <!-- Dynamic Questions Loaded Here -->
-            </div>
-            <button class="btn" onclick="submitTestAnswers()">ഉത്തരം സമർപ്പിക്കുക</button>
-        </div>
-
-        <div id="studentResultView" style="display:none;">
-            <h3>ടെസ്റ്റ് റിസൾട്ട്</h3>
-            <p id="scoreCardText"></p>
-        </div>
+    <!-- Navigation Tabs -->
+    <div class="tab-nav">
+        <button id="tabAdminBtn" class="active-tab" onclick="switchMainTab('admin')">അഡ്മിൻ ഡാഷ്‌ബോർഡ്</button>
+        <button id="tabStudentBtn" onclick="switchMainTab('student')">വിദ്യാർത്ഥി മോഡ്</button>
     </div>
 
     <!-- ================= ADMIN SECTION ================= -->
-    <div id="adminSection" class="section-box">
-        <div class="header-banner" style="background: #2d3748;">
-            <h2>മാസ്റ്റർ അഡ്മിൻ പാനൽ</h2>
-            <p>പുതിയ ടെസ്റ്റുകൾ നിർമ്മിക്കുകയും വിലയിരുത്തുകയും ചെയ്യാം</p>
+    <div id="adminPanelSection">
+        <div class="sub-box" style="border-color: #14532d;">
+            <h3>1. പുതിയ ക്ലാസ് ടെസ്റ്റ് ഇവന്റ് നിർമ്മിക്കുക</h3>
+            <label>ഇവന്റ് പേര് (ഉദാ: നിബ്രസൂൽ ഉലൂം മദ്രസ 8th Standard Class Test):</label>
+            <input type="text" id="eventName" placeholder="ഇവന്റ് പേര് നൽകുക">
+            
+            <label>സ്ഥലം / സ്ഥാപനം:</label>
+            <input type="text" id="eventPlace" placeholder="സ്ഥലം നൽകുക">
+
+            <label>ലോഗോ അപ്‌ലോഡ് ചെയ്യുക:</label>
+            <input type="file" id="eventLogo" accept="image/*">
+
+            <label>ബാനർ അപ്‌ലോഡ് ചെയ്യുക:</label>
+            <input type="file" id="eventBanner" accept="image/*">
+
+            <label>വാല്യുവേഷൻ മോഡ്:</label>
+            <select id="evalMode">
+                <option value="auto">ഓട്ടോമാറ്റിക് വാല്യുവേഷൻ (Key Match)</option>
+                <option value="manual">മാനുവൽ വാല്യുവേഷൻ (അധ്യാപകൻ ടിക്ക് ഇടേണ്ടത്)</option>
+            </select>
+
+            <label>ചോദ്യങ്ങളും ഉത്തരങ്ങളും ബൾക്ക് ആയി ചേർക്കുക (Format: Q | a,b,c,d | Answer | Marks):</label>
+            <textarea id="bulkQuestions" rows="4" placeholder="ഉദാ: ഇന്ത്യയുടെ തലസ്ഥാനം ഏത്? | ഡൽഹി,മുംബൈ,കൊൽക്കത്ത,ചെന്നൈ | ഡൽഹി | 5"></textarea>
+
+            <button class="btn-green" onclick="createNewTestEvent()">🚀 പുതിയ ലിങ്ക് ക്രിയേറ്റ് ചെയ്യുക</button>
         </div>
 
-        <h3>1. പുതിയ ടെസ്റ്റ് ക്രിയേറ്റ് ചെയ്യുക</h3>
-        <input type="text" id="adminTestTitle" placeholder="ടെസ്റ്റിന്റെ പേര് (ഉദാ: ചരിത്രം ചാപ്റ്റർ 1)">
-        <input type="text" id="adminSubject" placeholder="വിഷയം">
-        <input type="date" id="adminDate">
-        
-        <h4>ചോദ്യങ്ങൾ ചേർക്കുക</h4>
-        <div id="adminQuestionsBuilder">
-            <div class="question-card">
-                <input type="text" class="q-text" placeholder="ചോദ്യം എഴുതുക">
-                <select class="q-type">
-                    <option value="mcq">മൾട്ടിപ്പിൾ ചോയ്സ് (MCQ)</option>
-                    <option value="short">ഷോർട്ട് ആൻസർ (ടൈപ്പിംഗ്)</option>
-                </select>
-                <input type="text" class="q-options" placeholder="ഓപ്ഷനുകൾ കോമ ഇട്ട് നൽകുക (MCQ ആണെങ്കിൽ മാത്രം)">
-                <input type="text" class="q-answer" placeholder="ശരിയായ ഉത്തരം (Answer Key)">
-                <input type="number" class="q-marks" placeholder="മാർക്ക്">
+        <!-- Created Events List (Like Screenshot 1) -->
+        <div class="sub-box">
+            <h3>📋 നിലവിലുള്ള ഇവന്റുകൾ (Events Board)</h3>
+            <div id="eventsListContainer">
+                <!-- Dynamic Events Will Load Here -->
             </div>
         </div>
-        <button class="btn" style="background: #319795;" onclick="saveNewTest()">ടെസ്റ്റ് സേവ് ചെയ്ത് ലിങ്ക് ഉണ്ടാക്കുക</button>
 
-        <div id="shareLinkContainer" style="margin-top: 15px; display:none;">
-            <p>കുട്ടികൾക്ക് അയച്ചുകൊടുക്കാനുള്ള ലിങ്ക്:</p>
-            <input type="text" id="generatedShareLink" readonly>
+        <!-- Manual Evaluation Section -->
+        <div class="sub-box" style="border-color: #d97706;">
+            <h3>📝 മാനുവൽ പേപ്പർ വാല്യുവേഷൻ (Teacher Check)</h3>
+            <select id="selectEventForEval" onchange="loadStudentSubmissions()">
+                <option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>
+            </select>
+            <div id="studentPapersContainer">
+                <!-- Student submissions for checking will appear here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= STUDENT SECTION ================= -->
+    <div id="studentPanelSection" style="display:none;">
+        <div class="sub-box" id="studentLoginBox">
+            <h3 id="studEventTitle">ക്ലാസ് ടെസ്റ്റിലേക്ക് സ്വാഗതം</h3>
+            <p id="studEventDetails"></p>
+            <input type="text" id="studentNameInput" placeholder="നിങ്ങളുടെ മുഴുവൻ പേര്">
+            <input type="text" id="studentPhoneInput" placeholder="ഫോൺ നമ്പർ / റോൾ നമ്പർ">
+            <button class="btn-green" onclick="startStudentTest()">ടെസ്റ്റ് ആരംഭിക്കുക</button>
         </div>
 
-        <hr style="margin: 30px 0;">
+        <div id="studentTestBox" style="display:none;">
+            <div id="studentQuestionsArea"></div>
+            <label>ഫോട്ടോ അല്ലെങ്കിൽ ഡോക്യുമെന്റ് അപ്‌ലോഡ് ചെയ്യുക (ആവശ്യമെങ്കിൽ - Compressed):</label>
+            <input type="file" id="studentDocUpload" accept="image/*">
+            <button class="btn-blue" onclick="submitStudentAnswers()">ഉത്തരങ്ങൾ സമർപ്പിക്കുക</button>
+        </div>
 
-        <h3>2. റിസൾട്ട് മാനുവൽ ഇവാല്യുവേഷൻ & മോഡറേഷൻ</h3>
-        <select id="selectTestForEval" onchange="loadSubmissions()">
-            <option value="">ടെസ്റ്റ് തിരഞ്ഞെടുക്കുക</option>
-        </select>
-        <div id="evaluationsContainer">
-            <!-- Student submissions will load here for manual checking -->
+        <div id="studentResultBox" style="display:none; text-align:center;">
+            <h3>🎉 ടെസ്റ്റ് പൂർത്തിയായി!</h3>
+            <p id="resultStatusText" style="color: green; font-weight: bold;"></p>
+            <p id="detailedScoreCard"></p>
+            <button class="btn-green" onclick="downloadCertificate()">🏆 സർട്ടിഫിക്കറ്റ് ഡൗൺലോഡ് ചെയ്യുക</button>
+            <button class="btn-blue" onclick="viewAnswerKey()" style="margin-top: 10px;">🔑 ആൻസർ കീ കാണുക</button>
         </div>
     </div>
 </div>
 
 <script>
-    // Local data simulation (Can be synced with Firebase)
-    let currentTestData = {
-        title: "ചരിത്രം ഒന്നാം അധ്യായം",
-        subject: "സോഷ്യോളജി",
-        date: "2026-06-15",
-        questions: [
-            { id: 1, type: "mcq", text: "ഇന്ത്യയുടെ ദേശീയ പതാകയിലെ നിറങ്ങൾ എത്ര?", options: ["2", "3", "4", "5"], answer: "3", marks: 5 },
-            { id: 2, type: "short", text: "ഗാന്ധിജി ജനിച്ച വർഷം ഏത്?", options: [], answer: "1869", marks: 5 }
-        ]
-    };
+    // Local Database Simulation for Events & Submissions
+    let eventsData = JSON.parse(localStorage.getItem('classTestEvents')) || [];
+    let submissionsData = JSON.parse(localStorage.getItem('classTestSubs')) || {};
 
-    let studentSubmissions = {};
-
-    function switchTab(tab) {
-        if(tab === 'student') {
-            document.getElementById('studentSection').classList.add('active');
-            document.getElementById('adminSection').classList.remove('active');
-            document.getElementById('btnStudentTab').classList.add('active-tab');
-            document.getElementById('btnAdminTab').classList.remove('active-tab');
+    function switchMainTab(tab) {
+        if(tab === 'admin') {
+            document.getElementById('adminPanelSection').style.display = 'block';
+            document.getElementById('studentPanelSection').style.display = 'none';
+            document.getElementById('tabAdminBtn').classList.add('active-tab');
+            document.getElementById('tabStudentBtn').classList.remove('active-tab');
+            renderEventsList();
+            loadEvalDropdown();
         } else {
-            document.getElementById('adminSection').classList.add('active');
-            document.getElementById('studentSection').classList.remove('active');
-            document.getElementById('btnAdminTab').classList.add('active-tab');
-            document.getElementById('btnStudentTab').classList.remove('active-tab');
+            document.getElementById('adminPanelSection').style.display = 'none';
+            document.getElementById('studentPanelSection').style.display = 'block';
+            document.getElementById('tabStudentBtn').classList.add('active-tab');
+            document.getElementById('tabAdminBtn').classList.remove('active-tab');
         }
     }
 
-    function startTest() {
-        const name = document.getElementById('studentName').value;
-        if(!name) {
-            alert("ദയവായി നിങ്ങളുടെ പേര് നൽകുക!");
+    function createNewTestEvent() {
+        let name = document.getElementById('eventName').value;
+        let place = document.getElementById('eventPlace').value;
+        let mode = document.getElementById('evalMode').value;
+        let rawQ = document.getElementById('bulkQuestions').value;
+
+        if(!name || !rawQ) {
+            alert("ദയവായി ഇവന്റ് പേരും ചോദ്യങ്ങളും നൽകുക!");
             return;
         }
-        document.getElementById('studentLoginForm').style.display = 'none';
-        document.getElementById('testInterface').style.display = 'block';
-        
-        document.getElementById('displayTestTitle').innerText = currentTestData.title;
-        document.getElementById('displaySubject').innerText = currentTestData.subject;
-        document.getElementById('displayDate').innerText = currentTestData.date;
 
-        let qContainer = document.getElementById('questionsContainer');
-        qContainer.innerHTML = "";
+        let questions = rawQ.split('\n').map(line => {
+            let parts = line.split('|');
+            return {
+                q: parts[0] ? parts[0].trim() : '',
+                options: parts[1] ? parts[1].split(',').map(o => o.trim()) : [],
+                answer: parts[2] ? parts[2].trim() : '',
+                marks: parts[3] ? parseInt(parts[3].trim()) : 5
+            };
+        });
 
-        currentTestData.questions.forEach((q, index) => {
-            let html = `<div class="question-card">
-                <p><b>ചോദ്യം ${index+1}:</b> ${q.text} (${q.marks} മാർക്ക്)</p>`;
-            
-            if(q.type === 'mcq') {
-                q.opt.forEach(opt => {
-                    html += `<label><input type="radio" name="q_${q.id}" value="${opt}"> ${opt}</label><br>`;
-                });
-            } else {
-                html += `<input type="text" id="ans_${q.id}" placeholder="ഉത്തരം ഇവിടെ ടൈപ്പ് ചെയ്യുക...">
-                         <label>ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുക (ആവശ്യമെങ്കിൽ): <input type="file" id="file_${q.id}" accept="image/*"></label>`;
-            }
-            html += `</div>`;
-            qContainer.innerHTML += html;
+        let newEvent = {
+            id: 'ID_' + Date.now(),
+            name: name,
+            place: place,
+            mode: mode,
+            questions: questions,
+            date: new Date().toLocaleDateString()
+        };
+
+        eventsData.push(newEvent);
+        localStorage.setItem('classTestEvents', JSON.stringify(eventsData));
+        alert("ഇവന്റ് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു!");
+        renderEventsList();
+        loadEvalDropdown();
+    }
+
+    function renderEventsList() {
+        let container = document.getElementById('eventsListContainer');
+        container.innerHTML = "";
+        if(eventsData.length === 0) {
+            container.innerHTML = "<p>ഇവന്റുകൾ ഒന്നുംമില്ല.</p>";
+            return;
+        }
+
+        eventsData.forEach((ev, idx) => {
+            let shareLink = window.location.href.split('?')[0] + "?event=" + ev.id;
+            container.innerHTML += `
+                <div style="background:#f3f4f6; padding:10px; border-radius:8px; margin-bottom:10px; border:1px solid #cbd5e1;">
+                    <b>${ev.name}</b> (${ev.place})<br>
+                    <small>ചോദ്യങ്ങൾ: ${ev.questions.length} | മോഡ്: ${ev.mode}</small><br>
+                    <input type="text" value="${shareLink}" readonly style="background:#fff; margin:5px 0;">
+                    <button class="btn-green" onclick="navigator.clipboard.writeText('${shareLink}'); alert('ലിങ്ക് കോപ്പി ചെയ്തു!');">📋 കോപ്പി ലിങ്ക്</button>
+                    <button class="btn-red" onclick="deleteEvent(${idx})" style="margin-top:5px;">🗑️ ഡിലീറ്റ് ചെയ്യുക</button>
+                </div>
+            `;
         });
     }
 
-    function submitTestAnswers() {
-        alert("നിങ്ങളുടെ ഉത്തരങ്ങൾ വിജയകരമായി സമർപ്പിച്ചു!");
-        document.getElementById('testInterface').style.display = 'none';
-        document.getElementById('studentResultView').style.display = 'block';
-        document.getElementById('scoreCardText').innerText = "പരീക്ഷ വിജയകരമായി പൂർത്തിയായി. റിസൾട്ട് പിന്നീട് പ്രസിദ്ധീകരിക്കുന്നതാണ്.";
+    function deleteEvent(index) {
+        if(confirm("ഈ ഇവന്റ് ഡിലീറ്റ് ചെയ്യണമെന്നുറപ്പാണോ?")) {
+            eventsData.splice(index, 1);
+            localStorage.setItem('classTestEvents', JSON.stringify(eventsData));
+            renderEventsList();
+            loadEvalDropdown();
+        }
     }
 
-    function saveNewTest() {
-        alert("പുതിയ ടെസ്റ്റ് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു!");
-        let shareableUrl = window.location.href.split('?')[0] + "?test=new_test_101";
-        document.getElementById('shareLinkContainer').style.display = 'block';
-        document.getElementById('generatedShareLink').value = shareableUrl;
+    function loadEvalDropdown() {
+        let select = document.getElementById('selectEventForEval');
+        select.innerHTML = '<option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>';
+        eventsData.forEach(ev => {
+            select.innerHTML += `<option value="${ev.id}">${ev.name}</option>`;
+        });
     }
 
-    function loadSubmissions() {
-        // Loads submissions for teacher manual review
-        let evalContainer = document.getElementById('evaluationsContainer');
-        evalContainer.innerHTML = `<div class="question-card"><p><b>കുട്ടി: അലി (റോൾ: 01)</b></p><p>ഉത്തരം: 1869</p><button class="btn" style="background:green;" onclick="alert('മാർക്ക് നൽകി!')">ശരിയാണെന്ന് ടിക്ക് ചെയ്യുക (✔)</button></div>`;
+    function loadStudentSubmissions() {
+        let eventId = document.getElementById('selectEventForEval').value;
+        let container = document.getElementById('studentPapersContainer');
+        container.innerHTML = "";
+        
+        let subs = submissionsData[eventId] || [];
+        if(subs.length === 0) {
+            container.innerHTML = "<p>കുട്ടികളുടെ സബ്മിഷനുകൾ ഒന്നും ലഭ്യമല്ല.</p>";
+            return;
+        }
+
+        subs.forEach((sub, sIdx) => {
+            container.innerHTML += `
+                <div class="eval-card">
+                    <p><b>വിദ്യാർത്ഥി:</b> ${sub.name} (${sub.phone})</p>
+                    <p><b>സ്റ്റാറ്റസ്:</b> <span style="color:green;">🟢 വാല്യുവേഷൻ കഴിഞ്ഞു / പരിശോധനയിലുണ്ട്</span></p>
+                    <p><b>ലഭിച്ച മാർക്ക്:</b> ${sub.score || 'പെൻഡിങ്'}</p>
+                </div>
+            `;
+        });
+    }
+
+    // URL Check to load Student View Directly if Link is Clicked
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('event');
+        if(eventId) {
+            switchMainTab('student');
+            let ev = eventsData.find(e => e.id === eventId);
+            if(ev) {
+                document.getElementById('studEventTitle').innerText = ev.name;
+                document.getElementById('studEventDetails').innerText = `സ്ഥലം: ${ev.place}`;
+                window.currentActiveEvent = ev;
+            } else {
+                document.getElementById('studEventTitle').innerText = "ഇവന്റ് കണ്ടെത്താനായില്ല!";
+            }
+        } else {
+            renderEventsList();
+            loadEvalDropdown();
+        }
+    };
+
+    let activeStudentAnswers = {};
+    function startStudentTest() {
+        let name = document.getElementById('studentNameInput').value;
+        let phone = document.getElementById('studentPhoneInput').value;
+        if(!name || !phone) {
+            alert("പേരും ഫോൺ നമ്പറും നൽകുക!");
+            return;
+        }
+
+        document.getElementById('studentLoginBox').style.display = 'none';
+        document.getElementById('studentTestBox').style.display = 'block';
+
+        let qArea = document.getElementById('studentQuestionsArea');
+        qArea.innerHTML = "";
+
+        window.currentActiveEvent.questions.forEach((q, qIdx) => {
+            let html = `<div style="background:#fafaf9; padding:10px; margin-bottom:10px; border-radius:6px; border:1px solid #e7e5e4;">
+                <p><b>ചോദ്യം ${qIdx+1}:</b> ${q.q} (${q.marks} മാർക്ക്)</p>`;
+            
+            if(q.options && q.options.length > 0) {
+                q.options.forEach(opt => {
+                    html += `<label><input type="radio" name="sq_${qIdx}" value="${opt}"> ${opt}</label><br>`;
+                });
+            } else {
+                html += `<input type="text" id="ans_input_${qIdx}" placeholder="ഉത്തരം ടൈപ്പ് ചെയ്യുക...">`;
+            }
+            html += `</div>`;
+            qArea.innerHTML += html;
+        });
+    }
+
+    function submitStudentAnswers() {
+        alert("നിങ്ങളുടെ ഉത്തരങ്ങൾ വിജയകരമായി സബ്മിറ്റ് ചെയ്തു! 🟢 അപ്‌ലോഡഡ്.");
+        document.getElementById('studentTestBox').style.display = 'none';
+        document.getElementById('studentResultBox').style.display = 'block';
+        document.getElementById('resultStatusText').innerText = "🟢 അപ്‌ലോഡ് ചെയ്തു - വാല്യുവേഷൻ ഉടൻ ലഭ്യമാകും";
+    }
+
+    function downloadCertificate() {
+        alert("🏆 സർട്ടിഫിക്കറ്റ് ഡൗൺലോഡ് ചെയ്യുന്നു...");
+    }
+
+    function viewAnswerKey() {
+        alert("🔑 ആൻസർ കീ പ്രസിദ്ധീകരിച്ചിരിക്കുന്നു!");
     }
 </script>
 
