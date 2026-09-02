@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#14532d"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noor Quiz"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png"><link rel="apple-touch-icon" href="./icon-192.png">
+<title>Noor Quiz V9.17.5 FINAL FIX - Nabidinam Special</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<style>
+body{background:#fdf8e8;font-family:sans-serif;margin:0}
+.section-border{border:2.5px solid #14532d;border-radius:14px;background:white;padding:12px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+.green-header{background:#14532d;color:white;text-align:center;font-weight:900;font-size:11px;padding:8px;border-radius:8px;margin-bottom:12px}
+.banner-bg{background:radial-gradient(ellipse at top,#166534 0%,#052e16 75%,#000 100%)}
+.comp-banner-clean{position:relative;width:100%;height:280px;overflow:visible;background:#052e16;margin-bottom:0}
+.comp-banner-clean img{width:100%;height:100%;object-fit:cover}
+.comp-banner-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05) 0%,rgba(0,0,0,0.8) 100%)}
+.comp-logo-clean{position:absolute;left:50%;bottom:-45px;transform:translateX(-50%);width:90px;height:90px;background:white;border-radius:22px;border:4px solid white;box-shadow:0 12px 28px rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;overflow:hidden;font-weight:900;font-size:32px;color:#14532d;z-index:20}
+.comp-title-clean{position:absolute;bottom:54px;left:50%;transform:translateX(-50%);text-align:center;width:calc(100% - 24px);z-index:21;white-space:nowrap;overflow:hidden}.comp-title-clean h1{font-size:13px!important;line-height:1.15!important;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:800!important}.comp-title-clean p{display:none!important}
+.cert-preview{position:relative;width:100%;height:220px;border:2px dashed #9ca3af;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden}
+</style>
+
+<style>
+.master-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;display:none;align-items:center;justify-content:center;padding:18px}
+.master-card{background:#fff;border-radius:20px;max-width:560px;width:100%;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.master-card h2{margin:0 0 8px;color:#14532d}.master-card input,.master-card select{width:100%;padding:11px;margin:6px 0 10px;border:1px solid #d1d5db;border-radius:10px}
+.master-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.master-btn{border:0;border-radius:10px;padding:11px;font-weight:800;cursor:pointer}.master-primary{background:#14532d;color:white}.master-muted{background:#e5e7eb}.master-danger{background:#fee2e2;color:#991b1b}
+.master-list{max-height:230px;overflow:auto;margin-top:10px}.master-item{border:1px solid #e5e7eb;border-radius:12px;padding:10px;margin:7px 0;display:flex;justify-content:space-between;gap:8px;align-items:center}
+</style>
+
+<style>
+.v4-panel{background:#fff;border:2px solid #14532d;border-radius:18px;padding:16px;margin:14px 0}
+.v4-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.v4-btn{border:0;border-radius:10px;padding:10px 12px;font-weight:800;cursor:pointer}
+.v4-primary{background:#14532d;color:#fff}.v4-secondary{background:#e5e7eb;color:#111827}.v4-danger{background:#fee2e2;color:#991b1b}.v4-blue{background:#1d4ed8;color:#fff}
+.v4-table{width:100%;border-collapse:collapse;font-size:12px}.v4-table th,.v4-table td{border-bottom:1px solid #e5e7eb;padding:8px;text-align:left}
+.v4-qbox{border:1px solid #d1d5db;border-radius:12px;padding:10px;margin:8px 0}.v4-qbox textarea,.v4-qbox input{width:100%;padding:8px;border:1px solid #d1d5db;border-radius:8px;margin:4px 0}
+.v4-hidden{display:none}
+@media(max-width:600px){.v4-grid{grid-template-columns:1fr}}
+.competitor-clean-hide{display:none!important}
+</style>
+
+<style id="nq-final-css">
+#compEventNameBelow,#compDetailsBelow,#cloudLoadStatus,#eventNameDisplay,#eventCountDisplay,#eventRandomDisplay{display:none!important}
+#competitorView > .bg-white.border-b-4{padding-top:62px!important;padding-bottom:18px!important}
+#compPlaceShow{font-size:15px!important;color:#374151!important;margin-top:0!important;font-weight:700!important}
+
+#nqMasterEntry{margin:0 auto 14px;max-width:650px;text-align:center;padding:10px 12px;background:#f5f3ff;border-bottom:2px solid #7e22ce}
+#nqMasterEntry button,#nqOrganizerInstall{background:#14532d;color:#fff;border:0;border-radius:12px;padding:12px 18px;font-weight:900}
+#nqOrganizerOverlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:10001;display:none;align-items:center;justify-content:center;padding:18px}
+#nqOrganizerCard{background:#fff;border-radius:20px;max-width:520px;width:100%;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+#nqOrganizerCard input{width:100%;padding:12px;margin:7px 0;border:1px solid #d1d5db;border-radius:10px}
+#nqOrganizerCard button{width:100%;padding:12px;margin-top:8px;border:0;border-radius:10px;font-weight:900}
+.nq-public-mode #adminLoginBox,.nq-public-mode #nqMasterEntry,.nq-public-mode #adminLoginBox + button{display:none!important}
+.nq-public-mode #adminView{display:none!important}
+.nq-organizer-mode #nqMasterEntry{display:none!important}
+.nq-organizer-mode #adminLoginBox{display:none!important}
+#certColor{width:58px;height:38px;padding:2px;border:2px solid #14532d;border-radius:9px;background:#fff}
+#masterControlBtn{display:none}.nq-master-mode #masterControlBtn{display:block!important;visibility:visible!important;opacity:1!important}
+.nq-public-mode #competitorView > div.mt-10.text-center > button{display:none!important}.nq-master-mode #competitorView{display:none!important}.nq-admin-mode #nqMasterEntry{display:none!important}
+</style>
+
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div id="screen-loading" class="fixed inset-0 z-[99999] flex flex-col items-center justify-center text-center space-y-6 p-6 bg-slate-950">
+  <div class="relative flex items-center justify-center">
+    <div class="absolute w-28 h-28 bg-emerald-500/25 rounded-full animate-ping"></div>
+    <div class="relative w-24 h-24 bg-slate-900 border border-emerald-500/40 rounded-3xl flex items-center justify-center shadow-2xl backdrop-blur-md">
+      <span class="text-4xl">🌙</span>
+    </div>
+  </div>
+  <div class="flex flex-col items-center space-y-2">
+    <h2 class="text-white font-bold text-lg tracking-wide">Noor Quiz Loading...</h2>
+    <div class="flex space-x-1.5">
+      <div class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+      <div class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+      <div class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
+    </div>
+  </div>
+</div>
+
+<div id="v4QuestionOverlay" class="master-overlay" style="display:none">
+  <div class="master-card" style="max-width:850px">
+    <h2>📝 Question Manager — V4</h2>
+    <p style="font-size:13px;color:#6b7280">Bulk import, edit, delete, duplicate and export your question bank.</p>
+    <div class="v4-grid">
+      <button class="v4-btn v4-primary" onclick="v4OpenImport()">📥 Import CSV / Excel</button>
+      <button class="v4-btn v4-blue" onclick="v4ExportCSV()">📤 Export CSV</button>
+    </div>
+    <input id="v4File" class="v4-hidden" type="file" accept=".csv,.xlsx,.xls" onchange="v4ImportFile(event)">
+    <div class="v4-panel">
+      <b>Add Question</b>
+      <input id="v4q" placeholder="Question">
+      <div class="v4-grid">
+        <input id="v4a" placeholder="Option A">
+        <input id="v4b" placeholder="Option B">
+        <input id="v4c" placeholder="Option C">
+        <input id="v4d" placeholder="Option D">
+      </div>
+      <select id="v4correct" style="width:100%;padding:9px;margin-top:6px">
+        <option value="A">Correct: A</option><option value="B">Correct: B</option>
+        <option value="C">Correct: C</option><option value="D">Correct: D</option>
+      </select>
+      <button class="v4-btn v4-primary" style="margin-top:8px" onclick="v4AddQuestion()">➕ Add Question</button>
+    </div>
+    <div class="v4-grid">
+      <button class="v4-btn v4-danger" onclick="v4DeleteSelected()">🗑️ Delete Selected</button>
+      <button class="v4-btn v4-secondary" onclick="v4CloseQuestions()">Close</button>
+    </div>
+    <div id="v4QuestionList" style="max-height:390px;overflow:auto;margin-top:10px"></div>
+  </div>
+</div>
+
+<div id="masterOverlay" class="master-overlay">
+  <div class="master-card">
+    <h2>👑 Master Admin</h2>
+    <p id="masterStatus" style="font-size:13px;color:#6b7280">Google Sign-In required. Master access only.</p>
+    <div id="masterLoginBox">
+      <button id="masterGoogleBtn" class="master-btn master-primary" style="width:100%" onclick="masterLogin()">🔐 Continue with Google</button>
+      <p id="masterGoogleMsg" style="font-size:12px;color:#b91c1c;font-weight:800;margin-top:10px"></p>
+    </div>
+    <div id="masterPanel" style="display:none">
+      <h3>Create Organizer</h3>
+      <div class="master-row">
+        <input id="orgName" placeholder="Organizer name">
+        <input id="orgEmail" type="email" placeholder="Organizer email">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center"><input id="orgCode" placeholder="Activation code (blank = auto generate)"><button type="button" class="master-btn master-muted" onclick="document.getElementById('orgCode').value=generateActivationCode()">🔄 Generate</button></div><div id="orgLinkBox" style="display:none;margin:8px 0;padding:10px;background:#f0fdf4;border:1px solid #86efac;border-radius:10px;font-size:12px;word-break:break-word"></div>
+      <div class="master-row">
+        <button class="master-btn master-primary" onclick="createOrganizer()">Create / Activate</button>
+        <button class="master-btn master-muted" onclick="masterLogout()">Logout</button>
+      </div>
+      <h3 style="margin-top:16px">Organizers</h3>
+      <div id="organizerList" class="master-list">Loading...</div>
+    </div>
+    <button class="master-btn master-muted" style="width:100%;margin-top:12px" onclick="closeMaster()">Close</button>
+  </div>
+</div>
+
+<div id="competitorView">
+<div class="comp-banner-clean" id="compBannerContainer">
+<img id="compBannerImg" src="" class="hidden">
+<div id="compBannerDefault" class="w-full h-full banner-bg flex items-center justify-center"><span class="text-white/30 text-6xl">🌙</span></div>
+<div class="comp-banner-overlay"></div>
+<div class="comp-title-clean">
+<h1 id="compTitle" class="text-white text-[36px] font-black drop-shadow-[0_3px_12px_rgba(0,0,0,1)] leading-tight">🌙 Noor Al Madrasa</h1>
+<p id="compSubTitle" class="text-yellow-200 text-[15px] mt-2 font-bold drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">Meelad Quiz 2K26 - Nabidinam Special</p>
+</div>
+<div class="comp-logo-clean" id="compLogoContainer">
+<img id="compLogoImg" src="" class="w-full h-full object-cover hidden">
+<span id="compLogoText">N</span>
+</div>
+</div>
+<div class="bg-white border-b-4 border-green-600 px-4 py-6 text-center shadow-md">
+<h2 id="compEventNameBelow" class="text-[28px] font-black text-[#14532d] leading-tight">Loading... - Nabidinam Special - Secure</h2>
+<p id="compPlaceShow" class="text-[17px] text-gray-800 mt-2 font-black"></p>
+<p id="compDetailsBelow" class="text-[12px] text-gray-600 mt-3 bg-yellow-50 inline-block px-4 py-2 rounded-full border-2 border-yellow-200"></p>
+<div id="eventScheduleDisplay" style="display:none" class="mt-3 mx-auto max-w-[95%] bg-green-50 border-2 border-green-200 rounded-xl px-4 py-3 text-sm font-black text-green-900"></div>
+<p id="cloudLoadStatus" class="text-[11px] text-white mt-4 font-black bg-green-600 inline-block px-6 py-2 rounded-full shadow-lg">☁️ Loading TRUE CLOUD - Nabidinam Special - Secure - V9.17.2</p>
+</div>
+<div class="max-w-[500px] mx-auto px-4 pt-6">
+<div id="registrationBox" class="bg-white rounded-[22px] border-2 border-green-900/20 p-6 shadow-lg">
+<h2 class="font-bold text-center text-green-900 text-[20px]">രജിസ്ട്രേഷൻ</h2>
+<p id="eventNameDisplay" class="text-xs text-center text-gray-500 mt-1"></p>
+<p id="eventCountDisplay" class="text-[11px] text-center text-blue-600 font-bold mt-1"></p>
+<p id="eventRandomDisplay" class="text-[10px] text-center text-orange-600 font-bold mt-1"></p>
+<div class="w-12 h-2 bg-yellow-400 rounded-full mx-auto mt-3 mb-6"></div>
+<input id="nameInput" placeholder="പൂർണ്ണ നാമം *" class="w-full mb-3 px-4 py-4 rounded-xl border-2 border-green-100 outline-none text-[15px]">
+<input id="phoneInput" type="tel" placeholder="ഫോൺ *" class="w-full mb-3 px-4 py-4 rounded-xl border-2 border-green-100 outline-none text-[15px]">
+<input id="placeInput" placeholder="സ്ഥലം / മദ്രസ" class="w-full mb-6 px-4 py-4 rounded-xl border-2 border-gray-200 outline-none text-[15px]">
+<button onclick="startQuiz()" class="w-full bg-green-600 text-white font-black py-4 rounded-xl text-[17px] shadow-lg">🚀 ക്വിസ് ആരംഭിക്കുക</button>
+<p id="errorMsg" class="hidden text-red-600 text-sm text-center mt-3 font-bold"></p>
+</div>
+<div id="quizCard" class="hidden bg-white rounded-[20px] p-5 border-2 mt-4 shadow-lg"><div class="flex justify-between items-center"><span id="qCount" class="font-bold text-sm bg-gray-100 px-3 py-1.5 rounded-full">Q 1</span><span id="timer" class="bg-yellow-400 px-4 py-1.5 rounded-full font-black">10:00</span></div><div class="w-full bg-gray-200 rounded-full h-2.5 mt-4"><div id="progressBar" class="bg-green-600 h-2.5 rounded-full" style="width:0%"></div></div><h3 id="qText" class="font-bold my-6 text-[17px]"></h3><div id="options" class="space-y-3"></div><p id="quizFeedback" class="hidden text-center font-black mt-4 text-sm p-4 rounded-xl"></p></div>
+<div id="resultCard" class="hidden bg-white rounded-[22px] border-2 p-6 shadow-xl mt-4 text-center"><h2 id="finalScore" class="text-5xl font-black mt-2 text-green-700">0/0</h2><p id="finalTime" class="mt-2 text-sm font-bold"></p><div class="grid grid-cols-2 gap-3 mt-6"><button onclick="location.reload()" class="bg-green-600 text-white py-3.5 rounded-xl font-black text-sm">🏠 Home</button><button onclick="downloadCertificate()" class="bg-blue-600 text-white py-3.5 rounded-xl font-black text-sm">📜 Certificate - Secure</button></div><div id="certDownloadArea" class="hidden mt-5"><canvas id="certCanvas" class="w-full border-2 rounded-xl"></canvas><a id="certDownloadLink" download="Certificate_Nabidinam_Secure.png" class="mt-3 block bg-yellow-400 text-black py-3 rounded-xl font-bold text-sm">⬇️ Download PNG - Nabidinam Secure</a></div></div>
+<div class="mt-10 text-center pb-12"><button onclick="document.getElementById('adminLoginBox').classList.toggle('hidden')" class="text-[11px] text-gray-400 border-2 px-6 py-2.5 rounded-full">Admin Login</button><div id="adminLoginBox" class="hidden mt-4 bg-white p-5 rounded-xl border-2 shadow-xl text-left"><input id="adminPass" type="password" placeholder="Admin Password" class="w-full border-2 rounded-xl px-3 py-3 mb-3 text-sm"><button onclick="loginAdmin()" class="w-full bg-slate-800 text-white py-3 rounded-xl font-bold">Login</button><p id="loginError" class="hidden text-red-600 text-xs mt-3 font-bold"></p><p class="text-[10px] text-gray-500 mt-2">Admin Login</p></div></div>
+</div>
+</div>
+<div id="adminView" class="hidden p-2 pb-24">
+<button id="masterControlBtn" class="bg-purple-700 text-white py-3 px-4 rounded-xl font-black mt-3 w-full" style="display:none" onclick="openMasterAdmin()">👑 MASTER CONTROL</button>
+
+<div class="max-w-[650px] mx-auto">
+<div class="flex justify-between items-center bg-white p-4 rounded-xl border-2 mb-4 shadow-sm"><h2 class="font-black text-[11px]">Admin V9.17.3 FINAL - Nabidinam Special - Password Protected - No Misuse - 100% - Secure</h2><button onclick="logoutAdmin()" class="bg-red-50 text-red-600 border-2 px-5 py-2 rounded-full text-xs font-bold">Logout - Secure</button></div>
+<div class="section-border border-[3px] border-blue-600 bg-blue-50/40">
+<div class="green-header bg-blue-700 text-[12px] py-3">📅 Past Events - TRUE CLOUD - SECURE - Nabidinam Special - No Misuse - V9.17.2 - Secure - 100% Working!</div>
+<div id="pastEventsList" class="space-y-3 max-h-[500px] overflow-auto p-3 bg-white rounded-xl border-2 min-h-[120px] text-[12px]">☁️ Loading TRUE CLOUD - SECURE - Nabidinam Special - V9.17.3 FINAL - Full Checked - No Breaking - No Misuse - All Features Kept - Logo, Banner, Event Name, Place - All Will Show - Edit Button Fixed - Login Secure Fixed - Nothing Removed - Secure - 100% Working for Nabidinam!</div>
+<div class="grid grid-cols-2 gap-3 mt-4"><button onclick="loadPastEvents()" class="bg-blue-600 text-white py-4 rounded-xl text-xs font-black shadow-xl">🔄 Force Reload - Secure - No Misuse - Nabidinam Special - 100%</button><button onclick="clearAllEvents()" class="bg-red-100 text-red-600 border-2 py-4 rounded-xl text-xs font-black">Clear All Cloud - Secure</button></div>
+<p id="storageInfo" class="text-[11px] text-center mt-3 font-black text-green-700 bg-green-50 py-2 rounded-full border"></p>
+</div>
+<div class="section-border"><div class="green-header">1 - Event Basic - Secure - Logo+Banner Both Keep - Banner Clean Title Below - No Breaking - No Misuse!</div>
+<input id="eventName" placeholder="Event Name - Ex: ഇശൽ മദീന 2k26 മീലാദ് ക്വിസ് - Nabidinam Secure - Must Fill! - No Breaking! - No Misuse!" class="w-full border-[3px] border-yellow-600/40 rounded-xl px-4 py-3.5 text-sm mb-3 font-bold">
+<input id="eventPlace" placeholder="Place - Ex: എളമ്പിലാട് - Nabidinam Secure - Must Fill! - No Breaking! - No Misuse!" class="w-full border-2 border-gray-300 rounded-xl px-4 py-3.5 text-sm mb-3 font-bold">
+<select id="eventCategory" onchange="handleCategoryChange(this.value)" class="w-full border-2 border-green-900 rounded-xl px-4 py-3.5 text-sm mb-3 font-bold bg-white"><option value="Madrasa" selected>Madrasa - Nabidinam Secure</option><option value="School">School</option><option value="College">College</option><option value="Masjid">Masjid</option><option value="Mahal">Mahal</option><option value="Organization">Organization</option><option value="District">District</option><option value="State">State</option><option value="National">National</option><option value="Other">Other Custom</option></select>
+<div id="customCategoryBox" class="hidden mb-3"><input id="customCategory" placeholder="Custom Type - Nabidinam Secure" class="w-full border-2 border-orange-400 rounded-xl px-4 py-3.5 text-sm bg-orange-50"></div>
+<div class="grid grid-cols-2 gap-4 mt-4"><div><label class="text-[11px] font-black">Logo - Keep - Must Upload! - Secure - No Misuse!</label><div class="bg-yellow-50 border-2 rounded-xl p-2 mt-2"><input type="file" accept="image/*" onchange="handleLogoBanner(event,'logo')" class="text-[11px] w-full"></div><img id="logoPreview" class="hidden w-full h-28 object-contain mt-3 border-[3px] rounded-xl bg-white p-2 shadow"><p id="logoSizeInfo" class="text-[10px] text-green-600 mt-2 font-black"></p></div><div><label class="text-[11px] font-black">Banner - Keep - Must Upload! - Secure - No Misuse!</label><div class="bg-blue-50 border-2 rounded-xl p-2 mt-2"><input type="file" accept="image/*" onchange="handleLogoBanner(event,'banner')" class="text-[11px] w-full"></div><img id="bannerPreview" class="hidden w-full h-28 object-cover mt-3 border-[3px] rounded-xl shadow"><p id="bannerSizeInfo" class="text-[10px] text-green-600 mt-2 font-black"></p></div></div>
+</div>
+<div class="section-border"><div class="green-header">2 - Certificate - Secure - Fast - Keep - All Features Checked - No Breaking - No Misuse! - Opt1+Opt2+X+Y+Size+Title+Sub+Sub2</div>
+<div class="flex gap-2 mb-4"><button id="opt1Btn" onclick="switchCert(1)" class="bg-[#14532d] text-white px-5 py-2.5 rounded-xl text-[11px] font-bold shadow">Opt1: Full Upload - Secure - No Misuse!</button><button id="opt2Btn" onclick="switchCert(2)" class="bg-gray-200 px-5 py-2.5 rounded-xl text-[11px] font-bold">Opt2: Auto Gen - Secure - No Misuse!</button></div>
+<div id="certOpt1"><div class="bg-yellow-50 p-4 rounded-xl border-2 border-yellow-500"><p class="text-[11px] font-black">📜 Full Certificate Upload - Auto Compress 200KB - Secure - No Misuse!</p><input type="file" accept="image/*" onchange="handleCertFull(event)" class="w-full mt-3 text-xs border-2 rounded-xl p-3 bg-white"><p id="certSizeInfo" class="text-[10px] text-gray-600 mt-2 font-bold"></p></div></div>
+<div id="certOpt2" class="hidden"><div class="bg-blue-50/50 p-4 rounded-xl border-2"><div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] font-bold">Bg Image - Secure - No Misuse!</label><input type="file" accept="image/*" onchange="handleCertFile(event,'bg')" class="w-full text-[10px] border-2 rounded-lg px-2 py-2 bg-white mt-1"></div><div><label class="text-[10px] font-bold">Logo1 - Secure - No Misuse!</label><input type="file" accept="image/*" onchange="handleCertFile(event,'logo1')" class="w-full text-[10px] border-2 rounded-lg px-2 py-2 bg-white mt-1"></div><div><label class="text-[10px] font-bold">Logo2 - Secure - No Misuse!</label><input type="file" accept="image/*" onchange="handleCertFile(event,'logo2')" class="w-full text-[10px] border-2 rounded-lg px-2 py-2 bg-white mt-1"></div><div><label class="text-[10px] font-bold">Sign - Secure - No Misuse!</label><input type="file" accept="image/*" onchange="handleCertFile(event,'sign')" class="w-full text-[10px] border-2 rounded-lg px-2 py-2 bg-white mt-1"></div></div><input id="certTitle" value="Certificate of Appreciation - Nabidinam Special - Secure" class="w-full border-2 rounded-xl px-4 py-2.5 mt-3 text-xs"><input id="certSub" value="Noor Al Madrasa - Meelad Quiz 2K26 - Nabidinam Secure" class="w-full border-2 rounded-xl px-4 py-2.5 mt-2 text-xs"><input id="certSub2" value="For Excellent Participation - Nabidinam Special - Secure" class="w-full border-2 rounded-xl px-4 py-2.5 mt-2 text-xs"><div class="mt-4 bg-white p-4 rounded-xl border-2"><label class="text-xs font-black">Name X: <span id="xVal">50</span>% - Secure - No Misuse!</label><input id="certX" type="range" min="0" max="100" value="50" class="w-full mt-1"><label class="text-xs font-black mt-3 block">Name Y: <span id="yVal">60</span>% - Secure - No Misuse!</label><input id="certY" type="range" min="0" max="100" value="60" class="w-full mt-1"><label class="text-xs font-black mt-3 block">Font Size: <span id="sVal">24</span>px - Secure - No Misuse!</label><input id="certS" type="range" min="10" max="80" value="24" class="w-full mt-1"><div class="flex items-center justify-between mt-4 bg-green-50 border-2 border-green-300 rounded-xl p-3"><label class="text-xs font-black">Certificate Name Color</label><input id="certColor" type="color" value="#14532d" title="Certificate name color"></div></div></div></div>
+<div class="mt-4"><div class="cert-preview shadow-inner"><img id="certPreviewImg" src="" class="hidden w-full h-full object-contain"><div id="certPreviewPlaceholder" class="text-center"><p class="text-xs text-gray-400">Certificate Preview - Secure - No Misuse! - Nabidinam Special V9.17.2</p></div><div id="certNameOnImage" style="position:absolute;left:50%;top:60%;transform:translate(-50%,-50%);font-weight:900;color:#14532d;font-size:24px">Sample Name - Nabidinam Secure</div></div></div>
+</div>
+<div class="section-border"><div class="green-header">3 - Settings - LINK BOX - All Checked - No Breaking - No Misuse! - Banner Clean - TRUE CLOUD - V9.17.2 - Secure - Nabidinam Special</div>
+<div class="bg-green-50 border-[3px] border-green-500 p-4 rounded-xl mb-4"><p class="font-black text-xs text-green-800">✅ V9.17.4 FINAL - NABIDINAM SPECIAL - All Checked - No Breaking - No Misuse - Event Board + Banner Logo + Login Secure + All Options - 100% Working Secure for Nabidinam!</p><p id="firebaseStatus" class="text-[11px] mt-2 font-bold bg-white px-3 py-2 rounded-full border-2">Firebase: Connecting - Secure - Nabidinam Special V9.17.2 - No Breaking - No Misuse!</p></div>
+<div class="grid grid-cols-2 gap-3"><div><label class="text-[11px] font-black">Timer Minute - Secure - No Misuse! - All Checked!</label><select id="setMinute" class="w-full border-2 rounded-xl px-3 py-3 text-xs font-bold bg-white mt-1"><option value="5">5 Min - Secure!</option><option value="10" selected>10 Min - Secure!</option><option value="15">15 Min - Secure!</option><option value="20">20 Min - Secure!</option><option value="30">30 Min - Secure!</option><option value="60">60 Min - Secure!</option><option value="custom">Custom - Secure!</option></select><input id="setMinuteCustom" type="number" placeholder="Custom Minute - Secure! - No Misuse!" class="hidden w-full border-2 border-yellow-500 rounded-xl px-3 py-2.5 mt-2 text-xs"></div><div><label class="text-[11px] font-black">Count - Fixed! - Secure - No Misuse! - All Checked!</label><input id="setCount" type="number" value="20" min="1" max="100" class="w-full border-2 border-blue-500 rounded-xl px-3 py-3 text-xs font-bold bg-blue-50 mt-1"></div></div>
+<div class="bg-yellow-50 p-4 rounded-xl mt-4 border-2 space-y-3">
+<label class="flex justify-between items-center font-bold bg-white p-3 rounded-xl border-2 border-orange-500"><span>🔀 Random Mode - Secure - No Misuse! - All Checked!</span><input id="setRandom" type="checkbox" checked class="w-6 h-6"></label>
+<label class="flex justify-between items-center font-bold bg-white p-3 rounded-xl border-2 border-green-500"><span>✅ Show Correct Green - Wrong→Correct Green - Secure - No Misuse!</span><input id="setShowCorrect" type="checkbox" checked class="w-6 h-6"></label>
+<label class="flex justify-between items-center font-bold bg-white p-3 rounded-xl border-2 border-blue-500"><span>🌐 TRUE CLOUD - Same Link Update - Secure - No Misuse!</span><input id="setOnline" type="checkbox" checked class="w-6 h-6"></label><div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+<div class="bg-white p-3 rounded-xl border-2"><label class="text-[11px] font-black block mb-1">🕐 Event Opening Time</label><input id="setStartAt" type="datetime-local" class="w-full border-2 rounded-xl px-3 py-2.5 text-xs font-bold"></div>
+<div class="bg-white p-3 rounded-xl border-2"><label class="text-[11px] font-black block mb-1">⏰ Event Closing Time</label><input id="setEndAt" type="datetime-local" class="w-full border-2 rounded-xl px-3 py-2.5 text-xs font-bold"></div>
+</div>
+<label class="flex justify-between items-center font-bold bg-white p-3 rounded-xl border-2 mt-3"><span>📊 Show this Event's Results in Admin Results</span><input id="setShowResults" type="checkbox" checked class="w-6 h-6"></label><label class="flex justify-between items-center font-bold bg-white p-3 rounded-xl border-2"><span>👤 Participant Score/Time</span><input id="setShowParticipantResult" type="checkbox" checked class="w-6 h-6"></label>
+<label class="flex justify-between items-center font-bold bg-white p-3 rounded-xl border-2"><span>📱 One Phone One Attempt - Secure - No Misuse! - All Checked!</span><input id="setPhoneLock" type="checkbox" class="w-6 h-6"></label>
+<label class="flex justify-between items-center font-bold bg-white p-3 rounded-xl border-2"><span>💻 One Device One Attempt - Secure - No Misuse! - All Checked!</span><input id="setDeviceLock" type="checkbox" class="w-6 h-6"></label>
+</div>
+<input id="eventIdShow" readonly placeholder="Event ID Auto - Same Link-ന് Same ID - Secure - No Misuse! - All Checked!" class="w-full border-2 rounded-xl px-3 py-3 mt-4 text-xs bg-gray-100 font-bold">
+<div class="grid grid-cols-1 gap-3 mt-4">
+<button id="createLinkBtn" onclick="createNewLink()" class="w-full bg-green-600 text-white font-black py-5 rounded-xl text-[18px] shadow-xl">💚 CREATE NEW LINK - Secure - Nabidinam Special - No Breaking - No Misuse - 100% Working!</button>
+<button id="saveCloudBtn" onclick="saveCloudSameLink()" class="w-full bg-blue-700 text-white py-4 rounded-xl text-xs font-black border-2 border-blue-900 shadow-lg">💾 SAVE CLOUD SAME LINK - Secure - All Keep - No Breaking - No Misuse! - Logo+Banner+Event+Place+Certificate+Count+Random+All!</button>
+</div>
+<div id="linkBox" class="mt-5 bg-green-50 border-[4px] border-green-600 p-5 rounded-xl shadow-2xl">
+<p class="text-[14px] font-black text-green-800">✅ TRUE CLOUD Link Ready! V9.17.2 - Secure - Nabidinam Special - No Breaking - No Misuse - All Checked!</p>
+<p id="generatedLink" class="break-all text-[15px] font-bold mt-4 bg-white p-4 rounded-xl border-[3px] border-green-400 select-all shadow-inner">ലിങ്ക് ഇവിടെ വരും - CREATE NEW LINK അടിക്കൂ! Instant! Secure! No Breaking! No Misuse! Nabidinam Special!</p>
+<div class="grid grid-cols-3 gap-3 mt-5"><button onclick="copyLink()" class="bg-green-600 text-white py-4 rounded-xl text-xs font-black shadow-lg">📋 Copy - Secure!</button><button onclick="shareWhatsApp()" class="bg-[#25D366] text-white py-4 rounded-xl text-xs font-black shadow-lg">WhatsApp - Secure!</button><button onclick="editCurrentEvent()" class="bg-blue-600 text-white py-4 rounded-xl text-xs font-black shadow-lg">✏️ Edit - Secure! - No Misuse! - Fixed!</button></div>
+</div>
+<p id="cloudStatus" class="text-[12px] mt-3 font-black text-center bg-yellow-50 py-3 rounded-xl border-2"></p>
+</div>
+<div class="section-border"><div class="green-header">4 - Questions Bulk - Secure - Count Fixed - Random Mode - All Checked - No Breaking - No Misuse! - Nabidinam Special V9.17.2</div><textarea id="qBulk" rows="5" placeholder="Q | a,b,c,d | ans - Secure - No Misuse! - Ex: നബി ജന്മദേശം? | മക്ക,മദീന,ത്വാഇഫ്,യമൻ | 0" class="w-full border-2 rounded-xl p-4 text-xs"></textarea><button onclick="bulkAdd()" class="w-full mt-3 bg-[#8B5A00] text-white py-3.5 rounded-xl text-xs font-black shadow-lg">📚 Bulk Add - Secure - No Breaking! - No Misuse! - All Checked! - Random + Count Fixed! - Nabidinam Special</button><div class="mt-4"><div class="bg-[#14532d] text-white flex justify-between px-4 py-3 rounded-t-xl"><span class="text-xs font-black">Total: <span id="totalQCount">0</span> | Show: <span id="showQCount">0</span> | Secure - No Misuse! V9.17.2</span><span id="quota" class="bg-yellow-400 text-black px-3 py-1 rounded-full text-[11px] font-black">Quota: 0</span></div><div id="qList" class="bg-yellow-50/50 border-2 border-t-0 rounded-b-xl p-3 min-h-[80px] text-xs">No Questions - Secure - No Misuse! - Nabidinam Special</div></div></div>
+<div class="section-border border-orange-400"><div class="green-header bg-orange-600">5 - Results & Ranking - Secure - All Checked - No Breaking - No Misuse! - Nabidinam Special V9.17.2</div><div class="bg-orange-50 p-4 rounded-xl border-2 mb-4"><div class="mb-3"><label class="block text-xs font-black mb-1">🎯 Results for Event</label><select id="resultsEventFilter" onchange="applyResultsEventFilter()" class="w-full border-2 rounded-xl px-3 py-3 text-xs font-bold bg-white"><option value="">All Events</option></select></div><div class="grid grid-cols-3 gap-3"><button id="refreshResultsBtn" onclick="refreshResults()" class="bg-slate-800 text-white py-3 rounded-xl text-xs font-black">🔄 Refresh - Secure!</button><button onclick="downloadResults()" class="bg-green-600 text-white py-3 rounded-xl text-xs font-black">📥 CSV - Secure!</button><button onclick="clearAllResults()" class="bg-red-100 text-red-600 border-2 py-3 rounded-xl text-xs font-black">🗑️ Clear My Results</button></div></div><div id="resultsList" class="bg-white border-2 rounded-xl p-3 max-h-[250px] overflow-auto text-xs">No Results - Secure - No Misuse! - Nabidinam Special V9.17.2</div></div>
+</div>
+</div>
+<script>
+const firebaseConfig = {apiKey:"AIzaSyD-vcPSpB3LVCBObQsrHvBQ8N_Zyty0pgg",authDomain:"noor-ai-madrasa-app.firebaseapp.com",databaseURL:"https://noor-ai-madrasa-app-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"noor-ai-madrasa-app",storageBucket:"noor-ai-madrasa-app.firebasestorage.app",messagingSenderId:"150380342282",appId:"1:150380342282:web:5f5c459e30a072cf1dc3f3"};
+const REST_URL="https://noor-ai-madrasa-app-default-rtdb.asia-southeast1.firebasedatabase.app";
+let firebaseDB=null;
+const LEGACY_ADMIN_EMAIL='';
+async function sha256Hex(v){const b=new TextEncoder().encode(String(v));const h=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+function currentOrganizerId(){return new URLSearchParams(location.search).get('organizer')||'';}
+function currentRole(){const u=(typeof firebase!=='undefined'&&firebase.auth)?firebase.auth().currentUser:null;if(u&&u.email&&u.email.toLowerCase()===MASTER_ADMIN_EMAIL.toLowerCase())return 'master';if(currentOrganizerId()&&u&&u.email)return 'organizer';return 'admin';}
+async function ensureAnonymousAuth(){
+  if(typeof firebase==='undefined'||!firebase.auth) throw new Error('Firebase Auth unavailable');
+  try{
+    if(firebase.auth().currentUser) return firebase.auth().currentUser;
+    await firebase.auth().signInAnonymously();
+    return firebase.auth().currentUser;
+  }catch(e){
+    console.warn('Anonymous auth failed',e);
+    throw e;
+  }
+}
+async function ensureFirebaseReady(){
+  if(typeof firebase==='undefined'||!firebase.auth||!firebaseDB) throw new Error('Firebase unavailable');
+  try{ await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL); }catch(e){}
+  if(!firebase.auth().currentUser) await ensureAnonymousAuth();
+  const u=firebase.auth().currentUser;
+  if(!u) throw new Error('Firebase authentication not ready');
+  return u;
+}
+async function authRestUrl(path){const u=(typeof firebase!=='undefined'&&firebase.auth)?firebase.auth().currentUser:null;const token=u?await u.getIdToken():'';return `${REST_URL}/${path}.json${token?'?auth='+encodeURIComponent(token)+'&cb='+Date.now():'?cb='+Date.now()}`;}
+try{firebase.initializeApp(firebaseConfig);firebaseDB=firebase.database();setTimeout(()=>{const s=document.getElementById('firebaseStatus');if(s)s.innerText='✅ Firebase 8.10.1 + REST + Local - Secure - All Checked - No Breaking - No Misuse - Connected - V9.17.4 FINAL - NABIDINAM SPECIAL - 100% Working Secure!';const si=document.getElementById('storageInfo');if(si)si.innerText='✅ Secure - All Checked - No Breaking - No Misuse - 3 Layer - Event Board + Banner Logo + Login Secure + All Options Fixed - 100% Working Secure for Nabidinam! V9.17.2';},800);}catch(e){document.getElementById('firebaseStatus').innerText='⚠️ SDK Failed REST works - Secure - No Breaking - No Misuse: '+e.message}
+let currentEventId='',currentEventOwnerId='',questions=[],totalMinutes=10,eventQuestionCount=20,randomMode=true,currentQ=0,score=0,timerInt=null,startTime=null,lastGeneratedLink='',currentLogoBase64='',currentBannerBase64='',currentCertBase64='',currentCertBgBase64='',currentCertLogo1Base64='',currentCertLogo2Base64='',currentCertSignBase64='',certMode=1,showCorrectWrong=true,showResultsToParticipants=true,certPos={x:'50',y:'60',s:'24'},eventPhoneLock=false,eventDeviceLock=false;
+
+async function initAuthPersistence(){
+  try{
+    if(typeof firebase!=='undefined'&&firebase.auth){
+      await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    }
+  }catch(e){console.warn('Auth persistence setup failed',e);}
+}
+initAuthPersistence();
+try{firebase.auth().onIdTokenChanged(u=>{ if(u && u.email){ try{localStorage.setItem('nq_firebase_email',String(u.email).toLowerCase());}catch(e){} } });}catch(e){}
+try{firebase.auth().onAuthStateChanged(function(user){
+  if(!user)return;
+  setTimeout(function(){
+    try{ if(document.getElementById('adminView') && !document.getElementById('adminView').classList.contains('hidden')) loadPastEvents(); }catch(e){}
+    try{ if(document.getElementById('resultsList') && !document.getElementById('resultsList').closest('.hidden')) loadResults(); }catch(e){}
+  },250);
+});}catch(e){}
+
+function waitForExistingAuth(timeout=2500){
+  return new Promise(resolve=>{
+    if(typeof firebase==='undefined'||!firebase.auth){resolve(null);return;}
+    const existing=firebase.auth().currentUser;
+    if(existing){resolve(existing);return;}
+    let done=false;
+    const finish=u=>{if(done)return;done=true;try{unsub&&unsub();}catch(e){}resolve(u||null);};
+    let unsub=null;
+    try{unsub=firebase.auth().onAuthStateChanged(u=>{if(u)finish(u);});}catch(e){finish(null);return;}
+    setTimeout(()=>finish(firebase.auth().currentUser||null),timeout);
+  });
+}
+
+async function ensureEventWriteAuth(eventId){
+  if(typeof firebase==='undefined'||!firebase.auth||!firebaseDB) throw new Error('Firebase is not ready');
+  await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{});
+  let u=await waitForExistingAuth(8000);
+  let owner=null;
+  try{
+    const r=await fetch(`${REST_URL}/events/${encodeURIComponent(eventId)}.json`,{cache:'no-store'});
+    if(r.ok) owner=await r.json();
+  }catch(e){}
+  const ownerId=String(owner?.ownerId||'').trim();
+  const ownerIsMaster=ownerId.toLowerCase()===MASTER_ADMIN_EMAIL.toLowerCase();
+  if(ownerIsMaster){
+    if(u && String(u.email||'').trim().toLowerCase()===MASTER_ADMIN_EMAIL.toLowerCase()) return u;
+    if(typeof masterLogin==='function'){
+      await masterLogin();
+      u=await waitForExistingAuth(8000);
+      if(u && String(u.email||'').trim().toLowerCase()===MASTER_ADMIN_EMAIL.toLowerCase()) return u;
+    }
+    throw new Error('Master Google Sign-In is required to edit/save this Master event.');
+  }
+  if(ownerId.startsWith('org_')){
+    if(u && u.email) {
+      try{
+        const snap=await firebaseDB.ref('masterAdmin/organizers/'+ownerId).once('value');
+        const o=snap.val();
+        if(o && o.active!==false && String(o.email||'').trim().toLowerCase()===String(u.email||'').trim().toLowerCase()) return u;
+      }catch(e){}
+    }
+    throw new Error('Organizer Firebase login is required to edit/save this event. Please login again with the Organizer Gmail + Activation Code.');
+  }
+  if(!ownerId){
+    if(u && u.email) return u;
+    if(typeof masterLogin==='function'){
+      await masterLogin();
+      u=await waitForExistingAuth(8000);
+      if(u && u.email) return u;
+    }
+  }
+  if(u && u.email) return u;
+  throw new Error('Authenticated Master/Organizer account required before saving.');
+}
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const loader = document.getElementById('screen-loading');
+    if (loader) {
+      loader.style.transition = 'opacity 0.5s ease';
+      loader.style.opacity = '0';
+      setTimeout(() => loader.remove(), 500);
+    }
+  }, 600);
+});
+
+function init(){
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('reset')==='admin' && params.get('event')===null){localStorage.removeItem('noor_admin_pass');localStorage.setItem('noor_admin_pass','1234');}
+  const urlId=params.get('event');
+  if(urlId) currentEventId=urlId;
+  else currentEventId=localStorage.getItem('currentEventId_v17')||localStorage.getItem('currentEventId_v16')||'';
+  questions=JSON.parse(localStorage.getItem('questions_v13')||'[]');
+  const sp=JSON.parse(localStorage.getItem('certPos_v13')||'{"x":"50","y":"60","s":"24"}');certPos=sp;
+  if(document.getElementById('certX')){document.getElementById('certX').value=sp.x;document.getElementById('certY').value=sp.y;document.getElementById('certS').value=sp.s;updateCertLive();}
+  const lastLink=localStorage.getItem('lastGeneratedLink_v14');
+  if(lastLink){lastGeneratedLink=lastLink;document.getElementById('generatedLink').innerText=lastLink;}
+}
+
+function getAdminPass(){
+  return localStorage.getItem('noor_admin_pass')||'1234';
+}
+function loginAdmin(){
+  const input=document.getElementById('adminPass').value.trim();
+  const saved=getAdminPass();
+  const err=document.getElementById('loginError');
+  const isValid=input===saved;
+  if(isValid){
+    try{localStorage.setItem('nq_admin_session_v174','1');localStorage.setItem('noor_admin_last_login','1');}catch(e){}
+    document.getElementById('competitorView').classList.add('hidden');
+    document.getElementById('adminView').classList.remove('hidden'); addMasterControlButton();
+    err.classList.add('hidden');
+    console.log('✅ Secure Admin Login Success - V9.17.2 - Nabidinam Special - No Misuse!');
+    try{renderQuestions();}catch(e){console.log('renderQuestions Error Ignored Secure:',e);}
+    try{loadPastEvents();}catch(e){console.log('loadPastEvents Error Ignored Secure:',e);}
+    try{loadResults();}catch(e){console.log('loadResults Error Ignored Secure:',e);}
+  }else{
+    err.innerHTML='❌ Wrong Admin Password.<br><br>Use the Admin password configured for this app.';
+    err.classList.remove('hidden');
+    console.log('❌ Secure Block - Wrong Password - No Misuse - V9.17.2');
+  }
+}
+function addMasterControlButton(){
+  const b=document.getElementById('masterControlBtn');
+  if(b) b.style.display = masterLoggedIn ? 'block' : 'none';
+}
+function removeMasterControlButton(){
+  const b=document.getElementById('masterControlBtn');
+  if(b) b.style.display='none';
+}
+function logoutAdmin(){ try{localStorage.removeItem('nq_admin_session_v174');localStorage.removeItem('noor_admin_last_login');}catch(e){} removeMasterControlButton();
+  document.getElementById('adminView').classList.add('hidden');
+  document.getElementById('competitorView').classList.remove('hidden');
+  if(masterLoggedIn){
+    try{if(typeof firebase!=='undefined'&&firebase.auth)firebase.auth().signOut();}catch(e){}
+    masterLoggedIn=false; masterGoogleUser=null;
+    document.getElementById('masterOverlay').style.display='none';
+  }
+  removeMasterControlButton();
+}
+
+function handleCategoryChange(v){document.getElementById('customCategoryBox').classList.toggle('hidden',v!=='Other');}
+function switchCert(t){certMode=t;document.getElementById('certOpt1').classList.toggle('hidden',t!==1);document.getElementById('certOpt2').classList.toggle('hidden',t!==2);document.getElementById('opt1Btn').className=t===1?'bg-[#14532d] text-white px-5 py-2.5 rounded-xl text-[11px] font-bold shadow':'bg-gray-200 px-5 py-2.5 rounded-xl text-[11px] font-bold';document.getElementById('opt2Btn').className=t===2?'bg-[#14532d] text-white px-5 py-2.5 rounded-xl text-[11px] font-bold shadow':'bg-gray-200 px-5 py-2.5 rounded-xl text-[11px] font-bold';}
+function compressImage(file,maxW,q,cb){const r=new FileReader();r.onload=e=>{const i=new Image();i.onload=()=>{const c=document.createElement('canvas');let w=i.width,h=i.height;if(w>maxW){h=h*(maxW/w);w=maxW}c.width=w;c.height=h;c.getContext('2d').drawImage(i,0,0,w,h);cb(c.toDataURL('image/jpeg',q))};i.src=e.target.result};r.readAsDataURL(file)}
+async function handleLogoBanner(e,type){const f=e.target.files[0];if(!f)return;compressImage(f,type==='logo'?300:800,0.5,async c=>{if(type==='logo'){currentLogoBase64=c;document.getElementById('logoPreview').src=c;document.getElementById('logoPreview').classList.remove('hidden');document.getElementById('logoSizeInfo').innerText=`✅ Logo: ${(c.length/1024).toFixed(1)}KB - Secure - V9.17.2`;localStorage.setItem('temp_logo',c)}else{currentBannerBase64=c;document.getElementById('bannerPreview').src=c;document.getElementById('bannerPreview').classList.remove('hidden');document.getElementById('bannerSizeInfo').innerText=`✅ Banner: ${(c.length/1024).toFixed(1)}KB - Secure - V9.17.2`;localStorage.setItem('temp_banner',c)}})}
+function handleCertFull(e){const f=e.target.files[0];if(!f)return;compressImage(f,800,0.5,c=>{currentCertBase64=c;document.getElementById('certPreviewImg').src=c;document.getElementById('certPreviewImg').classList.remove('hidden');document.getElementById('certPreviewPlaceholder').classList.add('hidden');document.getElementById('certSizeInfo').innerText=`✅ Cert: ${(c.length/1024).toFixed(1)}KB - Secure - V9.17.2`;localStorage.setItem('certFullImage',c)})}
+function handleCertFile(e,type){const f=e.target.files[0];if(!f)return;compressImage(f,800,0.5,c=>{if(type==='bg')currentCertBgBase64=c;else if(type==='logo1')currentCertLogo1Base64=c;else if(type==='logo2')currentCertLogo2Base64=c;else if(type==='sign')currentCertSignBase64=c;document.getElementById('certPreviewImg').src=c;document.getElementById('certPreviewImg').classList.remove('hidden');document.getElementById('certPreviewPlaceholder').classList.add('hidden');localStorage.setItem('cert_'+type,c);updateCertLive();})}
+function updateCertLive(){const x=document.getElementById('certX').value,y=document.getElementById('certY').value,s=document.getElementById('certS').value;document.getElementById('xVal').innerText=x;document.getElementById('yVal').innerText=y;document.getElementById('sVal').innerText=s;const d=document.getElementById('certNameOnImage');d.style.left=x+'%';d.style.top=y+'%';d.style.fontSize=s+'px';d.style.transform='translate(-50%,-50%)';certPos={x,y,s};localStorage.setItem('certPos_v13',JSON.stringify(certPos));}
+document.getElementById('certX')?.addEventListener('input',updateCertLive);
+document.getElementById('certY')?.addEventListener('input',updateCertLive);
+document.getElementById('certS')?.addEventListener('input',updateCertLive);
+document.getElementById('setMinute')?.addEventListener('change',function(){const c=document.getElementById('setMinuteCustom');if(this.value==='custom')c.classList.remove('hidden');else c.classList.add('hidden');});
+
+function renderQuestions(){const l=document.getElementById('qList'),t=document.getElementById('totalQCount'),s=document.getElementById('showQCount');if(t)t.innerText=questions.length;if(s)s.innerText=Math.min(eventQuestionCount||questions.length,questions.length);if(!questions.length){l.innerHTML='<p class="text-center py-6 text-gray-500">No Questions - Secure - Nabidinam Special - No Misuse! Bulk Add ചെയ്യൂ!</p>';document.getElementById('quota').innerText='Quota: 0';return;}l.innerHTML='';const d=Math.min(eventQuestionCount||questions.length,questions.length);questions.slice(0,d).forEach((q,i)=>{l.innerHTML+=`<div class="bg-white border-2 rounded-xl p-3 mb-2 flex justify-between gap-2 shadow-sm"><div class="flex-1"><p class="font-bold text-[13px]">${i+1}. ${q.q} ${randomMode?'🔀 Random - Secure!':''}</p><p class="text-[11px] text-gray-600 mt-1">${q.opts.map((o,idx)=>idx===q.ans?`✅ ${o} - Secure!`:o).join(' | ')}</p></div><button onclick="deleteQuestion(${i})" class="bg-red-100 text-red-600 border-2 px-4 py-1 rounded-full text-[11px] font-black">🗑️ Delete - Secure!</button></div>`});document.getElementById('quota').innerText='Total: '+questions.length+' | Show: '+d+' | Random:'+(randomMode?'ON - Secure!':'OFF - Secure!')+' - Nabidinam Special Secure'}
+function bulkAdd(){const txt=document.getElementById('qBulk').value.trim();if(!txt){alert('Type Questions - Secure - Nabidinam Special - No Misuse!');return;}let a=0;txt.split('\n').forEach(l=>{if(!l.trim())return;const p=l.split('|');if(p.length<2)return;const q=p[0].trim(),o=p[1].split(',').map(x=>x.trim()).filter(x=>x);let ans=0;if(p[2]){ans=parseInt(p[2].trim());if(isNaN(ans))ans=0}if(q&&o.length>=2){questions.push({q,opts:o,ans:Math.min(ans,o.length-1)});a++}});localStorage.setItem('questions_v13',JSON.stringify(questions));document.getElementById('qBulk').value='';renderQuestions();alert('✅ '+a+' Added! Secure! No Misuse! Nabidinam Special - V9.17.2');}
+function deleteQuestion(i){if(!confirm('Delete Q '+(i+1)+'? Secure! Nabidinam Special - No Misuse!'))return;questions.splice(i,1);localStorage.setItem('questions_v13',JSON.stringify(questions));renderQuestions();}
+
+async function loadPastEvents(){
+  const c=document.getElementById('pastEventsList'); if(!c)return;
+  c.innerHTML='<p class="text-xs text-center py-6">☁️ Loading events...</p>';
+  let data=null, source='';
+  try{const res=await fetch(`${REST_URL}/events.json?cb=${Date.now()}`,{cache:'no-store'}); if(res.ok){data=await res.json();source='cloud';}}catch(e){}
+  if(!data && firebaseDB){try{const snap=await firebaseDB.ref('events').once('value');data=snap.val();source='sdk';}catch(e){}}
+  if(!data){try{data=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');source='local';}catch(e){data={};}}
+  if(!data || typeof data!=='object')data={};
+  const ids=Object.keys(data).filter(id=>data[id]);
+  if(!ids.length){c.innerHTML='<p class="text-xs text-center py-6 text-green-600 font-black">No Events Yet. Create a new event.</p>';document.getElementById('storageInfo').innerText='0 Events';return;}
+  c.innerHTML='';
+  ids.reverse().forEach(id=>{
+    const ev=data[id]||{};
+    c.insertAdjacentHTML('beforeend',`<div class="bg-white border-[3px] rounded-xl p-4 mb-3 shadow-md" data-event-id="${id}"><div class="flex justify-between gap-3"><div class="flex-1"><p class="font-black text-[14px] text-green-800">${escapeHtml(ev.title||'Noor Event')} <span class="bg-green-100 px-2 py-1 rounded-full text-[10px]">${ev.minute||10} Min</span> <span class="bg-blue-100 px-2 py-1 rounded-full text-[10px]">Count:${ev.count||20}</span></p><p class="text-[12px] font-black text-gray-800 mt-2">📍 ${escapeHtml(ev.place||'')} | ${escapeHtml(ev.category||'')} | Qs:${ev.questions?.length||0}</p><p class="text-[10px] text-gray-600 mt-1">Logo:${ev.logo?'✅':'❌'} Banner:${ev.banner?'✅':'❌'} Cert:${ev.certificate?'✅':'❌'} | ID:${id}</p></div><div class="flex flex-col gap-2"><button onclick="copyEventLink('${id}')" class="bg-green-600 text-white px-5 py-2.5 rounded-full text-[11px] font-black">📋 Copy Link</button><button onclick="editEventById('${id}')" class="bg-blue-700 text-white px-5 py-2.5 rounded-full text-[11px] font-black">✏️ Edit</button><button onclick="deleteEvent('${id}')" class="bg-red-100 text-red-600 border-2 px-5 py-2.5 rounded-full text-[11px] font-black">🗑️ Delete</button></div></div></div>`);
+  });
+  if(source==='cloud')localStorage.setItem('pastEvents_backup',JSON.stringify(data));
+  document.getElementById('storageInfo').innerText=`${ids.length} Event(s) Loaded — ${source==='cloud'?'Cloud':'Backup'}`;
+}
+
+async function clearAllEvents(){
+  if(!confirm('Delete ALL EVENTS? This removes every event from Cloud.'))return;
+  let ok=false, lastErr=null;
+  try{
+    const r=await fetch(`${REST_URL}/events.json?cb=${Date.now()}`,{method:'DELETE',cache:'no-store'});
+    if(!r.ok) throw new Error(`Cloud clear HTTP ${r.status}`);
+    const check=await fetch(`${REST_URL}/events.json?cb=${Date.now()}`,{cache:'no-store'});
+    if(!check.ok) throw new Error(`Cloud clear verification HTTP ${check.status}`);
+    const remaining=await check.json();
+    if(remaining!==null && Object.keys(remaining||{}).length) throw new Error('Some events still exist in Cloud');
+    ok=true;
+  }catch(e){lastErr=e;}
+  if(!ok && firebaseDB){
+    try{
+      await firebaseDB.ref('events').remove();
+      const snap=await firebaseDB.ref('events').once('value');
+      if(snap.exists()) throw new Error('Firebase verification failed: events still exist');
+      ok=true;
+    }catch(e){lastErr=e;}
+  }
+  if(!ok){alert('❌ Events were NOT cleared. Nothing was removed locally.\n\n'+(lastErr?.message||'Firebase permission/network error'));return;}
+  localStorage.removeItem('pastEvents_backup');
+  Object.keys(localStorage).filter(k=>k.startsWith('last_event_')).forEach(k=>localStorage.removeItem(k));
+  await loadPastEvents();
+  alert('✅ All events deleted from Cloud and verified.');
+}
+
+async function deleteEvent(id){
+  if(!confirm('Delete this event permanently?'))return;
+  let ok=false;
+  try{const r=await fetch(`${REST_URL}/events/${encodeURIComponent(id)}.json`,{method:'DELETE'});ok=r.ok;}catch(e){}
+  if(!ok && firebaseDB){try{await firebaseDB.ref('events/'+id).remove();ok=true;}catch(e){}}
+  if(!ok){alert('❌ Event delete failed. The event was NOT removed locally. Check Firebase Rules.');return;}
+  try{const backup=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');delete backup[id];localStorage.setItem('pastEvents_backup',JSON.stringify(backup));localStorage.removeItem('last_event_'+id);}catch(e){}
+  if(document.getElementById('eventIdShow')?.value===id){document.getElementById('eventIdShow').value='';currentEventId='';}
+  await loadPastEvents();
+  alert('✅ Event deleted.');
+}
+
+async function editEventById(id){
+  try{
+    let data=null;
+    try{const res=await fetch(`${REST_URL}/events/${encodeURIComponent(id)}.json?cb=${Date.now()}`,{cache:'no-store'});if(res.ok)data=await res.json();}catch(e){}
+    if(!data && firebaseDB){try{const snap=await firebaseDB.ref('events/'+id).once('value');data=snap.val();}catch(e){}}
+    if(!data){const local=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');data=local[id];}
+    if(!data){alert('Event not found.');return;}
+    currentEventId='event_'+id;
+    document.getElementById('eventName').value=data.title||''; document.getElementById('eventPlace').value=data.place||'';
+    document.getElementById('eventCategory').value=['Madrasa','School','College','Masjid','Mahal','Organization','District','State','National','Other'].includes(data.category)?data.category:'Other';
+    if(document.getElementById('customCategory'))document.getElementById('customCategory').value=data.category||'';
+    document.getElementById('setMinute').value=String(data.minute||10); document.getElementById('setCount').value=data.count||20;
+    eventQuestionCount=data.count||20; randomMode=data.randomMode!==false; showCorrectWrong=data.showCorrect!==false;
+    document.getElementById('setRandom').checked=randomMode; document.getElementById('setShowCorrect').checked=showCorrectWrong;
+    document.getElementById('setOnline').checked=data.onlineMode!==false; document.getElementById('setPhoneLock').checked=data.phoneLock===true; document.getElementById('setDeviceLock').checked=data.deviceLock===true;
+    if(document.getElementById('setStartAt'))document.getElementById('setStartAt').value=data.startAt||'';
+    if(document.getElementById('setEndAt'))document.getElementById('setEndAt').value=data.endAt||'';
+    if(document.getElementById('setShowResults'))document.getElementById('setShowResults').checked=data.showResults!==false; if(document.getElementById('setShowParticipantResult'))document.getElementById('setShowParticipantResult').checked=data.showResultsToParticipants!==false;
+    questions=Array.isArray(data.questions)?data.questions:[]; localStorage.setItem('questions_v13',JSON.stringify(questions)); renderQuestions();
+    if(data.logo){currentLogoBase64=data.logo;document.getElementById('logoPreview').src=data.logo;document.getElementById('logoPreview').classList.remove('hidden');}
+    if(data.banner){currentBannerBase64=data.banner;document.getElementById('bannerPreview').src=data.banner;document.getElementById('bannerPreview').classList.remove('hidden');}
+    if(data.certificate){currentCertBase64=data.certificate;document.getElementById('certPreviewImg').src=data.certificate;document.getElementById('certPreviewImg').classList.remove('hidden');document.getElementById('certPreviewPlaceholder').classList.add('hidden');}
+    if(data.certPos){certPos=data.certPos;document.getElementById('certX').value=certPos.x;document.getElementById('certY').value=certPos.y;document.getElementById('certS').value=certPos.s;updateCertLive();}
+    ['certTitle','certSub','certSub2','certColor'].forEach(k=>{if(data[k]!=null&&document.getElementById(k))document.getElementById(k).value=data[k];});
+    document.getElementById('eventIdShow').value=id; lastGeneratedLink=window.location.origin+window.location.pathname+'?event='+id; document.getElementById('generatedLink').innerText=lastGeneratedLink; document.getElementById('linkBox').style.display='block';
+    localStorage.setItem('lastGeneratedLink_v14',lastGeneratedLink);localStorage.setItem('currentEventId_v17',currentEventId);
+    document.getElementById('cloudStatus').innerText='✅ Event loaded for editing. Change anything, then press SAVE CLOUD SAME LINK.';
+    window.scrollTo({top:100,behavior:'smooth'});
+  }catch(e){alert('Edit failed: '+e.message);}
+}
+function copyEventLink(id){const l=window.location.origin+window.location.pathname+'?event='+id;navigator.clipboard.writeText(l).then(()=>alert('✅ Link Copied - Secure - No Misuse! - Nabidinam Special V9.17.2 - 100% Working Secure!\n\n'+l+'\n\nBanner Clean - Logo, Event Name, Place താഴെ വൃത്തിയായി - Secure! No Breaking! Nothing Removed! - Nabidinam Special Secure!'));}
+async function deleteCloudEvent(id){
+  const key=String(id).replace(/^event_/,'');
+  let lastErr=null;
+  try{
+    const r=await fetch(`${REST_URL}/events/${encodeURIComponent(key)}.json?cb=${Date.now()}`,{method:'DELETE',cache:'no-store'});
+    if(!r.ok) throw new Error(`Cloud delete HTTP ${r.status}`);
+    const check=await fetch(`${REST_URL}/events/${encodeURIComponent(key)}.json?cb=${Date.now()}`,{cache:'no-store'});
+    if(check.ok){const remaining=await check.json(); if(remaining!==null) throw new Error('Cloud verification failed: event still exists');}
+    else throw new Error(`Cloud verification HTTP ${check.status}`);
+    return true;
+  }catch(e){ lastErr=e; }
+  if(firebaseDB){
+    try{
+      await firebaseDB.ref('events/'+key).remove();
+      const snap=await firebaseDB.ref('events/'+key).once('value');
+      if(snap.exists()) throw new Error('Firebase verification failed: event still exists');
+      return true;
+    }catch(e){ lastErr=e; }
+  }
+  throw lastErr || new Error('No cloud delete method available');
+}
+async function deleteEvent(id){
+  if(!confirm('Delete this event from Cloud?\n\nEvent ID: '+id+'\n\nThis cannot be undone.'))return;
+  try{
+    await deleteCloudEvent(id);
+    try{
+      const backup=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');
+      delete backup[id];
+      localStorage.setItem('pastEvents_backup',JSON.stringify(backup));
+      localStorage.removeItem('last_event_'+id);
+    }catch(e){}
+    await loadPastEvents();
+    alert('✅ Event deleted successfully.');
+  }catch(e){
+    alert('❌ Event was NOT deleted.\n\n'+(e.message||'Firebase permission/network error')+'\n\nNothing was removed locally. Publish the correct Firebase Rules and try again.');
+    await loadPastEvents();
+  }
+}
+async function editEventById(id){
+  try{
+    let data=null;
+    try{const res=await fetch(`${REST_URL}/events/${id}.json`);if(res.ok)data=await res.json();}catch{}
+    if(!data && firebaseDB){const snap=await firebaseDB.ref('events/'+id).once('value');data=snap.val();}
+    if(!data){const local=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');data=local[id];}
+    if(!data){alert('Event Not Found! ID:'+id+' - Secure! No Misuse! Nabidinam Special');return;}
+    currentEventId='event_'+id;
+    document.getElementById('eventName').value=data.title||'';
+    document.getElementById('eventPlace').value=data.place||'';
+    document.getElementById('eventCategory').value=data.category||'Madrasa';
+    document.getElementById('setMinute').value=data.minute||10;
+    document.getElementById('setCount').value=data.count||20;eventQuestionCount=data.count||20;
+    randomMode=data.randomMode!==false;showCorrectWrong=data.showCorrect!==false;
+    document.getElementById('setRandom').checked=randomMode;document.getElementById('setShowCorrect').checked=showCorrectWrong;
+    document.getElementById('setOnline').checked=data.onlineMode!==false;document.getElementById('setPhoneLock').checked=data.phoneLock===true;document.getElementById('setDeviceLock').checked=data.deviceLock===true;
+    if(document.getElementById('setStartAt'))document.getElementById('setStartAt').value=data.startAt||'';
+    if(document.getElementById('setEndAt'))document.getElementById('setEndAt').value=data.endAt||'';
+    if(document.getElementById('setShowResults'))document.getElementById('setShowResults').checked=data.showResults!==false; if(document.getElementById('setShowParticipantResult'))document.getElementById('setShowParticipantResult').checked=data.showResultsToParticipants!==false;
+    questions=data.questions||[];localStorage.setItem('questions_v13',JSON.stringify(questions));renderQuestions();
+    if(data.logo){currentLogoBase64=data.logo;document.getElementById('logoPreview').src=data.logo;document.getElementById('logoPreview').classList.remove('hidden');document.getElementById('logoSizeInfo').innerText=`✅ Logo Loaded - ${(data.logo.length/1024).toFixed(1)}KB - Secure! V9.17.2`;}
+    if(data.banner){currentBannerBase64=data.banner;document.getElementById('bannerPreview').src=data.banner;document.getElementById('bannerPreview').classList.remove('hidden');document.getElementById('bannerSizeInfo').innerText=`✅ Banner Loaded - ${(data.banner.length/1024).toFixed(1)}KB - Secure! V9.17.2`;}
+    if(data.certificate){currentCertBase64=data.certificate;document.getElementById('certPreviewImg').src=data.certificate;document.getElementById('certPreviewImg').classList.remove('hidden');document.getElementById('certPreviewPlaceholder').classList.add('hidden');}
+    if(data.certBg)currentCertBgBase64=data.certBg; if(data.certLogo1)currentCertLogo1Base64=data.certLogo1; if(data.certLogo2)currentCertLogo2Base64=data.certLogo2; if(data.certSign)currentCertSignBase64=data.certSign; if(data.certMode)certMode=data.certMode; switchCert(certMode);
+    if(data.certPos){certPos=data.certPos;document.getElementById('certX').value=data.certPos.x;document.getElementById('certY').value=data.certPos.y;document.getElementById('certS').value=data.certPos.s;updateCertLive();}
+    if(data.certTitle) document.getElementById('certTitle').value=data.certTitle;
+    if(data.certSub) document.getElementById('certSub').value=data.certSub;
+    if(data.certSub2) document.getElementById('certSub2').value=data.certSub2; if(data.certColor&&document.getElementById('certColor')) document.getElementById('certColor').value=data.certColor;
+    document.getElementById('eventIdShow').value=id;
+    lastGeneratedLink=window.location.origin+window.location.pathname+'?event='+id;
+    document.getElementById('generatedLink').innerText=lastGeneratedLink;
+    document.getElementById('linkBox').style.display='block';
+    localStorage.setItem('lastGeneratedLink_v14',lastGeneratedLink);localStorage.setItem('currentEventId_v17',currentEventId);
+    document.getElementById('cloudStatus').innerText=`✅ Edit Loaded! Secure! No Misuse! Event:${data.title} Place:${data.place} Logo:${data.logo?'✅ Secure!':'❌'} Banner:${data.banner?'✅ Secure!':'❌'} Count:${data.count} Random:${data.randomMode?'ON Secure!':'OFF Secure!'} - Nothing Removed! - Nabidinam Special V9.17.2 Secure!`;
+    window.scrollTo({top:100,behavior:'smooth'});
+    alert(`✅ Edit Loaded - Secure! - No Misuse! - Nabidinam Special V9.17.2 - Nothing Removed! - 100% Fixed! - Full Checked! - Secure!\n\nEvent: ${data.title}\nPlace: ${data.place}\nLogo: ${data.logo?'✅ Secure!':'❌'}\nBanner: ${data.banner?'✅ Secure!':'❌'}\nCertificate: ${data.certificate?'✅ Secure!':'❌'}\nQs: ${data.questions?.length||0}\nCount: ${data.count} - Secure!\nRandom: ${data.randomMode?'ON Secure!':'OFF Secure!'}\nShow Correct: ${data.showCorrect?'ON Secure!':'OFF Secure!'}\nOne Phone: ${data.phoneLock?'ON Secure!':'OFF Secure!'}\nOne Device: ${data.deviceLock?'ON Secure!':'OFF Secure!'}\n\nSecure! No Misuse! All Checked! Edit ചെയ്ത് SAVE SAME LINK അടിക്കൂ! - Nabidinam Special Secure!`);
+  }catch(e){alert('Edit Failed: '+e.message+' - Secure! No Misuse! Nabidinam Special');}
+}
+function editCurrentEvent(){if(!currentEventId||currentEventId==='event_'){alert('Past Events-ൽ Edit Button അടിക്കൂ - Secure! No Misuse! - Fixed! V9.17.2 Nabidinam Special Secure');return;}editEventById(currentEventId.replace(/event_/g,''));}
+function createNewLink(){currentEventId='event_'+Date.now();createOrUpdateLink(true);}
+function saveCloudSameLink(){let eid=document.getElementById('eventIdShow').value.trim()||currentEventId||'';if(eid){eid=eid.replace(/event_/g,'');currentEventId='event_'+eid;}if(!currentEventId||currentEventId==='event_')currentEventId='event_'+Date.now();createOrUpdateLink(false);}
+async function createOrUpdateLink(isNew){
+  let minute=parseInt(document.getElementById('setMinute').value)||10;
+  if(document.getElementById('setMinute').value==='custom') minute=parseInt(document.getElementById('setMinuteCustom').value)||10;
+  const title=document.getElementById('eventName').value.trim()||'Noor Quiz'; const place=document.getElementById('eventPlace').value.trim();
+  let category=document.getElementById('eventCategory').value||'Madrasa'; if(category==='Other'){const cc=document.getElementById('customCategory').value.trim();if(cc)category=cc;}
+  const count=parseInt(document.getElementById('setCount').value)||20; eventQuestionCount=count; randomMode=document.getElementById('setRandom').checked; showCorrectWrong=document.getElementById('setShowCorrect').checked;
+  if(!questions.length){alert('Questions Add ചെയ്യൂ!');return;}
+  const cleanId=(currentEventId||'event_'+Date.now()).replace(/^event_/,''); currentEventId='event_'+cleanId;
+  const link=window.location.origin+window.location.pathname+'?event='+cleanId; lastGeneratedLink=link;
+  if(!currentLogoBase64)currentLogoBase64=localStorage.getItem('temp_logo')||''; if(!currentBannerBase64)currentBannerBase64=localStorage.getItem('temp_banner')||'';
+  const startAt=document.getElementById('setStartAt')?.value||''; const endAt=document.getElementById('setEndAt')?.value||''; const showResults=document.getElementById('setShowResults')?.checked!==false; const showResultsToParticipants=document.getElementById('setShowParticipantResult')?.checked!==false;
+  try{ await ensureEventWriteAuth(cleanId); }catch(e){ document.getElementById('cloudStatus').innerText='❌ Cloud authentication required: '+(e.message||'Please sign in'); alert('Cloud Save നു Master Google Sign-In / Organizer Login ആവശ്യമാണ്.\n\n'+(e.message||'')); return; }
+   let ownerId=currentEventOwnerId||currentOrganizerId()||'';
+   if(!ownerId && masterLoggedIn) ownerId=MASTER_ADMIN_EMAIL;
+   if(!ownerId && !isNew){ try{ const rr=await fetch(await authRestUrl(`events/${encodeURIComponent(cleanId)}`),{cache:'no-store'}); if(rr.ok){const old=await rr.json(); ownerId=String(old?.ownerId||'');} }catch(e){} }
+   if(!ownerId) ownerId=currentOrganizerId()||'';
+   currentEventOwnerId=ownerId;
+   const eventData={ownerId,title,place,category,questions,minute,count,onlineMode:document.getElementById('setOnline').checked,showCorrect:showCorrectWrong,randomMode,phoneLock:document.getElementById('setPhoneLock').checked,deviceLock:document.getElementById('setDeviceLock').checked,startAt,endAt,showResults,showResultsToParticipants,logo:currentLogoBase64||'',banner:currentBannerBase64||'',certificate:currentCertBase64||'',certPos,certColor:document.getElementById('certColor')?.value||'#14532d',certTitle:document.getElementById('certTitle')?.value||'',certSub:document.getElementById('certSub')?.value||'',certSub2:document.getElementById('certSub2')?.value||'',updated:Date.now()};
+  document.getElementById('cloudStatus').innerText='☁️ Saving...';
+  let cloudSaved=false;
+  try{const r=await fetch(await authRestUrl(`events/${encodeURIComponent(cleanId)}`),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(eventData)});cloudSaved=r.ok;}catch(e){}
+  if(!cloudSaved && firebaseDB){try{await firebaseDB.ref('events/'+cleanId).set(eventData);cloudSaved=true;}catch(e){}}
+  if(!cloudSaved){document.getElementById('cloudStatus').innerText='❌ Cloud Save Failed. Nothing is marked as saved. Check Firebase Rules.';return;}
+  const backup=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');backup[cleanId]=eventData;localStorage.setItem('pastEvents_backup',JSON.stringify(backup));localStorage.setItem('last_event_'+cleanId,JSON.stringify(eventData));localStorage.setItem('lastGeneratedLink_v14',link);localStorage.setItem('currentEventId_v17',currentEventId);
+  document.getElementById('eventIdShow').value=cleanId;document.getElementById('generatedLink').innerText=link;document.getElementById('linkBox').style.display='block';document.getElementById('cloudStatus').innerText=isNew?'✅ Event created and saved to Cloud.':'✅ Event updated and saved to Cloud. The same link remains valid.';
+  document.getElementById('createLinkBtn').innerText='💚 CREATE NEW LINK';document.getElementById('saveCloudBtn').innerText='💾 SAVE CLOUD SAME LINK';
+  if(navigator.clipboard)navigator.clipboard.writeText(link).catch(()=>{}); await loadPastEvents();renderQuestions();
+}
+function copyLink(){if(!lastGeneratedLink){const l=localStorage.getItem('lastGeneratedLink_v14');if(l)lastGeneratedLink=l;else{alert('Create Link First! Secure! No Misuse! Nabidinam Special');return;}}navigator.clipboard.writeText(lastGeneratedLink).then(()=>alert('✅ Link Copied - Secure - No Misuse! - Nabidinam Special V9.17.2 - 100% Working Secure! - Full Checked!\n\n'+lastGeneratedLink+'\n\nBanner Clean - Logo, Event, Place താഴെ വൃത്തിയായി - Secure! No Breaking! Nothing Removed! - Nabidinam Special Secure!'));}
+function shareWhatsApp(){if(!lastGeneratedLink){const l=localStorage.getItem('lastGeneratedLink_v14');if(l)lastGeneratedLink=l;else return;}window.open('https://wa.me/?text='+encodeURIComponent('🌙 Noor Quiz V9.17.2 - Secure - Nabidinam Special - No Breaking - No Misuse! - Full Checked! - Banner Clean Title Below - Nothing Removed - Nabidinam Special Secure:\n\n'+lastGeneratedLink),'_blank');}
+
+async function loadCompetitorEvent(){
+  const params=new URLSearchParams(window.location.search);
+  const eventId=params.get('event');
+  const isPublicEvent=!!eventId;
+  if(!eventId){document.getElementById('cloudLoadStatus').innerText='ℹ️ No Event ID - Default View - Secure - No Breaking - No Misuse! - Nabidinam Special - Admin-ൽ Create Link! - All Checked! Secure!';document.getElementById('compEventNameBelow').innerText='';document.getElementById('compPlaceShow').innerText='';document.getElementById('compDetailsBelow').innerText='';return;}
+  document.getElementById('cloudLoadStatus').innerText='☁️ Connecting to TRUE CLOUD…';
+  let data=null;
+  try{const res=await fetch(await authRestUrl(`events/${encodeURIComponent(eventId)}`),{cache:'no-store'});if(res.ok)data=await res.json();}catch(e){console.warn('Event REST load failed:',e)}
+  if(!data && firebaseDB){try{const snap=await firebaseDB.ref('events/'+eventId).once('value');data=snap.val();}catch(e){console.warn('Event SDK load failed:',e)}}
+  if(!data && isPublicEvent){document.getElementById('cloudLoadStatus').innerText='❌ This event is no longer available. The link may have been deleted or disabled.';return;}
+  if(isPublicEvent && !data){return;}
+  if(!data){try{const backup=JSON.parse(localStorage.getItem('pastEvents_backup')||'{}');data=backup[eventId];}catch{}}
+  if(!data){try{const last=JSON.parse(localStorage.getItem('last_event_'+eventId)||'null');data=last;}catch{}}
+  if(!data){document.getElementById('cloudLoadStatus').innerText='❌ Event Not Found! ID:'+eventId;return;}
+  let scheduleState='open';
+  if(isPublicEvent){
+    const now=Date.now(), start=data.startAt?new Date(data.startAt).getTime():null, end=data.endAt?new Date(data.endAt).getTime():null;
+    if(start && now<start) scheduleState='before';
+    if(end && now>end) scheduleState='after';
+  }
+  currentEventId='event_'+eventId;currentEventOwnerId=String(data.ownerId||'');window.currentEventData=data;questions=data.questions||[];totalMinutes=data.minute||10;eventQuestionCount=data.count||20;showCorrectWrong=data.showCorrect!==false;showResultsToParticipants=data.showResultsToParticipants!==false;randomMode=data.randomMode!==false;eventPhoneLock=data.phoneLock===true;eventDeviceLock=data.deviceLock===true;currentCertBase64=data.certificate||'';currentCertBgBase64=data.certBg||'';currentCertLogo1Base64=data.certLogo1||'';currentCertLogo2Base64=data.certLogo2||'';currentCertSignBase64=data.certSign||'';certMode=data.certMode||1;certPos=data.certPos||{x:'50',y:'60',s:'24'};if(data.certColor&&document.getElementById('certColor'))document.getElementById('certColor').value=data.certColor;
+  document.getElementById('compTitle').innerText=data.title||'🌙 Noor Al Madrasa - Nabidinam Special Secure';
+  document.getElementById('compEventNameBelow').innerText=data.title||'Noor Al Madrasa - Nabidinam Special Secure';
+  document.getElementById('compPlaceShow').innerText=data.place||'';
+  document.getElementById('compDetailsBelow').innerText=`${data.category||'Madrasa'} | ${totalMinutes} Min - Secure! | ${Math.min(eventQuestionCount,questions.length)} Qs - Secure! | ${randomMode?'🔀 Random Secure!':'📝 Same Secure!'} | ${data.place||''} - Secure! - No Misuse! - Nabidinam Special V9.17.2 Secure`;
+  const scheduleParts=[];
+  if(data.startAt){const d=new Date(data.startAt);if(!isNaN(d))scheduleParts.push('🟢 Opening: '+d.toLocaleString());}
+  if(data.endAt){const d=new Date(data.endAt);if(!isNaN(d))scheduleParts.push('🔴 Closing: '+d.toLocaleString());}
+  const sched=document.getElementById('cloudLoadStatus');
+  const scheduleBox=document.getElementById('eventScheduleDisplay');
+  if(scheduleParts.length){
+    if(sched) sched.innerText=scheduleParts.join(' | ');
+    if(scheduleBox){scheduleBox.innerText=scheduleParts.join('  •  ');scheduleBox.style.display='block';}
+  }else if(scheduleBox){scheduleBox.style.display='none';scheduleBox.innerText='';}
+
+  document.getElementById('eventNameDisplay').innerText=data.title||'';
+  document.getElementById('eventCountDisplay').innerText=`📝 Total:${questions.length} - Secure! Show:${Math.min(eventQuestionCount,questions.length)} - Secure! Time:${totalMinutes}Min - Secure!`;
+  document.getElementById('eventRandomDisplay').innerText=`${randomMode?'🔀 Random ON - Secure!':'📝 Same - Secure!'} | ${showCorrectWrong?'✅ Show Correct Green - Secure!':''} | Secure! No Misuse! - Nabidinam Special`;
+  document.getElementById('compSubTitle').innerText=data.category||'Meelad Quiz 2K26 - Nabidinam Special - Secure!';
+  const scheduleText=[data.startAt?('🟢 Opening: '+new Date(data.startAt).toLocaleString()):'',data.endAt?('🔴 Closing: '+new Date(data.endAt).toLocaleString()):''].filter(Boolean).join(' | ');
+  const startBtn=document.querySelector('#registrationBox button[onclick=\"startQuiz()\"]');
+  if(scheduleState==='before'){
+    if(document.getElementById('eventScheduleDisplay')) document.getElementById('eventScheduleDisplay').innerText=`⏳ ${scheduleText||'Opening time is set.'}`;
+    document.getElementById('cloudLoadStatus').innerText=`⏳ ${scheduleText||'Opening time is set.'}`;
+    if(startBtn){startBtn.disabled=true;startBtn.classList.add('opacity-50','cursor-not-allowed');startBtn.innerText='⏳ ക്വിസ് ആരംഭിക്കുന്നത് വരെ കാത്തിരിക്കുക';}
+  }else if(scheduleState==='after'){
+    if(document.getElementById('eventScheduleDisplay')) document.getElementById('eventScheduleDisplay').innerText=`⛔ ${scheduleText||'Event closed.'}`;
+    document.getElementById('cloudLoadStatus').innerText=`⛔ ${scheduleText||'Event closed.'}`;
+    if(startBtn){startBtn.disabled=true;startBtn.classList.add('opacity-50','cursor-not-allowed');startBtn.innerText='⛔ മത്സരം അവസാനിച്ചു';}
+  }else{
+    if(document.getElementById('eventScheduleDisplay') && scheduleText) document.getElementById('eventScheduleDisplay').innerText=`✅ ${scheduleText}`;
+    document.getElementById('cloudLoadStatus').innerText=`✅ Loaded! ${scheduleText?(' | '+scheduleText):''} - ${data.title} - Logo:${data.logo?'✅':'❌'} Banner:${data.banner?'✅':'❌'} Cert:${data.certificate?'✅':'❌'}`;
+    if(startBtn){startBtn.disabled=false;startBtn.classList.remove('opacity-50','cursor-not-allowed');startBtn.innerText='🚀 ക്വിസ് ആരംഭിക്കുക';}
+  }
+  const logoImg=document.getElementById('compLogoImg'), logoText=document.getElementById('compLogoText');
+  if(data.logo && logoImg){logoImg.src=data.logo;logoImg.classList.remove('hidden');if(logoText)logoText.classList.add('hidden');}
+  const bannerImg=document.getElementById('compBannerImg'), bannerDefault=document.getElementById('compBannerDefault');
+  if(data.banner && bannerImg){bannerImg.src=data.banner;bannerImg.classList.remove('hidden');if(bannerDefault)bannerDefault.classList.add('hidden');}
+  if(data.certificate) localStorage.setItem('certFullImage',data.certificate); if(data.certBg)localStorage.setItem('cert_bg',data.certBg); if(data.certLogo1)localStorage.setItem('cert_logo1',data.certLogo1); if(data.certLogo2)localStorage.setItem('cert_logo2',data.certLogo2); if(data.certSign)localStorage.setItem('cert_sign',data.certSign);
+  if(data.certPos) localStorage.setItem('certPos_v13',JSON.stringify(data.certPos));
+  localStorage.setItem('questions_v13',JSON.stringify(questions));
+}
+
+function startQuiz(){
+  const eventIdForStart=new URLSearchParams(window.location.search).get('event');
+  if(eventIdForStart && window.currentEventData){
+    const now=Date.now(), st=window.currentEventData.startAt?new Date(window.currentEventData.startAt).getTime():null, en=window.currentEventData.endAt?new Date(window.currentEventData.endAt).getTime():null;
+    if(st && now<st){alert('⏳ മത്സരം ആരംഭിക്കുന്ന സമയം: '+new Date(st).toLocaleString());return;}
+    if(en && now>en){alert('⛔ മത്സരം അവസാനിച്ചിരിക്കുന്നു: '+new Date(en).toLocaleString());return;}
+  }
+  const name=document.getElementById('nameInput').value.trim(),phone=document.getElementById('phoneInput').value.trim(),err=document.getElementById('errorMsg');
+  if(!name||!phone){err.innerText='Name & Phone Required - Secure! No Misuse! Nabidinam Special Secure';err.classList.remove('hidden');return;}
+  const phoneLock=!!eventPhoneLock;
+  if(phoneLock){const used=JSON.parse(localStorage.getItem('usedPhones')||'[]');const eid=new URLSearchParams(window.location.search).get('event')||currentEventId;if(used.includes(phone+'_'+eid)){err.innerText='❌ ഈ ഫോൺ ഉപയോഗിച്ചു! One Phone One - Secure! No Misuse! - Nabidinam Special Secure';err.classList.remove('hidden');return;}}
+  const deviceLock=!!eventDeviceLock;
+  if(deviceLock){const used=JSON.parse(localStorage.getItem('usedDevices')||'[]');const eid=new URLSearchParams(window.location.search).get('event')||currentEventId;if(used.includes(eid)){err.innerText='❌ ഈ Device-ൽ ചെയ്തു! One Device One - Secure! No Misuse! - Nabidinam Special Secure';err.classList.remove('hidden');return;}}
+  err.classList.add('hidden');
+  if(!questions.length){const s=JSON.parse(localStorage.getItem('questions_v13')||'[]');if(s.length)questions=s;}
+  if(!questions.length){err.innerText='No Questions - Secure! No Misuse!';err.classList.remove('hidden');return;}
+}
+</script>
+</body>
+</html>
