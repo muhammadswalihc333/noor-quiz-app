@@ -39,9 +39,9 @@
         .cert-preview-bg { position: absolute; width: 100%; height: 100%; object-fit: cover; top: 0; left: 0; }
         .cert-preview-name-tag { position: absolute; transform: translate(-50%, -50%); font-weight: bold; pointer-events: none; text-shadow: 1px 1px 2px rgba(255,255,255,0.8); white-space: nowrap; }
 
-        .student-banner-container { position: relative; width: 100%; height: 180px; border-radius: 10px; overflow: hidden; background: #e5e7eb; margin-bottom: 40px; }
-        .student-banner-img { width: 100%; height: 100%; object-fit: cover; }
-        .student-logo-wrapper { position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%); width: 75px; height: 75px; border-radius: 50%; background: #fff; border: 3px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.15); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .student-banner-container { position: relative; width: 100%; height: 180px; border-radius: 10px; overflow: visible; background: #e5e7eb; margin-bottom: 50px; }
+        .student-banner-img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+        .student-logo-wrapper { position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%); width: 75px; height: 75px; border-radius: 50%; background: #fff; border: 3px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.15); overflow: hidden; display: flex; align-items: center; justify-content: center; z-index: 10; }
         .student-logo-img { width: 100%; height: 100%; object-fit: cover; }
         .student-event-title { text-align: center; font-size: 18px; font-weight: bold; color: #1f2937; margin-top: 10px; margin-bottom: 12px; }
         .timing-badge { background: #f0fdf4; border: 1.5px solid #bbf7d0; padding: 10px; border-radius: 12px; text-align: center; font-size: 12px; font-weight: 600; color: #166534; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; }
@@ -54,7 +54,8 @@
         📚 ക്ലാസ് ടെസ്റ്റ് സെക്ഷൻ (പ്രോ മാനേജർ V10.2 - Live Preview)
     </div>
 
-    <div class="tab-nav">
+    <!-- അഡ്മിൻ മോഡിൽ മാത്രം കാണുന്ന ടാബ് നാവിഗേഷൻ -->
+    <div class="tab-nav" id="mainTabNavContainer">
         <button id="tabAdminBtn" class="active-tab" onclick="switchMainTab('admin')">👑 അഡ്മിൻ പാനൽ</button>
         <button id="tabStudentBtn" onclick="switchMainTab('student')">👨‍🎓 വിദ്യാർത്ഥി മോഡ്</button>
     </div>
@@ -446,7 +447,7 @@
         });
     }
 
-        function saveNewTestEvent() {
+    function saveNewTestEvent() {
         let nameField = document.getElementById('eventName');
         if (!nameField) return;
         let name = nameField.value.trim();
@@ -521,7 +522,6 @@
         if (pendingFiles === 0) checkAndCommit();
     }
 
-
     function commitEventData(editingId, name, bannerUrl, logoUrl, certConfig) {
         let payload = {
             id: editingId ? editingId : ('EV_' + Date.now()),
@@ -557,10 +557,16 @@
         updateDashboardOverview();
 
         let generatedLink = window.location.href.split('?')[0] + "?event=" + payload.id;
+        let whatsappMsg = encodeURIComponent("ക്ലാസ് ടെസ്റ്റിൽ പങ്കെടുക്കാനുള്ള ലിങ്ക്: " + generatedLink);
+        
         let successBoxHtml = `
             <div style="background:#f0fdf4; border:2px dashed #22c55e; padding:12px; border-radius:8px; margin-top:15px;">
                 <b style="color:#14532d; font-size:13px;">🔗 ഇവന്റ് ലിങ്ക് റെഡി! (ഇത് കോപ്പി ചെയ്ത് കുട്ടികൾക്ക് അയക്കുക):</b>
-                <input type="text" value="${generatedLink}" readonly style="width:100%; margin:6px 0; padding:8px; background:#fff; font-weight:bold; color:#2563eb; border:1px solid #cbd5e1; border-radius:4px;" onclick="this.select();">
+                <input type="text" id="generatedLinkInput" value="${generatedLink}" readonly style="width:100%; margin:6px 0; padding:8px; background:#fff; font-weight:bold; color:#2563eb; border:1px solid #cbd5e1; border-radius:4px;" onclick="this.select();">
+                <div style="display:flex; gap:8px; margin-top:8px;">
+                    <button class="btn btn-blue" style="margin-top:0; flex:1;" onclick="copyGeneratedLink()">📋 കോപ്പി ചെയ്യുക</button>
+                    <a href="https://api.whatsapp.com/send?text=${whatsappMsg}" target="_blank" class="btn btn-green" style="margin-top:0; flex:1; text-decoration:none;">واتساب WhatsApp-ൽ അയക്കുക</a>
+                </div>
             </div>
         `;
         
@@ -577,6 +583,15 @@
         }
 
         resetEventForm();
+    }
+
+    function copyGeneratedLink() {
+        let inputEl = document.getElementById('generatedLinkInput');
+        if(inputEl) {
+            inputEl.select();
+            document.execCommand('copy');
+            alert('ലിങ്ക് വിജയകരമായി കോപ്പി ചെയ്തു!');
+        }
     }
 
     function editEvent(id) {
@@ -658,12 +673,14 @@
         container.innerHTML = "";
         eventsData.forEach((ev, idx) => {
             let shareLink = window.location.href.split('?')[0] + "?event=" + ev.id;
+            let whatsappMsg = encodeURIComponent("ക്ലാസ് ടെസ്റ്റിൽ പങ്കെടുക്കാനുള്ള ലിങ്ക്: " + shareLink);
             container.innerHTML += `
                 <div class="event-card">
                     <b>${ev.name}</b><br>
-                    <input type="text" value="${shareLink}" readonly style="margin:6px 0; background:#fff;">
-                    <div style="display:flex; gap:6px;">
+                    <input type="text" id="event_link_${idx}" value="${shareLink}" readonly style="margin:6px 0; background:#fff;">
+                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
                         <button class="btn btn-blue" style="margin:0; font-size:12px; flex:1;" onclick="editEvent('${ev.id}')">✏️ എഡിറ്റ്</button>
+                        <a href="https://api.whatsapp.com/send?text=${whatsappMsg}" target="_blank" class="btn btn-green" style="margin:0; font-size:12px; flex:1; text-decoration:none;">واتساب ഷെയർ</a>
                         <button class="btn btn-red" style="margin:0; font-size:12px; flex:1;" onclick="eventsData.splice(${idx},1); localStorage.setItem('isolated_classTestEvents_v10', JSON.stringify(eventsData)); renderEventsList(); updateDashboardOverview();">🗑️ ഡിലീറ്റ്</button>
                     </div>
                 </div>`;
@@ -692,6 +709,10 @@
         const urlParams = new URLSearchParams(window.location.search);
         const eventId = urlParams.get('event');
         if(eventId) {
+            // വിദ്യാർത്ഥി ലിങ്ക് വഴി വരുമ്പോൾ അഡ്മിൻ ടാബുകൾ ഹൈഡ് ചെയ്യുക
+            let tabNav = document.getElementById('mainTabNavContainer');
+            if(tabNav) tabNav.style.display = 'none';
+
             switchMainTab('student');
             let ev = eventsData.find(e => e.id === eventId);
             if(ev) {
