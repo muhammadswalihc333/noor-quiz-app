@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ക്ലാസ് ടെസ്റ്റ് - പ്രോ മാനേജർ (V10.2 - Live Preview Mode)</title>
+    <style>
+        :root { --primary: #14532d; --primary-light: #22c55e; --accent: #2563eb; --danger: #ef4444; --bg: #fcf8f2; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: #333; box-sizing: border-box; }
+        .container { max-width: 680px; width: 100%; margin: 0 auto; background: #fff; padding: 15px; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 2px solid var(--primary); overflow-x: hidden; }
+        .header-box { background: linear-gradient(135deg, #14532d, #166534); color: white; padding: 16px; text-align: center; border-radius: 10px; font-weight: bold; font-size: 17px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(20,83,45,0.3); }
+        .sub-box { background: #fff; border: 2px solid #e5e7eb; border-radius: 12px; padding: 12px; margin-bottom: 15px; word-wrap: break-word; }
+        .sub-box h3 { margin-top: 0; color: var(--primary); font-size: 15px; border-bottom: 2px solid #f3f4f6; padding-bottom: 6px; }
+        .btn { border: none; padding: 10px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-top: 6px; font-size: 14px; box-sizing: border-box; }
+        .btn-green { background: var(--primary-light); color: white; }
+        .btn-blue { background: var(--accent); color: white; }
+        .btn-red { background: var(--danger); color: white; }
+        .btn-dark { background: var(--primary); color: white; }
+        .btn:disabled { background: #9ca3af !important; cursor: not-allowed; opacity: 0.7; }
+        input, select, textarea { width: 100%; padding: 10px; margin: 5px 0 12px 0; border: 1px solid #d1d5db; border-radius: 8px; box-sizing: border-box; font-size: 14px; background: #fdfdfd; }
+        .tab-nav { display: flex; gap: 8px; margin-bottom: 15px; }
+        .tab-nav button { flex: 1; padding: 10px; font-weight: bold; border-radius: 8px; cursor: pointer; border: 2px solid var(--primary); background: #fff; color: var(--primary); font-size: 13px; }
+        .tab-nav button.active-tab { background: var(--primary); color: white; }
+        .event-card { background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px; border-radius: 10px; margin-bottom: 12px; }
+        .flex-row { display: flex; gap: 8px; flex-wrap: wrap; }
+        .flex-row > * { flex: 1; min-width: 130px; }
+        .checkbox-group { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 13px; font-weight: 600; }
+        .checkbox-group input { width: 18px; height: 18px; margin: 0; }
+        .q-item-admin { background: #fdf2f8; border: 1px solid #fbcfe8; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+        th, td { padding: 6px; border: 1px solid #cbd5e1; text-align: left; }
+
+        .overview-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px; }
+        .overview-card { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px; border-radius: 10px; text-align: center; }
+        .overview-card h4 { margin: 0; font-size: 12px; color: #166534; }
+        .overview-card span { font-size: 20px; font-weight: bold; color: #14532d; }
+
+        .cert-preview-container { position: relative; width: 100%; height: 200px; background: #e5e7eb; border: 2px dashed #9ca3af; border-radius: 8px; overflow: hidden; margin-top: 10px; display: flex; align-items: center; justify-content: center; }
+        .cert-preview-bg { position: absolute; width: 100%; height: 100%; object-fit: cover; top: 0; left: 0; }
+        .cert-preview-name-tag { position: absolute; transform: translate(-50%, -50%); font-weight: bold; pointer-events: none; text-shadow: 1px 1px 2px rgba(255,255,255,0.8); white-space: nowrap; }
+
+        .student-banner-container { position: relative; width: 100%; height: 180px; border-radius: 10px; overflow: hidden; background: #e5e7eb; margin-bottom: 40px; }
+        .student-banner-img { width: 100%; height: 100%; object-fit: cover; }
+        .student-logo-wrapper { position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%); width: 75px; height: 75px; border-radius: 50%; background: #fff; border: 3px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.15); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .student-logo-img { width: 100%; height: 100%; object-fit: cover; }
+        .student-event-title { text-align: center; font-size: 18px; font-weight: bold; color: #1f2937; margin-top: 10px; margin-bottom: 12px; }
+        .timing-badge { background: #f0fdf4; border: 1.5px solid #bbf7d0; padding: 10px; border-radius: 12px; text-align: center; font-size: 12px; font-weight: 600; color: #166534; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-box">
+        📚 ക്ലാസ് ടെസ്റ്റ് സെക്ഷൻ (പ്രോ മാനേജർ V10.2 - Live Preview)
+    </div>
+
+    <div class="tab-nav">
+        <button id="tabAdminBtn" class="active-tab" onclick="switchMainTab('admin')">👑 അഡ്മിൻ പാനൽ</button>
+        <button id="tabStudentBtn" onclick="switchMainTab('student')">👨‍🎓 വിദ്യാർത്ഥി മോഡ്</button>
+    </div>
+
+    <div id="adminPanelSection">
+        
+        <div class="sub-box" style="border-color: var(--primary-light);">
+            <h3>📈 ഡാഷ്‌ബോർഡ് ഓവർവ്യൂ (Overview)</h3>
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <h4>ആകെ ഇവന്റുകൾ</h4>
+                    <span id="statTotalEvents">0</span>
+                </div>
+                <div class="overview-card">
+                    <h4>ആകെ സബ്മിഷനുകൾ</h4>
+                    <span id="statTotalSubs">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sub-box">
+            <h3 id="formSectionTitle">✨ പുതിയ ക്ലാസ് ടെസ്റ്റ് ഇവന്റ് നിർമ്മിക്കുക</h3>
+            <input type="hidden" id="editingEventId" value="">
+            
+            <label>ഇവന്റ് പേര്:</label>
+            <input type="text" id="eventName" placeholder="ഉദാ: മീലാദ് ക്ലാസ് ടെസ്റ്റ് 2026">
+            
+            <div class="flex-row">
+                <div>
+                    <label>സ്ഥലം / സ്ഥാപനം:</label>
+                    <input type="text" id="eventPlace" placeholder="സ്ഥലം">
+                </div>
+                <div>
+                    <label>ടെസ്റ്റ് സമയം (Minutes):</label>
+                    <input type="number" id="eventTimer" value="10">
+                </div>
+            </div>
+
+            <div class="flex-row">
+                <div>
+                    <label>ആരംഭിക്കുന്ന തീയതി & സമയം (Opens):</label>
+                    <input type="datetime-local" id="eventStartDT">
+                </div>
+                <div>
+                    <label>അവസാനിക്കുന്ന തീയതി & സമയം (Closes):</label>
+                    <input type="datetime-local" id="eventEndDT">
+                </div>
+            </div>
+
+            <div class="flex-row" style="background:#f0fdf4; padding:10px; border-radius:8px; border:1px solid #bbf7d0; margin:10px 0;">
+                <div>
+                    <label>🖼️ ബാനർ ചിത്രം:</label>
+                    <input type="file" id="eventBannerFile" accept="image/*">
+                </div>
+                <div>
+                    <label>🛡️ ലോഗോ ചിത്രം:</label>
+                    <input type="file" id="eventLogoFile" accept="image/*">
+                </div>
+            </div>
+
+            <label>വാല്യുവേഷൻ രീതി:</label>
+            <select id="eventEvalType">
+                <option value="auto">ഓട്ടോമാറ്റിക് വാല്യുവേഷൻ (Key Match)</option>
+                <option value="teacher">മാസ്റ്റർ (ടീച്ചർ) മാനുവൽ വാല്യുവേഷൻ</option>
+            </select>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="randMode" checked>
+                <label for="randMode">റാൻഡം മോഡ് (ചോദ്യങ്ങൾ മാറിമാറി വരാൻ)</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="oneDeviceCheck">
+                <label for="oneDeviceCheck">ഒരു ഡിവൈസിൽ നിന്ന് ഒരു തവണ മാത്രം</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="showResultCheck" checked>
+                <label for="showResultCheck">കുട്ടികൾക്ക് റിസൾട്ട് കാണാൻ അനുവാദം (Enable/Disable Result)</label>
+            </div>
+
+            <hr style="margin: 12px 0; border:0; border-top:1px solid #e5e7eb;">
+            <h4 style="color:var(--primary); margin-bottom:5px;">🎓 സർട്ടിഫിക്കറ്റ് കോൺഫിഗറേഷൻ & ലൈവ് പ്രിവ്യൂ</h4>
+            
+            <div style="background:#f0fdf4; padding:10px; border-radius:8px; border:1px solid #bbf7d0; margin-bottom:10px;">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="enablePartCert" onchange="toggleCertSubBox('part')">
+                    <label for="enablePartCert">1. പങ്കെടുത്തവർക്കുള്ള സർട്ടിഫിക്കറ്റ് (Participation - എല്ലാവർക്കും)</label>
+                </div>
+                <div id="partCertBox" style="display:none; margin-top:8px;">
+                    <label>ജനറേഷൻ രീതി:</label>
+                    <select id="partGenMode">
+                        <option value="auto">സൈറ്റ് ഓട്ടോമാറ്റിക് ജനറേറ്റ് ചെയ്യുക (Casual Template)</option>
+                        <option value="manual">മാനുവൽ ബാക്ക്ഗ്രൗണ്ട് അപ്‌ലോഡ് & പൊസിഷൻ</option>
+                    </select>
+                    <label>ബാക്ക്ഗ്രൗണ്ട് ഫയൽ (Manual ആണെങ്കിൽ മാത്രം):</label>
+                    <input type="file" id="partCertFile" accept="image/*" onchange="previewCertificateBg(event)">
+                </div>
+            </div>
+
+            <div style="background:#eff6ff; padding:10px; border-radius:8px; border:1px solid #bfdbfe; margin-bottom:10px;">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="enableMeritCert" onchange="toggleCertSubBox('merit')">
+                    <label for="enableMeritCert">2. വിജയികൾക്കുള്ള മെറിറ്റ് സർട്ടിഫിക്കറ്റ് (1st, 2nd, 3rd മാത്രം)</label>
+                </div>
+                <div id="meritCertBox" style="display:none; margin-top:8px;">
+                    <label>ജനറേഷൻ രീതി:</label>
+                    <select id="meritGenMode">
+                        <option value="auto">സൈറ്റ് ഓട്ടോമാറ്റിക് ജനറേറ്റ് ചെയ്യുക (Casual Template)</option>
+                        <option value="manual">മാനുവൽ ബാക്ക്ഗ്രൗണ്ട് അപ്‌ലോഡ് & പൊസിഷൻ</option>
+                    </select>
+                    <label>ബാക്ക്ഗ്രൗണ്ട് ഫയൽ (Manual ആണെങ്കിൽ മാത്രം):</label>
+                    <input type="file" id="meritCertFile" accept="image/*" onchange="previewCertificateBg(event)">
+                </div>
+            </div>
+
+            <div style="background:#fdf4ff; padding:12px; border-radius:8px; border:1px solid #f5d0fe;">
+                <h4 style="color:#db2777; margin-top:0; font-size:13px;">👁️ സർട്ടിഫിക്കറ്റ് ലൈവ് പ്രിവ്യൂ (പേര് എവിടെ വരുന്നു എന്ന് കാണുക)</h4>
+                
+                <div id="certPreviewBox" class="cert-preview-container">
+                    <img id="certPreviewImg" class="cert-preview-bg" style="display:none;">
+                    <div id="certPreviewDefaultText" style="color:#6b7280; font-size:12px; text-align:center; z-index:1;">ബാക്ക്ഗ്രൗണ്ട് ഫയൽ അപ്‌ലോഡ് ചെയ്യുമ്പോൾ ഇവിടെ പ്രിവ്യൂ കാണാം</div>
+                    <div id="certPreviewName" class="cert-preview-name-tag" style="left: 50%; top: 50%; font-size: 16px; color: #14532d;">മുഹമ്മദ് സാലിഹ് (ഉദാഹരണം)</div>
+                </div>
+
+                <label style="margin-top:10px;">Name X Position (<span id="valX">50</span>%):</label>
+                <input type="range" id="certXPos" min="0" max="100" value="50" oninput="updateCertPreviewCoords()">
+
+                <label>Name Y Position (<span id="valY">50</span>%):</label>
+                <input type="range" id="certYPos" min="0" max="100" value="50" oninput="updateCertPreviewCoords()">
+
+                <label>Font Size (<span id="valSize">24</span>px):</label>
+                <input type="range" id="certFontSize" min="12" max="60" value="24" oninput="updateCertPreviewCoords()">
+
+                <label>Certificate Name Color:</label>
+                <input type="color" id="certColorPicker" value="#14532d" style="height:40px; padding:2px;" oninput="updateCertPreviewCoords()">
+            </div>
+
+            <hr style="margin: 12px 0; border:0; border-top:1px solid #e5e7eb;">
+            <h4 style="color:var(--primary); margin-bottom:5px;">📌 ചോദ്യങ്ങൾ ചേർക്കാനുള്ള വിഭാഗം</h4>
+            
+            <div style="background:#f0fdf4; padding:10px; border-radius:8px; border:1px solid #bbf7d0; margin-bottom:10px;">
+                <b style="color:var(--primary); font-size:13px;">1. മൾട്ടിപ്പിൾ ചോയ്സ് (MCQ) ബൾക്ക് ആയി ചേർക്കാൻ:</b>
+                <textarea id="bulkMCQText" rows="3" placeholder="നബി ജന്മദേശം ഏത്? - മക്ക,മദീന,ത്വാഇഫ് - മക്ക - 5"></textarea>
+                <button class="btn btn-dark" onclick="processBulkMCQ()">📦 ബൾക്ക് MCQ ആഡ് ചെയ്യുക</button>
+            </div>
+
+            <div style="background:#eff6ff; padding:10px; border-radius:8px; border:1px solid #bfdbfe; margin-bottom:10px;">
+                <b style="color:var(--accent); font-size:13px;">2. എഴുതി ഉത്തരം നൽകേണ്ട ചോദ്യങ്ങൾ ബൾക്ക് ആയി ചേർക്കാൻ:</b>
+                <textarea id="bulkDescText" rows="3" placeholder="നബി ജീവിതം വിവരിക്കുക - 10"></textarea>
+                <button class="btn btn-dark" onclick="processBulkDesc()">📦 ബൾക്ക് എഴുത്തുചോദ്യങ്ങൾ ആഡ് ചെയ്യുക</button>
+            </div>
+
+            <h5 style="margin:8px 0 4px 0; font-size:13px;">ചേർത്ത ചോദ്യങ്ങളുടെ ലിസ്റ്റ്:</h5>
+            <div id="adminQuestionsPreview" style="max-height:180px; overflow-y:auto; margin-bottom:12px;"></div>
+
+            <button id="saveEventBtn" class="btn btn-green" onclick="saveNewTestEvent()">🚀 പുതിയ ഇവന്റ് ലിങ്ക് ക്രിയേറ്റ് ചെയ്യുക</button>
+            <button id="cancelEditBtn" class="btn btn-red" style="display:none;" onclick="resetEventForm()">❌ എഡിറ്റിംഗ് കാൻസൽ ചെയ്യുക</button>
+        </div>
+
+        <div class="sub-box">
+            <h3>📋 ഇവന്റുകൾ ബോർഡ് (എഡിറ്റ് ചെയ്യാൻ സാധിക്കും)</h3>
+            <div id="eventsListContainer"></div>
+        </div>
+
+        <div class="sub-box" style="border-color: #d97706;">
+            <h3>📝 ടീച്ചർ പേപ്പർ വാല്യുവേഷൻ & മാർക്കിങ്</h3>
+            <select id="selectEventForEval" onchange="loadStudentSubmissionsForEval()">
+                <option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>
+            </select>
+            <div id="studentPapersContainer"></div>
+        </div>
+
+        <div class="sub-box" style="border-color: #2563eb;">
+            <h3>🔑 മാസ്റ്റർ ആൻസർ കീ അപ്ലോഡ്</h3>
+            <select id="selectEventForKey" onchange="loadAnswerKeyUploader()">
+                <option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>
+            </select>
+            <div id="answerKeyUploadContainer" style="margin-top: 8px;"></div>
+        </div>
+
+        <div class="sub-box" style="border-color: var(--accent);">
+            <h3>📊 റിസൾട്ട്, ടൈം-ബേസ്ഡ് റാങ്കിംഗ് & പോസ്റ്റർ</h3>
+            <p style="font-size:12px; color:#555;">* അധ്യാപകൻ ഇവാലുവേഷൻ ചെയ്ത് സേവ് ചെയ്താൽ മാത്രമേ റാങ്ക് ലിസ്റ്റ് ദൃശ്യമാകൂ (തുല്യ മാർക്കെങ്കിൽ കുറഞ്ഞ സമയത്ത് തീർത്തവർക്ക് മുൻഗണന).</p>
+            <div class="flex-row" style="margin-bottom: 8px;">
+                <select id="selectEventForResult" onchange="renderResultsBoard()">
+                    <option value="ALL">എല്ലാ ഇവന്റുകളുടെയും റിസൾട്ട്</option>
+                </select>
+                <button class="btn btn-green" style="margin-top:0; width:auto;" onclick="exportResultsToCSV()">📥 ഡൗൺലോഡ് എക്സൽ (CSV)</button>
+            </div>
+            <div id="resultsBoardContainer" style="margin-top: 10px; overflow-x:auto;"></div>
+            
+            <div style="background:#fdf2f8; border:1px solid #fbcfe8; padding:12px; border-radius:8px; margin-top:12px;">
+                <h4 style="color:#db2777; margin-top:0;">🖼️ വിന്നേഴ്സ് പോസ്റ്റർ ജനറേറ്റർ (1st, 2nd, 3rd)</h4>
+                <p style="font-size:12px; color:#555;">ഇവന്റ് തിരഞ്ഞെടുക്കുക, വിജയികളുടെ ഫോട്ടോകൾ വേണമെങ്കിൽ അപ്‌ലോഡ് ചെയ്ത് ഒറ്റ പോസ്റ്റരായി ഡൗൺലോഡ് ചെയ്യാം.</p>
+                <select id="posterEventSelect" style="margin-bottom:8px;">
+                    <option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>
+                </select>
+                
+                <div class="flex-row">
+                    <div>
+                        <label>🥇 1st Place ഫോട്ടോ:</label>
+                        <input type="file" id="posterPhoto1" accept="image/*">
+                    </div>
+                    <div>
+                        <label>🥈 2nd Place ഫോട്ടോ:</label>
+                        <input type="file" id="posterPhoto2" accept="image/*">
+                    </div>
+                </div>
+                <div>
+                    <label>🥉 3rd Place ഫോട്ടോ:</label>
+                    <input type="file" id="posterPhoto3" accept="image/*">
+                </div>
+
+                <button class="btn btn-blue" onclick="generateWinnersPoster()">📥 വിന്നേഴ്സ് പോസ്റ്റർ ഡൗൺലോഡ് ചെയ്യുക</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="studentPanelSection" style="display:none;">
+        
+        <div class="sub-box" id="studentLoginBox">
+            
+            <div class="student-banner-container">
+                <img id="studBannerImg" src="" class="student-banner-img" style="display:none;">
+                <div class="student-logo-wrapper">
+                    <img id="studLogoImg" src="" class="student-logo-img" style="display:none;">
+                </div>
+            </div>
+
+            <div id="studEventTitle" class="student-event-title">ക്ലാസ് ടെസ്റ്റ്</div>
+            
+            <div id="studTimingBadge" class="timing-badge">
+                🟢 Opens: -- 🔴 Closes: --
+            </div>
+            
+            <label>പൂർണ്ണ നാമം *:</label>
+            <input type="text" id="studentNameInput" placeholder="പേര് നൽകുക">
+            
+            <label>ഫോൺ *:</label>
+            <input type="tel" id="studentPhoneInput" placeholder="ഫോൺ നമ്പർ">
+
+            <label>ക്ലാസ് / ഡിവിഷൻ:</label>
+            <input type="text" id="studentClassInput" placeholder="ക്ലാസ്">
+
+            <label>സ്ഥലം:</label>
+            <input type="text" id="studentPlaceInput" placeholder="സ്ഥലം">
+            
+            <button id="startTestBtn" class="btn btn-green" onclick="startStudentTest()">▶️ ടെസ്റ്റ് ആരംഭിക്കുക</button>
+            <p id="timingNoticeText" style="text-align:center; font-size:12px; color:red; font-weight:bold; margin-top:6px;"></p>
+            
+            <hr style="margin: 15px 0; border:0; border-top:1px solid #e5e7eb;">
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn btn-blue" style="flex:1; min-width:140px;" onclick="checkStudentResultPanel()">🔍 റിസൾട്ട് & സർട്ടിഫിക്കറ്റ്</button>
+                <button class="btn btn-dark" style="flex:1; min-width:140px;" onclick="checkStudentAnswerKeyPanel()">🔑 ആൻസർ കീ കാണുക</button>
+            </div>
+        </div>
+
+        <div id="studentTestBox" style="display:none;">
+            <div id="timerDisplay" style="background: #fee2e2; color: #991b1b; padding: 10px; text-align: center; font-weight: bold; border-radius: 8px; margin-bottom: 12px;">⏳ സമയം ബാക്കി: <span id="timeLeft">10:00</span></div>
+            <div id="studentQuestionsArea"></div>
+            <button class="btn btn-blue" onclick="submitStudentAnswers()">📤 ഉത്തരങ്ങൾ സബ്മിറ്റ് ചെയ്യുക</button>
+        </div>
+
+        <div id="studentResultBox" style="display:none;" class="sub-box">
+            <h3>📋 നിങ്ങളുടെ സബ്മിഷൻ, റിസൾട്ട് & സർട്ടിഫിക്കറ്റ്</h3>
+            <div id="studentScoreCardContent"></div>
+            <div id="studentCertificateArea" style="margin-top: 15px; text-align: center;"></div>
+            <button class="btn btn-dark" onclick="location.reload()" style="margin-top: 10px;">🏠 തിരികെ ഹോമിലേക്ക്</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    let eventsData = JSON.parse(localStorage.getItem('isolated_classTestEvents_v10')) || [];
+    let submissionsData = JSON.parse(localStorage.getItem('isolated_classTestSubs_v10')) || {};
+    let answerKeysData = JSON.parse(localStorage.getItem('isolated_classTestKeys_v10')) || {};
+    
+    let tempQuestionsList = [];
+    let activeTestEvent = null;
+    let timerInterval = null;
+    let currentStudentSession = null;
+
+    function switchMainTab(tab) {
+        if(tab === 'admin') {
+            document.getElementById('adminPanelSection').style.display = 'block';
+            document.getElementById('studentPanelSection').style.display = 'none';
+            document.getElementById('tabAdminBtn').classList.add('active-tab');
+            document.getElementById('tabStudentBtn').classList.remove('active-tab');
+            renderEventsList();
+            loadAdminDropdowns();
+            updateDashboardOverview();
+        } else {
+            document.getElementById('adminPanelSection').style.display = 'none';
+            document.getElementById('studentPanelSection').style.display = 'block';
+            document.getElementById('tabStudentBtn').classList.add('active-tab');
+            document.getElementById('tabAdminBtn').classList.remove('active-tab');
+        }
+    }
+
+    function updateDashboardOverview() {
+        let totalEvents = eventsData.length;
+        let totalSubs = 0;
+        Object.keys(submissionsData).forEach(k => {
+            if(Array.isArray(submissionsData[k])) {
+                totalSubs += submissionsData[k].length;
+            }
+        });
+        document.getElementById('statTotalEvents').innerText = totalEvents;
+        document.getElementById('statTotalSubs').innerText = totalSubs;
+    }
+
+    function toggleCertSubBox(type) {
+        if(type === 'part') {
+            let chk = document.getElementById('enablePartCert').checked;
+            document.getElementById('partCertBox').style.display = chk ? 'block' : 'none';
+        } else if(type === 'merit') {
+            let chk = document.getElementById('enableMeritCert').checked;
+            document.getElementById('meritCertBox').style.display = chk ? 'block' : 'none';
+        }
+    }
+
+    function previewCertificateBg(event) {
+        let file = event.target.files[0];
+        if(file) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let imgEl = document.getElementById('certPreviewImg');
+                imgEl.src = e.target.result;
+                imgEl.style.display = 'block';
+                document.getElementById('certPreviewDefaultText').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function updateCertPreviewCoords() {
+        let x = document.getElementById('certXPos').value;
+        let y = document.getElementById('certYPos').value;
+        let size = document.getElementById('certFontSize').value;
+        let color = document.getElementById('certColorPicker').value;
+
+        document.getElementById('valX').innerText = x;
+        document.getElementById('valY').innerText = y;
+        document.getElementById('valSize').innerText = size;
+
+        let nameTag = document.getElementById('certPreviewName');
+        nameTag.style.left = x + '%';
+        nameTag.style.top = y + '%';
+        nameTag.style.fontSize = (size * 0.8) + 'px';
+        nameTag.style.color = color;
+    }
+
+    function processBulkMCQ() {
+        let raw = document.getElementById('bulkMCQText').value.trim();
+        if(!raw) return;
+        raw.split('\n').forEach(line => {
+            let p = line.split('-').map(x => x.trim());
+            if(p.length >= 3) {
+                tempQuestionsList.push({ type: 'mcq', q: p[0], options: p[1].split(',').map(o => o.trim()), answer: p[2], marks: p[3] ? parseInt(p[3]) : 5 });
+            }
+        });
+        document.getElementById('bulkMCQText').value = '';
+        renderAdminQuestionsPreview();
+    }
+
+    function processBulkDesc() {
+        let raw = document.getElementById('bulkDescText').value.trim();
+        if(!raw) return;
+        raw.split('\n').forEach(line => {
+            let p = line.split('-').map(x => x.trim());
+            if(p[0]) {
+                tempQuestionsList.push({ type: 'desc', q: p[0], options: [], answer: 'Manual Evaluation', marks: p[1] ? parseInt(p[1]) : 10 });
+            }
+        });
+        document.getElementById('bulkDescText').value = '';
+        renderAdminQuestionsPreview();
+    }
+
+    function renderAdminQuestionsPreview() {
+        let container = document.getElementById('adminQuestionsPreview');
+        container.innerHTML = "";
+        tempQuestionsList.forEach((item, idx) => {
+            container.innerHTML += `
+                <div class="q-item-admin">
+                    <div style="font-size:13px;"><b>Q${idx+1} [${item.type.toUpperCase()}]:</b> ${item.q}</div>
+                    <button class="btn btn-red" style="padding:4px 8px; margin:0; font-size:11px;" onclick="tempQuestionsList.splice(${idx},1); renderAdminQuestionsPreview();">🗑️</button>
+                </div>`;
+        });
+    }
+
+    function saveNewTestEvent() {
+        let name = document.getElementById('eventName').value.trim();
+        if(!name || tempQuestionsList.length === 0) { alert("പേരും ചോദ്യങ്ങളും നൽകുക!"); return; }
+
+        let editingId = document.getElementById('editingEventId').value;
+        let bannerFile = document.getElementById('eventBannerFile').files[0];
+        let logoFile = document.getElementById('eventLogoFile').files[0];
+        let partFile = document.getElementById('partCertFile').files[0];
+        let meritFile = document.getElementById('meritCertFile').files[0];
+
+        let bannerUrl = "";
+        let logoUrl = "";
+        let partBgUrl = "";
+        let meritBgUrl = "";
+
+        let existingEv = editingId ? eventsData.find(e => e.id === editingId) : null;
+        if(existingEv) {
+            bannerUrl = existingEv.banner || "";
+            logoUrl = existingEv.logo || "";
+            partBgUrl = existingEv.partCert ? existingEv.partCert.bgUrl : "";
+            meritBgUrl = existingEv.meritCert ? existingEv.meritCert.bgUrl : "";
+        }
+
+        let pendingFiles = 0;
+        let checkAndCommit = () => {
+            if(pendingFiles === 0) {
+                let certConfig = {
+                    participation: {
+                        enabled: document.getElementById('enablePartCert').checked,
+                        mode: document.getElementById('partGenMode').value,
+                        bgUrl: partBgUrl
+                    },
+                    merit: {
+                        enabled: document.getElementById('enableMeritCert').checked,
+                        mode: document.getElementById('meritGenMode').value,
+                        bgUrl: meritBgUrl
+                    },
+                    x: document.getElementById('certXPos').value,
+                    y: document.getElementById('certYPos').value,
+                    size: document.getElementById('certFontSize').value,
+                    color: document.getElementById('certColorPicker').value
+                };
+                commitEventData(editingId, name, bannerUrl, logoUrl, certConfig);
+            }
+        };
+
+        if(bannerFile) {
+            pendingFiles++;
+            let r = new FileReader();
+            r.onload = function(e) { bannerUrl = e.target.result; pendingFiles--; checkAndCommit(); };
+            r.readAsDataURL(bannerFile);
+        }
+        if(logoFile) {
+            pendingFiles++;
+            let r = new FileReader();
+            r.onload = function(e) { logoUrl = e.target.result; pendingFiles--; checkAndCommit(); };
+            r.readAsDataURL(logoFile);
+        }
+        if(partFile) {
+            pendingFiles++;
+            let r = new FileReader();
+            r.onload = function(e) { partBgUrl = e.target.result; pendingFiles--; checkAndCommit(); };
+            r.readAsDataURL(partFile);
+        }
+        if(meritFile) {
+            pendingFiles++;
+            let r = new FileReader();
+            r.onload = function(e) { meritBgUrl = e.target.result; pendingFiles--; checkAndCommit(); };
+            r.readAsDataURL(meritFile);
+        }
+        if(pendingFiles === 0) checkAndCommit();
+    }
+
+    function commitEventData(editingId, name, bannerUrl, logoUrl, certConfig) {
+        let payload = {
+            id: editingId ? editingId : ('EV_' + Date.now()),
+            name,
+            place: document.getElementById('eventPlace').value.trim(),
+            timer: parseInt(document.getElementById('eventTimer').value) || 10,
+            startDT: document.getElementById('eventStartDT').value,
+            endDT: document.getElementById('eventEndDT').value,
+            banner: bannerUrl,
+            logo: logoUrl,
+            evalType: document.getElementById('eventEvalType').value,
+            showResult: document.getElementById('showResultCheck').checked,
+            rand: document.getElementById('randMode').checked,
+            oneDevice: document.getElementById('oneDeviceCheck').checked,
+            certificates: certConfig,
+            questions: [...tempQuestionsList],
+            date: new Date().toLocaleDateString()
+        };
+
+        if(editingId) {
+            let idx = eventsData.findIndex(e => e.id === editingId);
+            if(idx !== -1) eventsData[idx] = payload;
+            alert("ഇവന്റ് അതേ ലിങ്കിൽ വിജയകരമായി അപ്ഡേറ്റ് ചെയ്തു!");
+        } else {
+            eventsData.push(payload);
+            alert("പുതിയ ഇവന്റ് ലിങ്ക് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു!");
+        }
+
+        localStorage.setItem('isolated_classTestEvents_v10', JSON.stringify(eventsData));
+        
+        renderEventsList();
+        loadAdminDropdowns();
+        updateDashboardOverview();
+
+        let generatedLink = window.location.href.split('?')[0] + "?event=" + payload.id;
+        let successBoxHtml = `
+            <div style="background:#f0fdf4; border:2px dashed #22c55e; padding:12px; border-radius:8px; margin-top:15px;">
+                <b style="color:#14532d; font-size:13px;">🔗 ഇവന്റ് ലിങ്ക് റെഡി! (ഇത് കോപ്പി ചെയ്ത് കുട്ടികൾക്ക് അയക്കുക):</b>
+                <input type="text" value="${generatedLink}" readonly style="width:100%; margin:6px 0; padding:8px; background:#fff; font-weight:bold; color:#2563eb; border:1px solid #cbd5e1; border-radius:4px;" onclick="this.select();">
+            </div>
+        `;
+        
+        let saveBtn = document.getElementById('saveEventBtn');
+        let oldBox = document.getElementById('tempGeneratedLinkBox');
+        if(oldBox) oldBox.remove();
+        
+        let linkDiv = document.createElement('div');
+        linkDiv.id = 'tempGeneratedLinkBox';
+        linkDiv.innerHTML = successBoxHtml;
+        
+        if(saveBtn && saveBtn.parentElement) {
+            saveBtn.parentElement.appendChild(linkDiv);
+        }
+
+        resetEventForm();
+    }
+
+    function editEvent(id) {
+        let ev = eventsData.find(e => e.id === id);
+        if(!ev) return;
+        document.getElementById('editingEventId').value = ev.id;
+        document.getElementById('formSectionTitle').innerText = "✏️ ഇവന്റ് എഡിറ്റ് ചെയ്യുക (സെയിം ലിങ്ക് നിലനിർത്തുന്നു)";
+        document.getElementById('eventName').value = ev.name;
+        document.getElementById('eventPlace').value = ev.place || '';
+        document.getElementById('eventTimer').value = ev.timer || 10;
+        document.getElementById('eventStartDT').value = ev.startDT || '';
+        document.getElementById('eventEndDT').value = ev.endDT || '';
+        document.getElementById('eventEvalType').value = ev.evalType || 'auto';
+        document.getElementById('randMode').checked = ev.rand;
+        document.getElementById('oneDeviceCheck').checked = ev.oneDevice;
+        document.getElementById('showResultCheck').checked = ev.showResult !== false;
+
+        if(ev.certificates) {
+            let p = ev.certificates.participation || {};
+            let m = ev.certificates.merit || {};
+            
+            document.getElementById('enablePartCert').checked = !!p.enabled;
+            document.getElementById('partGenMode').value = p.mode || 'auto';
+            toggleCertSubBox('part');
+
+            document.getElementById('enableMeritCert').checked = !!m.enabled;
+            document.getElementById('meritGenMode').value = m.mode || 'auto';
+            toggleCertSubBox('merit');
+
+            document.getElementById('certXPos').value = ev.certificates.x || 50;
+            document.getElementById('certYPos').value = ev.certificates.y || 50;
+            document.getElementById('certFontSize').value = ev.certificates.size || 24;
+            document.getElementById('certColorPicker').value = ev.certificates.color || '#14532d';
+
+            if(p.bgUrl || m.bgUrl) {
+                let imgEl = document.getElementById('certPreviewImg');
+                imgEl.src = p.bgUrl || m.bgUrl;
+                imgEl.style.display = 'block';
+                document.getElementById('certPreviewDefaultText').style.display = 'none';
+            }
+            updateCertPreviewCoords();
+        }
+
+        tempQuestionsList = [...ev.questions];
+        renderAdminQuestionsPreview();
+        document.getElementById('saveEventBtn').innerText = "💾 മാറ്റങ്ങൾ അതേ ലിങ്കിൽ സേവ് ചെയ്യുക";
+        document.getElementById('cancelEditBtn').style.display = 'inline-flex';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetEventForm() {
+        document.getElementById('editingEventId').value = "";
+        document.getElementById('formSectionTitle').innerText = "✨ പുതിയ ക്ലാസ് ടെസ്റ്റ് ഇവന്റ് നിർമ്മിക്കുക";
+        document.getElementById('eventName').value = "";
+        document.getElementById('eventPlace').value = "";
+        document.getElementById('eventTimer').value = "10";
+        document.getElementById('eventStartDT').value = "";
+        document.getElementById('eventEndDT').value = "";
+        document.getElementById('eventBannerFile').value = "";
+        document.getElementById('eventLogoFile').value = "";
+        document.getElementById('partCertFile').value = "";
+        document.getElementById('meritCertFile').value = "";
+        document.getElementById('bulkMCQText').value = "";
+        document.getElementById('bulkDescText').value = "";
+        document.getElementById('enablePartCert').checked = false;
+        document.getElementById('enableMeritCert').checked = false;
+        toggleCertSubBox('part');
+        toggleCertSubBox('merit');
+        document.getElementById('certPreviewImg').style.display = 'none';
+        document.getElementById('certPreviewDefaultText').style.display = 'block';
+        tempQuestionsList = [];
+        renderAdminQuestionsPreview();
+        document.getElementById('saveEventBtn').innerText = "🚀 പുതിയ ഇവന്റ് ലിങ്ക് ക്രിയേറ്റ് ചെയ്യുക";
+        document.getElementById('cancelEditBtn').style.display = 'none';
+    }
+
+    function renderEventsList() {
+        let container = document.getElementById('eventsListContainer');
+        container.innerHTML = "";
+        eventsData.forEach((ev, idx) => {
+            let shareLink = window.location.href.split('?')[0] + "?event=" + ev.id;
+            container.innerHTML += `
+                <div class="event-card">
+                    <b>${ev.name}</b><br>
+                    <input type="text" value="${shareLink}" readonly style="margin:6px 0; background:#fff;">
+                    <div style="display:flex; gap:6px;">
+                        <button class="btn btn-blue" style="margin:0; font-size:12px; flex:1;" onclick="editEvent('${ev.id}')">✏️ എഡിറ്റ്</button>
+                        <button class="btn btn-red" style="margin:0; font-size:12px; flex:1;" onclick="eventsData.splice(${idx},1); localStorage.setItem('isolated_classTestEvents_v10', JSON.stringify(eventsData)); renderEventsList(); updateDashboardOverview();">🗑️ ഡിലീറ്റ്</button>
+                    </div>
+                </div>`;
+        });
+    }
+
+    function loadAdminDropdowns() {
+        ['selectEventForEval', 'selectEventForKey', 'selectEventForResult', 'posterEventSelect'].forEach(id => {
+            let el = document.getElementById(id);
+            if(el) {
+                let firstOpt = el.options[0].outerHTML;
+                el.innerHTML = firstOpt;
+                eventsData.forEach(ev => { el.innerHTML += `<option value="${ev.id}">${ev.name}</option>`; });
+            }
+        });
+        renderResultsBoard();
+    }
+
+    function loadAnswerKeyUploader() {
+        let evId = document.getElementById('selectEventForKey').value;
+        let container = document.getElementById('answerKeyUploadContainer');
+        container.innerHTML = evId ? `<textarea id="masterKey" rows="3">${answerKeysData[evId] || ''}</textarea><button class="btn btn-green" onclick="answerKeysData['${evId}']=document.getElementById('masterKey').value; localStorage.setItem('isolated_classTestKeys_v10', JSON.stringify(answerKeysData)); alert('സേവ് ചെയ്തു!');">💾 സേവ് ചെയ്യുക</button>` : '';
+    }
+
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('event');
+        if(eventId) {
+            switchMainTab('student');
+            let ev = eventsData.find(e => e.id === eventId);
+            if(ev) {
+                activeTestEvent = ev;
+                document.getElementById('studEventTitle').innerText = ev.name;
+
+                if(ev.banner) {
+                    let bImg = document.getElementById('studBannerImg');
+                    bImg.src = ev.banner;
+                    bImg.style.display = 'block';
+                }
+                if(ev.logo) {
+                    let lImg = document.getElementById('studLogoImg');
+                    lImg.src = ev.logo;
+                    lImg.style.display = 'block';
+                }
+
+                let startFormatted = ev.startDT ? new Date(ev.startDT).toLocaleString() : 'ഉടൻ';
+                let endFormatted = ev.endDT ? new Date(ev.endDT).toLocaleString() : 'നിശ്ചിത സമയം';
+                document.getElementById('studTimingBadge').innerHTML = `🟢 Opens: ${startFormatted} • 🔴 Closes: ${endFormatted}`;
+
+                checkTestTimingStatus(ev);
+            }
+        } else {
+            renderEventsList();
+            loadAdminDropdowns();
+            updateDashboardOverview();
+        }
+    };
+
+    function checkTestTimingStatus(ev) {
+        let now = Date.now();
+        let startMs = ev.startDT ? new Date(ev.startDT).getTime() : 0;
+        let endMs = ev.endDT ? new Date(ev.endDT).getTime() : Infinity;
+
+        let startBtn = document.getElementById('startTestBtn');
+        let noticeTxt = document.getElementById('timingNoticeText');
+
+        if(now < startMs) {
+            startBtn.disabled = true;
+            noticeTxt.innerText = "⏳ ടെസ്റ്റ് ആരംഭിച്ചിട്ടില്ല. നിശ്ചിത സമയത്ത് മാത്രമേ ബട്ടൺ പ്രവർത്തിക്കൂ.";
+        } else if(now > endMs) {
+            startBtn.disabled = true;
+            noticeTxt.innerText = "❌ ഈ ടെസ്റ്റിന്റെ സമയം അവസാനിച്ചിരിക്കുന്നു (Closed).";
+        } else {
+            startBtn.disabled = false;
+            noticeTxt.innerText = "";
+        }
+    }
+
+    function startStudentTest() {
+        let name = document.getElementById('studentNameInput').value.trim();
+        let phone = document.getElementById('studentPhoneInput').value.trim();
+        let sClass = document.getElementById('studentClassInput').value.trim();
+        let sPlace = document.getElementById('studentPlaceInput').value.trim();
+
+        if(!name || !phone) { alert("പേരും ഫോൺ നമ്പറും നൽകുക!"); return; }
+        if(!activeTestEvent) return;
+
+        if(activeTestEvent.oneDevice) {
+            let subs = submissionsData[activeTestEvent.id] || [];
+            let found = subs.find(s => s.phone === phone);
+            if(found) {
+                alert("ഈ ഡിവൈസ്/ഫോൺ നമ്പർ ഉപയോഗിച്ച് ഇതിനകം ടെസ്റ്റ് എഴുതിയിട്ടുണ്ട്!");
+                return;
+            }
+        }
+
+        currentStudentSession = { name, phone, class: sClass, place: sPlace, startTime: Date.now() };
+        document.getElementById('studentLoginBox').style.display = 'none';
+        document.getElementById('studentTestBox').style.display = 'block';
+
+        let qArea = document.getElementById('studentQuestionsArea');
+        qArea.innerHTML = "";
+        
+        let qList = [...activeTestEvent.questions];
+        if(activeTestEvent.rand) {
+            qList.sort(() => Math.random() - 0.5);
+        }
+        window.currentStudentQuestions = qList;
+
+        window.currentStudentQuestions.forEach((q, qIdx) => {
+            let html = `<div class="sub-box"><p><b>Q${qIdx+1}:</b> ${q.q}</p>`;
+            if(q.type === 'mcq') {
+                q.options.forEach(opt => { html += `<label style="display:block; margin:4px 0;"><input type="radio" name="sq_${qIdx}" value="${opt}"> ${opt}</label>`; });
+            } else {
+                html += `<textarea id="ans_desc_${qIdx}" rows="2" placeholder="ഉത്തരം എഴുതുക..."></textarea>`;
+            }
+            html += `</div>`;
+            qArea.innerHTML += html;
+        });
+
+        let totalSec = activeTestEvent.timer * 60;
+        timerInterval = setInterval(() => {
+            let m = Math.floor(totalSec / 60), s = totalSec % 60;
+            document.getElementById('timeLeft').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+            if(totalSec <= 0) { clearInterval(timerInterval); submitStudentAnswers(); }
+            totalSec--;
+        }, 1000);
+    }
+
+    function submitStudentAnswers() {
+        if(timerInterval) clearInterval(timerInterval);
+        let answers = [];
+        window.currentStudentQuestions.forEach((q, qIdx) => {
+            let ans = "";
+            let radios = document.getElementsByName(`sq_${qIdx}`);
+            for(let r of radios) { if(r.checked) ans = r.value; }
+            let txt = document.getElementById(`ans_desc_${qIdx}`);
+            if(txt) ans = txt.value;
+            answers.push({ q: q.q, studentAns: ans, correctAns: q.answer, marks: q.marks });
+        });
+
+        let isAuto = activeTestEvent.evalType === 'auto';
+        let scoreVal = 0;
+        if(isAuto) {
+            answers.forEach(curr => {
+                if(curr.studentAns.trim().toLowerCase() === curr.correctAns.trim().toLowerCase()) {
+                    scoreVal += curr.marks;
+                }
+            });
+        }
+
+        let timeTaken = Date.now() - currentStudentSession.startTime;
+
+        let submission = {
+            id: 'SUB_' + Date.now(),
+            eventId: activeTestEvent.id,
+            name: currentStudentSession.name,
+            phone: currentStudentSession.phone,
+            class: currentStudentSession.class,
+            place: currentStudentSession.place,
+            answers,
+            evalStatus: isAuto ? 'Evaluated' : 'Pending',
+            score: isAuto ? scoreVal : 'Pending',
+            timeTaken,
+            submitTime: new Date().toISOString()
+        };
+
+        if(!submissionsData[activeTestEvent.id]) submissionsData[activeTestEvent.id] = [];
+        submissionsData[activeTestEvent.id].push(submission);
+        localStorage.setItem('isolated_classTestSubs_v10', JSON.stringify(submissionsData));
+
+        document.getElementById('studentTestBox').style.display = 'none';
+        renderStudentResultCard(submission);
+    }
+
+    function checkStudentResultPanel() {
+        let phone = document.getElementById('studentPhoneInput').value.trim();
+        if(!phone || !activeTestEvent) return;
+        let sub = (submissionsData[activeTestEvent.id] || []).find(s => s.phone === phone);
+        if(!sub) { alert("സബ്മിഷൻ ഇല്ല!"); return; }
+        document.getElementById('studentLoginBox').style.display = 'none';
+        renderStudentResultCard(sub);
+    }
+
+    function renderStudentResultCard(sub) {
+        document.getElementById('studentResultBox').style.display = 'block';
+        let content = document.getElementById('studentScoreCardContent');
+        let certArea = document.getElementById('studentCertificateArea');
+
+        if(!activeTestEvent.showResult) {
+            content.innerHTML = `<p style="color:red; font-weight:bold;">റിസൾട്ട് പ്രസിദ്ധീകരിക്കുന്നത് താൽക്കാലികമായി ഡിസേബിൾ ചെയ്തിരിക്കുന്നു.</p>`;
+            return;
+        }
+
+        content.innerHTML = `<p><b>പേര്:</b> ${sub.name} | <b>സ്കോർ:</b> <span style="color:green; font-weight:bold;">${sub.score}</span></p>`;
+
+        certArea.innerHTML = "";
+        let cfg = activeTestEvent.certificates;
+        if(!cfg) return;
+
+        if(cfg.participation && cfg.participation.enabled) {
+            certArea.innerHTML += `<button class="btn btn-green" onclick="generateStudentCertificate('participation', '${sub.name}')">🎓 ഡൗൺലോഡ് പങ്കാളിത്ത സർട്ടിഫിക്കറ്റ്</button><br>`;
+        }
+
+        if(cfg.merit && cfg.merit.enabled && sub.evalStatus === 'Evaluated') {
+            let allSubs = [...(submissionsData[activeTestEvent.id] || [])].filter(s => s.evalStatus === 'Evaluated');
+            allSubs.sort((a, b) => {
+                if(b.score !== a.score) return b.score - a.score;
+                return (a.timeTaken || 0) - (b.timeTaken || 0);
+            });
+            let rankIdx = allSubs.findIndex(s => s.phone === sub.phone);
+            if(rankIdx !== -1 && rankIdx < 3) {
+                certArea.innerHTML += `<button class="btn btn-blue" onclick="generateStudentCertificate('merit', '${sub.name}')" style="margin-top:8px;">🏆 ഡൗൺലോഡ് മെറിറ്റ് സർട്ടിഫിക്കറ്റ് (Rank #${rankIdx+1})</button>`;
+            }
+        }
+    }
+
+    function generateStudentCertificate(type, studentName) {
+        let cfg = activeTestEvent.certificates;
+        let mode = type === 'participation' ? cfg.participation.mode : cfg.merit.mode;
+        let bgUrl = type === 'participation' ? cfg.participation.bgUrl : cfg.merit.bgUrl;
+
+        let canvas = document.createElement('canvas');
+        canvas.width = 1000;
+        canvas.height = 700;
+        let ctx = canvas.getContext('2d');
+
+        let drawTextOnCanvas = () => {
+            ctx.fillStyle = cfg.color || '#14532d';
+            ctx.font = `bold ${cfg.size * 2}px sans-serif`;
+            ctx.textAlign = 'center';
+            let xCoord = (cfg.x / 100) * canvas.width;
+            let yCoord = (cfg.y / 100) * canvas.height;
+            ctx.fillText(studentName, xCoord, yCoord);
+
+            let link = document.createElement('a');
+            link.download = studentName + '_' + type + '_Certificate.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        };
+
+        if(mode === 'manual' && bgUrl) {
+            let img = new Image();
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                drawTextOnCanvas();
+            };
+            img.src = bgUrl;
+        } else {
+            ctx.fillStyle = '#fcf8f2';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#14532d';
+            ctx.lineWidth = 15;
+            ctx.strokeRect(20, 20, 960, 660);
+
+            ctx.fillStyle = '#14532d';
+            ctx.font = 'bold 32px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(activeTestEvent.name, 500, 100);
+
+            ctx.font = 'bold 28px sans-serif';
+            let titleText = type === 'participation' ? 'CERTIFICATE OF PARTICIPATION' : 'CERTIFICATE OF MERIT (WINNER)';
+            ctx.fillText(titleText, 500, 160);
+
+            ctx.font = '20px sans-serif';
+            ctx.fillStyle = '#333333';
+            ctx.fillText('ഇത് സാക്ഷ്യപ്പെടുത്തുന്നത്:', 500, 240);
+
+            drawTextOnCanvas();
+
+            ctx.font = '18px sans-serif';
+            ctx.fillStyle = '#555555';
+            let desc = type === 'participation' ? 'ഈ ഓൺലൈൻ പരിപാടിയിൽ വിജയകരമായി പങ്കെടുത്തതിന് നൽകുന്നത്.' : 'ഈ മത്സരത്തിൽ മികച്ച വിജയം (Top 3) കരസ്ഥമാക്കിയതിന് നൽകുന്ന സർട്ടിഫിക്കറ്റ്.';
+            ctx.fillText(desc, 500, 520);
+        }
+    }
+
+    function checkStudentAnswerKeyPanel() {
+        if(!activeTestEvent) return;
+        document.getElementById('studentLoginBox').style.display = 'none';
+        document.getElementById('studentResultBox').style.display = 'block';
+        document.getElementById('studentScoreCardContent').innerHTML = `<h4>🔑 ആൻസർ കീ:</h4><p>${answerKeysData[activeTestEvent.id] || 'ഇതുവരെ അപ്ലോഡ് ചെയ്തിട്ടില്ല (Pending).'}</p>`;
+    }
+
+    function loadStudentSubmissionsForEval() {
+        let evId = document.getElementById('selectEventForEval').value;
+        let container = document.getElementById('studentPapersContainer');
+        container.innerHTML = "";
+        if(!evId || !submissionsData[evId]) return;
+
+        submissionsData[evId].forEach((sub, sIdx) => {
+            let html = `<div style="background:#fffbeb; padding:8px; margin-bottom:8px; border:1px solid #fde68a;"><b>${sub.name}</b> (${sub.phone})<br>`;
+            sub.answers.forEach((ans, aIdx) => {
+                html += `Q: ${ans.q} | ഉത്തരം: <b>${ans.studentAns}</b><br>മാർക്ക്: <input type="number" id="m_${sIdx}_${aIdx}" value="${ans.awardedMarks || 0}" style="width:50px;"><br>`;
+            });
+            html += `<button class="btn btn-green" onclick="saveEval('${evId}', ${sIdx})">സേവ് ചെയ്യുക</button></div>`;
+            container.innerHTML += html;
+        });
+    }
+
+    function saveEval(evId, sIdx) {
+        let sub = submissionsData[evId][sIdx];
+        let total = 0;
+        sub.answers.forEach((ans, aIdx) => {
+            let m = parseInt(document.getElementById(`m_${sIdx}_${aIdx}`).value) || 0;
+            ans.awardedMarks = m;
+            total += m;
+        });
+        sub.score = total;
+        sub.evalStatus = 'Evaluated';
+        localStorage.setItem('isolated_classTestSubs_v10', JSON.stringify(submissionsData));
+        alert("വാല്യുവേഷൻ സേവ് ചെയ്തു!");
+        loadStudentSubmissionsForEval();
+        renderResultsBoard();
+    }
+
+    function renderResultsBoard() {
+        let evId = document.getElementById('selectEventForResult').value;
+        let container = document.getElementById('resultsBoardContainer');
+        let subs = [];
+        if(evId === 'ALL') { Object.keys(submissionsData).forEach(k => subs = subs.concat(submissionsData[k])); }
+        else { subs = submissionsData[evId] || []; }
+
+        subs = subs.filter(s => s.evalStatus === 'Evaluated');
+        subs.sort((a, b) => {
+            if(b.score !== a.score) return b.score - a.score;
+            return (a.timeTaken || 0) - (b.timeTaken || 0);
+        });
+
+        if(subs.length === 0) { container.innerHTML = "<p>വാല്യുവേഷൻ പൂർത്തിയായ റിസൾട്ടുകൾ ഇല്ല.</p>"; return; }
+        let html = `<table><tr><th>Rank</th><th>Name</th><th>Class</th><th>Score</th></tr>`;
+        subs.forEach((s, i) => {
+            html += `<tr><td>#${i+1}</td><td>${s.name}</td><td>${s.class || '-'}</td><td>${s.score}</td></tr>`;
+        });
+        container.innerHTML = html + `</table>`;
+    }
+
+    function exportResultsToCSV() {
+        let evId = document.getElementById('selectEventForResult').value;
+        let subs = [];
+        if(evId === 'ALL') { Object.keys(submissionsData).forEach(k => subs = subs.concat(submissionsData[k])); }
+        else { subs = submissionsData[evId] || []; }
+
+        subs = subs.filter(s => s.evalStatus === 'Evaluated');
+        subs.sort((a, b) => {
+            if(b.score !== a.score) return b.score - a.score;
+            return (a.timeTaken || 0) - (b.timeTaken || 0);
+        });
+
+        if(subs.length === 0) { alert("എക്സ്പോർട്ട് ചെയ്യാൻ വാല്യുവേറ്റ് ചെയ്ത റിസൾട്ടുകൾ ലഭ്യമല്ല!"); return; }
+
+        let csvContent = "data:text/csv;charset=utf-8,Rank,Name,Phone,Class,Place,Score\n";
+        subs.forEach((s, i) => {
+            csvContent += `#${i+1},"${s.name}","${s.phone}","${s.class || ''}","${s.place || ''}",${s.score}\n`;
+        });
+
+        let encodedUri = encodeURI(csvContent);
+        let link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "class_test_results.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function generateWinnersPoster() {
+        let evId = document.getElementById('posterEventSelect').value;
+        if(!evId) { alert("പോസ്റ്ററിനായി ഇവന്റ് തിരഞ്ഞെടുക്കുക!"); return; }
+        let ev = eventsData.find(e => e.id === evId);
+        let subs = (submissionsData[evId] || []).filter(s => s.evalStatus === 'Evaluated');
+        
+        subs.sort((a, b) => {
+            if(b.score !== a.score) return b.score - a.score;
+            return (a.timeTaken || 0) - (b.timeTaken || 0);
+        });
+
+        if(subs.length === 0) { alert("ഈ ഇവന്റിൽ വാല്യുവേറ്റ് ചെയ്ത വിജയികൾ ഇല്ല!"); return; }
+
+        let canvas = document.createElement('canvas');
+        canvas.width = 800;
+        canvas.height = 1000;
+        let ctx = canvas.getContext('2d');
+
+        let grad = ctx.createLinearGradient(0, 0, 800, 1000);
+        grad.addColorStop(0, '#14532d');
+        grad.addColorStop(1, '#064e3b');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 800, 1000);
+
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 8;
+        ctx.strokeRect(20, 20, 760, 960);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 32px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🏆 RANK HOLDERS / വിജയികൾ 🏆', 400, 80);
+        ctx.font = 'bold 20px sans-serif';
+        ctx.fillStyle = '#f59e0b';
+        ctx.fillText(ev.name, 400, 120);
+
+        let rankPositions = [
+            { x: 400, y: 280, radius: 70, nameY: 380, label: '1st Place' },
+            { x: 230, y: 560, radius: 55, nameY: 645, label: '2nd Place' },
+            { x: 570, y: 560, radius: 55, nameY: 645, label: '3rd Place' }
+        ];
+
+        let loadedImagesCount = 0;
+        let totalImagesToLoad = Math.min(subs.length, 3);
+
+        let drawAllRanks = () => {
+            rankPositions.forEach((pos, idx) => {
+                if(idx < subs.length) {
+                    let student = subs[idx];
+                    
+                    ctx.fillStyle = '#f59e0b';
+                    ctx.font = 'bold 18px sans-serif';
+                    ctx.fillText(pos.label, pos.x, pos.y - pos.radius - 15);
+
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, pos.radius, 0, Math.PI * 2, true);
+                    ctx.closePath();
+                    ctx.clip();
+                    
+                    if(window[`posterImgObj${idx+1}`]) {
+                        ctx.drawImage(window[`posterImgObj${idx+1}`], pos.x - pos.radius, pos.y - pos.radius, pos.radius * 2, pos.radius * 2);
+                    } else {
+                        ctx.fillStyle = '#374151';
+                        ctx.fill();
+                    }
+                    ctx.restore();
+
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, pos.radius, 0, Math.PI * 2, true);
+                    ctx.lineWidth = 4;
+                    ctx.strokeStyle = '#f59e0b';
+                    ctx.stroke();
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 20px sans-serif';
+                    ctx.fillText(student.name, pos.x, pos.nameY);
+                    ctx.font = '16px sans-serif';
+                    ctx.fillStyle = '#d1d5db';
+                    ctx.fillText(`Score: ${student.score}`, pos.x, pos.nameY + 24);
+                }
+            });
+
+            ctx.fillStyle = '#f59e0b';
+            ctx.font = 'bold 22px sans-serif';
+            ctx.fillText('അഭിനന്ദനങ്ങൾ! ആശംസകളോടെ...', 400, 920);
+
+            let link = document.createElement('a');
+            link.download = ev.name + '_Rank_Holders_Poster.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        };
+
+        for(let i=1; i<=3; i++) {
+            let photoInput = document.getElementById(`posterPhoto${i}`);
+            if(photoInput && photoInput.files && photoInput.files[0]) {
+                let r = new FileReader();
+                r.onload = (function(index) {
+                    return function(e) {
+                        let img = new Image();
+                        img.onload = function() {
+                            window[`posterImgObj${index}`] = img;
+                            loadedImagesCount++;
+                            if(loadedImagesCount === totalImagesToLoad) drawAllRanks();
+                        };
+                        img.src = e.target.result;
+                    };
+                })(i);
+                r.readAsDataURL(photoInput.files[0]);
+            } else {
+                totalImagesToLoad = Math.max(0, totalImagesToLoad - 1);
+            }
+        }
+
+        if(totalImagesToLoad === 0) {
+            drawAllRanks();
+        }
+    }
+</script>
+
+</body>
+</html>
