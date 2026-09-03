@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ക്ലാസ് ടെസ്റ്റ് - പ്രോ മാനേജർ (V10.2 - Live Preview Mode)</title>
+    <title>📚 ക്ലാസ് ടെസ്റ്റ് സെക്ഷൻ </title>
     <style>
         :root { --primary: #14532d; --primary-light: #22c55e; --accent: #2563eb; --danger: #ef4444; --bg: #fcf8f2; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: #333; box-sizing: border-box; }
@@ -51,10 +51,9 @@
 
 <div class="container">
     <div class="header-box">
-        📚 ക്ലാസ് ടെസ്റ്റ് സെക്ഷൻ (പ്രോ മാനേജർ V10.2 - Live Preview)
+        📚 ക്ലാസ് ടെസ്റ്റ് സെക്ഷൻ
     </div>
 
-    <!-- അഡ്മിൻ മോഡിൽ മാത്രം കാണുന്ന ടാബ് നാവിഗേഷൻ -->
     <div class="tab-nav" id="mainTabNavContainer">
         <button id="tabAdminBtn" class="active-tab" onclick="switchMainTab('admin')">👑 അഡ്മിൻ പാനൽ</button>
         <button id="tabStudentBtn" onclick="switchMainTab('student')">👨‍🎓 വിദ്യാർത്ഥി മോഡ്</button>
@@ -127,8 +126,8 @@
                 <label for="randMode">റാൻഡം മോഡ് (ചോദ്യങ്ങൾ മാറിമാറി വരാൻ)</label>
             </div>
             <div class="checkbox-group">
-                <input type="checkbox" id="oneDeviceCheck">
-                <label for="oneDeviceCheck">ഒരു ഡിവൈസിൽ നിന്ന് ഒരു തവണ മാത്രം</label>
+                <input type="checkbox" id="oneDeviceCheck" checked>
+                <label for="oneDeviceCheck">ഒരു ഡിവൈസിൽ / ഫോൺ നമ്പറിൽ നിന്ന് ഒരു തവണ മാത്രം (One Attempt Restriction ON/OFF)</label>
             </div>
             <div class="checkbox-group">
                 <input type="checkbox" id="showResultCheck" checked>
@@ -141,7 +140,7 @@
             <div style="background:#f0fdf4; padding:10px; border-radius:8px; border:1px solid #bbf7d0; margin-bottom:10px;">
                 <div class="checkbox-group">
                     <input type="checkbox" id="enablePartCert" onchange="toggleCertSubBox('part')">
-                    <label for="enablePartCert">1. പങ്കെടുത്തവർക്കുള്ള സർട്ടിഫിക്കറ്റ് (Participation - എല്ലാവർക്കും)</label>
+                    <label for="enablePartCert">1. പങ്കെടുത്തവർക്കുള്ള സർട്ടിഫിക്കറ്റ് (Participation - ടെസ്റ്റ് സബ്മിറ്റ് ചെയ്ത ഉടൻ ലഭിക്കുന്നത്)</label>
                 </div>
                 <div id="partCertBox" style="display:none; margin-top:8px;">
                     <label>ജനറേഷൻ രീതി:</label>
@@ -157,7 +156,7 @@
             <div style="background:#eff6ff; padding:10px; border-radius:8px; border:1px solid #bfdbfe; margin-bottom:10px;">
                 <div class="checkbox-group">
                     <input type="checkbox" id="enableMeritCert" onchange="toggleCertSubBox('merit')">
-                    <label for="enableMeritCert">2. വിജയികൾക്കുള്ള മെറിറ്റ് സർട്ടിഫിക്കറ്റ് (1st, 2nd, 3rd മാത്രം)</label>
+                    <label for="enableMeritCert">2. വിജയികൾക്കുള്ള മെറിറ്റ് സർട്ടിഫിക്കറ്റ് (1st, 2nd, 3rd റാങ്ക് നേടിയവർക്ക് മാത്രം)</label>
                 </div>
                 <div id="meritCertBox" style="display:none; margin-top:8px;">
                     <label>ജനറേഷൻ രീതി:</label>
@@ -171,7 +170,7 @@
             </div>
 
             <div style="background:#fdf4ff; padding:12px; border-radius:8px; border:1px solid #f5d0fe;">
-                <h4 style="color:#db2777; margin-top:0; font-size:13px;">👁️ സർട്ടിഫിക്കറ്റ് ലൈവ് പ്രിവ്യൂ (പേര് എവിടെ വരുന്നു എന്ന് കാണുക)</h4>
+                <h4 style="color:#db2777; margin-top:0; font-size:13px;">👁️ സർട്ടിഫിക്കറ്റ് ലൈവ് പ്രിവ്യൂ</h4>
                 
                 <div id="certPreviewBox" class="cert-preview-container">
                     <img id="certPreviewImg" class="cert-preview-bg" style="display:none;">
@@ -215,7 +214,7 @@
         </div>
 
         <div class="sub-box">
-            <h3>📋 ഇവന്റുകൾ ബോർഡ് (എഡിറ്റ് ചെയ്യാൻ സാധിക്കും)</h3>
+            <h3>📋 ഇവന്റുകൾ ബോർഡ്</h3>
             <div id="eventsListContainer"></div>
         </div>
 
@@ -237,7 +236,6 @@
 
         <div class="sub-box" style="border-color: var(--accent);">
             <h3>📊 റിസൾട്ട്, ടൈം-ബേസ്ഡ് റാങ്കിംഗ് & പോസ്റ്റർ</h3>
-            <p style="font-size:12px; color:#555;">* അധ്യാപകൻ ഇവാലുവേഷൻ ചെയ്ത് സേവ് ചെയ്താൽ മാത്രമേ റാങ്ക് ലിസ്റ്റ് ദൃശ്യമാകൂ (തുല്യ മാർക്കെങ്കിൽ കുറഞ്ഞ സമയത്ത് തീർത്തവർക്ക് മുൻഗണന).</p>
             <div class="flex-row" style="margin-bottom: 8px;">
                 <select id="selectEventForResult" onchange="renderResultsBoard()">
                     <option value="ALL">എല്ലാ ഇവന്റുകളുടെയും റിസൾട്ട്</option>
@@ -248,7 +246,6 @@
             
             <div style="background:#fdf2f8; border:1px solid #fbcfe8; padding:12px; border-radius:8px; margin-top:12px;">
                 <h4 style="color:#db2777; margin-top:0;">🖼️ വിന്നേഴ്സ് പോസ്റ്റർ ജനറേറ്റർ (1st, 2nd, 3rd)</h4>
-                <p style="font-size:12px; color:#555;">ഇവന്റ് തിരഞ്ഞെടുക്കുക, വിജയികളുടെ ഫോട്ടോകൾ വേണമെങ്കിൽ അപ്‌ലോഡ് ചെയ്ത് ഒറ്റ പോസ്റ്റരായി ഡൗൺലോഡ് ചെയ്യാം.</p>
                 <select id="posterEventSelect" style="margin-bottom:8px;">
                     <option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>
                 </select>
@@ -277,7 +274,6 @@
     <div id="studentPanelSection" style="display:none;">
         
         <div class="sub-box" id="studentLoginBox">
-            
             <div class="student-banner-container">
                 <img id="studBannerImg" src="" class="student-banner-img" style="display:none;">
                 <div class="student-logo-wrapper">
@@ -294,7 +290,7 @@
             <label>പൂർണ്ണ നാമം *:</label>
             <input type="text" id="studentNameInput" placeholder="പേര് നൽകുക">
             
-            <label>ഫോൺ *:</label>
+            <label>ഫോൺ നമ്പര്‍ *:</label>
             <input type="tel" id="studentPhoneInput" placeholder="ഫോൺ നമ്പർ">
 
             <label>ക്ലാസ് / ഡിവിഷൻ:</label>
@@ -307,9 +303,16 @@
             <p id="timingNoticeText" style="text-align:center; font-size:12px; color:red; font-weight:bold; margin-top:6px;"></p>
             
             <hr style="margin: 15px 0; border:0; border-top:1px solid #e5e7eb;">
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <button class="btn btn-blue" style="flex:1; min-width:140px;" onclick="checkStudentResultPanel()">🔍 റിസൾട്ട് & സർട്ടിഫിക്കറ്റ്</button>
-                <button class="btn btn-dark" style="flex:1; min-width:140px;" onclick="checkStudentAnswerKeyPanel()">🔑 ആൻസർ കീ കാണുക</button>
+            
+            <div style="background:#f0fdf4; padding:12px; border-radius:8px; border:1px solid #bbf7d0;">
+                <h4 style="color:var(--primary); margin-top:0; font-size:14px;">🔍 നിങ്ങളുടെ റിസൾട്ട് അല്ലെങ്കിൽ സർട്ടിഫിക്കറ്റ് പരിശോധിക്കാൻ</h4>
+                <p style="font-size:12px; color:#555; margin-bottom:8px;">ടെസ്റ്റ് സബ്മിറ്റ് ചെയ്തപ്പോൾ ലഭിച്ച ഐഡി (Submission ID) താഴെ നൽകുക:</p>
+                <label>സബ്മിഷൻ ഐഡി (Submission ID):</label>
+                <input type="text" id="checkSubIdInput" placeholder="ഉദാ: SUB_1718000000000">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn btn-blue" style="flex:1; min-width:140px;" onclick="checkStudentResultById()">🔍 റിസൾട്ട് കാണുക</button>
+                    <button class="btn btn-dark" style="flex:1; min-width:140px;" onclick="checkStudentAnswerKeyPanel()">🔑 ആൻസർ കീ കാണുക</button>
+                </div>
             </div>
         </div>
 
@@ -330,9 +333,9 @@
 </div>
 
 <script>
-    let eventsData = JSON.parse(localStorage.getItem('isolated_classTestEvents_v10')) || [];
-    let submissionsData = JSON.parse(localStorage.getItem('isolated_classTestSubs_v10')) || {};
-    let answerKeysData = JSON.parse(localStorage.getItem('isolated_classTestKeys_v10')) || {};
+    let eventsData = JSON.parse(localStorage.getItem('isolated_classTestEvents_v12.1')) || [];
+    let submissionsData = JSON.parse(localStorage.getItem('isolated_classTestSubs_v12.1')) || {};
+    let answerKeysData = JSON.parse(localStorage.getItem('isolated_classTestKeys_v12.1')) || {};
     
     let tempQuestionsList = [];
     let activeTestEvent = null;
@@ -550,7 +553,7 @@
             alert("പുതിയ ഇവന്റ് ലിങ്ക് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു!");
         }
 
-        localStorage.setItem('isolated_classTestEvents_v10', JSON.stringify(eventsData));
+        localStorage.setItem('isolated_classTestEvents_v12.1', JSON.stringify(eventsData));
         
         renderEventsList();
         loadAdminDropdowns();
@@ -598,7 +601,7 @@
         let ev = eventsData.find(e => e.id === id);
         if(!ev) return;
         document.getElementById('editingEventId').value = ev.id;
-        document.getElementById('formSectionTitle').innerText = "✏️ ഇവന്റ് എഡിറ്റ് ചെയ്യുക (സെയിം ലിങ്ക് നിലനിർത്തുന്നു)";
+        document.getElementById('formSectionTitle').innerText = "✏️ ഇവന്റ് എഡിറ്റ് ചെയ്യുക";
         document.getElementById('eventName').value = ev.name;
         document.getElementById('eventPlace').value = ev.place || '';
         document.getElementById('eventTimer').value = ev.timer || 10;
@@ -606,7 +609,7 @@
         document.getElementById('eventEndDT').value = ev.endDT || '';
         document.getElementById('eventEvalType').value = ev.evalType || 'auto';
         document.getElementById('randMode').checked = ev.rand;
-        document.getElementById('oneDeviceCheck').checked = ev.oneDevice;
+        document.getElementById('oneDeviceCheck').checked = ev.oneDevice !== false;
         document.getElementById('showResultCheck').checked = ev.showResult !== false;
 
         if(ev.certificates) {
@@ -681,7 +684,7 @@
                     <div style="display:flex; gap:6px; flex-wrap:wrap;">
                         <button class="btn btn-blue" style="margin:0; font-size:12px; flex:1;" onclick="editEvent('${ev.id}')">✏️ എഡിറ്റ്</button>
                         <a href="https://api.whatsapp.com/send?text=${whatsappMsg}" target="_blank" class="btn btn-green" style="margin:0; font-size:12px; flex:1; text-decoration:none;">واتساب ഷെയർ</a>
-                        <button class="btn btn-red" style="margin:0; font-size:12px; flex:1;" onclick="eventsData.splice(${idx},1); localStorage.setItem('isolated_classTestEvents_v10', JSON.stringify(eventsData)); renderEventsList(); updateDashboardOverview();">🗑️ ഡിലീറ്റ്</button>
+                        <button class="btn btn-red" style="margin:0; font-size:12px; flex:1;" onclick="eventsData.splice(${idx},1); localStorage.setItem('isolated_classTestEvents_v12.1', JSON.stringify(eventsData)); renderEventsList(); updateDashboardOverview();">🗑️ ഡിലീറ്റ്</button>
                     </div>
                 </div>`;
         });
@@ -702,14 +705,13 @@
     function loadAnswerKeyUploader() {
         let evId = document.getElementById('selectEventForKey').value;
         let container = document.getElementById('answerKeyUploadContainer');
-        container.innerHTML = evId ? `<textarea id="masterKey" rows="3">${answerKeysData[evId] || ''}</textarea><button class="btn btn-green" onclick="answerKeysData['${evId}']=document.getElementById('masterKey').value; localStorage.setItem('isolated_classTestKeys_v10', JSON.stringify(answerKeysData)); alert('സേവ് ചെയ്തു!');">💾 സേവ് ചെയ്യുക</button>` : '';
+        container.innerHTML = evId ? `<textarea id="masterKey" rows="3">${answerKeysData[evId] || ''}</textarea><button class="btn btn-green" onclick="answerKeysData['${evId}']=document.getElementById('masterKey').value; localStorage.setItem('isolated_classTestKeys_v12.1', JSON.stringify(answerKeysData)); alert('സേവ് ചെയ്തു!');">💾 സേവ് ചെയ്യുക</button>` : '';
     }
 
     window.onload = function() {
         const urlParams = new URLSearchParams(window.location.search);
         const eventId = urlParams.get('event');
         if(eventId) {
-            // വിദ്യാർത്ഥി ലിങ്ക് വഴി വരുമ്പോൾ അഡ്മിൻ ടാബുകൾ ഹൈഡ് ചെയ്യുക
             let tabNav = document.getElementById('mainTabNavContainer');
             if(tabNav) tabNav.style.display = 'none';
 
@@ -772,11 +774,11 @@
         if(!name || !phone) { alert("പേരും ഫോൺ നമ്പറും നൽകുക!"); return; }
         if(!activeTestEvent) return;
 
-        if(activeTestEvent.oneDevice) {
+        if(activeTestEvent.oneDevice !== false) {
             let subs = submissionsData[activeTestEvent.id] || [];
-            let found = subs.find(s => s.phone === phone);
-            if(found) {
-                alert("ഈ ഡിവൈസ്/ഫോൺ നമ്പർ ഉപയോഗിച്ച് ഇതിനകം ടെസ്റ്റ് എഴുതിയിട്ടുണ്ട്!");
+            let alreadySubmitted = subs.find(s => s.phone === phone);
+            if(alreadySubmitted || localStorage.getItem('submitted_device_' + activeTestEvent.id)) {
+                alert("ഈ ഫോൺ നമ്പർ അല്ലെങ്കിൽ ഡിവൈസ് ഉപയോഗിച്ച് ഇതിനകം ടെസ്റ്റ് എഴുതിയിട്ടുണ്ട്! ഒന്നിധികം തവണ പങ്കെടുക്കാൻ അനുവാദമില്ല.");
                 return;
             }
         }
@@ -837,9 +839,10 @@
         }
 
         let timeTaken = Date.now() - currentStudentSession.startTime;
+        let subId = 'SUB_' + Date.now();
 
         let submission = {
-            id: 'SUB_' + Date.now(),
+            id: subId,
             eventId: activeTestEvent.id,
             name: currentStudentSession.name,
             phone: currentStudentSession.phone,
@@ -854,17 +857,27 @@
 
         if(!submissionsData[activeTestEvent.id]) submissionsData[activeTestEvent.id] = [];
         submissionsData[activeTestEvent.id].push(submission);
-        localStorage.setItem('isolated_classTestSubs_v10', JSON.stringify(submissionsData));
+        localStorage.setItem('isolated_classTestSubs_v12.1', JSON.stringify(submissionsData));
+        localStorage.setItem('submitted_device_' + activeTestEvent.id, 'true');
 
         document.getElementById('studentTestBox').style.display = 'none';
         renderStudentResultCard(submission);
     }
 
-    function checkStudentResultPanel() {
-        let phone = document.getElementById('studentPhoneInput').value.trim();
-        if(!phone || !activeTestEvent) return;
-        let sub = (submissionsData[activeTestEvent.id] || []).find(s => s.phone === phone);
-        if(!sub) { alert("സബ്മിഷൻ ഇല്ല!"); return; }
+    function checkStudentResultById() {
+        let subIdInput = document.getElementById('checkSubIdInput').value.trim();
+        if(!subIdInput || !activeTestEvent) {
+            alert("ദയവായി നിങ്ങളുടെ സബ്മിഷൻ ഐഡി (Submission ID) നൽകുക!");
+            return;
+        }
+
+        let subs = submissionsData[activeTestEvent.id] || [];
+        let sub = subs.find(s => s.id === subIdInput);
+        if(!sub) {
+            alert("ഈ ഐഡി നമ്പറിൽ സബ്മിഷൻ ഒന്നും കണ്ടെത്താനായില്ല. ഐഡി കൃത്യമാണെന്ന് ഉറപ്പുവരുത്തുക.");
+            return;
+        }
+
         document.getElementById('studentLoginBox').style.display = 'none';
         renderStudentResultCard(sub);
     }
@@ -874,28 +887,32 @@
         let content = document.getElementById('studentScoreCardContent');
         let certArea = document.getElementById('studentCertificateArea');
 
-        if(!activeTestEvent.showResult) {
-            content.innerHTML = `<p style="color:red; font-weight:bold;">റിസൾട്ട് പ്രസിദ്ധീകരിക്കുന്നത് താൽക്കാലികമായി ഡിസേബിൾ ചെയ്തിരിക്കുന്നു.</p>`;
-            return;
-        }
-
-        content.innerHTML = `<p><b>പേര്:</b> ${sub.name} | <b>സ്കോർ:</b> <span style="color:green; font-weight:bold;">${sub.score}</span></p>`;
+        content.innerHTML = `
+            <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:10px; border-radius:8px; margin-bottom:10px;">
+                <b style="color:var(--primary); font-size:14px;">✅ ടെസ്റ്റ് സബ്മിഷൻ വിവരങ്ങൾ!</b><br>
+                <p style="margin:4px 0; font-size:13px;"><b>നിങ്ങളുടെ സബ്മിഷൻ ഐഡി:</b> <span style="color:#2563eb; font-weight:bold; font-size:15px;" id="mySubIdText">${sub.id}</span></p>
+                <button class="btn btn-blue" style="font-size:12px; padding:6px 10px; margin-top:4px;" onclick="navigator.clipboard.writeText('${sub.id}'); alert('ഐഡി കോപ്പി ചെയ്തു! ഇത് സൂക്ഷിച്ചുവെക്കുക.');">📋 ഐഡി കോപ്പി ചെയ്യുക</button>
+            </div>
+            <p><b>പേര്:</b> ${sub.name} | <b>ഫോൺ:</b> ${sub.phone} | <b>സ്കോർ:</b> <span style="color:green; font-weight:bold;">${sub.score}</span></p>
+        `;
 
         certArea.innerHTML = "";
         let cfg = activeTestEvent.certificates;
         if(!cfg) return;
 
+        // 1. പങ്കാളിത്ത സർട്ടിഫിക്കറ്റ് (അഡ്മിൻ ഓൺ ആക്കിയിട്ടുണ്ടെങ്കിൽ സബ്മിറ്റ് ചെയ്ത ഉടൻ ഇവിടെ കാണിക്കും)
         if(cfg.participation && cfg.participation.enabled) {
-            certArea.innerHTML += `<button class="btn btn-green" onclick="generateStudentCertificate('participation', '${sub.name}')">🎓 ഡൗൺലോഡ് പങ്കാളിത്ത സർട്ടിഫിക്കറ്റ്</button><br>`;
+            certArea.innerHTML += `<button class="btn btn-green" onclick="generateStudentCertificate('participation', '${sub.name}')">🎓 ഡൗൺലോഡ് പങ്കാളിത്ത സർട്ടിഫിക്കറ്റ് (Participation)</button><br>`;
         }
 
+        // 2. വിജയികൾക്കുള്ള മെറിറ്റ് സർട്ടിഫിക്കറ്റ് (റാങ്ക് നേടിയവർക്ക് മാത്രം)
         if(cfg.merit && cfg.merit.enabled && sub.evalStatus === 'Evaluated') {
             let allSubs = [...(submissionsData[activeTestEvent.id] || [])].filter(s => s.evalStatus === 'Evaluated');
             allSubs.sort((a, b) => {
                 if(b.score !== a.score) return b.score - a.score;
                 return (a.timeTaken || 0) - (b.timeTaken || 0);
             });
-            let rankIdx = allSubs.findIndex(s => s.phone === sub.phone);
+            let rankIdx = allSubs.findIndex(s => s.id === sub.id);
             if(rankIdx !== -1 && rankIdx < 3) {
                 certArea.innerHTML += `<button class="btn btn-blue" onclick="generateStudentCertificate('merit', '${sub.name}')" style="margin-top:8px;">🏆 ഡൗൺലോഡ് മെറിറ്റ് സർട്ടിഫിക്കറ്റ് (Rank #${rankIdx+1})</button>`;
             }
@@ -976,7 +993,7 @@
         if(!evId || !submissionsData[evId]) return;
 
         submissionsData[evId].forEach((sub, sIdx) => {
-            let html = `<div style="background:#fffbeb; padding:8px; margin-bottom:8px; border:1px solid #fde68a;"><b>${sub.name}</b> (${sub.phone})<br>`;
+            let html = `<div style="background:#fffbeb; padding:8px; margin-bottom:8px; border:1px solid #fde68a;"><b>${sub.name}</b> (${sub.phone}) - <span style="font-size:11px; color:#555;">ID: ${sub.id}</span><br>`;
             sub.answers.forEach((ans, aIdx) => {
                 html += `Q: ${ans.q} | ഉത്തരം: <b>${ans.studentAns}</b><br>മാർക്ക്: <input type="number" id="m_${sIdx}_${aIdx}" value="${ans.awardedMarks || 0}" style="width:50px;"><br>`;
             });
@@ -995,7 +1012,7 @@
         });
         sub.score = total;
         sub.evalStatus = 'Evaluated';
-        localStorage.setItem('isolated_classTestSubs_v10', JSON.stringify(submissionsData));
+        localStorage.setItem('isolated_classTestSubs_v12.1', JSON.stringify(submissionsData));
         alert("വാല്യുവേഷൻ സേവ് ചെയ്തു!");
         loadStudentSubmissionsForEval();
         renderResultsBoard();
@@ -1015,9 +1032,9 @@
         });
 
         if(subs.length === 0) { container.innerHTML = "<p>വാല്യുവേഷൻ പൂർത്തിയായ റിസൾട്ടുകൾ ഇല്ല.</p>"; return; }
-        let html = `<table><tr><th>Rank</th><th>Name</th><th>Class</th><th>Score</th></tr>`;
+        let html = `<table><tr><th>Rank</th><th>Name</th><th>ID</th><th>Score</th></tr>`;
         subs.forEach((s, i) => {
-            html += `<tr><td>#${i+1}</td><td>${s.name}</td><td>${s.class || '-'}</td><td>${s.score}</td></tr>`;
+            html += `<tr><td>#${i+1}</td><td>${s.name}</td><td>${s.id}</td><td>${s.score}</td></tr>`;
         });
         container.innerHTML = html + `</table>`;
     }
@@ -1036,9 +1053,9 @@
 
         if(subs.length === 0) { alert("എക്സ്പോർട്ട് ചെയ്യാൻ വാല്യുവേറ്റ് ചെയ്ത റിസൾട്ടുകൾ ലഭ്യമല്ല!"); return; }
 
-        let csvContent = "data:text/csv;charset=utf-8,Rank,Name,Phone,Class,Place,Score\n";
+        let csvContent = "data:text/csv;charset=utf-8,Rank,SubmissionID,Name,Phone,Class,Place,Score\n";
         subs.forEach((s, i) => {
-            csvContent += `#${i+1},"${s.name}","${s.phone}","${s.class || ''}","${s.place || ''}",${s.score}\n`;
+            csvContent += `#${i+1},"${s.id}","${s.name}","${s.phone}","${s.class || ''}","${s.place || ''}",${s.score}\n`;
         });
 
         let encodedUri = encodeURI(csvContent);
