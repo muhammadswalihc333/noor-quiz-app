@@ -446,32 +446,33 @@
         });
     }
 
-    function saveNewTestEvent() {
-        let name = document.getElementById('eventName').value.trim();
-        if(!name || tempQuestionsList.length === 0) { alert("പേരും ചോദ്യങ്ങളും നൽകുക!"); return; }
+        function saveNewTestEvent() {
+        let nameField = document.getElementById('eventName');
+        if (!nameField) return;
+        let name = nameField.value.trim();
+        
+        if (!name || tempQuestionsList.length === 0) { 
+            alert("ഇവന്റിന്റെ പേരും കുറഞ്ഞത് ഒരു ചോദ്യമെങ്കിലും നൽകുക!"); 
+            return; 
+        }
 
-        let editingId = document.getElementById('editingEventId') ? document.getElementById('editingEventId').value.trim() : "";
+        let editingIdInput = document.getElementById('editingEventId');
+        let editingId = editingIdInput ? editingIdInput.value.trim() : "";
+
         let bannerFile = document.getElementById('eventBannerFile').files[0];
         let logoFile = document.getElementById('eventLogoFile').files[0];
         let partFile = document.getElementById('partCertFile').files[0];
         let meritFile = document.getElementById('meritCertFile').files[0];
 
-        let bannerUrl = "";
-        let logoUrl = "";
-        let partBgUrl = "";
-        let meritBgUrl = "";
-
         let existingEv = editingId ? eventsData.find(e => e.id === editingId) : null;
-        if(existingEv) {
-            bannerUrl = existingEv.banner || "";
-            logoUrl = existingEv.logo || "";
-            partBgUrl = existingEv.partCert ? existingEv.partCert.bgUrl : "";
-            meritBgUrl = existingEv.meritCert ? existingEv.meritCert.bgUrl : "";
-        }
+        let bannerUrl = existingEv ? (existingEv.banner || "") : "";
+        let logoUrl = existingEv ? (existingEv.logo || "") : "";
+        let partBgUrl = existingEv && existingEv.certificates && existingEv.certificates.participation ? (existingEv.certificates.participation.bgUrl || "") : "";
+        let meritBgUrl = existingEv && existingEv.certificates && existingEv.certificates.merit ? (existingEv.certificates.merit.bgUrl || "") : "";
 
         let pendingFiles = 0;
         let checkAndCommit = () => {
-            if(pendingFiles === 0) {
+            if (pendingFiles === 0) {
                 let certConfig = {
                     participation: {
                         enabled: document.getElementById('enablePartCert').checked,
@@ -492,32 +493,34 @@
             }
         };
 
-        if(bannerFile) {
+        if (bannerFile) {
             pendingFiles++;
             let r = new FileReader();
             r.onload = function(e) { bannerUrl = e.target.result; pendingFiles--; checkAndCommit(); };
             r.readAsDataURL(bannerFile);
         }
-        if(logoFile) {
+        if (logoFile) {
             pendingFiles++;
             let r = new FileReader();
             r.onload = function(e) { logoUrl = e.target.result; pendingFiles--; checkAndCommit(); };
             r.readAsDataURL(logoFile);
         }
-        if(partFile) {
+        if (partFile) {
             pendingFiles++;
             let r = new FileReader();
             r.onload = function(e) { partBgUrl = e.target.result; pendingFiles--; checkAndCommit(); };
             r.readAsDataURL(partFile);
         }
-        if(meritFile) {
+        if (meritFile) {
             pendingFiles++;
             let r = new FileReader();
             r.onload = function(e) { meritBgUrl = e.target.result; pendingFiles--; checkAndCommit(); };
             r.readAsDataURL(meritFile);
         }
-        if(pendingFiles === 0) checkAndCommit();
+
+        if (pendingFiles === 0) checkAndCommit();
     }
+
 
     function commitEventData(editingId, name, bannerUrl, logoUrl, certConfig) {
         let payload = {
