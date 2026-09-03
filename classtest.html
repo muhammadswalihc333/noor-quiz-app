@@ -450,7 +450,7 @@
         let name = document.getElementById('eventName').value.trim();
         if(!name || tempQuestionsList.length === 0) { alert("പേരും ചോദ്യങ്ങളും നൽകുക!"); return; }
 
-        let editingId = document.getElementById('editingEventId').value;
+        let editingId = document.getElementById('editingEventId') ? document.getElementById('editingEventId').value.trim() : "";
         let bannerFile = document.getElementById('eventBannerFile').files[0];
         let logoFile = document.getElementById('eventLogoFile').files[0];
         let partFile = document.getElementById('partCertFile').files[0];
