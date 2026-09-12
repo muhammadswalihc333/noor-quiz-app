@@ -51,7 +51,7 @@
 
 <div class="container">
     <div class="header-box">
-        📚 ക്ലാസ് ടെസ്റ്റ് സെക്ഷൻ[span_0](start_span)[span_0](end_span)
+        📚 ക്ലാസ് ടെസ്റ്റ് സെക്ഷൻ
     </div>
 
     <div class="tab-nav" id="mainTabNavContainer">
@@ -237,6 +237,20 @@
                 <option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>
             </select>
             <div id="answerKeyUploadContainer" style="margin-top: 8px;"></div>
+        </div>
+
+        <!-- 🔥 മൾട്ടി സ്റ്റുഡൻറ് പോസ്റ്റർ ജനറേറ്റർ സെക്ഷൻ (പുതിയതായി ചേർത്തു) -->
+        <div class="sub-box" style="border-color: #db2777; background: #fff5f8;">
+            <h3 style="color: #db2777;">🌟 മൾട്ടി സ്റ്റുഡൻറ് പോസ്റ്റർ ജനറേറ്റർ (Multi-Student Poster)</h3>
+            <p style="font-size: 13px; color: #555;">ഒന്നിലധികം വിദ്യാർത്ഥികളുടെ പേരുകൾ താഴെ നൽകി ഒരുമിച്ച് പോസ്റ്റർ തയ്യാറാക്കാം:</p>
+            
+            <label>പശ്ചാത്തല ഫോട്ടോ (ഓപ്ഷണൽ):</label>
+            <input type="file" id="multiPosterBgFile" accept="image/*">
+
+            <label>വിദ്യാർത്ഥികളുടെ പേരുകൾ (ഓരോ വരിയിലും ഓരോ പേര് വീതം):</label>
+            <textarea id="multiStudentNamesInput" rows="4" placeholder="അഭിജിത്ത്&#10;ഫാത്തിമ&#10;രാഹുൽ"></textarea>
+
+            <button class="btn btn-blue" onclick="generateMultiStudentPosterFile()" style="background: #db2777;">📥 മൾട്ടി സ്റ്റുഡൻറ് പോസ്റ്റർ ഡൗൺലോഡ് ചെയ്യുക</button>
         </div>
 
         <div class="sub-box" style="border-color: var(--accent);">
@@ -1115,6 +1129,124 @@
             } else {
                 finalizePoster(null);
             }
+        }
+    }
+
+    // 🌟 മൾട്ടി സ്റ്റുഡൻറ് പോസ്റ്റർ ജനറേറ്റർ ജാവസ്ക്രിപ്റ്റ് ഫങ്ഷൻ (പുതിയതായി ചേർത്തു)
+    function generateMultiStudentPosterFile() {
+        let inputVal = document.getElementById('multiStudentNamesInput').value.trim();
+        if(!inputVal) {
+            alert("ദയവായി കുറഞ്ഞത് ഒരു വിദ്യാർത്ഥിയുടെ പേരെയെങ്കിലും നൽകുക!");
+            return;
+        }
+
+        let names = inputVal.split('\n').map(n => n.trim()).filter(n => n !== '');
+        let bgFile = document.getElementById('multiPosterBgFile').files[0];
+
+        let canvas = document.createElement('canvas');
+        canvas.width = 900;
+        canvas.height = 1200;
+        let ctx = canvas.getContext('2d');
+
+        let drawCanvasContent = (bgImgObj) => {
+            // Background Color/Gradient
+            let grad = ctx.createLinearGradient(0, 0, 900, 1200);
+            grad.addColorStop(0, '#14532d');
+            grad.addColorStop(1, '#052e16');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 900, 1200);
+
+            if(bgImgObj) {
+                ctx.save();
+                ctx.globalAlpha = 0.2;
+                ctx.drawImage(bgImgObj, 0, 0, 900, 1200);
+                ctx.restore();
+            }
+
+            // Elegant Border
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 10;
+            ctx.strokeRect(25, 25, 850, 1150);
+
+            // Title Header
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 36px serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('🌟 വിജിതർ / വിദ്യാർത്ഥികൾ 🌟', 450, 95);
+
+            ctx.fillStyle = '#d4af37';
+            ctx.font = 'bold 20px sans-serif';
+            ctx.fillText('CLASS TEST PARTICIPANTS LIST', 450, 135);
+
+            // Grid rendering for student names
+            let startY = 200;
+            let startX = 75;
+            let colWidth = 360;
+            let rowHeight = 70;
+            let maxCols = 2;
+
+            names.forEach((name, index) => {
+                let col = index % maxCols;
+                let row = Math.floor(index / maxCols);
+                
+                let x = startX + (col * (colWidth + 40));
+                let y = startY + (row * (rowHeight + 15));
+
+                // If items exceed canvas height limit, skip or handle safely
+                if(y > 1050) return;
+
+                // Card background
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                ctx.strokeStyle = '#d4af37';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.roundRect(x, y, colWidth, rowHeight, 10);
+                ctx.fill();
+                ctx.stroke();
+
+                // Number badge
+                ctx.fillStyle = '#14532d';
+                ctx.beginPath();
+                ctx.arc(x + 35, y + (rowHeight / 2), 22, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 16px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(`#${index+1}`, x + 35, y + (rowHeight / 2) + 6);
+
+                // Student Name Text
+                ctx.fillStyle = '#1f2937';
+                ctx.font = 'bold 22px serif';
+                ctx.textAlign = 'left';
+                ctx.fillText(name, x + 75, y + (rowHeight / 2) + 8);
+            });
+
+            // Footer
+            ctx.fillStyle = '#d4af37';
+            ctx.font = 'bold 18px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Madrasa Digital Portal - All Rights Reserved', 450, 1140);
+
+            // Download trigger
+            let link = document.createElement('a');
+            link.download = 'Multi_Student_Poster.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+
+            setTimeout(() => { canvas.remove(); }, 1000);
+        };
+
+        if(bgFile) {
+            let r = new FileReader();
+            r.onload = function(e) {
+                let img = new Image();
+                img.onload = function() { drawCanvasContent(img); };
+                img.src = e.target.result;
+            };
+            r.readAsDataURL(bgFile);
+        } else {
+            drawCanvasContent(null);
         }
     }
 
