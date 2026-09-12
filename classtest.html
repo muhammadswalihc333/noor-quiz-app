@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📚 ക്ലാസ് ടെസ്റ്റ് സെക്ഷൻ </title>
-    <!-- html2canvas ലൈബ്രറി പോസ്റ്റർ ഡൗൺലോഡിനായി ചേർത്തിരിക്കുന്നു -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root { --primary: #14532d; --primary-light: #22c55e; --accent: #2563eb; --danger: #ef4444; --bg: #fcf8f2; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: #333; box-sizing: border-box; }
@@ -115,6 +113,11 @@
                     <label>🛡️ ലോഗോ ചിത്രം:</label>
                     <input type="file" id="eventLogoFile" accept="image/*">
                 </div>
+            </div>
+
+            <div style="background:#fdf4ff; padding:10px; border-radius:8px; border:1px solid #f5d0fe; margin:10px 0;">
+                <label>🕌 പോസ്റ്റർ ബാക്ക്ഗ്രൗണ്ട് മദ്രസ/പള്ളി ഫോട്ടോ (Islamic Background Model):</label>
+                <input type="file" id="eventMadrasaBgFile" accept="image/*">
             </div>
 
             <label>വാല്യുവേഷൻ രീതി:</label>
@@ -327,6 +330,15 @@
         <div id="studentResultBox" style="display:none;" class="sub-box">
             <h3>📋 നിങ്ങളുടെ സബ്മിഷൻ, റിസൾട്ട് & സർട്ടിഫിക്കറ്റ്</h3>
             <div id="studentScoreCardContent"></div>
+            
+            <div style="background:#fdf2f8; border:1px solid #fbcfe8; padding:12px; border-radius:8px; margin-top:15px;">
+                <h4 style="color:#db2777; margin-top:0; font-size:14px;">🖼️ വ്യക്തിഗത പോസ്റ്റർ ഡൗൺലോഡ് ചെയ്യുക (Custom Student Poster)</h4>
+                <p style="font-size:12px; color:#555; margin-bottom:8px;">നിങ്ങളുടെ ഫോട്ടോ അപ്‌ലോഡ് ചെയ്ത് ഇസ്ലാമിക് മോഡൽ പോസ്റ്റർ ഫോട്ടോയായി ഡൗൺലോഡ് ചെയ്യാം:</p>
+                <label>നിങ്ങളുടെ ഫോട്ടോ:</label>
+                <input type="file" id="customStudentPhoto" accept="image/*">
+                <button class="btn btn-blue" onclick="generateCustomStudentPoster()">📥 എന്റെ പോസ്റ്റർ ഡൗൺലോഡ് ചെയ്യുക</button>
+            </div>
+
             <div id="studentCertificateArea" style="margin-top: 15px; text-align: center;"></div>
             <button class="btn btn-dark" onclick="location.reload()" style="margin-top: 10px;">🏠 തിരികെ ഹോമിലേക്ക്</button>
         </div>
@@ -343,6 +355,7 @@
     let activeTestEvent = null;
     let timerInterval = null;
     let currentStudentSession = null;
+    let currentLoadedStudentSub = null;
 
     function switchMainTab(tab) {
         if(tab === 'admin') {
@@ -467,12 +480,14 @@
 
         let bannerFile = document.getElementById('eventBannerFile').files[0];
         let logoFile = document.getElementById('eventLogoFile').files[0];
+        let madrasaBgFile = document.getElementById('eventMadrasaBgFile').files[0];
         let partFile = document.getElementById('partCertFile').files[0];
         let meritFile = document.getElementById('meritCertFile').files[0];
 
         let existingEv = editingId ? eventsData.find(e => e.id === editingId) : null;
         let bannerUrl = existingEv ? (existingEv.banner || "") : "";
         let logoUrl = existingEv ? (existingEv.logo || "") : "";
+        let madrasaBgUrl = existingEv ? (existingEv.madrasaBg || "") : "";
         let partBgUrl = existingEv && existingEv.certificates && existingEv.certificates.participation ? (existingEv.certificates.participation.bgUrl || "") : "";
         let meritBgUrl = existingEv && existingEv.certificates && existingEv.certificates.merit ? (existingEv.certificates.merit.bgUrl || "") : "";
 
@@ -495,7 +510,7 @@
                     size: document.getElementById('certFontSize').value,
                     color: document.getElementById('certColorPicker').value
                 };
-                commitEventData(editingId, name, bannerUrl, logoUrl, certConfig);
+                commitEventData(editingId, name, bannerUrl, logoUrl, madrasaBgUrl, certConfig);
             }
         };
 
@@ -510,6 +525,12 @@
             let r = new FileReader();
             r.onload = function(e) { logoUrl = e.target.result; pendingFiles--; checkAndCommit(); };
             r.readAsDataURL(logoFile);
+        }
+        if (madrasaBgFile) {
+            pendingFiles++;
+            let r = new FileReader();
+            r.onload = function(e) { madrasaBgUrl = e.target.result; pendingFiles--; checkAndCommit(); };
+            r.readAsDataURL(madrasaBgFile);
         }
         if (partFile) {
             pendingFiles++;
@@ -527,7 +548,7 @@
         if (pendingFiles === 0) checkAndCommit();
     }
 
-    function commitEventData(editingId, name, bannerUrl, logoUrl, certConfig) {
+    function commitEventData(editingId, name, bannerUrl, logoUrl, madrasaBgUrl, certConfig) {
         let payload = {
             id: editingId ? editingId : ('EV_' + Date.now()),
             name,
@@ -537,6 +558,7 @@
             endDT: document.getElementById('eventEndDT').value,
             banner: bannerUrl,
             logo: logoUrl,
+            madrasaBg: madrasaBgUrl,
             evalType: document.getElementById('eventEvalType').value,
             showResult: document.getElementById('showResultCheck').checked,
             rand: document.getElementById('randMode').checked,
@@ -657,6 +679,7 @@
         document.getElementById('eventEndDT').value = "";
         document.getElementById('eventBannerFile').value = "";
         document.getElementById('eventLogoFile').value = "";
+        document.getElementById('eventMadrasaBgFile').value = "";
         document.getElementById('partCertFile').value = "";
         document.getElementById('meritCertFile').value = "";
         document.getElementById('bulkMCQText').value = "";
@@ -885,6 +908,7 @@
     }
 
     function renderStudentResultCard(sub) {
+        currentLoadedStudentSub = sub;
         document.getElementById('studentResultBox').style.display = 'block';
         let content = document.getElementById('studentScoreCardContent');
         let certArea = document.getElementById('studentCertificateArea');
@@ -941,6 +965,9 @@
             link.download = studentName + '_' + type + '_Certificate.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
+            
+            // Auto cleanup storage/memory
+            setTimeout(() => { canvas.remove(); }, 1000);
         };
 
         if(mode === 'manual' && bgUrl) {
@@ -971,11 +998,133 @@
             ctx.fillText('ഇത് സാക്ഷ്യപ്പെടുത്തുന്നത്:', 500, 240);
 
             drawTextOnCanvas();
+        }
+    }
 
-            ctx.font = '18px sans-serif';
-            ctx.fillStyle = '#555555';
-            let desc = type === 'participation' ? 'ഈ ഓൺലൈൻ പരിപാടിയിൽ വിജയകരമായി പങ്കെടുത്തതിന് നൽകുന്നത്.' : 'ഈ മത്സരത്തിൽ മികച്ച വിജയം (Top 3) കരസ്ഥമാക്കിയതിന് നൽകുന്ന സർട്ടിഫിക്കറ്റ്.';
-            ctx.fillText(desc, 500, 520);
+    function generateCustomStudentPoster() {
+        if(!currentLoadedStudentSub || !activeTestEvent) return;
+        let photoInput = document.getElementById('customStudentPhoto');
+        
+        let canvas = document.createElement('canvas');
+        canvas.width = 800;
+        canvas.height = 1000;
+        let ctx = canvas.getContext('2d');
+
+        // Background Gradient
+        let grad = ctx.createLinearGradient(0, 0, 800, 1000);
+        grad.addColorStop(0, '#1e293b');
+        grad.addColorStop(1, '#090d16');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 800, 1000);
+
+        let finalizePoster = (bgImgObj) => {
+            if(bgImgObj) {
+                ctx.save();
+                ctx.globalAlpha = 0.15;
+                ctx.drawImage(bgImgObj, 0, 0, 800, 1000);
+                ctx.restore();
+            }
+
+            // Gold Border
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 8;
+            ctx.strokeRect(20, 20, 760, 960);
+
+            // Header Text
+            ctx.fillStyle = '#d4af37';
+            ctx.font = 'bold 24px serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(activeTestEvent.name, 400, 80);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 36px serif';
+            ctx.fillText('STUDENT APPRECIATION', 400, 130);
+
+            // Draw Student Photo Frame
+            let cx = 400, cy = 340, radius = 110;
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2, true);
+            ctx.closePath();
+            ctx.clip();
+
+            let studentPhotoObj = window._customStudPhotoObj;
+            if(studentPhotoObj) {
+                ctx.drawImage(studentPhotoObj, cx - radius, cy - radius, radius * 2, radius * 2);
+            } else {
+                ctx.fillStyle = '#334155';
+                ctx.fill();
+            }
+            ctx.restore();
+
+            // Golden Border around Photo
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2, true);
+            ctx.lineWidth = 6;
+            ctx.strokeStyle = '#d4af37';
+            ctx.stroke();
+
+            // Crown / Badge
+            ctx.fillStyle = '#d4af37';
+            ctx.font = 'bold 20px sans-serif';
+            ctx.fillText('⭐ STAR PERFORMER ⭐', 400, 485);
+
+            // Details Box
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 2;
+            ctx.fillRect(175, 530, 450, 180);
+            ctx.strokeRect(175, 530, 450, 180);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 30px serif';
+            ctx.fillText(currentLoadedStudentSub.name, 400, 590);
+
+            ctx.font = '20px sans-serif';
+            ctx.fillStyle = '#cbd5e1';
+            ctx.fillText(`Score: ${currentLoadedStudentSub.score}`, 400, 640);
+            ctx.fillText(`Class: ${currentLoadedStudentSub.class || 'N/A'}`, 400, 680);
+
+            // Footer
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '14px sans-serif';
+            ctx.fillText('Madrasa Digital Portal', 400, 940);
+
+            let link = document.createElement('a');
+            link.download = currentLoadedStudentSub.name + '_Custom_Poster.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+
+            // Clean up memory to prevent storage issues
+            setTimeout(() => { canvas.remove(); }, 1000);
+        };
+
+        if(photoInput && photoInput.files && photoInput.files[0]) {
+            let r = new FileReader();
+            r.onload = function(e) {
+                let img = new Image();
+                img.onload = function() {
+                    window._customStudPhotoObj = img;
+                    if(activeTestEvent.madrasaBg) {
+                        let bgImg = new Image();
+                        bgImg.onload = function() { finalizePoster(bgImg); };
+                        bgImg.src = activeTestEvent.madrasaBg;
+                    } else {
+                        finalizePoster(null);
+                    }
+                };
+                img.src = e.target.result;
+            };
+            r.readAsDataURL(photoInput.files[0]);
+        } else {
+            window._customStudPhotoObj = null;
+            if(activeTestEvent.madrasaBg) {
+                let bgImg = new Image();
+                bgImg.onload = function() { finalizePoster(bgImg); };
+                bgImg.src = activeTestEvent.madrasaBg;
+            } else {
+                finalizePoster(null);
+            }
         }
     }
 
@@ -1067,7 +1216,6 @@
         document.body.removeChild(link);
     }
 
-    // അപ്ഡേറ്റ് ചെയ്ത പ്രൊഫഷണൽ വിന്നേഴ്സ് പോസ്റ്റർ ജനറേറ്റർ (ലോഗോയും ഡിഫോൾട്ട് വെക്ടറുകളും ഉൾപ്പെടുത്തിയത്)
     function generateWinnersPoster() {
         let evId = document.getElementById('posterEventSelect').value;
         if(!evId) { alert("പോസ്റ്ററിനായി ഇവന്റ് തിരഞ്ഞെടുക്കുക!"); return; }
@@ -1081,161 +1229,129 @@
 
         if(subs.length === 0) { alert("ഈ ഇവന്റിൽ വാല്യുവേറ്റ് ചെയ്ത വിജയികൾ ഇല്ല!"); return; }
 
-        // മദ്രസയുടെ ലോഗോ: ഇവന്റിൽ ലോഗോ ഉണ്ടെങ്കിൽ അത്, അല്ലെങ്കിൽ ഡിഫോൾട്ട് പ്രൊഫഷണൽ ലോഗോ
-        let madrasaLogo = (ev && ev.logo && ev.logo.trim() !== '') 
-            ? ev.logo 
-            : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+        let canvas = document.createElement('canvas');
+        canvas.width = 800;
+        canvas.height = 1000;
+        let ctx = canvas.getContext('2d');
 
-        let eventTitle = (ev && ev.name) ? ev.name : 'മദ്രസ ക്ലാസ് ടെസ്റ്റ്';
+        let drawFinalCanvas = (bgImgObj) => {
+            let grad = ctx.createLinearGradient(0, 0, 800, 1000);
+            grad.addColorStop(0, '#1e293b');
+            grad.addColorStop(1, '#090d16');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 800, 1000);
 
-        // ഡിഫോൾട്ട് വെക്ടർ അവതാറുകൾ (ഫോട്ടോ ഇല്ലാത്തവർക്ക്)
-        let defaultBoyImg = 'https://cdn-icons-png.flaticon.com/512/2922/2922510.png'; 
-        let defaultGirlImg = 'https://cdn-icons-png.flaticon.com/512/2922/2922565.png'; 
+            if(bgImgObj) {
+                ctx.save();
+                ctx.globalAlpha = 0.15;
+                ctx.drawImage(bgImgObj, 0, 0, 800, 1000);
+                ctx.restore();
+            }
 
-        // ടോപ്പ് 3 വിജയികളെ എടുത്തുവെക്കുന്നു
-        let winner1 = subs[0] || null;
-        let winner2 = subs[1] || null;
-        let winner3 = subs[2] || null;
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 8;
+            ctx.strokeRect(20, 20, 760, 960);
 
-        // ഫോട്ടോകൾ അപ്‌ലോഡ് ചെയ്തിട്ടുണ്ടോയെന്ന് പരിശോധിക്കുന്നു, ഇല്ലെങ്കിൽ ഡിഫോൾട്ട് വെക്ടർ എടുക്കുന്നു
-        let photo1Input = document.getElementById('posterPhoto1').files[0];
-        let photo2Input = document.getElementById('posterPhoto2').files[0];
-        let photo3Input = document.getElementById('posterPhoto3').files[0];
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 32px serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('🏆 RANK HOLDERS / വിജയികൾ 🏆', 400, 80);
+            ctx.font = 'bold 20px serif';
+            ctx.fillStyle = '#d4af37';
+            ctx.fillText(ev.name, 400, 120);
 
-        // ഒപ്പമുള്ള ഫോട്ടോകൾ റീഡ് ചെയ്ത് പോസ്റ്റർ പ്രിവ്യൂ ഉണ്ടാക്കാൻ ഹെൽപർ ഫങ്ഷൻ
-        let processPhotosAndBuildHtml = (img1Data, img2Data, img3Data) => {
-            let finalPhoto1 = img1Data || defaultBoyImg;
-            let finalPhoto2 = img2Data || defaultGirlImg;
-            let finalPhoto3 = img3Data || defaultBoyImg;
+            let rankPositions = [
+                { x: 400, y: 280, radius: 70, nameY: 380, label: '1st Place' },
+                { x: 230, y: 560, radius: 55, nameY: 645, label: '2nd Place' },
+                { x: 570, y: 560, radius: 55, nameY: 645, label: '3rd Place' }
+            ];
 
-            let winner2Html = winner2 ? `
-                <div style="text-align: center; flex: 1;">
-                    <span style="font-size: 13px; font-weight: bold; color: #facc15; display: block; margin-bottom: 5px;">🥈 2nd Place</span>
-                    <img src="${finalPhoto2}" style="width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 3px solid #facc15; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-                    <h4 style="margin: 5px 0 2px 0; font-size: 14px; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; margin-left: auto; margin-right: auto;">${winner2.name}</h4>
-                    <span style="font-size: 11px; color: #cbd5e1;">സ്കോർ: ${winner2.score}</span>
-                </div>` : `<div style="flex: 1;"></div>`;
+            let loadedImagesCount = 0;
+            let totalImagesToLoad = Math.min(subs.length, 3);
 
-            let winner3Html = winner3 ? `
-                <div style="text-align: center; flex: 1;">
-                    <span style="font-size: 13px; font-weight: bold; color: #facc15; display: block; margin-bottom: 5px;">🥉 3rd Place</span>
-                    <img src="${finalPhoto3}" style="width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 3px solid #facc15; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-                    <h4 style="margin: 5px 0 2px 0; font-size: 14px; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; margin-left: auto; margin-right: auto;">${winner3.name}</h4>
-                    <span style="font-size: 11px; color: #cbd5e1;">സ്കോർ: ${winner3.score}</span>
-                </div>` : `<div style="flex: 1;"></div>`;
-
-            let winner1Html = winner1 ? `
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <span style="font-size: 15px; font-weight: bold; color: #facc15; display: block; margin-bottom: 8px;">🥇 1st Place</span>
-                    <div style="position: relative; width: 100px; height: 100px; margin: 0 auto;">
-                        <img src="${finalPhoto1}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid #facc15; background: #fff; box-shadow: 0 6px 15px rgba(0,0,0,0.4);">
-                    </div>
-                    <h2 style="margin: 8px 0 2px 0; font-size: 20px; color: #ffffff; font-weight: bold;">${winner1.name}</h2>
-                    <span style="font-size: 13px; color: #38bdf8; font-weight: bold;">സ്കോർ: ${winner1.score}</span>
-                </div>` : '';
-
-            // കളർഫുൾ ആയ പ്രൊഫഷണൽ പോസ്റ്റർ ഡിസൈൻ
-            let posterHtml = `
-                <div id="dynamicWinnerPoster" style="width: 440px; background: linear-gradient(135deg, #0f172a, #1e3a8a, #312e81); color: #fff; padding: 25px; border-radius: 24px; text-align: center; font-family: 'Segoe UI', Tahoma, sans-serif; box-shadow: 0 25px 50px rgba(0,0,0,0.6); border: 3px solid #facc15; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; box-sizing: border-box;">
-                    
-                    <!-- മദ്രസ ലോഗോ & ഹെഡർ -->
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 15px; background: rgba(255,255,255,0.08); padding: 10px 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1);">
-                        <img src="${madrasaLogo}" style="width: 45px; height: 45px; border-radius: 50%; background: #fff; padding: 2px; object-fit: cover; border: 2px solid #facc15;" crossorigin="anonymous">
-                        <div style="text-align: left;">
-                            <h4 style="margin: 0; font-size: 14px; color: #facc15; font-weight: bold;">${eventTitle}</h4>
-                            <span style="font-size: 11px; color: #93c5fd;">വിജയികളുടെ റാങ്ക് പട്ടിക</span>
-                        </div>
-                    </div>
-
-                    <!-- മെയിൻ ബോക്സ് -->
-                    <div style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 18px; border: 1px dashed rgba(250,204,21,0.4);">
-                        <h3 style="margin: 0 0 15px 0; font-size: 18px; color: #4ade80; text-transform: uppercase; letter-spacing: 1px;">🏆 അഭിനന്ദനങ്ങൾ! 🏆</h3>
+            let drawAllRanks = () => {
+                rankPositions.forEach((pos, idx) => {
+                    if(idx < subs.length) {
+                        let student = subs[idx];
                         
-                        ${winner1Html}
+                        ctx.fillStyle = '#d4af37';
+                        ctx.font = 'bold 18px sans-serif';
+                        ctx.fillText(pos.label, pos.x, pos.y - pos.radius - 15);
 
-                        <div style="display: flex; justify-content: space-around; gap: 10px; margin-top: 10px;">
-                            ${winner2Html}
-                            ${winner3Html}
-                        </div>
-                    </div>
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.arc(pos.x, pos.y, pos.radius, 0, Math.PI * 2, true);
+                        ctx.closePath();
+                        ctx.clip();
+                        
+                        if(window[`posterImgObj${idx+1}`]) {
+                            ctx.drawImage(window[`posterImgObj${idx+1}`], pos.x - pos.radius, pos.y - pos.radius, pos.radius * 2, pos.radius * 2);
+                        } else {
+                            ctx.fillStyle = '#374151';
+                            ctx.fill();
+                        }
+                        ctx.restore();
 
-                    <!-- ഫൂട്ടർ -->
-                    <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 10px; color: #94a3b8; display: flex; justify-content: space-between; align-items: center;">
-                        <span>മദ്രസ ഡിജിറ്റൽ പോർട്ടൽ</span>
-                        <span>ClassTest Pro</span>
-                    </div>
-                    
-                    <!-- ക്ലോസ് ബട്ടൺ -->
-                    <button onclick="closeDynamicPoster()" style="position: absolute; top: -12px; right: -12px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-weight: bold; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.4); font-size: 16px;">×</button>
-                    
-                    <!-- ഡൗൺലോഡ് ബട്ടൺ -->
-                    <button id="downloadPosterBtn" style="margin-top: 15px; width: 100%; padding: 10px; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; box-shadow: 0 4px 10px rgba(37,99,235,0.4);">പോസ്റ്റർ ഡൗൺലോഡ് ചെയ്യുക</button>
-                </div>
-            `;
+                        ctx.beginPath();
+                        ctx.arc(pos.x, pos.y, pos.radius, 0, Math.PI * 2, true);
+                        ctx.lineWidth = 4;
+                        ctx.strokeStyle = '#d4af37';
+                        ctx.stroke();
 
-            let posterContainer = document.createElement('div');
-            posterContainer.id = 'posterOverlay';
-            posterContainer.style.cssText = "position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 9998; backdrop-filter: blur(4px);";
-            posterContainer.innerHTML = posterHtml;
-            document.body.appendChild(posterContainer);
-
-            // html2canvas ഉപയോഗിച്ച് പോസ്റ്റർ ഡൗൺലോഡ് ചെയ്യൽ
-            document.getElementById('downloadPosterBtn').addEventListener('click', function() {
-                if (typeof html2canvas === 'undefined') {
-                    alert("ഡൗൺലോഡ് ടൂൾ ലോഡ് ആയിട്ടില്ല!");
-                    return;
-                }
-
-                html2canvas(document.getElementById('dynamicWinnerPoster'), {scale: 2, useCORS: true, allowTaint: true}).then(canvas => {
-                    let link = document.createElement('a');
-                    link.download = `Rank_Holders_Poster_${ev.name.replace(/\s+/g, '_')}.png`;
-                    link.href = canvas.toDataURL("image/png");
-                    link.click();
-                    
-                    setTimeout(closeDynamicPoster, 1500);
+                        ctx.fillStyle = '#ffffff';
+                        ctx.font = 'bold 20px serif';
+                        ctx.fillText(student.name, pos.x, pos.nameY);
+                        ctx.font = '16px sans-serif';
+                        ctx.fillStyle = '#d1d5db';
+                        ctx.fillText(`Score: ${student.score}`, pos.x, pos.nameY + 24);
+                    }
                 });
-            });
-        };
 
-        // ഫയലുകൾ റീഡ് ചെയ്യാനുള്ള ലൂപ്പുകൾ
-        let r1 = null, r2 = null, r3 = null;
-        let img1Res = null, img2Res = null, img3Res = null;
-        let pendingReads = 0;
+                ctx.fillStyle = '#d4af37';
+                ctx.font = 'bold 22px serif';
+                ctx.fillText('അഭിനന്ദനങ്ങൾ! ആശംസകളോടെ...', 400, 920);
 
-        let checkDone = () => {
-            if(pendingReads === 0) {
-                processPhotosAndBuildHtml(img1Res, img2Res, img3Res);
+                let link = document.createElement('a');
+                link.download = ev.name + '_Rank_Holders_Poster.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+
+                // Auto cleanup memory
+                setTimeout(() => { canvas.remove(); }, 1000);
+            };
+
+            for(let i=1; i<=3; i++) {
+                let photoInput = document.getElementById(`posterPhoto${i}`);
+                if(photoInput && photoInput.files && photoInput.files[0]) {
+                    let r = new FileReader();
+                    r.onload = (function(index) {
+                        return function(e) {
+                            let img = new Image();
+                            img.onload = function() {
+                                window[`posterImgObj${index}`] = img;
+                                loadedImagesCount++;
+                                if(loadedImagesCount === totalImagesToLoad) drawAllRanks();
+                            };
+                            img.src = e.target.result;
+                        };
+                    })(i);
+                    r.readAsDataURL(photoInput.files[0]);
+                } else {
+                    totalImagesToLoad = Math.max(0, totalImagesToLoad - 1);
+                }
+            }
+
+            if(totalImagesToLoad === 0) {
+                drawAllRanks();
             }
         };
 
-        if(photo1Input) {
-            pendingReads++;
-            r1 = new FileReader();
-            r1.onload = e => { img1Res = e.target.result; pendingReads--; checkDone(); };
-            r1.readAsDataURL(photo1Input);
-        }
-        if(photo2Input) {
-            pendingReads++;
-            r2 = new FileReader();
-            r2.onload = e => { img2Res = e.target.result; pendingReads--; checkDone(); };
-            r2.readAsDataURL(photo2Input);
-        }
-        if(photo3Input) {
-            pendingReads++;
-            r3 = new FileReader();
-            r3.onload = e => { img3Res = e.target.result; pendingReads--; checkDone(); };
-            r3.readAsDataURL(photo3Input);
-        }
-
-        if(pendingReads === 0) {
-            processPhotosAndBuildHtml(null, null, null);
-        }
-    }
-
-    function closeDynamicPoster() {
-        let overlay = document.getElementById('posterOverlay');
-        if (overlay) {
-            document.body.removeChild(overlay);
+        if(ev.madrasaBg) {
+            let bgImg = new Image();
+            bgImg.onload = function() { drawFinalCanvas(bgImg); };
+            bgImg.src = ev.madrasaBg;
+        } else {
+            drawFinalCanvas(null);
         }
     }
 </script>
