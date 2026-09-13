@@ -239,35 +239,8 @@
             <div id="answerKeyUploadContainer" style="margin-top: 8px;"></div>
         </div>
 
-        <!-- 🌟 പുതിയതായി അറ്റാച്ച് ചെയ്ത വിന്നേഴ്സ് പോസ്റ്റർ മേക്കർ ഫയൽ കണ്ടന്റ് -->
-        <div class="sub-box" style="border-color: #db2777; background: #fff5f8;">
-            <h3 style="color: #db2777;">🖼️ വിന്നേഴ്സ് പോസ്റ്റർ ജനറേറ്റർ (1st, 2nd, 3rd)</h3>
-            <p style="font-size: 13px; color: #555;">വിജയികളുടെ ഫോട്ടോകൾ നൽകി ആകർഷകമായ പോസ്റ്റർ ഡൗൺലോഡ് ചെയ്യാം:</p>
-            
-            <select id="posterEventSelect" style="margin-bottom:8px;">
-                <option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>
-            </select>
-            
-            <div class="flex-row">
-                <div>
-                    <label>🥇 1st Place ഫോട്ടോ:</label>
-                    <input type="file" id="posterPhoto1" accept="image/*">
-                </div>
-                <div>
-                    <label>🥈 2nd Place ഫോട്ടോ:</label>
-                    <input type="file" id="posterPhoto2" accept="image/*">
-                </div>
-            </div>
-            <div>
-                <label>🥉 3rd Place ഫോട്ടോ:</label>
-                <input type="file" id="posterPhoto3" accept="image/*">
-            </div>
-
-            <button class="btn btn-blue" onclick="generateWinnersPoster()" style="background: #db2777; margin-top: 10px;">📥 വിന്നേഴ്സ് പോസ്റ്റർ ഡൗൺലോഡ് ചെയ്യുക</button>
-        </div>
-
         <div class="sub-box" style="border-color: var(--accent);">
-            <h3>📊 റിസൾട്ട്, ടൈം-ബേസ്ഡ് റാങ്കിംഗ് & ഇമേജ് ഇൻഡെക്സ്</h3>
+            <h3>📊 റിസൾട്ട്, ടൈം-ബേസ്ഡ് റാങ്കിംഗ് & എഡിറ്റ്/ഡിലീറ്റ് മാനേജ്മെന്റ്</h3>
             <div class="flex-row" style="margin-bottom: 8px;">
                 <select id="selectEventForResult" onchange="renderResultsBoard()">
                     <option value="ALL">എല്ലാ ഇവന്റുകളുടെയും റിസൾട്ട്</option>
@@ -314,7 +287,7 @@
             
             <div style="background:#f0fdf4; padding:12px; border-radius:8px; border:1px solid #bbf7d0;">
                 <h4 style="color:var(--primary); margin-top:0; font-size:14px;">🔍 നിങ്ങളുടെ റിസൾട്ട് അല്ലെങ്കിൽ സർട്ടിഫിക്കറ്റ് പരിശോധിക്കാൻ</h4>
-                <p style="font-size:12px; color:#555; margin-bottom:8px;">ടെസ്റ്റ് സബ്മിറ്റ് ചെയ്തപ്പോൾ ലഭിച്ച ഐഡി (Submission ID) താഴെ നൽകുക:</p>
+                <p style="font-size:12px; color:#555; margin-bottom:8px;">ടെസ്റ്റ് സബ്മിറ്റ് ചെയ്തപ്പോൾ ലഭിച്ച ഐഡി (Submission ID) നൽകുക:</p>
                 <label>സബ്മിഷൻ ഐഡി (Submission ID):</label>
                 <input type="text" id="checkSubIdInput" placeholder="ഉദാ: SUB_1718000000000">
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -333,15 +306,6 @@
         <div id="studentResultBox" style="display:none;" class="sub-box">
             <h3>📋 നിങ്ങളുടെ സബ്മിഷൻ, റിസൾട്ട് & സർട്ടിഫിക്കറ്റ്</h3>
             <div id="studentScoreCardContent"></div>
-            
-            <div style="background:#fdf2f8; border:1px solid #fbcfe8; padding:12px; border-radius:8px; margin-top:15px;">
-                <h4 style="color:#db2777; margin-top:0; font-size:14px;">🖼️ വ്യക്തിഗത പോസ്റ്റർ ഡൗൺലോഡ് ചെയ്യുക (Custom Student Poster)</h4>
-                <p style="font-size:12px; color:#555; margin-bottom:8px;">നിങ്ങളുടെ ഫോട്ടോ അപ്‌ലോഡ് ചെയ്ത് ഇസ്ലാമിക് മോഡൽ പോസ്റ്റർ ഫോട്ടോയായി ഡൗൺലോഡ് ചെയ്യാം:</p>
-                <label>നിങ്ങളുടെ ഫോട്ടോ:</label>
-                <input type="file" id="customStudentPhoto" accept="image/*">
-                <button class="btn btn-blue" onclick="generateCustomStudentPoster()">📥 എന്റെ പോസ്റ്റർ ഡൗൺലോഡ് ചെയ്യുക</button>
-            </div>
-
             <div id="studentCertificateArea" style="margin-top: 15px; text-align: center;"></div>
             <button class="btn btn-dark" onclick="location.reload()" style="margin-top: 10px;">🏠 തിരികെ ഹോമിലേക്ക്</button>
         </div>
@@ -719,7 +683,7 @@
     }
 
     function loadAdminDropdowns() {
-        ['selectEventForEval', 'selectEventForKey', 'selectEventForResult', 'posterEventSelect'].forEach(id => {
+        ['selectEventForEval', 'selectEventForKey', 'selectEventForResult'].forEach(id => {
             let el = document.getElementById(id);
             if(el) {
                 let firstOpt = el.options[0].outerHTML;
@@ -1003,129 +967,21 @@
         }
     }
 
-    function generateCustomStudentPoster() {
-        if(!currentLoadedStudentSub || !activeTestEvent) return;
-        let photoInput = document.getElementById('customStudentPhoto');
-        
-        let canvas = document.createElement('canvas');
-        canvas.width = 800;
-        canvas.height = 1000;
-        let ctx = canvas.getContext('2d');
-
-        let grad = ctx.createLinearGradient(0, 0, 800, 1000);
-        grad.addColorStop(0, '#1e293b');
-        grad.addColorStop(1, '#090d16');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, 800, 1000);
-
-        let finalizePoster = (bgImgObj) => {
-            if(bgImgObj) {
-                ctx.save();
-                ctx.globalAlpha = 0.15;
-                ctx.drawImage(bgImgObj, 0, 0, 800, 1000);
-                ctx.restore();
-            }
-
-            ctx.strokeStyle = '#d4af37';
-            ctx.lineWidth = 8;
-            ctx.strokeRect(20, 20, 760, 960);
-
-            ctx.fillStyle = '#d4af37';
-            ctx.font = 'bold 24px serif';
-            ctx.textAlign = 'center';
-            ctx.fillText(activeTestEvent.name, 400, 80);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 36px serif';
-            ctx.fillText('STUDENT APPRECIATION', 400, 130);
-
-            let cx = 400, cy = 340, radius = 110;
-            ctx.save();
-            ctx.beginPath();
-            ctx.arc(cx, cy, radius, 0, Math.PI * 2, true);
-            ctx.closePath();
-            ctx.clip();
-
-            let studentPhotoObj = window._customStudPhotoObj;
-            if(studentPhotoObj) {
-                ctx.drawImage(studentPhotoObj, cx - radius, cy - radius, radius * 2, radius * 2);
-            } else {
-                ctx.fillStyle = '#334155';
-                ctx.fill();
-            }
-            ctx.restore();
-
-            ctx.beginPath();
-            ctx.arc(cx, cy, radius, 0, Math.PI * 2, true);
-            ctx.lineWidth = 6;
-            ctx.strokeStyle = '#d4af37';
-            ctx.stroke();
-
-            ctx.fillStyle = '#d4af37';
-            ctx.font = 'bold 20px sans-serif';
-            ctx.fillText('⭐ STAR PERFORMER ⭐', 400, 485);
-
-            ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
-            ctx.strokeStyle = '#d4af37';
-            ctx.lineWidth = 2;
-            ctx.fillRect(175, 530, 450, 180);
-            ctx.strokeRect(175, 530, 450, 180);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 30px serif';
-            ctx.fillText(currentLoadedStudentSub.name, 400, 590);
-
-            ctx.font = '20px sans-serif';
-            ctx.fillStyle = '#cbd5e1';
-            ctx.fillText(`Score: ${currentLoadedStudentSub.score}`, 400, 640);
-            ctx.fillText(`Class: ${currentLoadedStudentSub.class || 'N/A'}`, 400, 680);
-
-            ctx.fillStyle = '#94a3b8';
-            ctx.font = '14px sans-serif';
-            ctx.fillText('Madrasa Digital Portal', 400, 940);
-
-            let link = document.createElement('a');
-            link.download = currentLoadedStudentSub.name + '_Custom_Poster.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-
-            setTimeout(() => { canvas.remove(); }, 1000);
-        };
-
-        if(photoInput && photoInput.files && photoInput.files[0]) {
-            let r = new FileReader();
-            r.onload = function(e) {
-                let img = new Image();
-                img.onload = function() {
-                    window._customStudPhotoObj = img;
-                    if(activeTestEvent.madrasaBg) {
-                        let bgImg = new Image();
-                        bgImg.onload = function() { finalizePoster(bgImg); };
-                        bgImg.src = activeTestEvent.madrasaBg;
-                    } else {
-                        finalizePoster(null);
-                    }
-                };
-                img.src = e.target.result;
-            };
-            r.readAsDataURL(photoInput.files[0]);
-        } else {
-            window._customStudPhotoObj = null;
-            if(activeTestEvent.madrasaBg) {
-                let bgImg = new Image();
-                bgImg.onload = function() { finalizePoster(bgImg); };
-                bgImg.src = activeTestEvent.madrasaBg;
-            } else {
-                finalizePoster(null);
-            }
-        }
-    }
-
     function checkStudentAnswerKeyPanel() {
         if(!activeTestEvent) return;
+        let subIdInput = prompt("ആൻസർ കീ കാണുന്നതിന് ദയവായി നിങ്ങളുടെ സബ്മിഷൻ ഐഡി (Submission ID) നൽകുക:");
+        if(!subIdInput) return;
+
+        let subs = submissionsData[activeTestEvent.id] || [];
+        let sub = subs.find(s => s.id === subIdInput.trim());
+        if(!sub) {
+            alert("നൽകിയ സബ്മിഷൻ ഐഡി തെറ്റാണ് അല്ലെങ്കിൽ ഈ ഇവന്റിൽ രജിസ്റ്റർ ചെയ്തിട്ടില്ല!");
+            return;
+        }
+
         document.getElementById('studentLoginBox').style.display = 'none';
         document.getElementById('studentResultBox').style.display = 'block';
-        document.getElementById('studentScoreCardContent').innerHTML = `<h4>🔑 ആൻസർ കീ:</h4><p>${answerKeysData[activeTestEvent.id] || 'ഇതുവരെ അപ്ലോഡ് ചെയ്തിട്ടില്ല (Pending).'}</p>`;
+        document.getElementById('studentScoreCardContent').innerHTML = `<h4>🔑 ആൻസർ കീ (${activeTestEvent.name}):</h4><p style="background:#f8fafc; padding:10px; border-radius:6px; border:1px solid #cbd5e1; white-space:pre-wrap;">${answerKeysData[activeTestEvent.id] || 'ഇതുവരെ അപ്ലോഡ് ചെയ്തിട്ടില്ല (Pending).'}</p>`;
     }
 
     function loadStudentSubmissionsForEval() {
@@ -1168,17 +1024,68 @@
         else { subs = submissionsData[evId] || []; }
 
         subs = subs.filter(s => s.evalStatus === 'Evaluated');
+        // Sort by Score (descending), then by Time Taken (ascending - faster completion ranks higher)
         subs.sort((a, b) => {
             if(b.score !== a.score) return b.score - a.score;
             return (a.timeTaken || 0) - (b.timeTaken || 0);
         });
 
         if(subs.length === 0) { container.innerHTML = "<p>വാല്യുവേഷൻ പൂർത്തിയായ റിസൾട്ടുകൾ ഇല്ല.</p>"; return; }
-        let html = `<table><tr><th>Rank</th><th>Name</th><th>ID</th><th>Score</th></tr>`;
-        subs.forEach((s, i) => {
-            html += `<tr><td>#${i+1}</td><td>${s.name}</td><td>${s.id}</td><td>${s.score}</td></tr>`;
+        
+        let html = `<table><tr><th>Rank</th><th>Name</th><th>ID</th><th>Score</th><th>Time Taken</th><th>Actions</th></tr>`;
+        subs.forEach((s) => {
+            // Find global index in original array for editing/deleting
+            let targetEvId = s.eventId;
+            let origIdx = (submissionsData[targetEvId] || []).findIndex(item => item.id === s.id);
+            let globalRank = subs.indexOf(s) + 1;
+            
+            let timeSec = Math.floor((s.timeTaken || 0) / 1000);
+            let timeMinStr = `${Math.floor(timeSec / 60)}m ${timeSec % 60}s`;
+
+            html += `<tr>
+                <td><b>#${globalRank}</b></td>
+                <td>${s.name}</td>
+                <td style="font-size:10px;">${s.id}</td>
+                <td><input type="number" id="res_score_${targetEvId}_${origIdx}" value="${s.score}" style="width:50px; padding:2px;"></td>
+                <td style="font-size:11px;">${timeMinStr}</td>
+                <td>
+                    <button class="btn btn-blue" style="padding:2px 6px; font-size:10px; margin:0;" onclick="updateSingleResult('${targetEvId}', ${origIdx})">✏️</button>
+                    <button class="btn btn-red" style="padding:2px 6px; font-size:10px; margin:0;" onclick="deleteSingleResult('${targetEvId}', ${origIdx})">🗑️</button>
+                </td>
+            </tr>`;
         });
         container.innerHTML = html + `</table>`;
+    }
+
+    function updateSingleResult(evId, origIdx) {
+        let inputEl = document.getElementById(`res_score_${evId}_${origIdx}`);
+        if(!inputEl) return;
+        let newScore = parseInt(inputEl.value);
+        if(isNaN(newScore)) { alert("സാധുവായ മാർക്ക് നൽകുക!"); return; }
+
+        if(submissionsData[evId] && submissionsData[evId][origIdx]) {
+            submissionsData[evId][origIdx].score = newScore;
+            localStorage.setItem('isolated_classTestSubs_v12.1', JSON.stringify(submissionsData));
+            alert("റിസൾട്ട് വിജയകരമായി അപ്ഡേറ്റ് ചെയ്തു!");
+            renderResultsBoard();
+            updateDashboardOverview();
+        }
+    }
+
+    function deleteSingleResult(evId, origIdx) {
+        if(!confirm("ഈ സബ്മിഷൻ റിസൾട്ട് ഡിലീറ്റ് ചെയ്യണമെന്ന് ഉറപ്പാണോ?")) return;
+        if(submissionsData[evId] && submissionsData[evId][origIdx]) {
+            let subToRemove = submissionsData[evId][origIdx];
+            submissionsData[evId].splice(origIdx, 1);
+            localStorage.setItem('isolated_classTestSubs_v12.1', JSON.stringify(submissionsData));
+            
+            // Clean device restriction if needed
+            localStorage.removeItem('submitted_device_' + evId);
+
+            alert("സബ്മിഷൻ വിജയകരമായി ക്ലിയർ ചെയ്തു/ഡിലീറ്റ് ചെയ്തു!");
+            renderResultsBoard();
+            updateDashboardOverview();
+        }
     }
 
     function exportResultsToCSV() {
@@ -1195,9 +1102,10 @@
 
         if(subs.length === 0) { alert("എക്സ്പോർട്ട് ചെയ്യാൻ വാല്യുവേറ്റ് ചെയ്ത റിസൾട്ടുകൾ ലഭ്യമല്ല!"); return; }
 
-        let csvContent = "data:text/csv;charset=utf-8,Rank,SubmissionID,Name,Phone,Class,Place,Score\n";
+        let csvContent = "data:text/csv;charset=utf-8,Rank,SubmissionID,Name,Phone,Class,Place,Score,TimeTakenSeconds\n";
         subs.forEach((s, i) => {
-            csvContent += `#${i+1},"${s.id}","${s.name}","${s.phone}","${s.class || ''}","${s.place || ''}",${s.score}\n`;
+            let timeSec = Math.floor((s.timeTaken || 0) / 1000);
+            csvContent += `#${i+1},"${s.id}","${s.name}","${s.phone}","${s.class || ''}","${s.place || ''}",${s.score},${timeSec}\n`;
         });
 
         let encodedUri = encodeURI(csvContent);
@@ -1207,144 +1115,6 @@
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-    }
-
-    function generateWinnersPoster() {
-        let evId = document.getElementById('posterEventSelect').value;
-        if(!evId) { alert("പോസ്റ്ററിനായി ഇവന്റ് തിരഞ്ഞെടുക്കുക!"); return; }
-        let ev = eventsData.find(e => e.id === evId);
-        let subs = (submissionsData[evId] || []).filter(s => s.evalStatus === 'Evaluated');
-        
-        subs.sort((a, b) => {
-            if(b.score !== a.score) return b.score - a.score;
-            return (a.timeTaken || 0) - (b.timeTaken || 0);
-        });
-
-        if(subs.length === 0) { alert("ഈ ഇവന്റിൽ വാല്യുവേറ്റ് ചെയ്ത വിജയികൾ ഇല്ല!"); return; }
-
-        let canvas = document.createElement('canvas');
-        canvas.width = 800;
-        canvas.height = 1000;
-        let ctx = canvas.getContext('2d');
-
-        let drawFinalCanvas = (bgImgObj) => {
-            let grad = ctx.createLinearGradient(0, 0, 800, 1000);
-            grad.addColorStop(0, '#1e293b');
-            grad.addColorStop(1, '#090d16');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, 800, 1000);
-
-            if(bgImgObj) {
-                ctx.save();
-                ctx.globalAlpha = 0.15;
-                ctx.drawImage(bgImgObj, 0, 0, 800, 1000);
-                ctx.restore();
-            }
-
-            ctx.strokeStyle = '#d4af37';
-            ctx.lineWidth = 8;
-            ctx.strokeRect(20, 20, 760, 960);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 32px serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('🏆 RANK HOLDERS / വിജയികൾ 🏆', 400, 80);
-            ctx.font = 'bold 20px serif';
-            ctx.fillStyle = '#d4af37';
-            ctx.fillText(ev.name, 400, 120);
-
-            let rankPositions = [
-                { x: 400, y: 280, radius: 70, nameY: 380, label: '1st Place' },
-                { x: 230, y: 560, radius: 55, nameY: 645, label: '2nd Place' },
-                { x: 570, y: 560, radius: 55, nameY: 645, label: '3rd Place' }
-            ];
-
-            let loadedImagesCount = 0;
-            let totalImagesToLoad = Math.min(subs.length, 3);
-
-            let drawAllRanks = () => {
-                rankPositions.forEach((pos, idx) => {
-                    if(idx < subs.length) {
-                        let student = subs[idx];
-                        
-                        ctx.fillStyle = '#d4af37';
-                        ctx.font = 'bold 18px sans-serif';
-                        ctx.fillText(pos.label, pos.x, pos.y - pos.radius - 15);
-
-                        ctx.save();
-                        ctx.beginPath();
-                        ctx.arc(pos.x, pos.y, pos.radius, 0, Math.PI * 2, true);
-                        ctx.closePath();
-                        ctx.clip();
-                        
-                        if(window[`posterImgObj${idx+1}`]) {
-                            ctx.drawImage(window[`posterImgObj${idx+1}`], pos.x - pos.radius, pos.y - pos.radius, pos.radius * 2, pos.radius * 2);
-                        } else {
-                            ctx.fillStyle = '#374151';
-                            ctx.fill();
-                        }
-                        ctx.restore();
-
-                        ctx.beginPath();
-                        ctx.arc(pos.x, pos.y, pos.radius, 0, Math.PI * 2, true);
-                        ctx.lineWidth = 4;
-                        ctx.strokeStyle = '#d4af37';
-                        ctx.stroke();
-
-                        ctx.fillStyle = '#ffffff';
-                        ctx.font = 'bold 20px serif';
-                        ctx.fillText(student.name, pos.x, pos.nameY);
-                        ctx.font = '16px sans-serif';
-                        ctx.fillStyle = '#d1d5db';
-                        ctx.fillText(`Score: ${student.score}`, pos.x, pos.nameY + 24);
-                    }
-                });
-
-                ctx.fillStyle = '#d4af37';
-                ctx.font = 'bold 22px serif';
-                ctx.fillText('അഭിനന്ദനങ്ങൾ! ആശംസകളോടെ...', 400, 920);
-
-                let link = document.createElement('a');
-                link.download = ev.name + '_Rank_Holders_Poster.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-
-                setTimeout(() => { canvas.remove(); }, 1000);
-            };
-
-            for(let i=1; i<=3; i++) {
-                let photoInput = document.getElementById(`posterPhoto${i}`);
-                if(photoInput && photoInput.files && photoInput.files[0]) {
-                    let r = new FileReader();
-                    r.onload = (function(index) {
-                        return function(e) {
-                            let img = new Image();
-                            img.onload = function() {
-                                window[`posterImgObj${index}`] = img;
-                                loadedImagesCount++;
-                                if(loadedImagesCount === totalImagesToLoad) drawAllRanks();
-                            };
-                            img.src = e.target.result;
-                        };
-                    })(i);
-                    r.readAsDataURL(photoInput.files[0]);
-                } else {
-                    totalImagesToLoad = Math.max(0, totalImagesToLoad - 1);
-                }
-            }
-
-            if(totalImagesToLoad === 0) {
-                drawAllRanks();
-            }
-        };
-
-        if(ev.madrasaBg) {
-            let bgImg = new Image();
-            bgImg.onload = function() { drawFinalCanvas(bgImg); };
-            bgImg.src = ev.madrasaBg;
-        } else {
-            drawFinalCanvas(null);
-        }
     }
 </script>
 
