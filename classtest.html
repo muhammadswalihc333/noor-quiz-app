@@ -239,7 +239,7 @@
             <div id="answerKeyUploadContainer" style="margin-top: 8px;"></div>
         </div>
 
-        <!-- 🌟 വിന്നേഴ്സ് പോസ്റ്റർ ജനറേറ്റർ സെക്ഷൻ -->
+        <!-- 🌟 പുതിയതായി അറ്റാച്ച് ചെയ്ത വിന്നേഴ്സ് പോസ്റ്റർ മേക്കർ ഫയൽ കണ്ടന്റ് -->
         <div class="sub-box" style="border-color: #db2777; background: #fff5f8;">
             <h3 style="color: #db2777;">🖼️ വിന്നേഴ്സ് പോസ്റ്റർ ജനറേറ്റർ (1st, 2nd, 3rd)</h3>
             <p style="font-size: 13px; color: #555;">വിജയികളുടെ ഫോട്ടോകൾ നൽകി ആകർഷകമായ പോസ്റ്റർ ഡൗൺലോഡ് ചെയ്യാം:</p>
@@ -1315,7 +1315,7 @@
             for(let i=1; i<=3; i++) {
                 let photoInput = document.getElementById(`posterPhoto${i}`);
                 if(photoInput && photoInput.files && photoInput.files[0]) {
-                    let `FileReader` = new FileReader();
+                    let r = new FileReader();
                     r.onload = (function(index) {
                         return function(e) {
                             let img = new Image();
