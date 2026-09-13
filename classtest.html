@@ -239,28 +239,35 @@
             <div id="answerKeyUploadContainer" style="margin-top: 8px;"></div>
         </div>
 
-        <!-- 🔥 അപ്ഡേറ്റ് ചെയ്ത മൾട്ടി സ്റ്റുഡൻറ് പോസ്റ്റർ ജനറേറ്റർ സെക്ഷൻ -->
+        <!-- 🌟 വിന്നേഴ്സ് പോസ്റ്റർ ജനറേറ്റർ സെക്ഷൻ -->
         <div class="sub-box" style="border-color: #db2777; background: #fff5f8;">
-            <h3 style="color: #db2777;">🌟 മൾട്ടി സ്റ്റുഡൻറ് പോസ്റ്റർ ജനറേറ്റർ (Multi-Student Poster)</h3>
-            <p style="font-size: 13px; color: #555;">റിസൾട്ട് അല്ലെങ്കിൽ ഇവന്റ് തിരഞ്ഞെടുക്കുമ്പോൾ കുട്ടികളുടെ വിവരങ്ങൾ ഓട്ടോമാറ്റിക്കായി വരും. ഓരോ കുട്ടിയുടെയും ഫോട്ടോ താഴെ നൽകാം:</p>
+            <h3 style="color: #db2777;">🖼️ വിന്നേഴ്സ് പോസ്റ്റർ ജനറേറ്റർ (1st, 2nd, 3rd)</h3>
+            <p style="font-size: 13px; color: #555;">വിജയികളുടെ ഫോട്ടോകൾ നൽകി ആകർഷകമായ പോസ്റ്റർ ഡൗൺലോഡ് ചെയ്യാം:</p>
             
-            <label>പശ്ചാത്തല ഫോട്ടോ (ഓപ്ഷണൽ):</label>
-            <input type="file" id="multiPosterBgFile" accept="image/*">
-
-            <label>ഇവന്റ് / റിസൾട്ട് തിരഞ്ഞെടുക്കുക:</label>
-            <select id="multiPosterEventSelect" onchange="loadMultiPosterStudentsList()">
+            <select id="posterEventSelect" style="margin-bottom:8px;">
                 <option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>
             </select>
-
-            <div id="multiPosterStudentsContainer" style="margin-top: 10px;">
-                <p style="font-size: 12px; color: #666;">ദയവായി മുകളിൽ നിന്ന് ഒരു ഇവന്റ് തിരഞ്ഞെടുക്കുക.</p>
+            
+            <div class="flex-row">
+                <div>
+                    <label>🥇 1st Place ഫോട്ടോ:</label>
+                    <input type="file" id="posterPhoto1" accept="image/*">
+                </div>
+                <div>
+                    <label>🥈 2nd Place ഫോട്ടോ:</label>
+                    <input type="file" id="posterPhoto2" accept="image/*">
+                </div>
+            </div>
+            <div>
+                <label>🥉 3rd Place ഫോട്ടോ:</label>
+                <input type="file" id="posterPhoto3" accept="image/*">
             </div>
 
-            <button class="btn btn-blue" onclick="generateMultiStudentPosterFile()" style="background: #db2777; margin-top: 12px;">📥 മൾട്ടി സ്റ്റുഡൻറ് പോസ്റ്റർ ഡൗൺലോഡ് ചെയ്യുക</button>
+            <button class="btn btn-blue" onclick="generateWinnersPoster()" style="background: #db2777; margin-top: 10px;">📥 വിന്നേഴ്സ് പോസ്റ്റർ ഡൗൺലോഡ് ചെയ്യുക</button>
         </div>
 
         <div class="sub-box" style="border-color: var(--accent);">
-            <h3>📊 റിസൾട്ട്, ടൈം-ബേസ്ഡ് റാങ്കിംഗ് & പോസ്റ്റർ</h3>
+            <h3>📊 റിസൾട്ട്, ടൈം-ബേസ്ഡ് റാങ്കിംഗ് & ഇമേജ് ഇൻഡെക്സ്</h3>
             <div class="flex-row" style="margin-bottom: 8px;">
                 <select id="selectEventForResult" onchange="renderResultsBoard()">
                     <option value="ALL">എല്ലാ ഇവന്റുകളുടെയും റിസൾട്ട്</option>
@@ -268,30 +275,6 @@
                 <button class="btn btn-green" style="margin-top:0; width:auto;" onclick="exportResultsToCSV()">📥 ഡൗൺലോഡ് എക്സൽ (CSV)</button>
             </div>
             <div id="resultsBoardContainer" style="margin-top: 10px; overflow-x:auto;"></div>
-            
-            <div style="background:#fdf2f8; border:1px solid #fbcfe8; padding:12px; border-radius:8px; margin-top:12px;">
-                <h4 style="color:#db2777; margin-top:0;">🖼️ വിന്നേഴ്സ് പോസ്റ്റർ ജനറേറ്റർ (1st, 2nd, 3rd)</h4>
-                <select id="posterEventSelect" style="margin-bottom:8px;">
-                    <option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>
-                </select>
-                
-                <div class="flex-row">
-                    <div>
-                        <label>🥇 1st Place ഫോട്ടോ:</label>
-                        <input type="file" id="posterPhoto1" accept="image/*">
-                    </div>
-                    <div>
-                        <label>🥈 2nd Place ഫോട്ടോ:</label>
-                        <input type="file" id="posterPhoto2" accept="image/*">
-                    </div>
-                </div>
-                <div>
-                    <label>🥉 3rd Place ഫോട്ടോ:</label>
-                    <input type="file" id="posterPhoto3" accept="image/*">
-                </div>
-
-                <button class="btn btn-blue" onclick="generateWinnersPoster()">📥 വിന്നേഴ്സ് പോസ്റ്റർ ഡൗൺലോഡ് ചെയ്യുക</button>
-            </div>
         </div>
 
     </div>
@@ -736,7 +719,7 @@
     }
 
     function loadAdminDropdowns() {
-        ['selectEventForEval', 'selectEventForKey', 'selectEventForResult', 'posterEventSelect', 'multiPosterEventSelect'].forEach(id => {
+        ['selectEventForEval', 'selectEventForKey', 'selectEventForResult', 'posterEventSelect'].forEach(id => {
             let el = document.getElementById(id);
             if(el) {
                 let firstOpt = el.options[0].outerHTML;
@@ -751,43 +734,6 @@
         let evId = document.getElementById('selectEventForKey').value;
         let container = document.getElementById('answerKeyUploadContainer');
         container.innerHTML = evId ? `<textarea id="masterKey" rows="3">${answerKeysData[evId] || ''}</textarea><button class="btn btn-green" onclick="answerKeysData['${evId}']=document.getElementById('masterKey').value; localStorage.setItem('isolated_classTestKeys_v12.1', JSON.stringify(answerKeysData)); alert('സേവ് ചെയ്തു!');">💾 സേവ് ചെയ്യുക</button>` : '';
-    }
-
-    // 🌟 മൾട്ടി-സ്റ്റുഡന്റ് പോസ്റ്ററിലേക്ക് ഇവന്റിലെ കുട്ടികളുടെ ലിസ്റ്റും ഫോട്ടോ അപ്‌ലോഡും ലോഡ് ചെയ്യുന്ന ഫങ്ഷൻ
-    function loadMultiPosterStudentsList() {
-        let evId = document.getElementById('multiPosterEventSelect').value;
-        let container = document.getElementById('multiPosterStudentsContainer');
-        container.innerHTML = "";
-
-        if(!evId) {
-            container.innerHTML = `<p style="font-size: 12px; color: #666;">ദയവായി മുകളിൽ നിന്ന് ഒരു ഇവന്റ് തിരഞ്ഞെടുക്കുക.</p>`;
-            return;
-        }
-
-        let subs = submissionsData[evId] || [];
-        if(subs.length === 0) {
-            container.innerHTML = `<p style="font-size: 12px; color: #d97706;">ഈ ഇവന്റിൽ ഇതുവരെ വിദ്യാർത്ഥികൾ ആരും സബ്മിറ്റ് ചെയ്തിട്ടില്ല.</p>`;
-            return;
-        }
-
-        // Sort by score or submission
-        subs.sort((a, b) => (b.score || 0) - (a.score || 0));
-
-        let html = `<div style="max-height: 220px; overflow-y: auto; background: #fff; padding: 8px; border-radius: 8px; border: 1px solid #cbd5e1;">`;
-        subs.sub_selected = true;
-        subs.forEach((s, idx) => {
-            html += `
-                <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px; margin-bottom: 8px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: bold; color: #1f2937;">
-                        <span>#${idx+1} - ${s.name} (Score: ${s.score || 0})</span>
-                    </div>
-                    <label style="font-size: 11px; color: #555; margin-top: 4px; display: block;">ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുക (ഓപ്ഷണൽ):</label>
-                    <input type="file" id="multi_stud_photo_${idx}" accept="image/*" data-student-name="${s.name}" data-student-score="${s.score || 0}" style="margin: 2px 0; font-size: 11px; padding: 4px;">
-                </div>`;
-        });
-        html += `</div>`;
-        container.innerHTML = html;
-        window.currentMultiPosterStudents = subs;
     }
 
     window.onload = function() {
@@ -1175,164 +1121,6 @@
         }
     }
 
-    // 🌟 മൾട്ടി സ്റ്റുഡൻറ് പോസ്റ്റർ ജനറേറ്റർ ഫങ്ഷൻ (ഫോട്ടോകളോടെ ഡൗൺലോഡ് ചെയ്യാൻ)
-    function generateMultiStudentPosterFile() {
-        let evId = document.getElementById('multiPosterEventSelect').value;
-        if(!evId || !window.currentMultiPosterStudents) {
-            alert("ദയവായി ഒരു ഇവന്റ് തിരഞ്ഞെടുക്കുക!");
-            return;
-        }
-
-        let students = window.currentMultiPosterStudents;
-        let bgFile = document.getElementById('multiPosterBgFile').files[0];
-        let selectedEvent = eventsData.find(e => e.id === evId);
-
-        let canvas = document.createElement('canvas');
-        canvas.width = 900;
-        canvas.height = 1200;
-        let ctx = canvas.getContext('2d');
-
-        let pendingImages = 0;
-        let studentImages = {};
-
-        students.forEach((s, idx) => {
-            let fileInput = document.getElementById(`multi_stud_photo_${idx}`);
-            if(fileInput && fileInput.files && fileInput.files[0]) {
-                pendingImages++;
-                let r = new FileReader();
-                r.onload = (function(index) {
-                    return function(e) {
-                        let img = new Image();
-                        img.onload = function() {
-                            studentImages[index] = img;
-                            pendingImages--;
-                            if(pendingImages === 0) renderFinalMultiPoster();
-                        };
-                        img.src = e.target.result;
-                    };
-                })(idx);
-                r.readAsDataURL(fileInput.files[0]);
-            }
-        });
-
-        let renderFinalMultiPoster = (bgImgObj) => {
-            let grad = ctx.createLinearGradient(0, 0, 900, 1200);
-            grad.addColorStop(0, '#14532d');
-            grad.addColorStop(1, '#052e16');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, 900, 1200);
-
-            if(bgImgObj) {
-                ctx.save();
-                ctx.globalAlpha = 0.2;
-                ctx.drawImage(bgImgObj, 0, 0, 900, 1200);
-                ctx.restore();
-            }
-
-            ctx.strokeStyle = '#d4af37';
-            ctx.lineWidth = 10;
-            ctx.strokeRect(25, 25, 850, 1150);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 34px serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('🌟 വിജിതർ / വിദ്യാർത്ഥികൾ 🌟', 450, 85);
-
-            ctx.fillStyle = '#d4af37';
-            ctx.font = 'bold 18px sans-serif';
-            ctx.fillText(selectedEvent ? selectedEvent.name : 'CLASS TEST PARTICIPANTS', 450, 125);
-
-            let startY = 180;
-            let startX = 60;
-            let colWidth = 370;
-            let rowHeight = 90;
-            let maxCols = 2;
-
-            students.forEach((s, index) => {
-                let col = index % maxCols;
-                let row = Math.floor(index / maxCols);
-                
-                let x = startX + (col * (colWidth + 40));
-                let y = startY + (row * (rowHeight + 15));
-
-                if(y > 1060) return;
-
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-                ctx.strokeStyle = '#d4af37';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.roundRect(x, y, colWidth, rowHeight, 10);
-                ctx.fill();
-                ctx.stroke();
-
-                // Student Photo Avatar or Default Badge
-                let avatarX = x + 45;
-                let avatarY = y + (rowHeight / 2);
-                let avatarRadius = 32;
-
-                ctx.save();
-                ctx.beginPath();
-                ctx.arc(avatarX, avatarY, avatarRadius, 0, Math.PI * 2, true);
-                ctx.closePath();
-                ctx.clip();
-
-                if(studentImages[index]) {
-                    ctx.drawImage(studentImages[index], avatarX - avatarRadius, avatarY - avatarRadius, avatarRadius * 2, avatarRadius * 2);
-                } else {
-                    ctx.fillStyle = '#14532d';
-                    ctx.fill();
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 16px sans-serif';
-                    ctx.textAlign = 'center';
-                    ctx.fillText(`#${index+1}`, avatarX, avatarY + 6);
-                }
-                ctx.restore();
-
-                ctx.beginPath();
-                ctx.arc(avatarX, avatarY, avatarRadius, 0, Math.PI * 2, true);
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = '#d4af37';
-                ctx.stroke();
-
-                // Student Name and Score Text
-                ctx.fillStyle = '#1f2937';
-                ctx.font = 'bold 20px serif';
-                ctx.textAlign = 'left';
-                ctx.fillText(s.name, x + 90, y + 36);
-
-                ctx.font = '14px sans-serif';
-                ctx.fillStyle = '#166534';
-                ctx.fillText(`Score: ${s.score || 0} | Rank: #${index+1}`, x + 90, y + 64);
-            });
-
-            ctx.fillStyle = '#d4af37';
-            ctx.font = 'bold 18px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('Madrasa Digital Portal - All Rights Reserved', 450, 1145);
-
-            let link = document.createElement('a');
-            link.download = 'Multi_Student_Poster.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-
-            setTimeout(() => { canvas.remove(); }, 1000);
-        };
-
-        if(pendingImages === 0) {
-            if(bgFile) {
-                let r = new FileReader();
-                r.onload = function(e) {
-                    let img = new Image();
-                    img.onload = function() { renderFinalMultiPoster(img); };
-                    img.src = e.target.result;
-                };
-                r.readAsDataURL(bgFile);
-            } else {
-                renderFinalMultiPoster(null);
-            }
-        }
-    }
-
     function checkStudentAnswerKeyPanel() {
         if(!activeTestEvent) return;
         document.getElementById('studentLoginBox').style.display = 'none';
@@ -1527,7 +1315,7 @@
             for(let i=1; i<=3; i++) {
                 let photoInput = document.getElementById(`posterPhoto${i}`);
                 if(photoInput && photoInput.files && photoInput.files[0]) {
-                    let r = new FileReader();
+                    let `FileReader` = new FileReader();
                     r.onload = (function(index) {
                         return function(e) {
                             let img = new Image();
