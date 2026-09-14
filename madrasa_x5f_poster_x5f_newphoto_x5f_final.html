@@ -139,6 +139,13 @@ input[type=range]{width:100%;accent-color:#c9a227}
 #imgSearchResults{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;overflow-y:auto;max-height:350px;padding:4px}
 #imgSearchResults img{width:100%;height:100px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid transparent}
 #imgSearchResults img:hover{border-color:#c9a227}
+
+/* Force desktop mode even on mobile */
+@media (max-width: 900px){
+  main{flex-direction:row !important;flex-wrap:nowrap !important;overflow-x:auto !important;}
+  #panel{flex:0 0 340px !important;min-width:340px !important;max-height:none !important;overflow:visible !important;}
+  #stageCol{flex:1 !important;min-width:500px !important;}
+}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&family=Cinzel:wght@400;700&family=Playfair+Display:wght@400;700&family=Poppins:wght@400;600&family=Cairo:wght@400;700&family=Great+Vibes&family=Reem+Kufi:wght@400;700&family=Tajawal:wght@400;700&family=Lateef&family=Aref+Ruqaa:wght@400;700&family=Katibeh&family=Harmattan:wght@400;700&family=Mirza:wght@400;700&family=Changa:wght@400;700&family=Cairo+Play:wght@400;700&family=Alex+Brush&family=Allura&family=Pinyon+Script&family=Sacramento&family=Parisienne&family=Cookie&family=Italianno&family=Montserrat:wght@400;700&family=Oswald:wght@400;700&family=Raleway:wght@400;700&display=swap" rel="stylesheet">
 </head>
@@ -381,7 +388,8 @@ let state = {
   layout: "top3",
   theme: "midnight",
   textStyle: "gold",
-  tagline: "SMALL MINDS  •  BIGGER PURPOSES  •  BRIGHTER UMMAH",
+  locked:{}, zorder:{}, opacity:{},
+   tagline: "SMALL MINDS  •  BIGGER PURPOSES  •  BRIGHTER UMMAH",
   quoteText: "\"Knowledge\nBuilds Brighter\nMuslim Generations\"",
   arText: "طلب العلم\nنور للحياة",
   enText: "SEEK KNOWLEDGE\nSHINE A BRIGHTER\nTOMORROW",
@@ -394,7 +402,8 @@ let state = {
     progKicker: {x:0, y:0, fs:36, rot:0, font:"", visible:true},
     progTitle: {x:0, y:0, fs:104, rot:0, font:"", visible:true},
     progSub: {x:0, y:0, fs:36, rot:0, font:"", visible:true},
-    tagline: {x:0, y:0, fs:20, rot:0, font:"", visible:true},
+    locked:{}, zorder:{}, opacity:{},
+   tagline: {x:0, y:0, fs:20, rot:0, font:"", visible:true},
     quoteL: {x:0, y:0, fs:30, rot:0, font:"", visible:true},
     arT: {x:0, y:0, fs:40, rot:0, font:"", visible:true},
     enR: {x:0, y:0, fs:17, rot:0, font:"", visible:true},
@@ -741,7 +750,12 @@ function renderPoster() {
     $('themeOverlayColor').style.opacity = '0';
   }
 
-  const titleEl = $('progTitle');
+  
+  // apply lock/opacity/zorder
+  Object.keys(state.zorder).forEach(id=>{ let el=$(id); if(el) el.style.zIndex=state.zorder[id]; });
+  Object.keys(state.opacity).forEach(id=>{ let el=$(id); if(el) el.style.opacity=state.opacity[id]; });
+  Object.keys(state.locked).forEach(id=>{ let el=$(id); if(el){ el.style.outline = state.locked[id] ? '2px dashed #ff5555' : ''; }});
+const titleEl = $('progTitle');
   titleEl.className = state.textStyle === 'gold' ? 'goldtext' : (state.textStyle === 'silver' ? 'silvertext' : '');
 
   $('pvMadrasa').innerText = state.madrasa;
@@ -927,6 +941,8 @@ function attachDragAndDrop() {
   let elemStartX = 0, elemStartY = 0;
 
   poster.onpointerdown = e => {
+    let _lk = e.target.closest('[data-id]');
+    if(_lk && state.locked[_lk.id||_lk.dataset.id]) return;
     let target = e.target.closest('[data-id], .flayer, .winner, .scard, #nameCard');
     if(!target) return;
     let id = target.id || target.dataset.id;
@@ -969,6 +985,21 @@ function attachDragAndDrop() {
 function getStageScale() {
   const wrap = $('stageWrap');
   return wrap.clientWidth / 1080;
+}
+
+
+function toggleLock(id){
+  state.locked[id]=!state.locked[id];
+  renderLayerList(); syncSelPanel(); renderPoster();
+}
+function moveLayer(id,dir){
+  let cur = state.zorder[id]||10;
+  state.zorder[id]=cur+dir;
+  renderPoster(); renderLayerList();
+}
+function setOpacity(id,val){
+  state.opacity[id]=val/100;
+  renderPoster();
 }
 
 function selectElement(id) {
@@ -1029,6 +1060,28 @@ function syncSelPanel() {
   }
 
   $('selVis').checked = p.visible !== false;
+  // inject lock/layer/opacity controls once
+  if(!$('lockBtn')){
+    let div=document.createElement('div');
+    div.innerHTML=`<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+      <button class="btn small" id="lockBtn">🔒 Lock / Unlock</button>
+      <button class="btn small ghost" id="fwdBtn">⬆️ മുകളിൽ</button>
+      <button class="btn small ghost" id="bwdBtn">⬇️ അടിയിൽ</button>
+    </div>
+    <div style="margin-top:8px"><label style="font-size:12px;color:#c9b98a">Opacity / തിക്നെസ്</label>
+    <input type="range" id="opacityRange" min="10" max="100" value="100"></div>`;
+    $('selPanel').appendChild(div);
+    $('lockBtn').onclick=()=>toggleLock(activeSelectionId);
+    $('fwdBtn').onclick=()=>moveLayer(activeSelectionId,1);
+    $('bwdBtn').onclick=()=>moveLayer(activeSelectionId,-1);
+    $('opacityRange').oninput=(e)=>setOpacity(activeSelectionId,e.target.value);
+  }
+  if(activeSelectionId){
+    $('lockBtn').textContent = state.locked[activeSelectionId] ? '🔓 Unlock' : '🔒 Lock';
+    let op = state.opacity[activeSelectionId];
+    $('opacityRange').value = op!==undefined ? op*100 : 100;
+  }
+
   if(p.font !== undefined) $('selFont').value = p.font;
 }
 
