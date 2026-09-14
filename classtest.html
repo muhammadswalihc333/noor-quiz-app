@@ -16,7 +16,6 @@
         .btn-blue { background: var(--accent); color: white; }
         .btn-red { background: var(--danger); color: white; }
         .btn-dark { background: var(--primary); color: white; }
-        .btn-poster { background: #9333ea; color: white; }
         .btn:disabled { background: #9ca3af !important; cursor: not-allowed; opacity: 0.7; }
         input, select, textarea { width: 100%; padding: 10px; margin: 5px 0 12px 0; border: 1px solid #d1d5db; border-radius: 8px; box-sizing: border-box; font-size: 14px; background: #fdfdfd; }
         .tab-nav { display: flex; gap: 8px; margin-bottom: 15px; }
@@ -251,13 +250,6 @@
                 <button class="btn btn-green" style="margin-top:0; width:auto;" onclick="exportResultsToCSV()">📥 ഡൗൺലോഡ് എക്സൽ (CSV)</button>
             </div>
             <div id="resultsBoardContainer" style="margin-top: 10px; overflow-x:auto;"></div>
-
-            <!-- പോസ്റ്റർ മേക്കിംഗ് ഫയൽ തുറക്കാനുള്ള ബട്ടൺ -->
-            <div style="margin-top: 15px; text-align: center;">
-                <a href="https://www.meta.ai/share/a/a7661aba-d977-4b74-a33c-cca964a60ddb" target="_blank" class="btn btn-poster">
-                    🎨 പോസ്റ്റർ മേക്കിംഗ് ഫയൽ തുറക്കാൻ
-                </a>
-            </div>
         </div>
 
     </div>
@@ -865,12 +857,10 @@
             let keyLines = masterKeyText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             
             answers.forEach((curr, idx) => {
-                let expectedAns = curr.correctAns; // Fallback to question's default answer
+                let expectedAns = curr.correctAns;
                 
-                // If master key has explicit answers line-by-line, map them
                 if(keyLines.length > idx) {
                     let line = keyLines[idx];
-                    // If line has format like "Q1: Answer" or just "Answer"
                     if(line.includes(':')) {
                         expectedAns = line.split(':')[1].trim();
                     } else {
@@ -975,52 +965,43 @@
         let ctx = canvas.getContext('2d');
 
         let drawProfessionalTemplate = (themeColor1, themeColor2, badgeTitle, subTitle) => {
-            // Background Fill
             let grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
             grad.addColorStop(0, '#fffdf9');
             grad.addColorStop(1, '#f4ece1');
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Elegant Outer Border
             ctx.strokeStyle = themeColor1;
             ctx.lineWidth = 8;
             ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
 
-            // Inner Thin Border
             ctx.strokeStyle = themeColor2;
             ctx.lineWidth = 2;
             ctx.strokeRect(45, 45, canvas.width - 90, canvas.height - 90);
 
-            // Corner Decorative Accents
             ctx.fillStyle = themeColor1;
             ctx.fillRect(30, 30, 40, 40);
             ctx.fillRect(canvas.width - 70, 30, 40, 40);
             ctx.fillRect(30, canvas.height - 70, 40, 40);
             ctx.fillRect(canvas.width - 70, canvas.height - 70, 40, 40);
 
-            // Header Title
             ctx.fillStyle = themeColor1;
             ctx.font = 'bold 38px "Times New Roman", serif';
             ctx.textAlign = 'center';
             ctx.fillText(activeTestEvent.name.toUpperCase(), canvas.width / 2, 120);
 
-            // Certificate Badge Title
             ctx.font = 'bold 44px "Georgia", serif';
             ctx.fillStyle = '#1f2937';
             ctx.fillText(badgeTitle, canvas.width / 2, 200);
 
-            // Subtitle
             ctx.font = 'italic 22px "Times New Roman", serif';
             ctx.fillStyle = '#4b5563';
             ctx.fillText(subTitle, canvas.width / 2, 250);
 
-            // Presented To text
             ctx.font = '20px sans-serif';
             ctx.fillStyle = '#6b7280';
             ctx.fillText('THIS CERTIFICATE IS PROUDLY PRESENTED TO', canvas.width / 2, 330);
 
-            // Student Name Rendering (Using Custom Coordinates or Defaults)
             let xCoord = (cfg.x / 100) * canvas.width;
             let yCoord = (cfg.y / 100) * canvas.height;
 
@@ -1028,7 +1009,6 @@
             ctx.font = `bold ${cfg.size * 2.2}px "Georgia", serif`;
             ctx.fillText(studentName, xCoord, yCoord);
 
-            // Underline for name
             ctx.strokeStyle = themeColor2;
             ctx.lineWidth = 3;
             ctx.beginPath();
@@ -1036,12 +1016,10 @@
             ctx.lineTo(xCoord + 250, yCoord + 15);
             ctx.stroke();
 
-            // Description text
             ctx.font = '18px sans-serif';
             ctx.fillStyle = '#374151';
             ctx.fillText('പ്രസ്തുത വ്യക്തി ഈ സ്ഥാപനം നടത്തിയ ഓൺലൈൻ ക്ലാസ് ടെസ്റ്റിൽ വിജയകരമായി പങ്കെടുക്കുകയും അഭിനന്ദനാർഹമായ നിലവാരം പുലർത്തുകയും ചെയ്തിരിക്കുന്നു.', canvas.width / 2, yCoord + 90);
 
-            // Footer Signatures & Date
             ctx.font = 'bold 16px sans-serif';
             ctx.fillStyle = '#1f2937';
             ctx.fillText('തീയതി: ' + new Date().toLocaleDateString(), 200, canvas.height - 130);
@@ -1082,7 +1060,6 @@
                 drawProfessionalTemplate('#1d4ed8', '#3b82f6', 'CERTIFICATE OF MERIT', 'Awarded for outstanding academic excellence and top rank');
             }
         } else {
-            // Classic Professional Gold/Dark Theme
             if(type === 'participation') {
                 drawProfessionalTemplate('#b45309', '#f59e0b', 'CERTIFICATE OF PARTICIPATION', 'This is proudly awarded for successful completion');
             } else {
@@ -1240,4 +1217,3 @@
 
 </body>
 </html>
-
