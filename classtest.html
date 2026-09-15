@@ -343,7 +343,9 @@
       appId: "1:150380342282:web:5f5c459e30a072cf1dc3f3"
     };
 
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
     const db = firebase.database();
 
     let eventsData = [];
@@ -356,13 +358,16 @@
     let currentStudentSession = null;
     let currentLoadedStudentSub = null;
 
-    // Load data from Firebase on startup
+    // Load data from Firebase on startup with strict sequencing
     function fetchAllFirebaseData(callback) {
         db.ref('classTestApp').once('value').then((snapshot) => {
             let val = snapshot.val() || {};
-            eventsData = val.events || [];
+            eventsData = Array.isArray(val.events) ? val.events : [];
             submissionsData = val.submissions || {};
             answerKeysData = val.keys || {};
+            if(callback) callback();
+        }).catch(err => {
+            console.error("Firebase load error:", err);
             if(callback) callback();
         });
     }
@@ -613,7 +618,7 @@
         loadAdminDropdowns();
         updateDashboardOverview();
 
-        let generatedLink = window.location.href.split('?')[0] + "?event=" + payload.id;
+        let generatedLink = window.location.origin + window.location.pathname + "?event=" + payload.id;
         let whatsappMsg = encodeURIComponent("ക്ലാസ് ടെസ്റ്റിൽ പങ്കെടുക്കാനുള്ള ലിങ്ക്: " + generatedLink);
         
         let successBoxHtml = `
@@ -727,9 +732,10 @@
 
     function renderEventsList() {
         let container = document.getElementById('eventsListContainer');
+        if(!container) return;
         container.innerHTML = "";
         eventsData.forEach((ev, idx) => {
-            let shareLink = window.location.href.split('?')[0] + "?event=" + ev.id;
+            let shareLink = window.location.origin + window.location.pathname + "?event=" + ev.id;
             let whatsappMsg = encodeURIComponent("ക്ലാസ് ടെസ്റ്റിൽ പങ്കെടുക്കാനുള്ള ലിങ്ക്: " + shareLink);
             container.innerHTML += `
                 <div class="event-card">
@@ -851,6 +857,7 @@
         alert("മാസ്റ്റർ ആൻസർ കീ വിജയകരമായി സേവ് ചെയ്തു!");
     }
 
+    // App Initialization on window load
     window.onload = function() {
         fetchAllFirebaseData(() => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -881,6 +888,8 @@
                     document.getElementById('studTimingBadge').innerHTML = `🟢 Opens: ${startFormatted} • 🔴 Closes: ${endFormatted}`;
 
                     checkTestTimingStatus(ev);
+                } else {
+                    alert("ക്ഷമിക്കണം, ഈ ഇവന്റ് കണ്ടെത്താനായില്ല!");
                 }
             } else {
                 renderEventsList();
@@ -1286,6 +1295,7 @@
     function renderResultsBoard() {
         let evId = document.getElementById('selectEventForResult').value;
         let container = document.getElementById('resultsBoardContainer');
+        if(!container) return;
         let subs = [];
         if(evId === 'ALL') { Object.keys(submissionsData).forEach(k => subs = subs.concat(submissionsData[k])); }
         else { subs = submissionsData[evId] || []; }
@@ -1382,3 +1392,4 @@
 
 </body>
 </html>
+
