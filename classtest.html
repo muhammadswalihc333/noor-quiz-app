@@ -61,7 +61,7 @@
     </div>
 
     <!-- അഡ്മിൻ ജിമെയിൽ ലോഗിൻ ബോക്സ് -->
-    <div class="sub-box" style="background:#eff6ff; border-color:#2563eb;">
+    <div class="sub-box" id="adminLoginBoxSection" style="background:#eff6ff; border-color:#2563eb;">
         <h3>🔐 അഡ്മിൻ ജിമെയിൽ ലോഗിൻ (Google Authentication)</h3>
         <p style="font-size:12px; color:#555;">ലിങ്ക് ക്രിയേറ്റ് ചെയ്യാനും ഡാറ്റ സേവ് ചെയ്യാനും നിങ്ങളുടെ ജിമെയിൽ അക്കൗണ്ട് വഴി ലോഗിൻ ചെയ്യുക:</p>
         <button class="btn btn-blue" onclick="loginWithGoogle()">🌐 Google അക്കൗണ്ട് വഴി Login ചെയ്യുക</button>
@@ -899,6 +899,10 @@
             const urlParams = new URLSearchParams(window.location.search);
             const eventId = urlParams.get('event');
             if(eventId) {
+                // Hide Admin Login Box for Students
+                let adminLoginBox = document.getElementById('adminLoginBoxSection');
+                if(adminLoginBox) adminLoginBox.style.display = 'none';
+
                 let tabNav = document.getElementById('mainTabNavContainer');
                 if(tabNav) tabNav.style.display = 'none';
 
