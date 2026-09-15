@@ -225,8 +225,8 @@
         </div>
 
         <div class="sub-box" style="border-color: #2563eb;">
-            <h3>🔑 മാസ്റ്റർ ആൻസർ കീ അപ്‌ലോഡ് (ഓട്ടോമാറ്റിക് ഇവാലുവേഷനായി)</h3>
-            <p style="font-size:12px; color:#555; margin-bottom:6px;">ഓരോ ചോദ്യത്തിന്റെയും ശരിയായ ഉത്തരം താഴെ നൽകുക (ഓരോ ലൈനിൽ ഒരെണ്ണം വീതം, ഉദാഹരണത്തിന്: 1. മക്ക അല്ലെങ്കിൽ കൃത്യമായ ഓപ്ഷൻ ടെക്സ്റ്റ്).</p>
+            <h3>🔑 മാസ്റ്റർ ആൻസർ കീ (ചോദ്യവും ഉത്തരവും സഹിതം)</h3>
+            <p style="font-size:12px; color:#555; margin-bottom:6px;">ഇവിടെ ഓരോ ചോദ്യവും അതിന്റെ ശരിയായ ഉത്തരവും വ്യക്തമായി കാണാനും ആവശ്യാനുസരണം എഡിറ്റ് ചെയ്ത് സേവ് ചെയ്യാനും സാധിക്കും (കുട്ടികൾക്കും ടീച്ചർമാർക്കും ഇത് ഒരുപോലെ കാണാവുന്നതാണ്).</p>
             <select id="selectEventForKey" onchange="loadAnswerKeyUploader()">
                 <option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>
             </select>
@@ -705,28 +705,43 @@
         renderResultsBoard();
     }
 
+    // മാസ്റ്റർ ആൻസർ കീ - ചോദ്യവും ഉത്തരവും വ്യക്തമായി കാണുന്നതും എഡിറ്റ് ചെയ്യുന്നതുമായ രീതി
     function loadAnswerKeyUploader() {
         let evId = document.getElementById('selectEventForKey').value;
         let container = document.getElementById('answerKeyUploadContainer');
         if(!evId) { container.innerHTML = ''; return; }
         
         let ev = eventsData.find(e => e.id === evId);
-        let placeholderText = "ഓരോ ചോദ്യത്തിന്റെയും ശരിയായ ഉത്തരം താഴെ നൽകുക:\n";
-        if(ev && ev.questions) {
-            ev.questions.forEach((q, idx) => {
-                placeholderText += `Q${idx+1}: ${q.answer}\n`;
-            });
-        }
+        if(!ev || !ev.questions) { container.innerHTML = '<p>ചോദ്യങ്ങൾ ഒന്നും കണ്ടെത്തിയില്ല.</p>'; return; }
+
+        let savedKeys = answerKeysData[evId] || {};
+        // ഒരു കോൺഫിഗറേഷൻ ഒബ്ജക്റ്റ് അല്ലെങ്കിൽ സിമ്പിൾ സ്റ്റോറേജ് ആയി മാനേജ് ചെയ്യാം
+        let html = `<div style="font-size:13px; color:#555; margin-bottom:8px;">ഓരോ ചോദ്യത്തിന്റെയും ശരിയായ ഉത്തരം താഴെയുള്ള ബോക്സിൽ തിരുത്തുകയോ ശരിപ്പെടുത്തുകയോ ചെയ്യാം:</div>`;
         
-        container.innerHTML = `
-            <textarea id="masterKey" rows="5" placeholder="${placeholderText}">${answerKeysData[evId] || ''}</textarea>
-            <button class="btn btn-green" onclick="saveAnswerKey('${evId}')">💾 മാസ്റ്റർ ആൻസർ കീ സേവ് ചെയ്യുക</button>
-        `;
+        ev.questions.forEach((q, idx) => {
+            let currentAns = (typeof savedKeys === 'object' && savedKeys[idx] !== undefined) ? savedKeys[idx] : q.answer;
+            html += `
+                <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:10px; border-radius:8px; margin-bottom:8px;">
+                    <div><b>Q${idx+1}:</b> ${q.q}</div>
+                    <div style="margin-top:6px; display:flex; align-items:center; gap:8px;">
+                        <span style="font-size:12px; font-weight:600; color:#166534; min-width:80px;">ശരിയുത്തരം:</span>
+                        <input type="text" id="master_q_ans_${idx}" value="${currentAns}" style="margin:0; padding:6px;">
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `<button class="btn btn-green" style="margin-top:8px;" onclick="saveMasterAnswerKey('${evId}', ${ev.questions.length})">💾 മാസ്റ്റർ ആൻസർ കീ സേവ് ചെയ്യുക</button>`;
+        container.innerHTML = html;
     }
 
-    function saveAnswerKey(evId) {
-        let keyText = document.getElementById('masterKey').value;
-        answerKeysData[evId] = keyText;
+    function saveMasterAnswerKey(evId, totalQ) {
+        let newKeys = {};
+        for(let i=0; i<totalQ; i++) {
+            let val = document.getElementById(`master_q_ans_${i}`).value.trim();
+            newKeys[i] = val;
+        }
+        answerKeysData[evId] = newKeys;
         localStorage.setItem('isolated_classTestKeys_v12.2', JSON.stringify(answerKeysData));
         alert("മാസ്റ്റർ ആൻസർ കീ വിജയകരമായി സേവ് ചെയ്തു!");
     }
@@ -855,22 +870,16 @@
         let scoreVal = 0;
         
         if(isAuto) {
-            let masterKeyText = answerKeysData[activeTestEvent.id] || "";
-            let keyLines = masterKeyText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            let savedKeys = answerKeysData[activeTestEvent.id] || {};
             
             answers.forEach((curr, idx) => {
                 let expectedAns = curr.correctAns;
-                
-                if(keyLines.length > idx) {
-                    let line = keyLines[idx];
-                    if(line.includes(':')) {
-                        expectedAns = line.split(':')[1].trim();
-                    } else {
-                        expectedAns = line;
-                    }
+                // കസ്റ്റം മാസ്റ്റർ കീ ഉണ്ടെങ്കിൽ അത് എടുക്കുക
+                if(typeof savedKeys === 'object' && savedKeys[idx] !== undefined) {
+                    expectedAns = savedKeys[idx];
                 }
 
-                if(curr.studentAns.trim().toLowerCase() === expectedAns.toLowerCase()) {
+                if(curr.studentAns.trim().toLowerCase() === expectedAns.trim().toLowerCase()) {
                     scoreVal += curr.marks;
                 }
             });
@@ -1082,17 +1091,34 @@
             return;
         }
 
+        let evQuestions = activeTestEvent.questions || [];
+        let savedKeys = answerKeysData[activeTestEvent.id] || {};
+
+        let keyHtml = `<h4>🔑 മാസ്റ്റർ ആൻസർ കീ (${activeTestEvent.name}):</h4>`;
+        evQuestions.forEach((q, idx) => {
+            let correctAns = (typeof savedKeys === 'object' && savedKeys[idx] !== undefined) ? savedKeys[idx] : q.answer;
+            keyHtml += `
+                <div style="background:#f8fafc; padding:10px; border-radius:6px; border:1px solid #cbd5e1; margin-bottom:8px; font-size:13px;">
+                    <div><b>Q${idx+1}:</b> ${q.q}</div>
+                    <div style="margin-top:4px; color:#166534; font-weight:bold;">ശരിയുത്തരം: ${correctAns}</div>
+                </div>
+            `;
+        });
+
         document.getElementById('studentLoginBox').style.display = 'none';
         document.getElementById('studentResultBox').style.display = 'block';
-        document.getElementById('studentScoreCardContent').innerHTML = `<h4>🔑 മാസ്റ്റർ ആൻസർ കീ (${activeTestEvent.name}):</h4><p style="background:#f8fafc; padding:10px; border-radius:6px; border:1px solid #cbd5e1; white-space:pre-wrap;">${answerKeysData[activeTestEvent.id] || 'ഇതുവരെ അപ്ലോഡ് ചെയ്തിട്ടില്ല (Pending).'}</p>`;
+        document.getElementById('studentScoreCardContent').innerHTML = keyHtml;
     }
 
-    // ടീച്ചേഴ്സ് ഇവാല്യുവേഷൻ പാനൽ - ചോദ്യവും കുട്ടിയുടെ ഉത്തരവും ആൻസർ കീയും ഒന്നിച്ച് കാണുന്ന ഭാഗം
     function loadStudentSubmissionsForEval() {
         let evId = document.getElementById('selectEventForEval').value;
         let container = document.getElementById('studentPapersContainer');
         container.innerHTML = "";
         if(!evId || !submissionsData[evId]) return;
+
+        let ev = eventsData.find(e => e.id === evId);
+        let evQuestions = ev ? ev.questions : [];
+        let savedKeys = answerKeysData[evId] || {};
 
         submissionsData[evId].forEach((sub, sIdx) => {
             let html = `<div style="background:#fffbeb; padding:12px; margin-bottom:12px; border:1px solid #fde68a; border-radius:8px;">
@@ -1100,14 +1126,15 @@
                 <div style="margin-top:8px;">`;
             
             sub.answers.forEach((ans, aIdx) => {
+                let correctAns = (typeof savedKeys === 'object' && savedKeys[aIdx] !== undefined) ? savedKeys[aIdx] : ans.correctAns;
                 html += `
                     <div style="background:#fff; border:1px solid #e5e7eb; padding:10px; border-radius:6px; margin-bottom:8px; font-size:12px;">
                         <div><b>ചോദ്യം (Question):</b> ${ans.q}</div>
                         <div style="margin-top:4px;"><b>കുട്ടിയുടെ ഉത്തരം (Student's Answer):</b> <span style="color:#2563eb;">${ans.studentAns || '(ഉത്തരം നൽകിയിട്ടില്ല)'}</span></div>
-                        <div style="margin-top:4px;"><b>ശരിയായ ഉത്തരം / ആൻസർ കീ (Answer Key):</b> <span style="color:#166534; font-weight:bold;">${ans.correctAns || 'N/A'}</span></div>
+                        <div style="margin-top:4px;"><b>ശരിയായ ഉത്തരം / ആൻസർ കീ (Answer Key):</b> <span style="color:#166534; font-weight:bold;">${correctAns || 'N/A'}</span></div>
                         <div style="margin-top:6px; display:flex; align-items:center; gap:6px;">
                             <span>മാർക്ക്:</span>
-                            <input type="number" id="m_${sIdx}_${aIdx}" value="${ans.awardedMarks !== undefined ? ans.awardedMarks : (ans.studentAns.trim().toLowerCase() === (ans.correctAns || '').trim().toLowerCase() ? ans.marks : 0)}" style="width:70px; margin:0; padding:4px;">
+                            <input type="number" id="m_${sIdx}_${aIdx}" value="${ans.awardedMarks !== undefined ? ans.awardedMarks : (ans.studentAns.trim().toLowerCase() === (correctAns || '').trim().toLowerCase() ? ans.marks : 0)}" style="width:70px; margin:0; padding:4px;">
                             <span style="color:#6b7280; font-size:11px;">(പരമാവധി മാർക്ക്: ${ans.marks})</span>
                         </div>
                     </div>
@@ -1191,7 +1218,7 @@
     function deleteSingleResult(evId, origIdx) {
         if(!confirm("ഈ സബ്മിഷൻ റിസൾട്ട് ഡിലീറ്റ് ചെയ്യണമെന്ന് ഉറപ്പാണോ?")) return;
         if(submissionsData[evId] && submissionsData[evId][origIdx]) {
-            let subToRemove = submissionsData[evId][origIdx];
+            submissionsData[evId][origIdx];
             submissionsData[evId].splice(origIdx, 1);
             localStorage.setItem('isolated_classTestSubs_v12.2', JSON.stringify(submissionsData));
             localStorage.removeItem('submitted_device_' + evId);
