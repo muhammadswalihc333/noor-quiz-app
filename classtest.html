@@ -232,10 +232,9 @@
                 <option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>
             </select>
 
-            <!-- പുതിയ ബൾക്ക് ആൻസർ കീ അപ്‌ലോഡ് ബോക്സ് -->
             <div id="bulkKeyUploadWrapper" style="display:none; background:#f0fdf4; border:1px solid #bbf7d0; padding:10px; border-radius:8px; margin-top:10px; margin-bottom:10px;">
                 <b style="color:var(--primary); font-size:13px;">📥 ചോദ്യങ്ങളും ഉത്തരങ്ങളും ബൾക്ക് ആയി അപ്‌ലോഡ് ചെയ്യാൻ (Bulk Answer Key):</b>
-                <p style="font-size:11px; color:#555; margin:4px 0;">ഓരോ വരിയിലും <code>ചോദ്യം - ഉത്തരം</code> എന്ന രീതിയിൽ നൽകുക (ഉദാഹരണം താഴെ കാണുക):</p>
+                <p style="font-size:11px; color:#555; margin:4px 0;">ഓരോ വരിയിലും <code>ചോദ്യം - ഉത്തരം</code> എന്ന രീതിയിൽ നൽകുക:</p>
                 <textarea id="bulkAnswerKeyText" rows="3" placeholder="നബി ജന്മദേശം ഏത്? - മക്ക&#10;മമ്പുറം തങ്ങൾ ജനിച്ചത് എവിടെ? - തിരൂരങ്ങാടി"></textarea>
                 <button class="btn btn-green" onclick="processBulkAnswerKeyUpload()">⚡ ബൾക്ക് ആൻസർ കീ അപ്ഡേറ്റ് ചെയ്യുക</button>
             </div>
@@ -715,7 +714,6 @@
         renderResultsBoard();
     }
 
-    // മാസ്റ്റർ ആൻസർ കീ ലോഡ് ചെയ്യുകയും ഒപ്പം ബൾക്ക് അപ്‌ലോഡ് ബോക്സ് കാണിക്കുകയും ചെയ്യുന്നു
     function loadAnswerKeyUploader() {
         let evId = document.getElementById('selectEventForKey').value;
         let container = document.getElementById('answerKeyUploadContainer');
@@ -751,7 +749,6 @@
         container.innerHTML = html;
     }
 
-    // ചോദ്യവും ഉത്തരവും ബൾക്ക് ആയി മാച്ച് ചെയ്ത് അപ്ഡേറ്റ് ചെയ്യുന്ന ഫങ്ഷൻ
     function processBulkAnswerKeyUpload() {
         let evId = document.getElementById('selectEventForKey').value;
         if(!evId) return;
@@ -774,9 +771,8 @@
             let parts = line.split('-').map(x => x.trim());
             if(parts.length >= 2) {
                 let qText = parts[0].toLowerCase();
-                let ansText = parts.slice(1).join(' - '); // ബാക്കി ഭാഗം ഉത്തരം ആയി എടുക്കുന്നു
+                let ansText = parts.slice(1).join(' - ');
 
-                // ഇവന്റിലെ ചോദ്യങ്ങളുമായി മാച്ച് ചെയ്തു നോക്കുന്നു
                 ev.questions.forEach((q, idx) => {
                     if(q.q.toLowerCase().includes(qText) || qText.includes(q.q.toLowerCase())) {
                         savedKeys[idx] = ansText;
@@ -1179,7 +1175,11 @@
 
         submissionsData[evId].forEach((sub, sIdx) => {
             let html = `<div style="background:#fffbeb; padding:12px; margin-bottom:12px; border:1px solid #fde68a; border-radius:8px;">
-                <b style="color:#b45309; font-size:14px;">👤 ${sub.name}</b> (${sub.phone}) - <span style="font-size:11px; color:#555;">ID: ${sub.id}</span><br>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <b style="color:#b45309; font-size:14px;">👤 ${sub.name}</b> 
+                    <button class="btn btn-red" style="padding:4px 8px; font-size:11px; margin:0; width:auto;" onclick="deleteStudentSubmission('${evId}', ${sIdx})">🗑️ സബ്മിഷൻ ഡിലീറ്റ് ചെയ്യുക</button>
+                </div>
+                <div style="font-size:11px; color:#555; margin-top:2px;">Phone: ${sub.phone} | ID: ${sub.id}</div>
                 <div style="margin-top:8px;">`;
             
             sub.answers.forEach((ans, aIdx) => {
@@ -1216,6 +1216,22 @@
         alert("വാല്യുവേഷൻ സേവ് ചെയ്തു!");
         loadStudentSubmissionsForEval();
         renderResultsBoard();
+    }
+
+    function deleteStudentSubmission(evId, sIdx) {
+        if(!confirm("ഈ കുട്ടിയുടെ സബ്മിഷൻ പൂർണ്ണമായി ഡിലീറ്റ് ചെയ്യണമെന്ന് ഉറപ്പാണോ? (ഇത് വഴി വീണ്ടും ടെസ്റ്റ് എഴുതാൻ സാധിക്കും)")) return;
+        let subs = submissionsData[evId];
+        if(subs && subs[sIdx]) {
+            let targetSub = subs[sIdx];
+            subs.splice(sIdx, 1);
+            localStorage.setItem('isolated_classTestSubs_v12.2', JSON.stringify(submissionsData));
+            localStorage.removeItem('submitted_device_' + evId);
+
+            alert("സബ്മിഷൻ വിജയകരമായി ഡിലീറ്റ് ചെയ്തു!");
+            loadStudentSubmissionsForEval();
+            renderResultsBoard();
+            updateDashboardOverview();
+        }
     }
 
     function renderResultsBoard() {
@@ -1281,6 +1297,7 @@
 
             alert("സബ്മിഷൻ വിജയകരമായി ക്ലിയർ ചെയ്തു/ഡിലീറ്റ് ചെയ്തു!");
             renderResultsBoard();
+            loadStudentSubmissionsForEval();
             updateDashboardOverview();
         }
     }
