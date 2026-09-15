@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📚 ക്ലാസ് ടെസ്റ്റ് സെക്ഷൻ</title>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <style>
         :root { --primary: #14532d; --primary-light: #22c55e; --accent: #2563eb; --danger: #ef4444; --bg: #fcf8f2; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: #333; box-sizing: border-box; }
@@ -327,15 +332,52 @@
 </div>
 
 <script>
-    let eventsData = JSON.parse(localStorage.getItem('isolated_classTestEvents_v12.2')) || [];
-    let submissionsData = JSON.parse(localStorage.getItem('isolated_classTestSubs_v12.2')) || {};
-    let answerKeysData = JSON.parse(localStorage.getItem('isolated_classTestKeys_v12.2')) || {};
+    // Firebase Initialization
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-vcPSpB3LVCBObQsrHvBQ8N_Zyty0pgg",
+      authDomain: "noor-ai-madrasa-app.firebaseapp.com",
+      databaseURL: "https://noor-ai-madrasa-app-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "noor-ai-madrasa-app",
+      storageBucket: "noor-ai-madrasa-app.firebasestorage.app",
+      messagingSenderId: "150380342282",
+      appId: "1:150380342282:web:5f5c459e30a072cf1dc3f3"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let eventsData = [];
+    let submissionsData = {};
+    let answerKeysData = {};
     
     let tempQuestionsList = [];
     let activeTestEvent = null;
     let timerInterval = null;
     let currentStudentSession = null;
     let currentLoadedStudentSub = null;
+
+    // Load data from Firebase on startup
+    function fetchAllFirebaseData(callback) {
+        db.ref('classTestApp').once('value').then((snapshot) => {
+            let val = snapshot.val() || {};
+            eventsData = val.events || [];
+            submissionsData = val.submissions || {};
+            answerKeysData = val.keys || {};
+            if(callback) callback();
+        });
+    }
+
+    function saveEventsToFirebase() {
+        db.ref('classTestApp/events').set(eventsData);
+    }
+
+    function saveSubmissionsToFirebase() {
+        db.ref('classTestApp/submissions').set(submissionsData);
+    }
+
+    function saveKeysToFirebase() {
+        db.ref('classTestApp/keys').set(answerKeysData);
+    }
 
     function switchMainTab(tab) {
         if(tab === 'admin') {
@@ -565,7 +607,7 @@
             alert("പുതിയ ഇവന്റ് ലിങ്ക് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു!");
         }
 
-        localStorage.setItem('isolated_classTestEvents_v12.2', JSON.stringify(eventsData));
+        saveEventsToFirebase();
         
         renderEventsList();
         loadAdminDropdowns();
@@ -696,10 +738,18 @@
                     <div style="display:flex; gap:6px; flex-wrap:wrap;">
                         <button class="btn btn-blue" style="margin:0; font-size:12px; flex:1;" onclick="editEvent('${ev.id}')">✏️ എഡിറ്റ്</button>
                         <a href="https://api.whatsapp.com/send?text=${whatsappMsg}" target="_blank" class="btn btn-green" style="margin:0; font-size:12px; flex:1; text-decoration:none;">واتساب ഷെയർ</a>
-                        <button class="btn btn-red" style="margin:0; font-size:12px; flex:1;" onclick="eventsData.splice(${idx},1); localStorage.setItem('isolated_classTestEvents_v12.2', JSON.stringify(eventsData)); renderEventsList(); updateDashboardOverview();">🗑️ ഡിലീറ്റ്</button>
+                        <button class="btn btn-red" style="margin:0; font-size:12px; flex:1;" onclick="deleteEventItem(${idx})">🗑️ ഡിലീറ്റ്</button>
                     </div>
                 </div>`;
         });
+    }
+
+    function deleteEventItem(idx) {
+        eventsData.splice(idx, 1);
+        saveEventsToFirebase();
+        renderEventsList();
+        loadAdminDropdowns();
+        updateDashboardOverview();
     }
 
     function loadAdminDropdowns() {
@@ -783,7 +833,7 @@
         });
 
         answerKeysData[evId] = savedKeys;
-        localStorage.setItem('isolated_classTestKeys_v12.2', JSON.stringify(answerKeysData));
+        saveKeysToFirebase();
         
         alert(`${updatedCount} ചോദ്യങ്ങളുടെ ആൻസർ കീ വിജയകരമായി ബൾക്ക് അപ്ഡേറ്റ് ചെയ്തു!`);
         document.getElementById('bulkAnswerKeyText').value = '';
@@ -797,45 +847,47 @@
             newKeys[i] = val;
         }
         answerKeysData[evId] = newKeys;
-        localStorage.setItem('isolated_classTestKeys_v12.2', JSON.stringify(answerKeysData));
+        saveKeysToFirebase();
         alert("മാസ്റ്റർ ആൻസർ കീ വിജയകരമായി സേവ് ചെയ്തു!");
     }
 
     window.onload = function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const eventId = urlParams.get('event');
-        if(eventId) {
-            let tabNav = document.getElementById('mainTabNavContainer');
-            if(tabNav) tabNav.style.display = 'none';
+        fetchAllFirebaseData(() => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const eventId = urlParams.get('event');
+            if(eventId) {
+                let tabNav = document.getElementById('mainTabNavContainer');
+                if(tabNav) tabNav.style.display = 'none';
 
-            switchMainTab('student');
-            let ev = eventsData.find(e => e.id === eventId);
-            if(ev) {
-                activeTestEvent = ev;
-                document.getElementById('studEventTitle').innerText = ev.name;
+                switchMainTab('student');
+                let ev = eventsData.find(e => e.id === eventId);
+                if(ev) {
+                    activeTestEvent = ev;
+                    document.getElementById('studEventTitle').innerText = ev.name;
 
-                if(ev.banner) {
-                    let bImg = document.getElementById('studBannerImg');
-                    bImg.src = ev.banner;
-                    bImg.style.display = 'block';
+                    if(ev.banner) {
+                        let bImg = document.getElementById('studBannerImg');
+                        bImg.src = ev.banner;
+                        bImg.style.display = 'block';
+                    }
+                    if(ev.logo) {
+                        let lImg = document.getElementById('studLogoImg');
+                        lImg.src = ev.logo;
+                        lImg.style.display = 'block';
+                    }
+
+                    let startFormatted = ev.startDT ? new Date(ev.startDT).toLocaleString() : 'ഉടൻ';
+                    let endFormatted = ev.endDT ? new Date(ev.endDT).toLocaleString() : 'നിശ്ചിത സമയം';
+                    document.getElementById('studTimingBadge').innerHTML = `🟢 Opens: ${startFormatted} • 🔴 Closes: ${endFormatted}`;
+
+                    checkTestTimingStatus(ev);
                 }
-                if(ev.logo) {
-                    let lImg = document.getElementById('studLogoImg');
-                    lImg.src = ev.logo;
-                    lImg.style.display = 'block';
-                }
-
-                let startFormatted = ev.startDT ? new Date(ev.startDT).toLocaleString() : 'ഉടൻ';
-                let endFormatted = ev.endDT ? new Date(ev.endDT).toLocaleString() : 'നിശ്ചിത സമയം';
-                document.getElementById('studTimingBadge').innerHTML = `🟢 Opens: ${startFormatted} • 🔴 Closes: ${endFormatted}`;
-
-                checkTestTimingStatus(ev);
+            } else {
+                renderEventsList();
+                loadAdminDropdowns();
+                updateDashboardOverview();
             }
-        } else {
-            renderEventsList();
-            loadAdminDropdowns();
-            updateDashboardOverview();
-        }
+        });
     };
 
     function checkTestTimingStatus(ev) {
@@ -870,8 +922,8 @@
         if(activeTestEvent.oneDevice !== false) {
             let subs = submissionsData[activeTestEvent.id] || [];
             let alreadySubmitted = subs.find(s => s.phone === phone);
-            if(alreadySubmitted || localStorage.getItem('submitted_device_' + activeTestEvent.id)) {
-                alert("ഈ ഫോൺ നമ്പർ അല്ലെങ്കിൽ ഡിവൈസ് ഉപയോഗിച്ച് ഇതിനകം ടെസ്റ്റ് എഴുതിയിട്ടുണ്ട്! ഒന്നിധികം തവണ പങ്കെടുക്കാൻ അനുവാദമില്ല.");
+            if(alreadySubmitted) {
+                alert("ഈ ഫോൺ നമ്പർ ഉപയോഗിച്ച് ഇതിനകം ടെസ്റ്റ് എഴുതിയിട്ടുണ്ട്! ഒന്നിധികം തവണ പങ്കെടുക്കാൻ അനുവാദമില്ല.");
                 return;
             }
         }
@@ -958,8 +1010,7 @@
 
         if(!submissionsData[activeTestEvent.id]) submissionsData[activeTestEvent.id] = [];
         submissionsData[activeTestEvent.id].push(submission);
-        localStorage.setItem('isolated_classTestSubs_v12.2', JSON.stringify(submissionsData));
-        localStorage.setItem('submitted_device_' + activeTestEvent.id, 'true');
+        saveSubmissionsToFirebase();
 
         document.getElementById('studentTestBox').style.display = 'none';
         renderStudentResultCard(submission);
@@ -1212,20 +1263,18 @@
         });
         sub.score = total;
         sub.evalStatus = 'Evaluated';
-        localStorage.setItem('isolated_classTestSubs_v12.2', JSON.stringify(submissionsData));
+        saveSubmissionsToFirebase();
         alert("വാല്യുവേഷൻ സേവ് ചെയ്തു!");
         loadStudentSubmissionsForEval();
         renderResultsBoard();
     }
 
     function deleteStudentSubmission(evId, sIdx) {
-        if(!confirm("ഈ കുട്ടിയുടെ സബ്മിഷൻ പൂർണ്ണമായി ഡിലീറ്റ് ചെയ്യണമെന്ന് ഉറപ്പാണോ? (ഇത് വഴി വീണ്ടും ടെസ്റ്റ് എഴുതാൻ സാധിക്കും)")) return;
+        if(!confirm("ഈ കുട്ടിയുടെ സബ്മിഷൻ പൂർണ്ണമായി ഡിലീറ്റ് ചെയ്യണമെന്ന് ഉറപ്പാണോ?")) return;
         let subs = submissionsData[evId];
         if(subs && subs[sIdx]) {
-            let targetSub = subs[sIdx];
             subs.splice(sIdx, 1);
-            localStorage.setItem('isolated_classTestSubs_v12.2', JSON.stringify(submissionsData));
-            localStorage.removeItem('submitted_device_' + evId);
+            saveSubmissionsToFirebase();
 
             alert("സബ്മിഷൻ വിജയകരമായി ഡിലീറ്റ് ചെയ്തു!");
             loadStudentSubmissionsForEval();
@@ -1281,7 +1330,7 @@
 
         if(submissionsData[evId] && submissionsData[evId][origIdx]) {
             submissionsData[evId][origIdx].score = newScore;
-            localStorage.setItem('isolated_classTestSubs_v12.2', JSON.stringify(submissionsData));
+            saveSubmissionsToFirebase();
             alert("റിസൾട്ട് വിജയകരമായി അപ്ഡേറ്റ് ചെയ്തു!");
             renderResultsBoard();
             updateDashboardOverview();
@@ -1292,8 +1341,7 @@
         if(!confirm("ഈ സബ്മിഷൻ റിസൾട്ട് ഡിലീറ്റ് ചെയ്യണമെന്ന് ഉറപ്പാണോ?")) return;
         if(submissionsData[evId] && submissionsData[evId][origIdx]) {
             submissionsData[evId].splice(origIdx, 1);
-            localStorage.setItem('isolated_classTestSubs_v12.2', JSON.stringify(submissionsData));
-            localStorage.removeItem('submitted_device_' + evId);
+            saveSubmissionsToFirebase();
 
             alert("സബ്മിഷൻ വിജയകരമായി ക്ലിയർ ചെയ്തു/ഡിലീറ്റ് ചെയ്തു!");
             renderResultsBoard();
