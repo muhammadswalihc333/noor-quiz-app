@@ -382,16 +382,21 @@
         firebase.auth().onAuthStateChanged((user) => {
             let statusEl = document.getElementById('adminLoginStatus');
             if (user) {
-                if(statusEl) statusEl.innerText = `Logged in as: ${user.email}`;
+                if(user.email === 'muhammadswalihc333@gmail.com') {
+                    if(statusEl) statusEl.innerText = `Master Admin Logged in: ${user.email}`;
+                } else {
+                    if(statusEl) statusEl.innerText = `Logged in as: ${user.email} (Not Admin)`;
+                    alert("ശ്രദ്ധിക്കുക: നിങ്ങൾ മാസ്റ്റർ അഡ്മിൻ അല്ലാതെയുള്ള ജിമെയിൽ ആണ് ഉപയോഗിക്കുന്നത്!");
+                }
             } else {
-                if(statusEl) statusEl.innerText = "Not logged in. Please login to save data.";
+                if(statusEl) statusEl.innerText = "Not logged in. Please login as Master Admin.";
             }
         });
     }
 
-    // Load data from Firebase on startup with strict sequencing
+    // Load data from Firebase on startup with strict sequencing (Path: classtest)
     function fetchAllFirebaseData(callback) {
-        db.ref('classTestApp').once('value').then((snapshot) => {
+        db.ref('classtest').once('value').then((snapshot) => {
             let val = snapshot.val() || {};
             eventsData = Array.isArray(val.events) ? val.events : [];
             submissionsData = val.submissions || {};
@@ -404,15 +409,15 @@
     }
 
     function saveEventsToFirebase() {
-        db.ref('classTestApp/events').set(eventsData);
+        db.ref('classtest/events').set(eventsData);
     }
 
     function saveSubmissionsToFirebase() {
-        db.ref('classTestApp/submissions').set(submissionsData);
+        db.ref('classtest/submissions').set(submissionsData);
     }
 
     function saveKeysToFirebase() {
-        db.ref('classTestApp/keys').set(answerKeysData);
+        db.ref('classtest/keys').set(answerKeysData);
     }
 
     function switchMainTab(tab) {
