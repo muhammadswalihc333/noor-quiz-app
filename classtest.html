@@ -227,9 +227,19 @@
         <div class="sub-box" style="border-color: #2563eb;">
             <h3>🔑 മാസ്റ്റർ ആൻസർ കീ (ചോദ്യവും ഉത്തരവും സഹിതം)</h3>
             <p style="font-size:12px; color:#555; margin-bottom:6px;">ഇവിടെ ഓരോ ചോദ്യവും അതിന്റെ ശരിയായ ഉത്തരവും വ്യക്തമായി കാണാനും ആവശ്യാനുസരണം എഡിറ്റ് ചെയ്ത് സേവ് ചെയ്യാനും സാധിക്കും (കുട്ടികൾക്കും ടീച്ചർമാർക്കും ഇത് ഒരുപോലെ കാണാവുന്നതാണ്).</p>
+            
             <select id="selectEventForKey" onchange="loadAnswerKeyUploader()">
                 <option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>
             </select>
+
+            <!-- പുതിയ ബൾക്ക് ആൻസർ കീ അപ്‌ലോഡ് ബോക്സ് -->
+            <div id="bulkKeyUploadWrapper" style="display:none; background:#f0fdf4; border:1px solid #bbf7d0; padding:10px; border-radius:8px; margin-top:10px; margin-bottom:10px;">
+                <b style="color:var(--primary); font-size:13px;">📥 ചോദ്യങ്ങളും ഉത്തരങ്ങളും ബൾക്ക് ആയി അപ്‌ലോഡ് ചെയ്യാൻ (Bulk Answer Key):</b>
+                <p style="font-size:11px; color:#555; margin:4px 0;">ഓരോ വരിയിലും <code>ചോദ്യം - ഉത്തരം</code> എന്ന രീതിയിൽ നൽകുക (ഉദാഹരണം താഴെ കാണുക):</p>
+                <textarea id="bulkAnswerKeyText" rows="3" placeholder="നബി ജന്മദേശം ഏത്? - മക്ക&#10;മമ്പുറം തങ്ങൾ ജനിച്ചത് എവിടെ? - തിരൂരങ്ങാടി"></textarea>
+                <button class="btn btn-green" onclick="processBulkAnswerKeyUpload()">⚡ ബൾക്ക് ആൻസർ കീ അപ്ഡേറ്റ് ചെയ്യുക</button>
+            </div>
+
             <div id="answerKeyUploadContainer" style="margin-top: 8px;"></div>
         </div>
 
@@ -705,17 +715,23 @@
         renderResultsBoard();
     }
 
-    // മാസ്റ്റർ ആൻസർ കീ - ചോദ്യവും ഉത്തരവും വ്യക്തമായി കാണുന്നതും എഡിറ്റ് ചെയ്യുന്നതുമായ രീതി
+    // മാസ്റ്റർ ആൻസർ കീ ലോഡ് ചെയ്യുകയും ഒപ്പം ബൾക്ക് അപ്‌ലോഡ് ബോക്സ് കാണിക്കുകയും ചെയ്യുന്നു
     function loadAnswerKeyUploader() {
         let evId = document.getElementById('selectEventForKey').value;
         let container = document.getElementById('answerKeyUploadContainer');
-        if(!evId) { container.innerHTML = ''; return; }
+        let bulkBox = document.getElementById('bulkKeyUploadWrapper');
+
+        if(!evId) { 
+            container.innerHTML = ''; 
+            bulkBox.style.display = 'none';
+            return; 
+        }
         
+        bulkBox.style.display = 'block';
         let ev = eventsData.find(e => e.id === evId);
         if(!ev || !ev.questions) { container.innerHTML = '<p>ചോദ്യങ്ങൾ ഒന്നും കണ്ടെത്തിയില്ല.</p>'; return; }
 
         let savedKeys = answerKeysData[evId] || {};
-        // ഒരു കോൺഫിഗറേഷൻ ഒബ്ജക്റ്റ് അല്ലെങ്കിൽ സിമ്പിൾ സ്റ്റോറേജ് ആയി മാനേജ് ചെയ്യാം
         let html = `<div style="font-size:13px; color:#555; margin-bottom:8px;">ഓരോ ചോദ്യത്തിന്റെയും ശരിയായ ഉത്തരം താഴെയുള്ള ബോക്സിൽ തിരുത്തുകയോ ശരിപ്പെടുത്തുകയോ ചെയ്യാം:</div>`;
         
         ev.questions.forEach((q, idx) => {
@@ -733,6 +749,49 @@
 
         html += `<button class="btn btn-green" style="margin-top:8px;" onclick="saveMasterAnswerKey('${evId}', ${ev.questions.length})">💾 മാസ്റ്റർ ആൻസർ കീ സേവ് ചെയ്യുക</button>`;
         container.innerHTML = html;
+    }
+
+    // ചോദ്യവും ഉത്തരവും ബൾക്ക് ആയി മാച്ച് ചെയ്ത് അപ്ഡേറ്റ് ചെയ്യുന്ന ഫങ്ഷൻ
+    function processBulkAnswerKeyUpload() {
+        let evId = document.getElementById('selectEventForKey').value;
+        if(!evId) return;
+        let ev = eventsData.find(e => e.id === evId);
+        if(!ev || !ev.questions) return;
+
+        let rawText = document.getElementById('bulkAnswerKeyText').value.trim();
+        if(!rawText) {
+            alert("ദയവായി ചോദ്യങ്ങളും ഉത്തരങ്ങളും നൽകുക!");
+            return;
+        }
+
+        let savedKeys = answerKeysData[evId] || {};
+        if(typeof savedKeys !== 'object') savedKeys = {};
+
+        let lines = rawText.split('\n');
+        let updatedCount = 0;
+
+        lines.forEach(line => {
+            let parts = line.split('-').map(x => x.trim());
+            if(parts.length >= 2) {
+                let qText = parts[0].toLowerCase();
+                let ansText = parts.slice(1).join(' - '); // ബാക്കി ഭാഗം ഉത്തരം ആയി എടുക്കുന്നു
+
+                // ഇവന്റിലെ ചോദ്യങ്ങളുമായി മാച്ച് ചെയ്തു നോക്കുന്നു
+                ev.questions.forEach((q, idx) => {
+                    if(q.q.toLowerCase().includes(qText) || qText.includes(q.q.toLowerCase())) {
+                        savedKeys[idx] = ansText;
+                        updatedCount++;
+                    }
+                });
+            }
+        });
+
+        answerKeysData[evId] = savedKeys;
+        localStorage.setItem('isolated_classTestKeys_v12.2', JSON.stringify(answerKeysData));
+        
+        alert(`${updatedCount} ചോദ്യങ്ങളുടെ ആൻസർ കീ വിജയകരമായി ബൾക്ക് അപ്ഡേറ്റ് ചെയ്തു!`);
+        document.getElementById('bulkAnswerKeyText').value = '';
+        loadAnswerKeyUploader();
     }
 
     function saveMasterAnswerKey(evId, totalQ) {
@@ -874,7 +933,6 @@
             
             answers.forEach((curr, idx) => {
                 let expectedAns = curr.correctAns;
-                // കസ്റ്റം മാസ്റ്റർ കീ ഉണ്ടെങ്കിൽ അത് എടുക്കുക
                 if(typeof savedKeys === 'object' && savedKeys[idx] !== undefined) {
                     expectedAns = savedKeys[idx];
                 }
@@ -1117,7 +1175,6 @@
         if(!evId || !submissionsData[evId]) return;
 
         let ev = eventsData.find(e => e.id === evId);
-        let evQuestions = ev ? ev.questions : [];
         let savedKeys = answerKeysData[evId] || {};
 
         submissionsData[evId].forEach((sub, sIdx) => {
@@ -1218,7 +1275,6 @@
     function deleteSingleResult(evId, origIdx) {
         if(!confirm("ഈ സബ്മിഷൻ റിസൾട്ട് ഡിലീറ്റ് ചെയ്യണമെന്ന് ഉറപ്പാണോ?")) return;
         if(submissionsData[evId] && submissionsData[evId][origIdx]) {
-            submissionsData[evId][origIdx];
             submissionsData[evId].splice(origIdx, 1);
             localStorage.setItem('isolated_classTestSubs_v12.2', JSON.stringify(submissionsData));
             localStorage.removeItem('submitted_device_' + evId);
