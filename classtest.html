@@ -386,7 +386,6 @@
                     if(statusEl) statusEl.innerText = `Master Admin Logged in: ${user.email}`;
                 } else {
                     if(statusEl) statusEl.innerText = `Logged in as: ${user.email} (Not Admin)`;
-                    alert("ശ്രദ്ധിക്കുക: നിങ്ങൾ മാസ്റ്റർ അഡ്മിൻ അല്ലാതെയുള്ള ജിമെയിൽ ആണ് ഉപയോഗിക്കുന്നത്!");
                 }
             } else {
                 if(statusEl) statusEl.innerText = "Not logged in. Please login as Master Admin.";
@@ -893,7 +892,7 @@
         alert("മാസ്റ്റർ ആൻസർ കീ വിജയകരമായി സേവ് ചെയ്തു!");
     }
 
-    // App Initialization on window load
+    // App Initialization on window load (With Fixed Event Loading)
     window.onload = function() {
         checkAdminAuthStatus();
         fetchAllFirebaseData(() => {
