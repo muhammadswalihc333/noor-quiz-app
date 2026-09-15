@@ -8,6 +8,7 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
     <style>
         :root { --primary: #14532d; --primary-light: #22c55e; --accent: #2563eb; --danger: #ef4444; --bg: #fcf8f2; }
@@ -57,6 +58,14 @@
 <div class="container">
     <div class="header-box">
         📚 ക്ലാസ് ടെസ്റ്റ് സെക്ഷൻ
+    </div>
+
+    <!-- അഡ്മിൻ ജിമെയിൽ ലോഗിൻ ബോക്സ് -->
+    <div class="sub-box" style="background:#eff6ff; border-color:#2563eb;">
+        <h3>🔐 അഡ്മിൻ ജിമെയിൽ ലോഗിൻ (Google Authentication)</h3>
+        <p style="font-size:12px; color:#555;">ലിങ്ക് ക്രിയേറ്റ് ചെയ്യാനും ഡാറ്റ സേവ് ചെയ്യാനും നിങ്ങളുടെ ജിമെയിൽ അക്കൗണ്ട് വഴി ലോഗിൻ ചെയ്യുക:</p>
+        <button class="btn btn-blue" onclick="loginWithGoogle()">🌐 Google അക്കൗണ്ട് വഴി Login ചെയ്യുക</button>
+        <p id="adminLoginStatus" style="font-size:12px; font-weight:bold; color:green; margin-top:6px;"></p>
     </div>
 
     <div class="tab-nav" id="mainTabNavContainer">
@@ -357,6 +366,28 @@
     let timerInterval = null;
     let currentStudentSession = null;
     let currentLoadedStudentSub = null;
+
+    // Google Authentication Functions
+    function loginWithGoogle() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth().signInWithPopup(provider).then((result) => {
+            alert("ലോഗിൻ വിജയിച്ചു: " + result.user.email);
+            checkAdminAuthStatus();
+        }).catch((error) => {
+            alert("ലോഗിൻ പരാജയപ്പെട്ടു: " + error.message);
+        });
+    }
+
+    function checkAdminAuthStatus() {
+        firebase.auth().onAuthStateChanged((user) => {
+            let statusEl = document.getElementById('adminLoginStatus');
+            if (user) {
+                if(statusEl) statusEl.innerText = `Logged in as: ${user.email}`;
+            } else {
+                if(statusEl) statusEl.innerText = "Not logged in. Please login to save data.";
+            }
+        });
+    }
 
     // Load data from Firebase on startup with strict sequencing
     function fetchAllFirebaseData(callback) {
@@ -859,6 +890,7 @@
 
     // App Initialization on window load
     window.onload = function() {
+        checkAdminAuthStatus();
         fetchAllFirebaseData(() => {
             const urlParams = new URLSearchParams(window.location.search);
             const eventId = urlParams.get('event');
@@ -1392,4 +1424,3 @@
 
 </body>
 </html>
-
