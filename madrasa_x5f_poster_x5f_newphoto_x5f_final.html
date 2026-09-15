@@ -148,6 +148,25 @@ input[type=range]{width:100%;accent-color:#c9a227}
 }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&family=Cinzel:wght@400;700&family=Playfair+Display:wght@400;700&family=Poppins:wght@400;600&family=Cairo:wght@400;700&family=Great+Vibes&family=Reem+Kufi:wght@400;700&family=Tajawal:wght@400;700&family=Lateef&family=Aref+Ruqaa:wght@400;700&family=Katibeh&family=Harmattan:wght@400;700&family=Mirza:wght@400;700&family=Changa:wght@400;700&family=Cairo+Play:wght@400;700&family=Alex+Brush&family=Allura&family=Pinyon+Script&family=Sacramento&family=Parisienne&family=Cookie&family=Italianno&family=Montserrat:wght@400;700&family=Oswald:wght@400;700&family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+#drawerToggle{position:fixed;top:12px;right:12px;z-index:9999;background:#c9a227;color:#1a1206;border:none;border-radius:50%;width:52px;height:52px;font-size:24px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.5);}
+#panel{transition:transform .3s ease;}
+@media (max-width:900px){
+  main{flex-direction:column !important;}
+  #stageCol{order:1;width:100%;min-width:0 !important;}
+  #stageWrap{max-width:100%;}
+  #panel{position:fixed;top:0;right:0;height:100vh;width:340px;max-width:92vw;z-index:9998;transform:translateX(105%);box-shadow:-4px 0 20px rgba(0,0,0,.6);max-height:100vh !important;overflow-y:auto !important;}
+  #panel.open{transform:translateX(0);}
+  #drawerBackdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9997;display:none;}
+  #drawerBackdrop.open{display:block;}
+}
+/* Fix touch drag vs scroll */
+#poster [data-id]{touch-action:none !important;}
+#poster{ touch-action:pan-y !important; }
+</style>
+<div id="drawerBackdrop"></div>
+<button id="drawerToggle">⚙️</button>
 </head>
 <body>
 <header>
@@ -963,20 +982,39 @@ function attachDragAndDrop() {
     e.stopPropagation();
   };
 
+  let rafPending=false;
   poster.onpointermove = e => {
     if(!draggingId) return;
-    const scale = getStageScale();
-    const dx = (e.clientX - startX) / scale;
-    const dy = (e.clientY - startY) / scale;
-
-    if(draggingId.startsWith('free_')) {
-      let l = state.freeLayers.find(x => x.id === draggingId);
-      if(l) { l.x = elemStartX + dx; l.y = elemStartY + dy; renderPoster(); syncSelPanel(); }
-    } else if(state.customPos[draggingId]) {
-      state.customPos[draggingId].x = elemStartX + dx;
-      state.customPos[draggingId].y = elemStartY + dy;
+    if(e.cancelable && e.pointerType==='touch') e.preventDefault();
+    if(rafPending) return;
+    rafPending=true;
+    requestAnimationFrame(()=>{
+      rafPending=false;
+      const scale = getStageScale();
+      const dx = (e.clientX - startX) / scale;
+      const dy = (e.clientY - startY) / scale;
+      let el = document.getElementById(draggingId);
+      // direct visual move for smoothness (no full re-render)
+      if(el){
+        let baseX = elemStartX + dx, baseY = elemStartY + dy;
+        el.style.transform = `translate(${baseX}px, ${baseY}px)`;
+      }
+      // update state silently
+      if(draggingId.startsWith('free_')) {
+        let l = state.freeLayers.find(x => x.id === draggingId);
+        if(l) { l.x = elemStartX + dx; l.y = elemStartY + dy; }
+      } else if(state.customPos[draggingId]) {
+        state.customPos[draggingId].x = elemStartX + dx;
+        state.customPos[draggingId].y = elemStartY + dy;
+      }
+    });
+  };
+  poster.onpointerup = e => {
+    if(draggingId){
+      // commit final position with full render once
       renderPoster(); syncSelPanel();
     }
+    draggingId = null;
   };
 
   poster.onpointerup = e => { draggingId = null; };
@@ -1104,11 +1142,34 @@ window.addEventListener('resize', () => {
   $('stageCol').style.minHeight = (1920 * scale + 60) + 'px';
 });
 
-window.onload = () => {
+window.onload = () => { setTimeout(()=>{document.getElementById('stageWrap').scrollIntoView({block:'start'});},300);
   init();
   window.dispatchEvent(new Event('resize'));
   $('jsok').style.color = '#50c878';
 };
+</script>
+
+<script>//drawer
+(function(){
+  const panel=document.getElementById('panel');
+  const btn=document.getElementById('drawerToggle');
+  const bg=document.getElementById('drawerBackdrop');
+  function toggleDrawer(force){
+    const open = force!==undefined?force:!panel.classList.contains('open');
+    panel.classList.toggle('open',open);
+    bg.classList.toggle('open',open);
+  }
+  btn.onclick=()=>toggleDrawer();
+  bg.onclick=()=>toggleDrawer(false);
+  // close drawer when selecting on desktop? keep open
+  // Optimize drag: use rAF and direct transform
+  let rafId=null, lastEvt=null, dragTarget=null;
+  const origMove = null;
+  // Patch: prevent screen scroll while dragging element
+  document.addEventListener('pointermove', function(e){
+    if(dragTarget && e.pointerType==='touch'){ e.preventDefault(); }
+  }, {passive:false});
+})();
 </script>
 </body>
 </html>
