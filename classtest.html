@@ -159,8 +159,10 @@
                 <div id="partCertBox" style="display:none; margin-top:8px;">
                     <label>സർട്ടിഫിക്കറ്റ് തീം / ഡിസൈൻ:</label>
                     <select id="partGenMode">
+                        <option value="madrasa_green">മദ്രസ ഗ്രീൻ തീം (Islamic Gold & Green)</option>
+                        <option value="royal_maroon">റോയൽ മരൂൺ തീം (Classic Madrasa / School)</option>
                         <option value="classic">പ്രൊഫഷണൽ ക്ലാസിക് ബോർഡർ തീം (Gold Border)</option>
-                        <option value="modern">മോഡേൺ ഗ്രീൻ ഗ്രാഡിയന്റ് തീം</option>
+                        <option value="modern">മോഡേൺ ബ്ലൂ / ഗ്രീൻ ഗ്രാഡിയന്റ് തീം</option>
                         <option value="manual">മാനുവൽ ബാക്ക്ഗ്രൗണ്ട് ഇമേജ് അപ്‌ലോഡ്</option>
                     </select>
                     <div id="partManualFileDiv" style="display:none; margin-top:6px;">
@@ -178,6 +180,8 @@
                 <div id="meritCertBox" style="display:none; margin-top:8px;">
                     <label>സർട്ടിഫിക്കറ്റ് തീം / ഡിസൈൻ:</label>
                     <select id="meritGenMode">
+                        <option value="royal_maroon">റോയൽ മരൂൺ മെറിറ്റ് തീം (Classic Ornamental)</option>
+                        <option value="madrasa_green">മദ്രസ ഗ്രീൻ മെറിറ്റ് തീം (Islamic Gold & Green)</option>
                         <option value="classic">പ്രൊഫഷണൽ ക്ലാസിക് ബോർഡർ തീം (Gold Border)</option>
                         <option value="modern">മോഡേൺ ബ്ലൂ ഗ്രാഡിയന്റ് തീം</option>
                         <option value="manual">മാനുവൽ ബാക്ക്ഗ്രൗണ്ട് ഇമേജ് അപ്‌ലോഡ്</option>
@@ -195,7 +199,7 @@
                 <div id="certPreviewBox" class="cert-preview-container">
                     <img id="certPreviewImg" class="cert-preview-bg" style="display:none;">
                     <div id="certPreviewDefaultText" style="color:#6b7280; font-size:12px; text-align:center; z-index:1;">പ്രൊഫഷണൽ ഡിസൈൻ ഡിഫോൾട്ടായി ലഭ്യമാണ്</div>
-                    <div id="certPreviewName" class="cert-preview-name-tag" style="left: 50%; top: 52%; font-size: 18px; color: #92400e;">മുഹമ്മദ് സാലിഹ് (ഉദാഹരണം)</div>
+                    <div id="certPreviewName" class="cert-preview-name-tag" style="left: 50%; top: 52%; font-size: 18px; color: #1f2937;">മുഹമ്മദ് സാലിഹ് (ഉദാഹരണം)</div>
                 </div>
 
                 <label style="margin-top:10px;">Name X Position (<span id="valX">50</span>%):</label>
@@ -208,7 +212,7 @@
                 <input type="range" id="certFontSize" min="12" max="60" value="26" oninput="updateCertPreviewCoords()">
 
                 <label>Certificate Name Color:</label>
-                <input type="color" id="certColorPicker" value="#92400e" style="height:40px; padding:2px;" oninput="updateCertPreviewCoords()">
+                <input type="color" id="certColorPicker" value="#1f2937" style="height:40px; padding:2px;" oninput="updateCertPreviewCoords()">
             </div>
 
             <hr style="margin: 12px 0; border:0; border-top:1px solid #e5e7eb;">
@@ -711,17 +715,17 @@
             let m = ev.certificates.merit || {};
             
             document.getElementById('enablePartCert').checked = !!p.enabled;
-            document.getElementById('partGenMode').value = p.mode || 'classic';
+            document.getElementById('partGenMode').value = p.mode || 'madrasa_green';
             toggleCertSubBox('part');
 
             document.getElementById('enableMeritCert').checked = !!m.enabled;
-            document.getElementById('meritGenMode').value = m.mode || 'classic';
+            document.getElementById('meritGenMode').value = m.mode || 'royal_maroon';
             toggleCertSubBox('merit');
 
             document.getElementById('certXPos').value = ev.certificates.x || 50;
             document.getElementById('certYPos').value = ev.certificates.y || 52;
             document.getElementById('certFontSize').value = ev.certificates.size || 26;
-            document.getElementById('certColorPicker').value = ev.certificates.color || '#92400e';
+            document.getElementById('certColorPicker').value = ev.certificates.color || '#1f2937';
 
             if(p.bgUrl || m.bgUrl) {
                 let imgEl = document.getElementById('certPreviewImg');
@@ -899,7 +903,6 @@
             const urlParams = new URLSearchParams(window.location.search);
             const eventId = urlParams.get('event');
             if(eventId) {
-                // Hide Admin Login Box for Students
                 let adminLoginBox = document.getElementById('adminLoginBoxSection');
                 if(adminLoginBox) adminLoginBox.style.display = 'none';
 
@@ -1129,70 +1132,114 @@
         canvas.height = 850;
         let ctx = canvas.getContext('2d');
 
-        let drawProfessionalTemplate = (themeColor1, themeColor2, badgeTitle, subTitle) => {
+        let drawProfessionalTemplate = (themeColor1, themeColor2, badgeTitle, subTitle, styleType) => {
+            // Background fill
             let grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-            grad.addColorStop(0, '#fffdf9');
-            grad.addColorStop(1, '#f4ece1');
+            if(styleType === 'madrasa_green') {
+                grad.addColorStop(0, '#f9fffb');
+                grad.addColorStop(1, '#e6f4ea');
+            } else if(styleType === 'royal_maroon') {
+                grad.addColorStop(0, '#fffdf9');
+                grad.addColorStop(1, '#f7eee1');
+            } else {
+                grad.addColorStop(0, '#fffdf9');
+                grad.addColorStop(1, '#f4ece1');
+            }
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+            // Double border layout
             ctx.strokeStyle = themeColor1;
-            ctx.lineWidth = 8;
+            ctx.lineWidth = 10;
             ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
 
             ctx.strokeStyle = themeColor2;
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 3;
             ctx.strokeRect(45, 45, canvas.width - 90, canvas.height - 90);
 
+            // Corner ornamental squares
             ctx.fillStyle = themeColor1;
-            ctx.fillRect(30, 30, 40, 40);
-            ctx.fillRect(canvas.width - 70, 30, 40, 40);
-            ctx.fillRect(30, canvas.height - 70, 40, 40);
-            ctx.fillRect(canvas.width - 70, canvas.height - 70, 40, 40);
+            ctx.fillRect(30, 30, 35, 35);
+            ctx.fillRect(canvas.width - 65, 30, 35, 35);
+            ctx.fillRect(30, canvas.height - 65, 35, 35);
+            ctx.fillRect(canvas.width - 65, canvas.height - 65, 35, 35);
 
+            // Header titles
             ctx.fillStyle = themeColor1;
-            ctx.font = 'bold 38px "Times New Roman", serif';
+            ctx.font = 'bold 36px "Times New Roman", serif';
             ctx.textAlign = 'center';
-            ctx.fillText(activeTestEvent.name.toUpperCase(), canvas.width / 2, 120);
+            ctx.fillText(activeTestEvent.name.toUpperCase(), canvas.width / 2, 110);
 
-            ctx.font = 'bold 44px "Georgia", serif';
+            if(activeTestEvent.place) {
+                ctx.font = '20px "Georgia", serif';
+                ctx.fillStyle = '#4b5563';
+                ctx.fillText(activeTestEvent.place, canvas.width / 2, 145);
+            }
+
+            ctx.font = 'bold 42px "Georgia", serif';
             ctx.fillStyle = '#1f2937';
-            ctx.fillText(badgeTitle, canvas.width / 2, 200);
+            ctx.fillText(badgeTitle, canvas.width / 2, 210);
 
-            ctx.font = 'italic 22px "Times New Roman", serif';
-            ctx.fillStyle = '#4b5563';
-            ctx.fillText(subTitle, canvas.width / 2, 250);
-
-            ctx.font = '20px sans-serif';
+            ctx.font = 'italic 20px "Times New Roman", serif';
             ctx.fillStyle = '#6b7280';
-            ctx.fillText('THIS CERTIFICATE IS PROUDLY PRESENTED TO', canvas.width / 2, 330);
+            ctx.fillText(subTitle, canvas.width / 2, 245);
+
+            // Presented to text
+            ctx.font = '18px sans-serif';
+            ctx.fillStyle = '#374151';
+            ctx.fillText('THIS CERTIFICATE IS PROUDLY PRESENTED TO', canvas.width / 2, 310);
 
             let xCoord = (cfg.x / 100) * canvas.width;
             let yCoord = (cfg.y / 100) * canvas.height;
 
-            ctx.fillStyle = cfg.color || themeColor1;
+            // Student Name
+            ctx.fillStyle = cfg.color || '#1f2937';
             ctx.font = `bold ${cfg.size * 2.2}px "Georgia", serif`;
             ctx.fillText(studentName, xCoord, yCoord);
 
+            // Underline for name
             ctx.strokeStyle = themeColor2;
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.moveTo(xCoord - 250, yCoord + 15);
-            ctx.lineTo(xCoord + 250, yCoord + 15);
+            ctx.moveTo(xCoord - 280, yCoord + 15);
+            ctx.lineTo(xCoord + 280, yCoord + 15);
             ctx.stroke();
 
+            // Description body
             ctx.font = '18px sans-serif';
-            ctx.fillStyle = '#374151';
-            ctx.fillText('പ്രസ്തുത വ്യക്തി ഈ സ്ഥാപനം നടത്തിയ ഓൺലൈൻ ക്ലാസ് ടെസ്റ്റിൽ വിജയകരമായി പങ്കെടുക്കുകയും അഭിനന്ദനാർഹമായ നിലവാരം പുലർത്തുകയും ചെയ്തിരിക്കുന്നു.', canvas.width / 2, yCoord + 90);
+            ctx.fillStyle = '#1f2937';
+            ctx.fillText('പ്രസ്തുത വ്യക്തി ഈ സ്ഥാപനം നടത്തിയ ഓൺലൈൻ ക്ലാസ് ടെസ്റ്റിൽ വിജയകരമായി പങ്കെടുക്കുകയും അഭിനന്ദനാർഹമായ നിലവാരം പുലർത്തുകയും ചെയ്തിരിക്കുന്നു.', canvas.width / 2, yCoord + 85);
 
+            // Date & Signatures
             ctx.font = 'bold 16px sans-serif';
             ctx.fillStyle = '#1f2937';
-            ctx.fillText('തീയതി: ' + new Date().toLocaleDateString(), 200, canvas.height - 130);
+            ctx.fillText('തീയതി: ' + new Date().toLocaleDateString(), 220, canvas.height - 130);
+            
             ctx.beginPath();
             ctx.moveTo(100, canvas.height - 160);
-            ctx.lineTo(300, canvas.height - 160);
+            ctx.lineTo(340, canvas.height - 160);
             ctx.stroke();
-            ctx.fillText('অথോറിറ്റി / കോർഡിനേറ്റർ സിഗ്നേച്ചർ', 200, canvas.height - 100);
+            ctx.fillText('Teacher / Coordinator Signature', 220, canvas.height - 100);
+
+            ctx.beginPath();
+            ctx.moveTo(canvas.width - 340, canvas.height - 160);
+            ctx.lineTo(canvas.width - 100, canvas.height - 160);
+            ctx.stroke();
+            ctx.fillText('Principal / Usthad Signature', canvas.width - 220, canvas.height - 100);
+
+            // Official Seal Mock
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, canvas.height - 125, 42, 0, 2 * Math.PI);
+            ctx.fillStyle = themeColor1;
+            ctx.fill();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#fde047';
+            ctx.stroke();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillText('OFFICIAL', canvas.width / 2, canvas.height - 132);
+            ctx.fillText('SEAL', canvas.width / 2, canvas.height - 114);
 
             triggerCanvasDownload(canvas, studentName, type);
         };
@@ -1211,24 +1258,36 @@
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 let xCoord = (cfg.x / 100) * canvas.width;
                 let yCoord = (cfg.y / 100) * canvas.height;
-                ctx.fillStyle = cfg.color || '#92400e';
+                ctx.fillStyle = cfg.color || '#1f2937';
                 ctx.font = `bold ${cfg.size * 2.2}px sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.fillText(studentName, xCoord, yCoord);
                 triggerCanvasDownload(canvas, studentName, type);
             };
             img.src = bgUrl;
+        } else if(mode === 'madrasa_green') {
+            if(type === 'participation') {
+                drawProfessionalTemplate('#065f46', '#059669', 'CERTIFICATE OF PARTICIPATION', 'Recognized for dedicated learning and successful participation', 'madrasa_green');
+            } else {
+                drawProfessionalTemplate('#065f46', '#d97706', 'CERTIFICATE OF EXCELLENCE', 'Awarded with highest distinction for academic excellence', 'madrasa_green');
+            }
+        } else if(mode === 'royal_maroon') {
+            if(type === 'participation') {
+                drawProfessionalTemplate('#7f1d1d', '#b45309', 'CERTIFICATE OF PARTICIPATION', 'Proudly presented for successful completion of the course', 'royal_maroon');
+            } else {
+                drawProfessionalTemplate('#7f1d1d', '#f59e0b', 'CERTIFICATE OF MERIT', 'Awarded for outstanding achievement and top rank', 'royal_maroon');
+            }
         } else if(mode === 'modern') {
             if(type === 'participation') {
-                drawProfessionalTemplate('#14532d', '#22c55e', 'CERTIFICATE OF PARTICIPATION', 'Recognized for active participation and dedication');
+                drawProfessionalTemplate('#1e40af', '#3b82f6', 'CERTIFICATE OF PARTICIPATION', 'Recognized for active engagement and dedication', 'modern');
             } else {
-                drawProfessionalTemplate('#1d4ed8', '#3b82f6', 'CERTIFICATE OF MERIT', 'Awarded for outstanding academic excellence and top rank');
+                drawProfessionalTemplate('#1e40af', '#60a5fa', 'CERTIFICATE OF MERIT', 'Awarded for exceptional academic performance', 'modern');
             }
         } else {
             if(type === 'participation') {
-                drawProfessionalTemplate('#b45309', '#f59e0b', 'CERTIFICATE OF PARTICIPATION', 'This is proudly awarded for successful completion');
+                drawProfessionalTemplate('#b45309', '#f59e0b', 'CERTIFICATE OF PARTICIPATION', 'This is proudly awarded for successful completion', 'classic');
             } else {
-                drawProfessionalTemplate('#9333ea', '#c084fc', 'CERTIFICATE OF EXCELLENCE', 'Awarded with highest distinction for securing top ranks');
+                drawProfessionalTemplate('#9333ea', '#c084fc', 'CERTIFICATE OF EXCELLENCE', 'Awarded with highest distinction for securing top ranks', 'classic');
             }
         }
     }
