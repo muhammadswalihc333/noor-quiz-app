@@ -10,6 +10,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
+    <!-- jsPDF Library for PDF Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <style>
         :root { --primary: #14532d; --primary-light: #22c55e; --accent: #2563eb; --danger: #ef4444; --bg: #fcf8f2; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: #333; box-sizing: border-box; }
@@ -828,19 +831,24 @@
         let html = `<div style="font-size:13px; color:#555; margin-bottom:8px;">ഓരോ ചോദ്യത്തിന്റെയും ശരിയായ ഉത്തരം താഴെയുള്ള ബോക്സിൽ തിരുത്തുകയോ ശരിപ്പെടുത്തുകയോ ചെയ്യാം:</div>`;
         
         ev.questions.forEach((q, idx) => {
-            let currentAns = (typeof savedKeys === 'object' && savedKeys[idx] !== undefined) ? savedKeys[idx] : q.answer;
+            let currentAns = (typeof savedKeys === 'object' && savedKeys[q.q] !== undefined) ? savedKeys[q.q] : ((typeof savedKeys === 'object' && savedKeys[idx] !== undefined) ? savedKeys[idx] : q.answer);
             html += `
                 <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:10px; border-radius:8px; margin-bottom:8px;">
                     <div><b>Q${idx+1}:</b> ${q.q}</div>
                     <div style="margin-top:6px; display:flex; align-items:center; gap:8px;">
                         <span style="font-size:12px; font-weight:600; color:#166534; min-width:80px;">ശരിയുത്തരം:</span>
-                        <input type="text" id="master_q_ans_${idx}" value="${currentAns}" style="margin:0; padding:6px;">
+                        <input type="text" id="master_q_ans_${idx}" data-qtext="${encodeURIComponent(q.q)}" value="${currentAns}" style="margin:0; padding:6px;">
                     </div>
                 </div>
             `;
         });
 
-        html += `<button class="btn btn-green" style="margin-top:8px;" onclick="saveMasterAnswerKey('${evId}', ${ev.questions.length})">💾 മാസ്റ്റർ ആൻസർ കീ സേവ് ചെയ്യുക</button>`;
+        html += `
+            <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+                <button class="btn btn-green" style="flex:1;" onclick="saveMasterAnswerKey('${evId}', ${ev.questions.length})">💾 മാസ്റ്റർ ആൻസർ കീ സേവ് ചെയ്യുക</button>
+                <button class="btn btn-blue" style="flex:1;" onclick="downloadAnswerKeyPDF('${evId}')">📄 മാസ്റ്റർ ആൻസർ കീ PDF ആയി ഡൗൺലോഡ് ചെയ്യുക</button>
+            </div>
+        `;
         container.innerHTML = html;
     }
 
@@ -868,9 +876,9 @@
                 let qText = parts[0].toLowerCase();
                 let ansText = parts.slice(1).join(' - ');
 
-                ev.questions.forEach((q, idx) => {
+                ev.questions.forEach((q) => {
                     if(q.q.toLowerCase().includes(qText) || qText.includes(q.q.toLowerCase())) {
-                        savedKeys[idx] = ansText;
+                        savedKeys[q.q] = ansText;
                         updatedCount++;
                     }
                 });
@@ -888,12 +896,57 @@
     function saveMasterAnswerKey(evId, totalQ) {
         let newKeys = {};
         for(let i=0; i<totalQ; i++) {
-            let val = document.getElementById(`master_q_ans_${i}`).value.trim();
-            newKeys[i] = val;
+            let inputEl = document.getElementById(`master_q_ans_${i}`);
+            if(inputEl) {
+                let qText = decodeURIComponent(inputEl.getAttribute('data-qtext'));
+                let val = inputEl.value.trim();
+                newKeys[qText] = val;
+            }
         }
         answerKeysData[evId] = newKeys;
         saveKeysToFirebase();
         alert("മാസ്റ്റർ ആൻസർ കീ വിജയകരമായി സേവ് ചെയ്തു!");
+    }
+
+    // Teacher PDF Download function for Answer Key
+    function downloadAnswerKeyPDF(evId) {
+        let ev = eventsData.find(e => e.id === evId);
+        if(!ev || !ev.questions) return;
+        let savedKeys = answerKeysData[evId] || {};
+
+        const { jsPDF } = window.jspdf;
+        let doc = new jsPDF();
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        doc.text(ev.name + " - Master Answer Key", 14, 20);
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        if(ev.place) doc.text("Place: " + ev.place, 14, 28);
+        doc.text("Date: " + new Date().toLocaleDateString(), 14, 36);
+
+        let y = 48;
+        ev.questions.forEach((q, idx) => {
+            let ans = (typeof savedKeys === 'object' && savedKeys[q.q] !== undefined) ? savedKeys[q.q] : ((typeof savedKeys === 'object' && savedKeys[idx] !== undefined) ? savedKeys[idx] : q.answer);
+            
+            if (y > 270) {
+                doc.addPage();
+                y = 20;
+            }
+
+            doc.setFont("helvetica", "bold");
+            doc.text(`Q${idx+1}: ${q.q}`, 14, y);
+            y += 6;
+
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(20, 83, 45);
+            doc.text(`Answer: ${ans}`, 18, y);
+            doc.setTextColor(0, 0, 0);
+            y += 10;
+        });
+
+        doc.save(`${ev.name}_Answer_Key.pdf`);
     }
 
     // App Initialization on window load (With Fixed Event Loading)
@@ -1013,6 +1066,16 @@
         }, 1000);
     }
 
+    // Smart helper to check if student answer matches master answer key with fuzzy tolerance
+    function isAnswerCorrectMatch(studentAns, expectedAns) {
+        if (!studentAns || !expectedAns) return false;
+        let s = studentAns.trim().toLowerCase();
+        let e = expectedAns.trim().toLowerCase();
+        if (s === e) return true;
+        if (s.length > 2 && (e.includes(s) || s.includes(e))) return true;
+        return false;
+    }
+
     function submitStudentAnswers() {
         if(timerInterval) clearInterval(timerInterval);
         let answers = [];
@@ -1031,13 +1094,13 @@
         if(isAuto) {
             let savedKeys = answerKeysData[activeTestEvent.id] || {};
             
-            answers.forEach((curr, idx) => {
+            answers.forEach((curr) => {
                 let expectedAns = curr.correctAns;
-                if(typeof savedKeys === 'object' && savedKeys[idx] !== undefined) {
-                    expectedAns = savedKeys[idx];
+                if (typeof savedKeys === 'object' && savedKeys[curr.q] !== undefined) {
+                    expectedAns = savedKeys[curr.q];
                 }
 
-                if(curr.studentAns.trim().toLowerCase() === expectedAns.trim().toLowerCase()) {
+                if(isAnswerCorrectMatch(curr.studentAns, expectedAns)) {
                     scoreVal += curr.marks;
                 }
             });
@@ -1133,7 +1196,6 @@
         let ctx = canvas.getContext('2d');
 
         let drawProfessionalTemplate = (themeColor1, themeColor2, badgeTitle, subTitle, styleType) => {
-            // Background fill
             let grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
             if(styleType === 'madrasa_green') {
                 grad.addColorStop(0, '#f9fffb');
@@ -1148,7 +1210,6 @@
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Double border layout
             ctx.strokeStyle = themeColor1;
             ctx.lineWidth = 10;
             ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
@@ -1157,14 +1218,12 @@
             ctx.lineWidth = 3;
             ctx.strokeRect(45, 45, canvas.width - 90, canvas.height - 90);
 
-            // Corner ornamental squares
             ctx.fillStyle = themeColor1;
             ctx.fillRect(30, 30, 35, 35);
             ctx.fillRect(canvas.width - 65, 30, 35, 35);
             ctx.fillRect(30, canvas.height - 65, 35, 35);
             ctx.fillRect(canvas.width - 65, canvas.height - 65, 35, 35);
 
-            // Header titles
             ctx.fillStyle = themeColor1;
             ctx.font = 'bold 36px "Times New Roman", serif';
             ctx.textAlign = 'center';
@@ -1184,7 +1243,6 @@
             ctx.fillStyle = '#6b7280';
             ctx.fillText(subTitle, canvas.width / 2, 245);
 
-            // Presented to text
             ctx.font = '18px sans-serif';
             ctx.fillStyle = '#374151';
             ctx.fillText('THIS CERTIFICATE IS PROUDLY PRESENTED TO', canvas.width / 2, 310);
@@ -1192,12 +1250,10 @@
             let xCoord = (cfg.x / 100) * canvas.width;
             let yCoord = (cfg.y / 100) * canvas.height;
 
-            // Student Name
             ctx.fillStyle = cfg.color || '#1f2937';
             ctx.font = `bold ${cfg.size * 2.2}px "Georgia", serif`;
             ctx.fillText(studentName, xCoord, yCoord);
 
-            // Underline for name
             ctx.strokeStyle = themeColor2;
             ctx.lineWidth = 2;
             ctx.beginPath();
@@ -1205,12 +1261,10 @@
             ctx.lineTo(xCoord + 280, yCoord + 15);
             ctx.stroke();
 
-            // Description body
             ctx.font = '18px sans-serif';
             ctx.fillStyle = '#1f2937';
             ctx.fillText('പ്രസ്തുത വ്യക്തി ഈ സ്ഥാപനം നടത്തിയ ഓൺലൈൻ ക്ലാസ് ടെസ്റ്റിൽ വിജയകരമായി പങ്കെടുക്കുകയും അഭിനന്ദനാർഹമായ നിലവാരം പുലർത്തുകയും ചെയ്തിരിക്കുന്നു.', canvas.width / 2, yCoord + 85);
 
-            // Date & Signatures
             ctx.font = 'bold 16px sans-serif';
             ctx.fillStyle = '#1f2937';
             ctx.fillText('തീയതി: ' + new Date().toLocaleDateString(), 220, canvas.height - 130);
@@ -1227,7 +1281,6 @@
             ctx.stroke();
             ctx.fillText('Principal / Usthad Signature', canvas.width - 220, canvas.height - 100);
 
-            // Official Seal Mock
             ctx.beginPath();
             ctx.arc(canvas.width / 2, canvas.height - 125, 42, 0, 2 * Math.PI);
             ctx.fillStyle = themeColor1;
@@ -1307,9 +1360,12 @@
         let evQuestions = activeTestEvent.questions || [];
         let savedKeys = answerKeysData[activeTestEvent.id] || {};
 
-        let keyHtml = `<h4>🔑 മാസ്റ്റർ ആൻസർ കീ (${activeTestEvent.name}):</h4>`;
+        let keyHtml = `
+            <h4>🔑 മാസ്റ്റർ ആൻസർ കീ (${activeTestEvent.name}):</h4>
+            <button class="btn btn-blue" style="margin-bottom:10px;" onclick="downloadStudentAnswerKeyPDF('${activeTestEvent.id}')">📄 ആൻസർ കീ PDF ആയി ഡൗൺലോഡ് ചെയ്യുക</button>
+        `;
         evQuestions.forEach((q, idx) => {
-            let correctAns = (typeof savedKeys === 'object' && savedKeys[idx] !== undefined) ? savedKeys[idx] : q.answer;
+            let correctAns = (typeof savedKeys === 'object' && savedKeys[q.q] !== undefined) ? savedKeys[q.q] : ((typeof savedKeys === 'object' && savedKeys[idx] !== undefined) ? savedKeys[idx] : q.answer);
             keyHtml += `
                 <div style="background:#f8fafc; padding:10px; border-radius:6px; border:1px solid #cbd5e1; margin-bottom:8px; font-size:13px;">
                     <div><b>Q${idx+1}:</b> ${q.q}</div>
@@ -1321,6 +1377,47 @@
         document.getElementById('studentLoginBox').style.display = 'none';
         document.getElementById('studentResultBox').style.display = 'block';
         document.getElementById('studentScoreCardContent').innerHTML = keyHtml;
+    }
+
+    // Student PDF Download function for Answer Key
+    function downloadStudentAnswerKeyPDF(evId) {
+        let ev = eventsData.find(e => e.id === evId);
+        if(!ev || !ev.questions) return;
+        let savedKeys = answerKeysData[evId] || {};
+
+        const { jsPDF } = window.jspdf;
+        let doc = new jsPDF();
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        doc.text(ev.name + " - Answer Key", 14, 20);
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        if(ev.place) doc.text("Place: " + ev.place, 14, 28);
+        doc.text("Date: " + new Date().toLocaleDateString(), 14, 36);
+
+        let y = 48;
+        ev.questions.forEach((q, idx) => {
+            let ans = (typeof savedKeys === 'object' && savedKeys[q.q] !== undefined) ? savedKeys[q.q] : ((typeof savedKeys === 'object' && savedKeys[idx] !== undefined) ? savedKeys[idx] : q.answer);
+            
+            if (y > 270) {
+                doc.addPage();
+                y = 20;
+            }
+
+            doc.setFont("helvetica", "bold");
+            doc.text(`Q${idx+1}: ${q.q}`, 14, y);
+            y += 6;
+
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(20, 83, 45);
+            doc.text(`Answer: ${ans}`, 18, y);
+            doc.setTextColor(0, 0, 0);
+            y += 10;
+        });
+
+        doc.save(`${ev.name}_Answer_Key.pdf`);
     }
 
     function loadStudentSubmissionsForEval() {
@@ -1342,7 +1439,11 @@
                 <div style="margin-top:8px;">`;
             
             sub.answers.forEach((ans, aIdx) => {
-                let correctAns = (typeof savedKeys === 'object' && savedKeys[aIdx] !== undefined) ? savedKeys[aIdx] : ans.correctAns;
+                let correctAns = (typeof savedKeys === 'object' && savedKeys[ans.q] !== undefined) ? savedKeys[ans.q] : ((typeof savedKeys === 'object' && savedKeys[aIdx] !== undefined) ? savedKeys[aIdx] : ans.correctAns);
+                
+                let isMatch = isAnswerCorrectMatch(ans.studentAns, correctAns);
+                let defaultMark = ans.awardedMarks !== undefined ? ans.awardedMarks : (isMatch ? ans.marks : 0);
+
                 html += `
                     <div style="background:#fff; border:1px solid #e5e7eb; padding:10px; border-radius:6px; margin-bottom:8px; font-size:12px;">
                         <div><b>ചോദ്യം (Question):</b> ${ans.q}</div>
@@ -1350,7 +1451,7 @@
                         <div style="margin-top:4px;"><b>ശരിയായ ഉത്തരം / ആൻസർ കീ (Answer Key):</b> <span style="color:#166534; font-weight:bold;">${correctAns || 'N/A'}</span></div>
                         <div style="margin-top:6px; display:flex; align-items:center; gap:6px;">
                             <span>മാർക്ക്:</span>
-                            <input type="number" id="m_${sIdx}_${aIdx}" value="${ans.awardedMarks !== undefined ? ans.awardedMarks : (ans.studentAns.trim().toLowerCase() === (correctAns || '').trim().toLowerCase() ? ans.marks : 0)}" style="width:70px; margin:0; padding:4px;">
+                            <input type="number" id="m_${sIdx}_${aIdx}" value="${defaultMark}" style="width:70px; margin:0; padding:4px;">
                             <span style="color:#6b7280; font-size:11px;">(പരമാവധി മാർക്ക്: ${ans.marks})</span>
                         </div>
                     </div>
@@ -1491,3 +1592,4 @@
 
 </body>
 </html>
+
