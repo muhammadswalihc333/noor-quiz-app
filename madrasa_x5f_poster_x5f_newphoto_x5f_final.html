@@ -46,7 +46,7 @@ input[type=range]{width:100%;accent-color:#c9a227}
 .tfield label{font-size:12px;color:#c9b98a}
 .tfield input,.tfield textarea{background:#0d1626;border:1px solid #2a3c5c;color:#fff;border-radius:6px;padding:7px;font-size:13px;width:100%;font-family:inherit}
 
-#poster{width:1080px;height:1920px;position:relative;overflow:hidden;font-family:Georgia,'Times New Roman',serif;color:#f7f1de;background-color:#0b1626;background-size:cover;background-position:center}
+#poster{width:1080px;height:1920px;position:relative;overflow:hidden;touch-action:none;font-family:Georgia,'Times New Roman',serif;color:#f7f1de;background-color:#0b1626;background-size:cover;background-position:center}
 
 /* Permanent Theme Elements Overlay Layer */
 #themeArtwork{position:absolute;inset:0;pointer-events:none!important;z-index:1;}
@@ -262,6 +262,37 @@ input[type=range]{width:100%;accent-color:#c9a227}
 .aiRow label{flex:0 0 90px;font-size:12px;color:#9fb2cc}
 .aiRow input{flex:1;background:#16233a;border:1px solid #2a3c5c;color:#fff;border-radius:8px;padding:9px;font-size:14px}
 .aiChips{display:flex;gap:6px;flex-wrap:wrap;flex:1}
+</style><style>
+/* ===== Layout dock bar ===== */
+#layoutBar{display:flex;gap:6px;align-items:center;justify-content:center;margin:0 auto 10px;flex-wrap:wrap;max-width:560px}
+#layoutBar .lb-label{font-size:12px;color:#8a94a8;width:100%;text-align:center}
+#layoutBar button{background:#22314d;color:#e8e2d2;border:1px solid #2a3c5c;border-radius:8px;padding:8px 12px;font-size:13px;cursor:pointer}
+#layoutBar button.on{background:#c9a227;color:#1a1206;font-weight:700;border-color:#c9a227}
+/* desktop: panel dock */
+@media (min-width:901px){
+  body.dock-right main{flex-direction:row-reverse}
+  body.dock-top main{flex-direction:column}
+  body.dock-top #panel, body.dock-bottom #panel{flex:none;width:100%;max-width:1400px}
+  body.dock-bottom main{flex-direction:column-reverse}
+}
+/* mobile: drawer slides from chosen side */
+@media (max-width:900px){
+  body.dock-left #panel{left:0;right:auto;transform:translateX(-105%)}
+  body.dock-left #panel.open{transform:translateX(0)}
+  body.dock-top #panel{left:0;right:0;top:0;width:100%;max-width:100%;height:75vh;max-height:75vh;transform:translateY(-105%)}
+  body.dock-top #panel.open{transform:translateY(0)}
+  body.dock-bottom #panel{left:0;right:0;top:auto;bottom:0;width:100%;max-width:100%;height:75vh;max-height:75vh;transform:translateY(105%)}
+  body.dock-bottom #panel.open{transform:translateY(0)}
+}
+/* fullscreen poster */
+body.stage-full header, body.stage-full #panel, body.stage-full #drawerToggle,
+body.stage-full #layoutBar, body.stage-full #drawerBackdrop{display:none !important}
+body.stage-full main{display:block;padding:0;max-width:none}
+body.stage-full #stageCol{position:fixed;inset:0;z-index:9400;background:#0e1522;overflow-y:auto;padding:14px 10px 96px;margin:0;max-width:none}
+body.stage-full #stageWrap{max-width:520px;margin:0 auto}
+#fullExitBar{display:none}
+body.stage-full #fullExitBar{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:9501;background:rgba(14,21,34,.96);border-top:2px solid #c9a227;padding:10px;gap:8px;justify-content:center;align-items:center}
+#fullExitBar button{border:none;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer}
 </style></head>
 <body>
 <header>
@@ -273,6 +304,13 @@ input[type=range]{width:100%;accent-color:#c9a227}
 <button id="aiBtn">🤖 AI പ്രോംപ്റ്റ് — എഴുതിയാൽ പോസ്റ്റർ റെഡി!</button>
 <button id="autoBtn">🪄 ഓട്ടോ പോസ്റ്റർ — ഫോട്ടോ തന്നാൽ പോസ്റ്റർ റെഡി!</button>
 <h2>⚙️ സെറ്റിംഗ്സ് / Settings</h2>
+<div class="field" style="background:#141d33;border:2px solid #c9a227;border-radius:10px;padding:10px">
+<label>🔍 എല്ലാ എഴുത്തും ഒന്നിച്ച്<br><span style="font-size:11px;color:#9fb2cc">എല്ലാ ടെക്സ്റ്റും ഒരുമിച്ച് ചെറുതാക്കൂ / വലുതാക്കൂ</span></label>
+<div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+<button class="chip" id="gtsMinus" style="padding:4px 12px;font-size:16px">−</button><input type="range" id="globalTextScale" min="50" max="200" value="100" step="5" style="flex:1;min-width:0"><button class="chip" id="gtsPlus" style="padding:4px 12px;font-size:16px">+</button>
+<span id="globalTextScaleVal" style="font-size:13px;color:#f3d27a;min-width:46px;text-align:center;font-weight:700">100%</span>
+</div>
+</div>
 <div class="field"><label>1️⃣ മദ്രസയുടെ പേര് / Madrasa name</label><input type="text" id="inMadrasa" value="AL FURQAN MADRASA"></div>
 <div class="field"><label>2️⃣ ലോഗോ / Logo (upload)</label><input type="file" id="inLogo" accept="image/*"></div>
 <div class="field"><label>3️⃣ ബാക്ക്ഗ്രൗണ്ട് ഇമേജ് / Custom Background</label><input type="file" id="inBgImg" accept="image/*"></div>
@@ -340,8 +378,10 @@ input[type=range]{width:100%;accent-color:#c9a227}
 <h2>📐 പൊസിഷൻ & ഫ്രെയിം സ്റ്റുഡിയോ</h2>
 <div id="selPanel">
   <h3>✏️ Selected: <span id="selName"></span></h3>
+<button class="chip" id="selReset" title="ആദ്യ സ്ഥാനത്തേക്ക് തിരിച്ചുകൊണ്ടുവരൂ" style="width:100%;margin:6px 0;background:#3b2f6b;border:2px solid #8b7ad8;font-weight:700;font-size:14px">↩️ ആദ്യ സ്ഥാനത്തേക്ക് / Reset item</button>
   <div class="xy"><div><span>↔</span><input type="range" id="selX" min="-600" max="600" step="2"></div><div><span>↕</span><input type="range" id="selY" min="-1000" max="1000" step="2"></div></div>
-  <div class="xy" style="margin-top:8px"><div><span>↻</span><input type="range" id="selRot" min="-180" max="180" step="1"></div><div id="selFsRow"><span>🔍</span><input type="range" id="selFs" min="10" max="150" step="1"></div></div>
+  <div class="xy" style="margin-top:8px"><div><span>↻</span><input type="range" id="selRot" min="-180" max="180" step="1"></div><div id="selFsRow" style="display:flex;gap:6px;align-items:center"><span>🔍</span><button class="chip" id="fsMinus" style="padding:4px 12px;font-size:16px">−</button><input type="range" id="selFs" min="10" max="150" step="1" style="flex:1;min-width:0"><button class="chip" id="fsPlus" style="padding:4px 12px;font-size:16px">+</button></div>
+<div id="selFsNumRow" style="display:flex;gap:6px;align-items:center;margin-top:6px"><span style="font-size:12px;color:#9fb2cc">🔢 അളവ്:</span><input type="number" id="selFsNum" min="10" max="800" step="1" style="width:76px;padding:6px;border-radius:8px;background:#0d1626;color:#e8e2d2;border:1px solid #2a3c5c"><span style="font-size:11px;color:#9fb2cc">നമ്പർ ടൈപ്പ് ചെയ്യൂ</span></div></div>
   <div style="margin:8px 0"><label style="font-size:12px;color:#9fb2cc">🔤 Font Family / ഫോണ്ട് മാറ്റുക</label><select id="selFont" style="width:100%;padding:8px;border-radius:8px;background:#0d1626;color:#e8e2d2;border:1px solid #2a3c5c;margin-top:4px"></select></div>
   
   <div id="selShapeRow" style="margin:8px 0;display:none">
@@ -376,16 +416,28 @@ input[type=range]{width:100%;accent-color:#c9a227}
 <h2>✨ സ്റ്റിക്കറുകൾ (അനിമേഷൻ)</h2>
 <div class="presets" style="margin-bottom:6px">
 <button class="btn small" id="netStkBtn">🌐 നെറ്റ് സ്റ്റിക്കർ തിരയൂ</button>
-<label class="btn small ghost" style="cursor:pointer">🎞️ GIF ചേർക്കൂ (ഫയൽ)<input type="file" id="gifInput" accept="image/gif,image/*" style="display:none"></label>
+<label class="btn small ghost" style="cursor:pointer">🎞️ GIF ചേർക്കൂ<input type="file" id="gifInput" accept="image/gif,image/*" style="display:none"></label>
 </div>
+<p class="hint" style="margin-top:2px">💡 കീബോർഡിലെ GIF നേരിട്ട് തുറക്കാൻ ബ്രൗസറിൽ സാധിക്കില്ല — ആദ്യം GIF ഫോണിൽ സേവ് ചെയ്ത് ഇവിടെ തിരഞ്ഞെടുക്കൂ. അല്ലെങ്കിൽ 📦 റെഡി സ്റ്റിക്കർ + അനിമേഷൻ ഉപയോഗിക്കൂ.</p>
 <div id="stkModal"><div class="box">
-<div class="hd"><input id="stkQuery" placeholder="തിരയൂ: moon, mosque, star, pray, crown..."><button class="btn small" id="stkGo">🔍</button><button class="btn small ghost" id="stkClose">✕</button></div>
+<div class="hd"><span style="color:#f3d27a;font-weight:700">✨ സ്റ്റിക്കർ തിരഞ്ഞെടുക്കൂ</span><button class="btn small ghost" id="stkClose">✕</button></div>
+<div style="display:flex;gap:6px;padding:12px 14px 0">
+<button class="chip on" id="tabReady">📦 റെഡി സ്റ്റിക്കർ</button>
+<button class="chip" id="tabNet">🌐 നെറ്റ് സെർച്ച്</button>
+</div>
+<div id="stkReadyPane">
+<div id="stkReadyGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px"></div>
+<p class="hint" style="padding:0 14px 12px">📦 ഇവ ഫോണിൽ തന്നെയുള്ള സ്റ്റിക്കറുകൾ — ഇന്റർനെറ്റ് വേണ്ട. PNG-യിലും വീഡിയോയിലും തെളിമയോടെ വരും.</p>
+</div>
+<div id="stkNetPane" style="display:none">
+<div class="hd" style="border-bottom:none;padding:10px 14px 0"><input id="stkQuery" placeholder="തിരയൂ: moon, mosque, star..."><button class="btn small" id="stkGo">🔍</button></div>
 <div class="stk-cats" id="stkCats"></div>
 <div id="stkResults"></div>
 <div class="urlrow"><input id="stkUrl" placeholder="🔗 GIF / PNG ലിങ്ക് ഒട്ടിക്കൂ (giphy, google...)"><button class="btn small" id="stkUrlAdd">ചേർക്കൂ</button></div>
-<p class="hint" style="padding:0 14px 12px">GIPHY-യിൽ പോയി GIF-ന്റെ ലിങ്ക് കോപ്പി ചെയ്ത് ഇവിടെ ഒട്ടിക്കാം. അനിമേഷൻ പോസ്റ്ററിൽ ലൈവ് ആയി കളിക്കും.</p>
+<p class="hint" style="padding:0 14px 12px">GIPHY-യിൽ പോയി GIF-ന്റെ ലിങ്ക് കോപ്പി ചെയ്ത് ഇവിടെ ഒട്ടിക്കാം. (ഇന്റർനെറ്റ് വേണം)</p>
+</div>
 </div></div>
-<p class="hint">ഒരു സ്റ്റിക്കറിൽ തൊടൂ — പോസ്റ്ററിൽ വരും. ഡ്രാഗ് ചെയ്ത് വെക്കാം. അനിമേഷൻ തിരഞ്ഞെടുക്കാം.</p>
+<p class="hint">ഒരു സ്റ്റിക്കറിൽ തൊടൂ — പോസ്റ്ററിൽ വരും. 🌐 ബട്ടനിൽ <b>📦 റെഡി സ്റ്റിക്കർ</b> (നെറ്റ് വേണ്ട) ഉണ്ട്.</p>
 <div class="stk-grid" id="stkGrid"></div>
 <div class="stk-anim-row" id="stkAnimRow">
   <button class="chip on" data-a="">⏸️ Still</button>
@@ -406,6 +458,25 @@ input[type=range]{width:100%;accent-color:#c9a227}
 </section>
 
 <section id="stageCol">
+<div id="layoutBar">
+<div class="lb-label">🖥️ ലേഔട്ട് / Layout</div>
+<button data-dock="full">⛶ ഫുൾസ്ക്രീൻ</button>
+<button data-dock="left" class="on">◀ ഇടത്</button>
+<button data-dock="right">▶ വലത്</button>
+<button data-dock="top">▲ മുകളിൽ</button>
+<button data-dock="bottom">▼ താഴെ</button>
+</div>
+
+<div id="floatUndo">
+<button id="undoBtn" title="തിരിച്ചെടുക്കൂ / Undo (Ctrl+Z)">↩️</button>
+<button id="redoBtn" title="വീണ്ടും ചെയ്യൂ / Redo (Ctrl+Y)">↪️</button>
+</div>
+<style>
+#floatUndo{position:fixed;top:76px;left:12px;z-index:9000;display:flex;gap:8px}
+#floatUndo button{width:48px;height:48px;border-radius:50%;background:rgba(20,29,51,.94);border:2px solid #c9a227;color:#f3d27a;font-size:22px;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:0}
+#floatUndo button:disabled{opacity:.35;border-color:#3a4a68}
+#floatUndo button:not(:disabled):active{transform:scale(.92)}
+</style>
 <div id="stageWrap"><div id="scaler">
 <div id="poster">
   <!-- Permanent Mosque & Book Artwork Background Layer -->
@@ -524,6 +595,7 @@ const FONT_OPTIONS = [
 
 let state = {
   madrasa: "AL FURQAN MADRASA",
+  globalTextScale: 1,
   logo: "",
   bgImage: "",
   bgZoom: 100,
@@ -573,6 +645,8 @@ let state = {
   ],
   freeLayers: []
 };
+
+const DEF_CUSTOMPOS = JSON.parse(JSON.stringify(state.customPos));
 
 let activeSelectionId = null;
 
@@ -650,14 +724,16 @@ function setupUI() {
   };
 
   $('addTxtBtn').onclick = () => {
+    const nid7='free_'+Date.now();
     state.freeLayers.push({
-      id: 'free_' + Date.now(),
+      id: nid7,
       type: 'text',
       content: 'New Text',
       x: 100, y: 500, fs: 36, rot: 0, font: 'Georgia, serif', color: '#f3d27a', visible: true
     });
     renderLayerList();
     renderPoster();
+    selectElement(nid7);
   };
 
   $('addImgInput').onchange = e => {
@@ -665,14 +741,16 @@ function setupUI() {
     if(f) {
       const r = new FileReader();
       r.onload = ev => {
+        const nid8='free_'+Date.now();
         state.freeLayers.push({
-          id: 'free_' + Date.now(),
+          id: nid8,
           type: 'image',
           src: ev.target.result,
-          x: 200, y: 500, width: 250, rot: 0, visible: true
+          x: 200, y: 500, fs: 250, rot: 0, visible: true
         });
         renderLayerList();
         renderPoster();
+        selectElement(nid8);
       };
       r.readAsDataURL(f);
     }
@@ -730,13 +808,13 @@ function setupUI() {
       el.style.background = 'none';
     });
     setTimeout(async () => {
+      bakeFlayers();
       let canvas = null, err = null;
       for(const sc of [2, 1]){
-        try{
-          canvas = await html2canvas($('poster'), {scale: sc, useCORS: true, backgroundColor: '#0b1626', logging: false});
-          err = null; break;
-        }catch(e){ err = e; canvas = null; }
+        try{ canvas = await captureClean(sc); err = null; break; }
+        catch(e){ err = e; canvas = null; }
       }
+      restoreFlayers();
       fixes.forEach(f=>{ f.el.classList.add(f.cls); f.el.style.color=''; f.el.style.background=''; });
       if(canvas){
         try{
@@ -761,14 +839,13 @@ function setupUI() {
   }
   $('vidBtn').onclick = async () => {
     const btn = $('vidBtn'), hint = $('vidHint');
-    if(typeof MediaRecorder === 'undefined'){ alert('ഈ ബ്രൗസറിൽ വീഡിയോ എക്സ്പോർട്ട് പറ്റില്ല. ഫോണിലെ Screen Recorder ഉപയോഗിച്ച് പോസ്റ്റർ റെക്കോർഡ് ചെയ്യൂ — അതാണ് എളുപ്പവഴി.'); return; }
+    if(typeof MediaRecorder === 'undefined'){ alert('ഈ ബ്രൗസറിൽ വീഡിയോ പറ്റില്ല. ഫോണിലെ Screen Recorder ഉപയോഗിക്കൂ.'); return; }
     const mime = pickMime();
     btn.innerText = "⏳ തയ്യാറെടുക്കുന്നു..."; btn.disabled = true;
-    hint.style.display = 'block';
+    hint.style.display = 'block'; hint.innerText = 'പോസ്റ്റർ വരയ്ക്കുന്നു...';
     clearSelection();
     const okLib = await ensureH2C();
-    if(!okLib){ alert('ലൈബ്രറി ലോഡ് ആയില്ല. ഇന്റർനെറ്റ് നോക്കൂ.'); btn.innerText="🎬 അനിമേഷൻ വീഡിയോ ഡൗൺലോഡ്"; btn.disabled=false; return; }
-    // gradient-text fix (same as PNG)
+    if(!okLib){ alert('ലൈബ്രरी ലോഡ് ആയില്ല. ഇന്റർനെറ്റ് നോക്കൂ.'); btn.innerText="🎬 അനിമേഷൻ വീഡിയോ ഡൗൺലോഡ്"; btn.disabled=false; return; }
     const fixes = [];
     document.querySelectorAll('#poster .goldtext, #poster .silvertext').forEach(el=>{
       const cls = el.classList.contains('goldtext') ? 'goldtext' : 'silvertext';
@@ -777,52 +854,111 @@ function setupUI() {
       el.style.color = cls==='goldtext' ? '#e9c767' : '#dbe3ec';
       el.style.background = 'none';
     });
+    const SC=0.75, W=810, H=1440, FPS=30, DURMS=5000;
     try{
-      const FRAMES = 28, FPS = 8, SC = 0.5, W = 540, H = 960;
-      const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
-      const cx = cv.getContext('2d');
-      cx.fillStyle = '#0b1626'; cx.fillRect(0,0,W,H);
-      const stream = cv.captureStream(FPS);
-      const recOpts = mime ? {mimeType: mime, videoBitsPerSecond: 5000000} : undefined;
-      const rec = new MediaRecorder(stream, recOpts);
-      const chunks = [];
-      rec.ondataavailable = e => { if(e.data && e.data.size) chunks.push(e.data); };
-      const stopped = new Promise(r => rec.onstop = r);
-      rec.start(500);
-      const holdMs = Math.round(1000 / FPS);
-      for(let i=0; i<FRAMES; i++){
-        btn.innerText = "🎥 ഫ്രെയിം " + (i+1) + "/" + FRAMES + " ...";
-        hint.innerText = "വീഡിയോ ഉണ്ടാക്കുന്നു... " + Math.round((i/FRAMES)*100) + "% — കുറച്ച് സമയമെടുക്കും, കാത്തിരിക്കൂ.";
+      const animStk = state.freeLayers.filter(l=>l.visible!==false && l.type==='sticker' && l.anim);
+      animStk.forEach(l=>{ const el=document.getElementById(l.id); if(el) el.style.visibility='hidden'; });
+      bakeFlayers();
+      const baseC = await captureClean(SC);
+      restoreFlayers();
+      animStk.forEach(l=>{ const el=document.getElementById(l.id); if(el) el.style.visibility=''; });
+      hint.innerText='സ്റ്റിക്കറുകൾ തയ്യാറാക്കുന്നു...';
+      const items=[];
+      for(const l of animStk){
+        let img=null, iw=0, ih=0;
         try{
-          const fc = await html2canvas($('poster'), {scale: SC, useCORS: true, backgroundColor: '#0b1626', logging: false});
-          cx.drawImage(fc, 0, 0, W, H);
-        }catch(e){ /* keep last frame */ }
-        await new Promise(r => setTimeout(r, holdMs));
+          if(l.src && isGifSrc(l.src)){
+            const gd = await tryDecodeGif(l.src);
+            if(gd){ items.push({l:l, gif:gd}); continue; }
+          }
+          if(l.src){
+            img = await new Promise((res,rej)=>{ const im=new Image(); if(l.src.indexOf('data:')!==0) im.crossOrigin='anonymous'; im.onload=()=>res(im); im.onerror=rej; im.src=l.src; });
+            iw=img.naturalWidth||200; ih=img.naturalHeight||200;
+          } else {
+            const c=document.createElement('canvas'); c.width=256; c.height=256;
+            const g=c.getContext('2d');
+            g.font='200px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';
+            g.textAlign='center'; g.textBaseline='middle';
+            g.fillText(l.content||'\u2728', 128, 140);
+            img=c; iw=256; ih=256;
+          }
+          items.push({l:l, img:img, iw:iw, ih:ih});
+        }catch(e){}
       }
-      rec.stop();
-      await stopped;
-      const ext = (mime && mime.includes('mp4')) ? 'mp4' : 'webm';
-      const blob = new Blob(chunks, {type: mime ? mime.split(';')[0] : 'video/webm'});
+      const cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+      const cx=cv.getContext('2d');
+      const stream=cv.captureStream(FPS);
+      const rec=new MediaRecorder(stream, mime?{mimeType:mime, videoBitsPerSecond:8000000}:undefined);
+      const chunks=[];
+      rec.ondataavailable=e=>{ if(e.data&&e.data.size) chunks.push(e.data); };
+      const stopped=new Promise(r=>rec.onstop=r);
+      rec.start(500);
+      const t0=performance.now(), TAU=Math.PI*2;
+      btn.innerText='🎥 റെക്കോർഡ് ചെയ്യുന്നു...';
+      await new Promise(res=>{
+        (function frame(){
+          const el=performance.now()-t0, tt=el/1000;
+          cx.clearRect(0,0,W,H);
+          cx.drawImage(baseC,0,0,W,H);
+          for(const it of items){
+            const l=it.l, anim=l.anim;
+            let _img=it.img, _iw=it.iw, _ih=it.ih;
+            if(it.gif){
+              const gd=it.gif; let gt=(tt*1000)%gd.total, acc=0;
+              _img=gd.frames[0].img; _iw=gd.w; _ih=gd.h;
+              for(const fr of gd.frames){ acc+=fr.delay; if(gt<acc){ _img=fr.img; break; } }
+            }
+            const x=l.x*SC, y=l.y*SC;
+            const base=(l.fs||120)*SC;
+            const s=Math.min(base/_iw, base/_ih), w=_iw*s, h=_ih*s;
+            let alpha=1, scl=1, dy=0, rot=((l.rot||0)*Math.PI/180), blur=0, swing=0;
+            if(anim==='twinkle') alpha=0.575+0.425*Math.cos(TAU*tt/1.6);
+            else if(anim==='float') dy=(-11+11*Math.cos(TAU*tt/3))*SC;
+            else if(anim==='pulse') scl=1.175-0.175*Math.cos(TAU*tt/1.8);
+            else if(anim==='spin') rot+=TAU*tt/8;
+            else if(anim==='glow') blur=(15-11*Math.cos(TAU*tt/2))*SC;
+            else if(anim==='swing') swing=(-12*Math.cos(TAU*tt/2.4))*Math.PI/180;
+            cx.save();
+            cx.globalAlpha=Math.max(0,Math.min(1,alpha));
+            cx.translate(x,y);
+            if(swing){ cx.translate(0,-h/2); cx.rotate(swing); cx.translate(0,h/2); }
+            cx.rotate(rot); cx.scale(scl,scl); cx.translate(0,dy);
+            if(blur>0){ cx.shadowColor='rgba(255,215,0,0.95)'; cx.shadowBlur=blur; }
+            cx.drawImage(_img,-w/2,-h/2,w,h);
+            cx.restore();
+          }
+          const pc=Math.min(99,Math.round(el/DURMS*100));
+          btn.innerText='🎥 '+pc+'%'; hint.innerText='🎥 വീഡിയോ റെക്കോർഡ് ചെയ്യുന്നു... '+pc+'%';
+          if(el<DURMS) requestAnimationFrame(frame); else res();
+        })();
+      });
+      rec.stop(); await stopped;
+      const ext=(mime&&mime.indexOf('mp4')>=0)?'mp4':'webm';
+      const blob=new Blob(chunks,{type: mime?mime.split(';')[0]:'video/webm'});
       if(!blob.size) throw new Error('empty video');
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'madrasa-poster-animated.' + ext;
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(()=>URL.revokeObjectURL(url), 10000);
-      hint.innerText = "✅ വീഡിയോ ഡൗൺലോഡ് ആയി! WhatsApp സ്റ്റാറ്റസിൽ ഇടാം.";
+      const url=URL.createObjectURL(blob);
+      const pv=document.getElementById('vidPrev'); pv.src=url; pv.load();
+      _vidBlob=blob; _vidExt=ext; _vidUrl=url;
+      document.getElementById('vidPrevModal').style.display='flex';
+      try{ pv.play(); }catch(e){}
+      hint.innerText='✅ വീഡിയോ റെഡി — മുകളിൽ കണ്ട് ഡൗൺലോഡ് ചെയ്യൂ.';
     }catch(err){
-      alert('വീഡിയോ ഉണ്ടാക്കാൻ പറ്റിയില്ല: ' + err.message + '\nപകരം ഫോണിലെ Screen Recorder ഉപയോഗിക്കൂ.');
-      hint.style.display = 'none';
+      alert('വീഡിയോ ഉണ്ടാക്കാൻ പറ്റിയില്ല: '+err.message+'\nപകരം ഫോണിലെ Screen Recorder ഉപയോഗിക്കൂ.');
+      hint.style.display='none';
     }
     fixes.forEach(f=>{ f.el.classList.add(f.cls); f.el.style.color=''; f.el.style.background=''; });
     btn.innerText = "🎬 അനിമേഷൻ വീഡിയോ ഡൗൺലോഡ്"; btn.disabled = false;
   };
 
   $('selClose').onclick = clearSelection;
+  const _sr=$('selReset'); if(_sr) _sr.onclick=()=>{ resetSelected(); };
   $('selX').oninput = e => updateSelectedProp('x', parseInt(e.target.value));
   $('selY').oninput = e => updateSelectedProp('y', parseInt(e.target.value));
   $('selRot').oninput = e => updateSelectedProp('rot', parseInt(e.target.value));
   $('selFs').oninput = e => updateSelectedProp('fs', parseInt(e.target.value));
+  const _fm=$('fsMinus'); if(_fm) _fm.onclick=()=>fsStep(-1);
+  const _fp=$('fsPlus'); if(_fp) _fp.onclick=()=>fsStep(1);
+  const _fn=$('selFsNum'); if(_fn) _fn.onchange=e=>{ const v=parseInt(e.target.value); if(!isNaN(v)){ const c=getFsConfig(); if(c){ updateSelectedProp('fs',Math.max(c.mn,Math.min(c.mx,v))); syncSelPanel(); } } };
   $('selFont').onchange = e => updateSelectedProp('font', e.target.value);
   $('selVis').onchange = e => updateSelectedProp('visible', e.target.checked);
   
@@ -848,18 +984,30 @@ function setupUI() {
   buildTextEditors();
   buildWinEditors();
   buildStudentEditors();
+  const gts=$('globalTextScale');
+  if(gts){
+    const gv=Math.round((state.globalTextScale||1)*100);
+    gts.value=gv; $('globalTextScaleVal').innerText=gv+'%';
+    gts.oninput=e=>{ state.globalTextScale=e.target.value/100; $('globalTextScaleVal').innerText=e.target.value+'%'; renderPoster(); };
+    const _gm=$('gtsMinus'), _gp=$('gtsPlus');
+    const _gstep=d=>{ let v=parseInt(gts.value)+d; v=Math.max(50,Math.min(200,v)); gts.value=v; state.globalTextScale=v/100; $('globalTextScaleVal').innerText=v+'%'; renderPoster(); };
+    if(_gm) _gm.onclick=()=>_gstep(-5);
+    if(_gp) _gp.onclick=()=>_gstep(5);
+  }
 }
 
 function addNetImage(url) {
+  const nid9='free_'+Date.now();
   state.freeLayers.push({
-    id: 'free_' + Date.now(),
+    id: nid9,
     type: 'image',
     src: url,
-    x: 200, y: 500, width: 250, rot: 0, visible: true
+    x: 200, y: 500, fs: 250, rot: 0, visible: true
   });
   $('imgModal').style.display = 'none';
   renderLayerList();
   renderPoster();
+  selectElement(nid9);
 }
 
 function setupNudge(id, dx, dy) {
@@ -1051,9 +1199,15 @@ const titleEl = $('progTitle');
     const el = $(id);
     if(el) {
       const p = state.customPos[id];
+      const gs = state.globalTextScale||1;
+      const isFrame = (id.indexOf('winner_')===0 || id.indexOf('student_')===0);
       el.style.display = p.visible ? '' : 'none';
-      el.style.transform = `translate(${p.x}px, ${p.y}px) rotate(${p.rot}deg)`;
-      if(p.fs) el.style.fontSize = p.fs + 'px';
+      const zm = p.zoom||1;
+      let fsc='';
+      if(isFrame && p.fs) fsc=` scale(${((p.fs/100)*zm).toFixed(3)})`;
+      else if(zm!==1) fsc=` scale(${zm.toFixed(3)})`;
+      el.style.transform = `translate(${p.x}px, ${p.y}px) rotate(${p.rot}deg)${fsc}`;
+      if(p.fs && !isFrame) el.style.fontSize = (p.fs*gs).toFixed(1) + 'px';
       if(p.font) el.style.fontFamily = p.font;
     }
   }
@@ -1065,20 +1219,20 @@ const titleEl = $('progTitle');
       const bw = l.bold ? 'bold' : 'normal';
       const gl = l.glow ? 'text-shadow:0 0 18px #ffd700, 0 2px 8px #000;' : 'text-shadow:0 2px 8px #000;';
       const safe = String(l.content||'').replace(/</g,'&lt;').replace(/\n/g,'<br>');
-      return `<div class="flayer ${activeSelectionId===l.id?'sel':''}" id="${l.id}" data-id="${l.id}" style="transform: translate(${l.x}px, ${l.y}px) rotate(${l.rot}deg);">
-        <div class="ftxt" style="font-size:${l.fs}px;color:${l.color};font-family:${l.font};font-weight:${bw};${gl}white-space:pre-line;">${safe}</div>
+      return `<div class="flayer ${activeSelectionId===l.id?'sel':''}" id="${l.id}" data-id="${l.id}" style="transform: translate(${l.x}px, ${l.y}px) rotate(${l.rot}deg) scale(${((l.zoom||1)).toFixed(3)});">
+        <div class="ftxt" style="font-size:${(l.fs*(state.globalTextScale||1)).toFixed(1)}px;color:${l.color};font-family:${l.font};font-weight:${bw};${gl}white-space:pre-line;">${safe}</div>
       </div>`;
     } else if(l.type === 'sticker') {
       const ac = l.anim ? `anim-${l.anim}` : '';
       const inner = l.src
         ? `<img src="${l.src}" style="width:${l.fs}px;height:${l.fs}px;object-fit:contain;" crossorigin="anonymous" alt="">`
         : `<span style="font-size:${l.fs}px;line-height:1;">${l.content}</span>`;
-      return `<div class="flayer ${activeSelectionId===l.id?'sel':''}" id="${l.id}" data-id="${l.id}" style="transform: translate(${l.x}px, ${l.y}px) rotate(${l.rot}deg);">
+      return `<div class="flayer ${activeSelectionId===l.id?'sel':''}" id="${l.id}" data-id="${l.id}" style="transform: translate(${l.x}px, ${l.y}px) rotate(${l.rot}deg) scale(${((l.zoom||1)).toFixed(3)});">
         <span class="${ac}" style="display:inline-block;line-height:1;">${inner}</span>
       </div>`;
     } else {
-      return `<div class="flayer ${activeSelectionId===l.id?'sel':''}" id="${l.id}" style="transform: translate(${l.x}px, ${l.y}px) rotate(${l.rot}deg);">
-        <img src="${l.src}" width="${l.width}" alt="">
+      return `<div class="flayer ${activeSelectionId===l.id?'sel':''}" id="${l.id}" style="transform: translate(${l.x}px, ${l.y}px) rotate(${l.rot}deg) scale(${((l.zoom||1)).toFixed(3)});">
+        <img src="${l.src}" width="${l.fs||l.width||250}" alt="">
       </div>`;
     }
   }).join('');
@@ -1197,6 +1351,7 @@ function attachDragAndDrop() {
   let elemStartX = 0, elemStartY = 0;
 
   poster.onpointerdown = e => {
+    if(window.__pinchActive) return;
     let _lk = e.target.closest('[data-id]');
     if(_lk && state.locked[_lk.id||_lk.dataset.id]) return;
     let target = e.target.closest('[data-id], .flayer, .winner, .scard, #nameCard');
@@ -1221,7 +1376,7 @@ function attachDragAndDrop() {
 
   let rafPending=false;
   poster.onpointermove = e => {
-    if(!draggingId) return;
+    if(!draggingId || window.__pinchActive || window.__justPinched) return;
     if(e.cancelable && e.pointerType==='touch') e.preventDefault();
     if(rafPending) return;
     rafPending=true;
@@ -1281,6 +1436,10 @@ function setOpacity(id,val){
 
 function selectElement(id) {
   activeSelectionId = id;
+  if(id && id.startsWith('free_')){
+    const _l=state.freeLayers.find(x=>x.id===id);
+    if(_l && _l.ox===undefined){ _l.ox=_l.x; _l.oy=_l.y; _l.ofs=_l.fs; _l.orot=_l.rot||0; }
+  }
   $('selPanel').style.display = 'block';
   
   document.querySelectorAll('.selHi').forEach(el => el.classList.remove('selHi'));
@@ -1291,6 +1450,30 @@ function selectElement(id) {
   renderLayerList();
 }
 
+function resetSelected(){
+  if(!activeSelectionId) return;
+  if(typeof pushUndo==='function') pushUndo();
+  const id=activeSelectionId;
+  if(id.startsWith('free_')){
+    const l=state.freeLayers.find(x=>x.id===id);
+    if(l){
+      if(l.ox!==undefined){ l.x=l.ox; l.y=l.oy; }
+      if(l.ofs!==undefined) l.fs=l.ofs;
+      l.rot=(l.orot||0);
+    }
+  } else {
+    const d=(typeof DEF_CUSTOMPOS!=='undefined')?DEF_CUSTOMPOS[id]:null;
+    if(d){
+      state.customPos[id]=JSON.parse(JSON.stringify(d));
+    } else if(state.customPos[id]){
+      const p=state.customPos[id];
+      const isFrame=(id.indexOf('winner_')===0||id.indexOf('student_')===0);
+      p.x=0; p.y=0; p.rot=0;
+      if(isFrame) p.fs=100;
+    }
+  }
+  renderPoster(); syncSelPanel(); renderLayerList();
+}
 function clearSelection() {
   activeSelectionId = null;
   $('selPanel').style.display = 'none';
@@ -1298,6 +1481,37 @@ function clearSelection() {
   renderLayerList();
 }
 
+function getFsConfig(){
+  const id=activeSelectionId;
+  if(!id) return null;
+  if(id.startsWith('free_')){
+    const l=state.freeLayers.find(x=>x.id===id);
+    if(!l||l.fs===undefined) return null;
+    if(l.type==='text') return {mn:8,mx:250,step:2,val:l.fs};
+    return {mn:20,mx:800,step:10,val:l.fs};
+  }
+  const p=state.customPos[id];
+  if(!p||p.fs===undefined) return null;
+  const isFrame=(id.indexOf('winner_')===0||id.indexOf('student_')===0);
+  if(isFrame) return {mn:10,mx:200,step:5,val:p.fs};
+  return {mn:8,mx:220,step:2,val:p.fs};
+}
+function configFsUI(){
+  const c=getFsConfig();
+  const row=$('selFsRow'), nrow=$('selFsNumRow');
+  if(!c){ if(row) row.style.display='none'; if(nrow) nrow.style.display='none'; return; }
+  const fs=$('selFs'), num=$('selFsNum');
+  fs.min=c.mn; fs.max=c.mx; fs.step=c.step; fs.value=c.val;
+  if(num){ num.min=c.mn; num.max=c.mx; num.step=c.step; num.value=Math.round(c.val); }
+  if(row) row.style.display='flex'; if(nrow) nrow.style.display='flex';
+}
+function fsStep(d){
+  const c=getFsConfig(); if(!c) return;
+  let v=Math.round(c.val)+d*c.step;
+  v=Math.max(c.mn,Math.min(c.mx,v));
+  updateSelectedProp('fs',v);
+  syncSelPanel();
+}
 function syncSelPanel() {
   if(!activeSelectionId) return;
   let nameTitle = activeSelectionId;
@@ -1305,17 +1519,20 @@ function syncSelPanel() {
 
   if(activeSelectionId.startsWith('free_')) {
     p = state.freeLayers.find(x => x.id === activeSelectionId);
+    if(p && p.fs===undefined) p.fs = p.width||250;
     nameTitle = p.type === 'text' ? '✏️ Free Text വരി' : (p.type==='sticker' ? '✨ സ്റ്റിക്കർ' : '🖼️ Free Image');
     $('selShapeRow').style.display = 'none';
   } else if(activeSelectionId.startsWith('winner_')) {
     let idx = parseInt(activeSelectionId.split('_')[1]);
-    p = state.customPos[activeSelectionId] || {x:0, y:0, rot:0, visible:true};
+    if(!state.customPos[activeSelectionId]) state.customPos[activeSelectionId]={x:0,y:0,rot:0,fs:100,visible:true};
+    p = state.customPos[activeSelectionId];
     nameTitle = "Winner #" + (idx+1) + " Photo Frame";
     $('selShapeRow').style.display = 'block';
     $('selShape').value = state.winners[idx].shape || 'round';
   } else if(activeSelectionId.startsWith('student_')) {
     let idx = parseInt(activeSelectionId.split('_')[1]);
-    p = state.customPos[activeSelectionId] || {x:0, y:0, rot:0, visible:true};
+    if(!state.customPos[activeSelectionId]) state.customPos[activeSelectionId]={x:0,y:0,rot:0,fs:100,visible:true};
+    p = state.customPos[activeSelectionId];
     nameTitle = "Student #" + (idx+1) + " Frame";
     $('selShapeRow').style.display = 'block';
     $('selShape').value = state.students[idx].shape || 'round';
@@ -1329,12 +1546,7 @@ function syncSelPanel() {
   $('selX').value = p.x || 0;
   $('selY').value = p.y || 0;
   $('selRot').value = p.rot || 0;
-  if(p.fs !== undefined) {
-    $('selFsRow').style.display = 'flex';
-    $('selFs').value = p.fs;
-  } else {
-    $('selFsRow').style.display = 'none';
-  }
+  configFsUI();
 
   $('selVis').checked = p.visible !== false;
   // inject lock/layer/opacity controls once
@@ -1655,7 +1867,7 @@ function stkSearch(q){
 }
 function renderStkResults(codes){
   const r=document.getElementById('stkResults');
-  r.innerHTML = codes.map(c=>`<button data-c="${c}"><img loading="lazy" src="${TW(c)}" alt=""></button>`).join('') || '<p class="hint">ഒന്നും കിട്ടിയില്ല</p>';
+  r.innerHTML = codes.map(c=>`<button data-c="${c}"><img loading="lazy" data-c="${c}" src="${TW(c)}" onerror="stkImgFb(this)" alt=""></button>`).join('') || '<p class="hint">ഒന്നും കിട്ടിയില്ല</p>';
   r.querySelectorAll('button').forEach(b=>b.onclick=()=>{
     addNetSticker(TW(b.dataset.c), false);
   });
@@ -1691,7 +1903,10 @@ function initNetStickers(){
     r.readAsDataURL(f); e.target.value='';
   };
 }
-window.addEventListener('load', ()=>setTimeout(initNetStickers, 1400));
+window._netStkDone = false;
+function initNetStickersSafe(){ if(window._netStkDone) return; window._netStkDone = true; try{ initNetStickers(); }catch(e){} }
+try{ initNetStickersSafe(); }catch(e){}
+window.addEventListener('load', ()=>setTimeout(initNetStickersSafe, 1400));
 </script><div id="wzModal"><div class="box">
 <div class="hd"><span>🪄 ഓട്ടോ പോസ്റ്റർ വിസാർഡ്</span><button class="btn small ghost" id="wzClose" style="background:#1a1206;color:#f3d27a">✕</button></div>
 <div id="wzSteps"><div data-s="1" class="on">1. വിവരങ്ങൾ</div><div data-s="2">2. ലേഔട്ട്</div><div data-s="3">3. കുട്ടികൾ</div><div data-s="4">4. തീം</div></div>
@@ -1962,5 +2177,436 @@ function initAI(){
   document.getElementById('aiGen').onclick=aiGenerate;
 }
 window.addEventListener('load', ()=>setTimeout(initAI, 1800));
+</script><script>
+// ---- capture fidelity: bake CSS translate() into left/top so html2canvas renders exact on-screen positions ----
+let _flBaked = [];
+function bakeFlayers(){
+  _flBaked = [];
+  document.querySelectorAll('#poster .flayer').forEach(function(el){
+    const tf = el.style.transform;
+    if(!tf) return;
+    const m = tf.match(/translate\(\s*(-?[\d.]+)px\s*,\s*(-?[\d.]+)px\s*\)/);
+    if(!m) return;
+    const r = tf.match(/rotate\(\s*(-?[\d.]+)deg\s*\)/);
+    _flBaked.push({el:el, tf:tf, left:el.style.left, top:el.style.top});
+    el.style.left = m[1]+'px';
+    el.style.top = m[2]+'px';
+    el.style.transform = r ? ('rotate('+r[1]+'deg)') : '';
+  });
+}
+function restoreFlayers(){
+  _flBaked.forEach(function(b){ b.el.style.transform=b.tf; b.el.style.left=b.left; b.el.style.top=b.top; });
+  _flBaked = [];
+}
+// Simple, robust capture: expand stage to natural size in place, scroll top, shoot, restore.
+async function captureClean(scale){
+  const wrap=document.getElementById('stageWrap'), scaler=document.getElementById('scaler');
+  const ow=wrap.style.width, omw=wrap.style.maxWidth, ot=scaler.style.transform;
+  wrap.style.width='1080px'; wrap.style.maxWidth='1080px';
+  scaler.style.transform='none';
+  try{ window.scrollTo(0,0); }catch(e){}
+  await new Promise(function(r){ setTimeout(r,250); });
+  try{
+    return await html2canvas(document.getElementById('poster'), {scale:scale, useCORS:true, backgroundColor:'#0b1626', logging:false});
+  } finally {
+    wrap.style.width=ow; wrap.style.maxWidth=omw; scaler.style.transform=ot;
+    try{ window.dispatchEvent(new Event('resize')); }catch(e){}
+  }
+}
+async function shareOrDownloadVideo(){
+  if(!_vidBlob){ alert('വീഡിയോ തയ്യാറായിട്ടില്ല'); return; }
+  const fname='madrasa-poster-animated.'+_vidExt;
+  try{
+    const file=new File([_vidBlob], fname, {type:_vidBlob.type||'video/webm'});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], title:'Madrasa Poster'});
+      return;
+    }
+  }catch(e){ if(e && e.name==='AbortError') return; }
+  try{
+    const a=document.createElement('a');
+    a.href=_vidUrl; a.download=fname; a.target='_blank';
+    document.body.appendChild(a); a.click(); a.remove();
+  }catch(e){ try{ window.open(_vidUrl,'_blank'); }catch(e2){} }
+}
+function stkImgFb(im){ im.onerror=null; im.src='https://emojicdn.elk.sh/'+im.dataset.c+'?style=twitter'; }
+</script><div id="vidPrevModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:20000;align-items:center;justify-content:center;padding:16px">
+<div style="background:#16233a;border:2px solid #7c3aed;border-radius:16px;max-width:400px;width:100%;padding:16px;text-align:center">
+<h3 style="color:#c4b5fd;margin-bottom:10px">🎬 വീഡിയോ റെഡി!</h3>
+<video id="vidPrev" controls playsinline style="width:100%;max-height:58vh;border-radius:10px;background:#000"></video>
+<div style="display:flex;gap:8px;margin-top:12px">
+<button class="btn small ghost" id="vidCloseBtn" style="flex:1">✕ അടയ്ക്കൂ</button>
+<button class="btn small" id="vidDlBtn" style="flex:2;background:linear-gradient(135deg,#c9a227,#f3d27a);color:#1a1206;border:none">⬇️ ഷെയർ / ഡൗൺലോഡ്</button>
+</div>
+<p class="hint" style="margin-top:8px">പ്രിവ്യൂ ശരിയാണെന്ന് നോക്കിയിട്ട് ഡൗൺലോഡ് ചെയ്യൂ.</p>
+</div></div><script>
+document.getElementById('vidCloseBtn').onclick = ()=>{ document.getElementById('vidPrevModal').style.display='none'; const pv=document.getElementById('vidPrev'); pv.pause(); };
+</script><div id="fullExitBar">
+<button id="fullExitBtn" style="background:#22314d;color:#fff">✕ അടയ്ക്കൂ / Exit</button>
+<button id="fullDlBtn" style="background:linear-gradient(135deg,#c9a227,#f3d27a);color:#1a1206">⬇️ PNG ഡൗൺലോഡ്</button>
+</div><script>
+function setDock(d){
+  document.body.classList.remove('dock-left','dock-right','dock-top','dock-bottom','stage-full');
+  if(d==='full'){ document.body.classList.add('stage-full'); }
+  else { document.body.classList.add('dock-'+d); }
+  document.querySelectorAll('#layoutBar button').forEach(function(b){ b.classList.toggle('on', b.dataset.dock===d); });
+  var p=document.getElementById('panel'); if(p) p.classList.remove('open');
+  var bg=document.getElementById('drawerBackdrop'); if(bg) bg.classList.remove('open');
+  setTimeout(function(){ window.dispatchEvent(new Event('resize')); }, 60);
+  setTimeout(function(){ var w=document.getElementById('stageWrap'); if(w) w.scrollIntoView({block:'start'}); }, 120);
+}
+function initLayoutBar(){
+  document.querySelectorAll('#layoutBar button').forEach(function(b){
+    b.onclick=function(){ setDock(b.dataset.dock); };
+  });
+  document.getElementById('fullExitBtn').onclick=function(){ setDock('left'); };
+  document.getElementById('fullDlBtn').onclick=function(){ setDock('left'); setTimeout(function(){ document.getElementById('dlBtn').click(); }, 300); };
+}
+if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', initLayoutBar); }
+else { initLayoutBar(); }
+</script><script>
+/* ================= V15 fixes ================= */
+const SVG_STICKERS = [
+{name:'🌙 ചന്ദ്രക്കല', svg:`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 200 200"><defs><mask id="m1"><rect width="200" height="200" fill="#fff"/><circle cx="122" cy="88" r="52" fill="#000"/></mask></defs><circle cx="100" cy="100" r="58" fill="#f3d27a" mask="url(#m1)"/><path d="M138 58l5 12 12 5-12 5-5 12-5-12-12-5 12-5z" fill="#f3d27a"/></svg>`},
+{name:'🕌 പള്ളി', svg:`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 200 200"><rect x="28" y="86" width="12" height="84" fill="#0f766e"/><path d="M26 86l8-20 8 20z" fill="#c9a227"/><rect x="160" y="86" width="12" height="84" fill="#0f766e"/><path d="M158 86l8-20 8 20z" fill="#c9a227"/><rect x="58" y="112" width="84" height="58" rx="4" fill="#0f766e"/><path d="M100 52C74 80 62 94 62 112h76c0-18-12-32-38-60z" fill="#c9a227"/><rect x="97" y="32" width="6" height="24" fill="#c9a227"/><circle cx="100" cy="28" r="5" fill="#f3d27a"/><rect x="88" y="132" width="24" height="38" rx="12" fill="#0b1626"/><rect x="18" y="170" width="164" height="9" rx="4" fill="#c9a227"/></svg>`},
+{name:'🕋 കഅ്ബ', svg:`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 200 200"><rect x="55" y="66" width="90" height="96" rx="6" fill="#151a24"/><rect x="55" y="90" width="90" height="18" fill="#c9a227"/><rect x="55" y="90" width="90" height="5" fill="#f3d27a"/><rect x="88" y="120" width="24" height="30" rx="3" fill="#c9a227" opacity="0.85"/></svg>`},
+{name:'📿 തസ്ബീഹ്', svg:`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 200 200"><g fill="#c9a227"><circle cx="155" cy="95" r="9"/><circle cx="144" cy="127" r="9"/><circle cx="117" cy="147" r="9"/><circle cx="83" cy="147" r="9"/><circle cx="56" cy="127" r="9"/><circle cx="45" cy="95" r="9"/><circle cx="56" cy="63" r="9"/><circle cx="83" cy="43" r="9"/><circle cx="117" cy="43" r="9"/><circle cx="144" cy="63" r="9"/></g><circle cx="100" cy="152" r="10" fill="#f3d27a"/><line x1="100" y1="160" x2="100" y2="178" stroke="#c9a227" stroke-width="5"/><path d="M100 178l-9 16h18z" fill="#f3d27a"/></svg>`},
+{name:'🏮 വിളക്ക്', svg:`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 200 200"><circle cx="100" cy="26" r="9" fill="none" stroke="#c9a227" stroke-width="6"/><line x1="100" y1="35" x2="100" y2="50" stroke="#c9a227" stroke-width="6"/><path d="M68 62h64l12 22v52l-12 22H68l-12-22V84z" fill="#f3d27a" opacity="0.22" stroke="#c9a227" stroke-width="7"/><line x1="64" y1="62" x2="136" y2="62" stroke="#c9a227" stroke-width="9"/><line x1="60" y1="158" x2="140" y2="158" stroke="#c9a227" stroke-width="9"/><path d="M100 92c14 16 14 36 0 52-14-16-14-36 0-52z" fill="#fbbf24"/><circle cx="100" cy="118" r="11" fill="#fde68a"/></svg>`},
+{name:'⭐ നക്ഷത്രം', svg:`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 200 200"><g fill="#c9a227"><rect x="86" y="42" width="28" height="116"/><rect x="86" y="42" width="28" height="116" transform="rotate(45 100 100)"/><rect x="86" y="42" width="28" height="116" transform="rotate(90 100 100)"/><rect x="86" y="42" width="28" height="116" transform="rotate(135 100 100)"/></g><circle cx="100" cy="100" r="24" fill="#0b1626"/><circle cx="100" cy="100" r="15" fill="#f3d27a"/></svg>`},
+{name:'📖 ഖുർആൻ', svg:`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 200 200"><path d="M100 62C82 48 54 46 38 56v88c16-10 44-12 62 2z" fill="#0f766e"/><path d="M100 62c18-14 46-16 62-6v88c-16-10-44-12-62 2z" fill="#14b8a6"/><line x1="100" y1="62" x2="100" y2="146" stroke="#c9a227" stroke-width="5"/><g stroke="#f3d27a" stroke-width="5" opacity="0.75"><line x1="52" y1="82" x2="86" y2="82"/><line x1="52" y1="96" x2="86" y2="96"/><line x1="114" y1="82" x2="148" y2="82"/><line x1="114" y1="96" x2="148" y2="96"/></g><path d="M100 34l4 8 8 4-8 4-4 8-4-8-8-4 8-4z" fill="#f3d27a"/></svg>`},
+{name:'✨ തിളക്കം', svg:`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 200 200"><path d="M100 28l9 24 24 9-24 9-9 24-9-24-24-9 24-9z" fill="#f3d27a"/><path d="M152 108l7 17 17 7-17 7-7 17-7-17-17-7 17-7z" fill="#c9a227"/><path d="M48 118l6 13 13 6-13 6-6 13-6-13-13-6 13-6z" fill="#fde68a"/></svg>`},
+{name:'🕌 ഡോം', svg:`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 200 200"><path d="M100 42C68 74 56 94 56 118h88c0-24-12-44-44-76z" fill="#c9a227"/><rect x="97" y="22" width="6" height="24" fill="#c9a227"/><circle cx="100" cy="18" r="5" fill="#f3d27a"/><rect x="46" y="118" width="108" height="46" rx="5" fill="#0f766e"/><rect x="88" y="132" width="24" height="32" rx="12" fill="#0b1626"/><rect x="36" y="164" width="128" height="9" rx="4" fill="#c9a227"/></svg>`},
+{name:'🗼 മിനാരം', svg:`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 200 200"><rect x="88" y="72" width="24" height="98" fill="#0f766e"/><path d="M82 72h36l-7-22h-22z" fill="#c9a227"/><rect x="97" y="28" width="6" height="24" fill="#c9a227"/><circle cx="100" cy="24" r="5" fill="#f3d27a"/><rect x="80" y="108" width="40" height="9" fill="#c9a227"/><rect x="80" y="140" width="40" height="9" fill="#c9a227"/><rect x="74" y="170" width="52" height="10" rx="3" fill="#c9a227"/></svg>`},
+{name:'☪️ ചന്ദ്രനക്ഷത്രം', svg:`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 200 200"><defs><mask id="m2"><rect width="200" height="200" fill="#fff"/><circle cx="120" cy="90" r="50" fill="#000"/></mask></defs><circle cx="100" cy="100" r="56" fill="#e9c767" mask="url(#m2)"/><path d="M130 76l6 13 13 6-13 6-6 13-6-13-13-6 13-6z" fill="#e9c767"/><circle cx="100" cy="100" r="74" fill="none" stroke="#c9a227" stroke-width="5" opacity="0.6"/></svg>`},
+{name:'🕌 ആർച്ച്', svg:`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 200 200"><path d="M48 172V112c0-42 24-62 52-84 28 22 52 42 52 84v60" fill="none" stroke="#c9a227" stroke-width="11"/><path d="M64 172v-54c0-32 16-50 36-66 20 16 36 34 36 66v54" fill="none" stroke="#f3d27a" stroke-width="4"/><path d="M100 108l5 11 11 5-11 5-5 11-5-11-11-5 11-5z" fill="#f3d27a"/></svg>`}
+];
+function svgURI(s){ return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s); }
+function renderReadyStickers(){
+  const g=document.getElementById('stkReadyGrid'); if(!g) return;
+  g.innerHTML=SVG_STICKERS.map((s,i)=>'<button data-si="'+i+'" title="'+s.name+'" style="background:#0d1626;border:1px solid #2a3c5c;border-radius:12px;padding:10px;cursor:pointer"><img loading="lazy" src="'+svgURI(s.svg)+'" style="width:64px;height:64px;object-fit:contain;pointer-events:none" alt=""></button>').join('');
+  g.querySelectorAll('button').forEach(b=>{ b.onclick=()=>{ addNetSticker(svgURI(SVG_STICKERS[+b.dataset.si].svg), false); }; });
+}
+function stkTab(which){
+  document.getElementById('tabReady').classList.toggle('on', which==='ready');
+  document.getElementById('tabNet').classList.toggle('on', which==='net');
+  document.getElementById('stkReadyPane').style.display = which==='ready'?'block':'none';
+  document.getElementById('stkNetPane').style.display = which==='net'?'block':'none';
+  if(which==='net' && typeof renderStkResults==='function' && typeof stkSearch==='function'){
+    renderStkResults(stkSearch((document.getElementById('stkQuery')||{value:''}).value));
+  }
+}
+function goldFixOn(){
+  const fixes=[];
+  document.querySelectorAll('#poster .goldtext, #poster .silvertext').forEach(el=>{
+    const cls=el.classList.contains('goldtext')?'goldtext':'silvertext';
+    fixes.push({el:el,cls:cls});
+    el.classList.remove('goldtext','silvertext');
+    el.style.color=cls==='goldtext'?'#e9c767':'#dbe3ec';
+    el.style.background='none';
+  });
+  return fixes;
+}
+function goldFixOff(fixes){
+  (fixes||[]).forEach(f=>{ try{ f.el.classList.add(f.cls); f.el.style.color=''; f.el.style.background=''; }catch(e){} });
+}
+function bakeOn(){ try{ if(typeof bakeTransforms==='function') bakeTransforms(); }catch(e){} }
+function bakeOff(){ try{ if(typeof restoreTransforms==='function') restoreTransforms(); }catch(e){} }
+async function libReady(){
+  if(typeof html2canvas!=='undefined') return true;
+  if(typeof ensureH2C==='function'){ try{ return await ensureH2C(); }catch(e){ return false; } }
+  return false;
+}
+/* ---------- robust PNG download ---------- */
+async function robustPNG(){
+  const btn=document.getElementById('dlBtn');
+  const setT=t=>{ if(btn) btn.innerText=t; };
+  const doneLabel='⬇️ PNG ഡൗൺലോഡ് / Download Poster';
+  try{
+    setT('⏳ ലൈബ്രറി...');
+    if(typeof clearSelection==='function') clearSelection();
+    const ok=await libReady();
+    if(!ok) throw new Error('ലൈബ്രറി ലോഡ് ആയില്ല. ഇന്റർനെറ്റ് ഓണാണെന്ന് നോക്കൂ.');
+    setT('⏳ തയ്യാറെടുക്കുന്നു...');
+    await new Promise(r=>setTimeout(r,400));
+    const fixes=goldFixOn();
+    let canvas=null,lastErr=null;
+    try{
+      bakeOn();
+      setT('⏳ ചിത്രം വരയ്ക്കുന്നു...');
+      const poster=document.getElementById('poster');
+      for(const sc of [2,1.5,1]){
+        try{ canvas=await html2canvas(poster,{scale:sc,useCORS:true,backgroundColor:'#0b1626',logging:false}); lastErr=null; break; }
+        catch(e){ lastErr=e; canvas=null; }
+      }
+    } finally { bakeOff(); goldFixOff(fixes); }
+    if(!canvas) throw new Error('റെൻഡർ പരാജയപ്പെട്ടു: '+((lastErr&&lastErr.message)||'അജ്ഞാത പിശക്'));
+    setT('⏳ സേവ് ചെയ്യുന്നു...');
+    let url;
+    try{ url=canvas.toDataURL('image/png'); }
+    catch(e){ throw new Error('സേവ് തടസ്സപ്പെട്ടു (ചിത്ര അനുമതി): '+e.message); }
+    const a=document.createElement('a');
+    a.download='madrasa-poster.png'; a.href=url;
+    document.body.appendChild(a); a.click(); a.remove();
+    setT('✅ ഡൗൺലോഡ് ആയി!');
+  }catch(err){
+    alert('PNG ഡൗൺലോഡ് പിശക്:\n'+((err&&err.message)||err)+'\n\nഇന്റർനെറ്റ് ഓണാണെന്ന് ഉറപ്പാക്കി വീണ്ടും ശ്രമിക്കൂ.');
+    setT(doneLabel);
+    return;
+  }
+  setTimeout(()=>setT(doneLabel),2500);
+}
+/* ---------- clearer, smoother video ---------- */
+function pickMime(){
+  if(typeof MediaRecorder==='undefined'||!MediaRecorder.isTypeSupported) return '';
+  const opts=['video/webm;codecs=vp9','video/webm','video/mp4'];
+  for(const m of opts){ try{ if(MediaRecorder.isTypeSupported(m)) return m; }catch(e){} }
+  return '';
+}
+async function robustVideo(){
+  const btn=document.getElementById('vidBtn'), hint=document.getElementById('vidHint');
+  const doneLabel='🎬 അനിമേഷൻ വീഡിയോ ഡൗൺലോഡ്';
+  try{
+    if(typeof MediaRecorder==='undefined') throw new Error('NO_RECORDER');
+    const mime=pickMime();
+    btn.disabled=true; btn.innerText='⏳ തയ്യാറെടുക്കുന്നു...';
+    if(hint) hint.style.display='block';
+    if(typeof clearSelection==='function') clearSelection();
+    const ok=await libReady();
+    if(!ok) throw new Error('ലൈബ്രറി ലോഡ് ആയില്ല. ഇന്റർനെറ്റ് നോക്കൂ.');
+    await new Promise(r=>setTimeout(r,400));
+    const fixes=goldFixOn();
+    const FRAMES=20, SC=0.6, W=648, H=1152;
+    const urls=[];
+    try{
+      bakeOn();
+      const poster=document.getElementById('poster');
+      for(let i=0;i<FRAMES;i++){
+        btn.innerText='🎥 ഫ്രെയിം '+(i+1)+'/'+FRAMES;
+        if(hint) hint.innerText='ഫ്രെയിമുകൾ പിടിക്കുന്നു... '+Math.round(i/FRAMES*55)+'% — കാത്തിരിക്കൂ';
+        const fc=await html2canvas(poster,{scale:SC,useCORS:true,backgroundColor:'#0b1626',logging:false});
+        urls.push(fc.toDataURL('image/jpeg',0.85));
+        await new Promise(r=>setTimeout(r,180));
+      }
+    } finally { bakeOff(); goldFixOff(fixes); }
+    btn.innerText='⏳ വീഡിയോ ഒരുക്കുന്നു...';
+    if(hint) hint.innerText='വീഡിയോ ഒരുക്കുന്നു... 70%';
+    const imgs=await Promise.all(urls.map(u=>new Promise((res,rej)=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=rej; im.src=u; })));
+    const cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+    const cx=cv.getContext('2d');
+    const FPS=10, LOOPS=2;
+    const stream=cv.captureStream(FPS);
+    const rec=new MediaRecorder(stream, mime?{mimeType:mime,videoBitsPerSecond:8000000}:undefined);
+    const chunks=[];
+    rec.ondataavailable=e=>{ if(e.data&&e.data.size) chunks.push(e.data); };
+    const stopped=new Promise(r=>{ rec.onstop=r; });
+    rec.start();
+    btn.innerText='🎬 റെക്കോർഡ് ചെയ്യുന്നു...';
+    if(hint) hint.innerText='വീഡിയോ റെക്കോർഡ് ചെയ്യുന്നു... 85%';
+    const total=FRAMES*LOOPS;
+    for(let f=0;f<total;f++){
+      cx.drawImage(imgs[f%FRAMES],0,0,W,H);
+      await new Promise(r=>setTimeout(r,Math.round(1000/FPS)));
+    }
+    rec.stop(); await stopped;
+    const blob=new Blob(chunks,{type:mime?mime.split(';')[0]:'video/webm'});
+    if(!blob.size) throw new Error('വീഡിയോ ശൂന്യമായി');
+    const ext=(mime&&mime.indexOf('mp4')>=0)?'mp4':'webm';
+    const url=URL.createObjectURL(blob);
+    document.getElementById('vidPrev').src=url;
+    const dl=document.getElementById('vidDl');
+    dl.href=url; dl.download='madrasa-poster-animated.'+ext;
+    document.getElementById('vidPrevModal').style.display='flex';
+    try{ document.getElementById('vidPrev').play(); }catch(e){}
+    if(hint) hint.innerText='✅ വീഡിയോ റെഡി — മുകളിൽ കണ്ട് ഡൗൺലോഡ് ചെയ്യൂ.';
+  }catch(err){
+    if(err&&err.message==='NO_RECORDER') alert('ഈ ബ്രൗസറിൽ വീഡിയോ പറ്റില്ല. ഫോണിലെ Screen Recorder ഉപയോഗിക്കൂ.');
+    else alert('വീഡിയോ പിശക്:\n'+((err&&err.message)||err));
+    if(hint) hint.style.display='none';
+  }
+  btn.disabled=false; btn.innerText=doneLabel;
+}
+/* ---------- wire everything (independent of main init) ---------- */
+function v15wire(){
+  const nb=document.getElementById('netStkBtn');
+  if(nb){ nb.onclick=()=>{ document.getElementById('stkModal').style.display='flex'; stkTab('ready'); renderReadyStickers(); }; }
+  const tr=document.getElementById('tabReady'); if(tr) tr.onclick=()=>stkTab('ready');
+  const tn=document.getElementById('tabNet'); if(tn) tn.onclick=()=>stkTab('net');
+  renderReadyStickers();
+  /* dlBtn/vidBtn keep their main handlers (captureClean pipeline) - do not overwrite */
+}
+try{ v15wire(); }catch(e){}
+window.addEventListener('load', ()=>setTimeout(()=>{ try{ v15wire(); }catch(e){} }, 2600));
+</script><script>
+(function(){ ['stkModal','imgModal'].forEach(function(id){ var m=document.getElementById(id); if(m && m.parentElement!==document.body) document.body.appendChild(m); }); })();
+</script><script>
+document.getElementById('vidDlBtn').onclick=shareOrDownloadVideo;
+</script><script>
+/* ================= Undo / Redo (Ctrl+Z / Ctrl+Y) ================= */
+let undoStack=[], redoStack=[];
+const MAX_UNDO=30;
+function snapState(){ try{ return JSON.stringify(state); }catch(e){ return null; } }
+function updateUndoBtns(){
+  const u=document.getElementById('undoBtn'), r=document.getElementById('redoBtn');
+  if(u){ u.disabled=!undoStack.length; u.style.opacity=undoStack.length?1:.45; }
+  if(r){ r.disabled=!redoStack.length; r.style.opacity=redoStack.length?1:.45; }
+}
+function pushUndo(){
+  if(typeof state==='undefined') return;
+  const s=snapState(); if(!s) return;
+  if(undoStack.length && undoStack[undoStack.length-1]===s) return;
+  undoStack.push(s);
+  if(undoStack.length>MAX_UNDO) undoStack.shift();
+  redoStack.length=0;
+  updateUndoBtns();
+}
+function refreshAfterUndo(){
+  try{ if(typeof clearSelection==='function') clearSelection(); }catch(e){}
+  try{ renderPoster(); }catch(e){}
+  try{ renderLayerList(); }catch(e){}
+  try{ if(typeof syncSelPanel==='function') syncSelPanel(); }catch(e){}
+  try{ if(typeof buildTextEditors==='function') buildTextEditors(); }catch(e){}
+  try{ if(typeof buildWinEditors==='function') buildWinEditors(); }catch(e){}
+  try{ if(typeof buildStudentEditors==='function') buildStudentEditors(); }catch(e){}
+  const sm={inMadrasa:'madrasa',inProgram:'program',inSubtitle:'subtitle'};
+  for(const id in sm){ const el=document.getElementById(id); if(el&&state[sm[id]]!==undefined) el.value=state[sm[id]]; }
+  const gts2=document.getElementById('globalTextScale');
+  if(gts2){ const gv=Math.round((state.globalTextScale||1)*100); gts2.value=gv; document.getElementById('globalTextScaleVal').innerText=gv+'%'; }
+}
+function doUndo(){
+  if(!undoStack.length) return;
+  const cur=snapState(); if(cur) redoStack.push(cur);
+  const s=undoStack.pop();
+  try{
+    const o=JSON.parse(s);
+    for(const k in state) delete state[k];
+    Object.assign(state,o);
+  }catch(e){ updateUndoBtns(); return; }
+  refreshAfterUndo();
+  updateUndoBtns();
+}
+function doRedo(){
+  if(!redoStack.length) return;
+  const cur=snapState(); if(cur) undoStack.push(cur);
+  const s=redoStack.pop();
+  try{
+    const o=JSON.parse(s);
+    for(const k in state) delete state[k];
+    Object.assign(state,o);
+  }catch(e){ updateUndoBtns(); return; }
+  refreshAfterUndo();
+  updateUndoBtns();
+}
+function initUndoRedo(){
+  const u=document.getElementById('undoBtn'), r=document.getElementById('redoBtn');
+  if(u) u.addEventListener('click', function(e){ e.stopPropagation(); doUndo(); });
+  if(r) r.addEventListener('click', function(e){ e.stopPropagation(); doRedo(); });
+  // snapshot before any interaction (covers drag, delete, add, sliders, inputs)
+  document.addEventListener('pointerdown', function(e){ if(e.target&&e.target.closest&&e.target.closest('#floatUndo')) return; pushUndo(); }, true);
+  document.addEventListener('focusin', function(){ pushUndo(); });
+  // keyboard: Ctrl+Z / Ctrl+Shift+Z / Ctrl+Y
+  document.addEventListener('keydown', function(e){
+    const mod=e.ctrlKey||e.metaKey;
+    if(!mod) return;
+    const k=(e.key||'').toLowerCase();
+    const tag=((e.target&&e.target.tagName)||'').toLowerCase();
+    const inField=(tag==='input'||tag==='textarea'||tag==='select');
+    if(k==='z'&&!e.shiftKey&&!inField){ e.preventDefault(); doUndo(); }
+    else if((k==='y'||(k==='z'&&e.shiftKey))&&!inField){ e.preventDefault(); doRedo(); }
+  });
+  updateUndoBtns();
+}
+if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', initUndoRedo); }
+else { initUndoRedo(); }
+</script><script>
+/* ============ Pinch-to-zoom on poster items (two fingers) ============ */
+function getItemZoom(id){
+  if(!id) return 1;
+  if(id.startsWith('free_')){
+    const l=state.freeLayers.find(x=>x.id===id);
+    return (l&&l.zoom)||1;
+  }
+  const p=state.customPos[id];
+  return (p&&p.zoom)||1;
+}
+function setItemZoom(id,z,live){
+  z=Math.max(0.2,Math.min(5,z));
+  let p=null,l=null;
+  if(id.startsWith('free_')){
+    l=state.freeLayers.find(x=>x.id===id);
+    if(!l) return;
+    l.zoom=z;
+  } else {
+    if(!state.customPos[id]) state.customPos[id]={x:0,y:0,rot:0,fs:100,visible:true};
+    p=state.customPos[id]; p.zoom=z;
+  }
+  if(live){
+    const el=document.getElementById(id);
+    if(el){
+      let tr='';
+      if(l){ tr=`translate(${l.x}px,${l.y}px) rotate(${l.rot||0}deg) scale(${z.toFixed(3)})`; }
+      else {
+        const isFrame=(id.indexOf('winner_')===0||id.indexOf('student_')===0);
+        const base=(isFrame&&p.fs)?(p.fs/100*z):z;
+        tr=`translate(${p.x}px,${p.y}px) rotate(${p.rot||0}deg) scale(${base.toFixed(3)})`;
+      }
+      el.style.transform=tr;
+    }
+  } else { renderPoster(); }
+}
+(function(){
+  const poster=document.getElementById('poster');
+  if(!poster) return;
+  const ptrs=new Map();
+  let pinch=null;
+  function dist(){
+    const v=[...ptrs.values()];
+    return Math.hypot(v[0].x-v[1].x, v[0].y-v[1].y);
+  }
+  poster.addEventListener('pointerdown', function(e){
+    if(ptrs.size===0){ window.__justPinched=false; }
+    ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(ptrs.size===2){
+      window.__pinchActive=true;
+      const v=[...ptrs.values()];
+      const d0=Math.max(dist(),1);
+      const mx=(v[0].x+v[1].x)/2, my=(v[0].y+v[1].y)/2;
+      let tid=null;
+      try{
+        const el=document.elementFromPoint(mx,my);
+        const t2=el?el.closest('[data-id],.flayer'):null;
+        if(t2) tid=t2.id||t2.dataset.id;
+      }catch(err){}
+      if(!tid && typeof activeSelectionId!=='undefined') tid=activeSelectionId;
+      if(tid){
+        try{ selectElement(tid); }catch(err){}
+        if(typeof pushUndo==='function') pushUndo();
+        pinch={d0:d0, z0:getItemZoom(tid), tid:tid};
+      } else {
+        window.__pinchActive=false;
+      }
+      e.stopPropagation();
+      if(e.cancelable) e.preventDefault();
+    }
+  }, true);
+  poster.addEventListener('pointermove', function(e){
+    if(!pinch || !ptrs.has(e.pointerId)) return;
+    ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(ptrs.size<2) return;
+    const z=pinch.z0*(dist()/pinch.d0);
+    setItemZoom(pinch.tid, z, true);
+    e.stopPropagation();
+    if(e.cancelable) e.preventDefault();
+  }, true);
+  function endP(e){
+    ptrs.delete(e.pointerId);
+    if(ptrs.size<2){
+      if(pinch){ renderPoster(); if(typeof syncSelPanel==='function') syncSelPanel(); pinch=null; }
+      window.__pinchActive=false;
+      window.__justPinched=true;
+    }
+  }
+  poster.addEventListener('pointerup', endP, true);
+  poster.addEventListener('pointercancel', endP, true);
+})();
 </script></body>
 </html>
