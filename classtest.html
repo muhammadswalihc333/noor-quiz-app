@@ -66,7 +66,7 @@
     <!-- അഡ്മിൻ ജിമെയിൽ ലോഗിൻ ബോക്സ് -->
     <div class="sub-box" id="adminLoginBoxSection" style="background:#eff6ff; border-color:#2563eb;">
         <h3>🔐 അഡ്മിൻ ജിമെയിൽ ലോഗിൻ (Google Authentication)</h3>
-        <p style="font-size:12px; color:#555;">ലിങ്ക് ക്രിയേറ്റ് ചെയ്യാനും ഡാറ്റ സേവ് ചെയ്യാനും നിങ്ങളുടെ ജിമെയിൽ അക്കൗണ്ട് വഴി ലോഗിൻ ചെയ്യുക[span_4](start_span)[span_4](end_span):</p>
+        <p style="font-size:12px; color:#555;">ലിങ്ക് ക്രിയേറ്റ് ചെയ്യാനും ഡാറ്റ സേവ് ചെയ്യാനും നിങ്ങളുടെ ജിമെയിൽ അക്കൗണ്ട് വഴി ലോഗിൻ ചെയ്യുക:</p>
         <button class="btn btn-blue" onclick="loginWithGoogle()">🌐 Google അക്കൗണ്ട് വഴി Login ചെയ്യുക</button>
         <p id="adminLoginStatus" style="font-size:12px; font-weight:bold; color:green; margin-top:6px;"></p>
     </div>
@@ -251,7 +251,7 @@
 
         <div class="sub-box" style="border-color: #2563eb;">
             <h3>🔑 മാസ്റ്റർ ആൻസർ കീ (ചോദ്യവും ഉത്തരവും സഹിതം)</h3>
-            <p style="font-size:12px; color:#555; margin-bottom:6px;">ഇവിടെ ഓരോ ചോദ്യവും അതിന്റെ ശരിയായ ഉത്തരവും വ്യക്തമായി കാണാനും ആവശ്യാനുസരണം എഡിറ്റ് ചെയ്ത് സേവ് ചെയ്യാനും സാധിക്കും[span_5](start_span)[span_5](end_span).</p>
+            <p style="font-size:12px; color:#555; margin-bottom:6px;">ഇവിടെ ഓരോ ചോദ്യവും അതിന്റെ ശരിയായ ഉത്തരവും വ്യക്തമായി കാണാനും ആവശ്യാനുസരണം എഡിറ്റ് ചെയ്ത് സേവ് ചെയ്യാനും സാധിക്കും.</p>
             
             <select id="selectEventForKey" onchange="loadAnswerKeyUploader()">
                 <option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>
@@ -834,7 +834,7 @@
         if(!ev || !ev.questions) { container.innerHTML = '<p>ചോദ്യങ്ങൾ ഒന്നും കണ്ടെത്തിയില്ല.</p>'; return; }
 
         let savedKeys = answerKeysData[evId] || {};
-        let html = `<div style="font-size:13px; color:#555; margin-bottom:8px;">ഓരോ ചോദ്യത്തിന്റെയും ശരിയായ ഉത്തരം താഴെയുള്ള ബോക്സിൽ തിരുത്തുകയോ ശരിപ്പെടുത്തുകയോ ചെയ്യാം[span_6](start_span)[span_6](end_span):</div>`;
+        let html = `<div style="font-size:13px; color:#555; margin-bottom:8px;">ഓരോ ചോദ്യത്തിന്റെയും ശരിയായ ഉത്തരം താഴെയുള്ള ബോക്സിൽ തിരുത്തുകയോ ശരിപ്പെടുത്തുകയോ ചെയ്യാം:</div>`;
         
         ev.questions.forEach((q, idx) => {
             let currentAns = (typeof savedKeys === 'object' && savedKeys[q.q] !== undefined) ? savedKeys[q.q] : ((typeof savedKeys === 'object' && savedKeys[idx] !== undefined) ? savedKeys[idx] : q.answer);
@@ -914,45 +914,79 @@
         alert("മാസ്റ്റർ ആൻസർ കീ വിജയകരമായി സേവ് ചെയ്തു!");
     }
 
-    // Fixed PDF Download Function supporting clean text rendering without encoding corruption for Malayalam/Arabic/English
+    // Canvas-based robust PDF generation to prevent encoding corruption and rendering issues for Malayalam/Arabic text
     function downloadAnswerKeyPDF(evId) {
         let ev = eventsData.find(e => e.id === evId);
-        if(!ev || !ev.questions) return;
         let savedKeys = answerKeysData[evId] || {};
+        if(!ev || !ev.questions) return;
 
-        const { jsPDF } = window.jspdf;
-        let doc = new jsPDF();
+        let canvas = document.createElement('canvas');
+        canvas.width = 1200;
+        let totalHeight = 250 + (ev.questions.length * 90);
+        canvas.height = totalHeight < 1600 ? 1600 : totalHeight;
+        let ctx = canvas.getContext('2d');
 
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(14);
-        doc.text(ev.name + " - Master Answer Key", 14, 20);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        if(ev.place) doc.text("Place/Institution: " + ev.place, 14, 28);
-        doc.text("Date: " + new Date().toLocaleDateString(), 14, 34);
+        ctx.fillStyle = '#14532d';
+        ctx.font = 'bold 36px "Segoe UI", Arial, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(ev.name + " - Master Answer Key", 60, 80);
 
-        let y = 44;
+        ctx.font = '20px "Segoe UI", Arial, sans-serif';
+        ctx.fillStyle = '#4b5563';
+        if(ev.place) ctx.fillText("Place / Institution: " + ev.place, 60, 120);
+        ctx.fillText("Date: " + new Date().toLocaleDateString(), 60, 150);
+
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(60, 180);
+        ctx.lineTo(canvas.width - 60, 180);
+        ctx.stroke();
+
+        let startY = 230;
         ev.questions.forEach((q, idx) => {
             let ans = (typeof savedKeys === 'object' && savedKeys[q.q] !== undefined) ? savedKeys[q.q] : ((typeof savedKeys === 'object' && savedKeys[idx] !== undefined) ? savedKeys[idx] : q.answer);
-            
-            if (y > 270) {
-                doc.addPage();
-                y = 20;
-            }
 
-            doc.setFont("helvetica", "bold");
-            doc.text(`Q${idx+1}: ${q.q}`, 14, y);
-            y += 6;
+            ctx.fillStyle = '#f8fafc';
+            ctx.fillRect(60, startY - 30, canvas.width - 120, 75);
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.strokeRect(60, startY - 30, canvas.width - 120, 75);
 
-            doc.setFont("helvetica", "normal");
-            doc.setTextColor(20, 83, 45);
-            doc.text(`Answer: ${ans}`, 18, y);
-            doc.setTextColor(0, 0, 0);
-            y += 10;
+            ctx.fillStyle = '#1f2937';
+            ctx.font = 'bold 20px "Segoe UI", Arial, sans-serif';
+            ctx.fillText(`Q${idx+1}: ${q.q}`, 80, startY);
+
+            ctx.fillStyle = '#166534';
+            ctx.font = 'bold 20px "Segoe UI", Arial, sans-serif';
+            ctx.fillText(`Answer: ${ans || 'N/A'}`, 80, startY + 32);
+
+            startY += 95;
         });
 
+        let imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        let doc = new jsPDF('p', 'mm', 'a4');
+        let imgWidth = 210;
+        let pageHeight = 295;
+        let imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft >= 0) {
+            position = heightLeft - imgHeight;
+            doc.addPage();
+            doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+        }
+
         doc.save(`${ev.name}_Answer_Key.pdf`);
+        canvas.remove();
     }
 
     window.onload = function() {
@@ -1389,43 +1423,7 @@
     }
 
     function downloadStudentAnswerKeyPDF(evId) {
-        let ev = eventsData.find(e => e.id === evId);
-        if(!ev || !ev.questions) return;
-        let savedKeys = answerKeysData[evId] || {};
-
-        const { jsPDF } = window.jspdf;
-        let doc = new jsPDF();
-
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(14);
-        doc.text(ev.name + " - Answer Key", 14, 20);
-
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        if(ev.place) doc.text("Place/Institution: " + ev.place, 14, 28);
-        doc.text("Date: " + new Date().toLocaleDateString(), 14, 34);
-
-        let y = 44;
-        ev.questions.forEach((q, idx) => {
-            let ans = (typeof savedKeys === 'object' && savedKeys[q.q] !== undefined) ? savedKeys[q.q] : ((typeof savedKeys === 'object' && savedKeys[idx] !== undefined) ? savedKeys[idx] : q.answer);
-            
-            if (y > 270) {
-                doc.addPage();
-                y = 20;
-            }
-
-            doc.setFont("helvetica", "bold");
-            doc.text(`Q${idx+1}: ${q.q}`, 14, y);
-            y += 6;
-
-            doc.setFont("helvetica", "normal");
-            doc.setTextColor(20, 83, 45);
-            doc.text(`Answer: ${ans}`, 18, y);
-            doc.setTextColor(0, 0, 0);
-            y += 10;
-        });
-
-        doc.save(`${ev.name}_Answer_Key.pdf`);
+        downloadAnswerKeyPDF(evId);
     }
 
     function loadStudentSubmissionsForEval() {
