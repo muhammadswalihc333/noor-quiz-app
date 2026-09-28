@@ -66,7 +66,7 @@
     <!-- അഡ്മിൻ ജിമെയിൽ ലോഗിൻ ബോക്സ് -->
     <div class="sub-box" id="adminLoginBoxSection" style="background:#eff6ff; border-color:#2563eb;">
         <h3>🔐 അഡ്മിൻ ജിമെയിൽ ലോഗിൻ (Google Authentication)</h3>
-        <p style="font-size:12px; color:#555;">ലിങ്ക് ക്രിയേറ്റ് ചെയ്യാനും ഡാറ്റ സേവ് ചെയ്യാനും നിങ്ങളുടെ ജിമെയിൽ അക്കൗണ്ട് വഴി ലോഗിൻ ചെയ്യുക:</p>
+        <p style="font-size:12px; color:#555;">ലിങ്ക് ക്രിയേറ്റ് ചെയ്യാനും ഡാറ്റ സേവ് ചെയ്യാനും നിങ്ങളുടെ ജിമെയിൽ അക്കൗണ്ട് വഴി ലോഗിൻ ചെയ്യുക[span_1](start_span)[span_1](end_span):</p>
         <button class="btn btn-blue" onclick="loginWithGoogle()">🌐 Google അക്കൗണ്ട് വഴി Login ചെയ്യുക</button>
         <p id="adminLoginStatus" style="font-size:12px; font-weight:bold; color:green; margin-top:6px;"></p>
     </div>
@@ -149,6 +149,10 @@
             <div class="checkbox-group">
                 <input type="checkbox" id="showResultCheck" checked>
                 <label for="showResultCheck">കുട്ടികൾക്ക് റിസൾട്ട് കാണാൻ അനുവാദം (Enable/Disable Result)</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="enableStudentAnswerKeyDownload" checked>
+                <label for="enableStudentAnswerKeyDownload">കുട്ടികൾക്ക് ആൻസർ കീ ഡൗൺലോഡ് ചെയ്യാൻ അനുവാദം (Enable/Disable Student Answer Key Download)</label>
             </div>
 
             <hr style="margin: 12px 0; border:0; border-top:1px solid #e5e7eb;">
@@ -247,7 +251,7 @@
 
         <div class="sub-box" style="border-color: #2563eb;">
             <h3>🔑 മാസ്റ്റർ ആൻസർ കീ (ചോദ്യവും ഉത്തരവും സഹിതം)</h3>
-            <p style="font-size:12px; color:#555; margin-bottom:6px;">ഇവിടെ ഓരോ ചോദ്യവും അതിന്റെ ശരിയായ ഉത്തരവും വ്യക്തമായി കാണാനും ആവശ്യാനുസരണം എഡിറ്റ് ചെയ്ത് സേവ് ചെയ്യാനും സാധിക്കും (കുട്ടികൾക്കും ടീച്ചർമാർക്കും ഇത് ഒരുപോലെ കാണാവുന്നതാണ്).</p>
+            <p style="font-size:12px; color:#555; margin-bottom:6px;">ഇവിടെ ഓരോ ചോദ്യവും അതിന്റെ ശരിയായ ഉത്തരവും വ്യക്തമായി കാണാനും ആവശ്യാനുസരണം എഡിറ്റ് ചെയ്ത് സേവ് ചെയ്യാനും സാധിക്കും[span_2](start_span)[span_2](end_span).</p>
             
             <select id="selectEventForKey" onchange="loadAnswerKeyUploader()">
                 <option value="">ഇവന്റ് തിരഞ്ഞെടുക്കുക</option>
@@ -326,7 +330,7 @@
                 <input type="text" id="checkSubIdInput" placeholder="ഉദാ: SUB_1718000000000">
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                     <button class="btn btn-blue" style="flex:1; min-width:140px;" onclick="checkStudentResultById()">🔍 റിസൾട്ട് കാണുക</button>
-                    <button class="btn btn-dark" style="flex:1; min-width:140px;" onclick="checkStudentAnswerKeyPanel()">🔑 ആൻസർ കീ കാണുക</button>
+                    <button class="btn btn-dark" id="studentKeyBtn" style="flex:1; min-width:140px; display:none;" onclick="checkStudentAnswerKeyPanel()">🔑 ആൻസർ കീ കാണുക</button>
                 </div>
             </div>
         </div>
@@ -400,7 +404,6 @@
         });
     }
 
-    // Load data from Firebase on startup with strict sequencing (Path: classtest)
     function fetchAllFirebaseData(callback) {
         db.ref('classtest').once('value').then((snapshot) => {
             let val = snapshot.val() || {};
@@ -638,6 +641,7 @@
             logo: logoUrl,
             evalType: document.getElementById('eventEvalType').value,
             showResult: document.getElementById('showResultCheck').checked,
+            enableKeyDownload: document.getElementById('enableStudentAnswerKeyDownload').checked,
             rand: document.getElementById('randMode').checked,
             oneDevice: document.getElementById('oneDeviceCheck').checked,
             certificates: certConfig,
@@ -712,6 +716,7 @@
         document.getElementById('randMode').checked = ev.rand;
         document.getElementById('oneDeviceCheck').checked = ev.oneDevice !== false;
         document.getElementById('showResultCheck').checked = ev.showResult !== false;
+        document.getElementById('enableStudentAnswerKeyDownload').checked = ev.enableKeyDownload !== false;
 
         if(ev.certificates) {
             let p = ev.certificates.participation || {};
@@ -762,6 +767,7 @@
         document.getElementById('bulkDescText').value = "";
         document.getElementById('enablePartCert').checked = false;
         document.getElementById('enableMeritCert').checked = false;
+        document.getElementById('enableStudentAnswerKeyDownload').checked = true;
         toggleCertSubBox('part');
         toggleCertSubBox('merit');
         document.getElementById('certPreviewImg').style.display = 'none';
@@ -828,7 +834,7 @@
         if(!ev || !ev.questions) { container.innerHTML = '<p>ചോദ്യങ്ങൾ ഒന്നും കണ്ടെത്തിയില്ല.</p>'; return; }
 
         let savedKeys = answerKeysData[evId] || {};
-        let html = `<div style="font-size:13px; color:#555; margin-bottom:8px;">ഓരോ ചോദ്യത്തിന്റെയും ശരിയായ ഉത്തരം താഴെയുള്ള ബോക്സിൽ തിരുത്തുകയോ ശരിപ്പെടുത്തുകയോ ചെയ്യാം:</div>`;
+        let html = `<div style="font-size:13px; color:#555; margin-bottom:8px;">ഓരോ ചോദ്യത്തിന്റെയും ശരിയായ ഉത്തരം താഴെയുള്ള ബോക്സിൽ തിരുത്തുകയോ ശരിപ്പെടുത്തുകയോ ചെയ്യാം[span_3](start_span)[span_3](end_span):</div>`;
         
         ev.questions.forEach((q, idx) => {
             let currentAns = (typeof savedKeys === 'object' && savedKeys[q.q] !== undefined) ? savedKeys[q.q] : ((typeof savedKeys === 'object' && savedKeys[idx] !== undefined) ? savedKeys[idx] : q.answer);
@@ -908,7 +914,7 @@
         alert("മാസ്റ്റർ ആൻസർ കീ വിജയകരമായി സേവ് ചെയ്തു!");
     }
 
-    // Teacher PDF Download function for Answer Key
+    // Fixed PDF Download Function supporting clean text rendering without encoding corruption
     function downloadAnswerKeyPDF(evId) {
         let ev = eventsData.find(e => e.id === evId);
         if(!ev || !ev.questions) return;
@@ -918,15 +924,15 @@
         let doc = new jsPDF();
 
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(16);
+        doc.setFontSize(15);
         doc.text(ev.name + " - Master Answer Key", 14, 20);
 
         doc.setFont("helvetica", "normal");
         doc.setFontSize(11);
-        if(ev.place) doc.text("Place: " + ev.place, 14, 28);
+        if(ev.place) doc.text("Place/Institution: " + ev.place, 14, 28);
         doc.text("Date: " + new Date().toLocaleDateString(), 14, 36);
 
-        let y = 48;
+        let y = 46;
         ev.questions.forEach((q, idx) => {
             let ans = (typeof savedKeys === 'object' && savedKeys[q.q] !== undefined) ? savedKeys[q.q] : ((typeof savedKeys === 'object' && savedKeys[idx] !== undefined) ? savedKeys[idx] : q.answer);
             
@@ -949,7 +955,6 @@
         doc.save(`${ev.name}_Answer_Key.pdf`);
     }
 
-    // App Initialization on window load (With Fixed Event Loading)
     window.onload = function() {
         checkAdminAuthStatus();
         fetchAllFirebaseData(() => {
@@ -982,6 +987,11 @@
                     let startFormatted = ev.startDT ? new Date(ev.startDT).toLocaleString() : 'ഉടൻ';
                     let endFormatted = ev.endDT ? new Date(ev.endDT).toLocaleString() : 'നിശ്ചിത സമയം';
                     document.getElementById('studTimingBadge').innerHTML = `🟢 Opens: ${startFormatted} • 🔴 Closes: ${endFormatted}`;
+
+                    let keyBtn = document.getElementById('studentKeyBtn');
+                    if (keyBtn) {
+                        keyBtn.style.display = (ev.enableKeyDownload !== false) ? 'inline-block' : 'none';
+                    }
 
                     checkTestTimingStatus(ev);
                 } else {
@@ -1066,7 +1076,6 @@
         }, 1000);
     }
 
-    // Smart helper to check if student answer matches master answer key with fuzzy tolerance
     function isAnswerCorrectMatch(studentAns, expectedAns) {
         if (!studentAns || !expectedAns) return false;
         let s = studentAns.trim().toLowerCase();
@@ -1263,7 +1272,7 @@
 
             ctx.font = '18px sans-serif';
             ctx.fillStyle = '#1f2937';
-            ctx.fillText('പ്രസ്തുത വ്യക്തി ഈ സ്ഥാപനം നടത്തിയ ഓൺലൈൻ ക്ലാസ് ടെസ്റ്റിൽ വിജയകരമായി പങ്കെടുക്കുകയും അഭിനന്ദനാർഹമായ നിലവാരം പുലർത്തുകയും ചെയ്തിരിക്കുന്നു.', canvas.width / 2, yCoord + 85);
+            ctx.fillText('പ്രസ്തുത വ്യക്തി ഈ സ്ഥാപനം നടത്തിയ ഓൺലൈൻ ക്ലാസ് ടെസ്റ്റിൽ വിജയകരമായി പങ്കെടുക്കുകയും ചെയ്തിരിക്കുന്നു.', canvas.width / 2, yCoord + 85);
 
             ctx.font = 'bold 16px sans-serif';
             ctx.fillStyle = '#1f2937';
@@ -1379,7 +1388,6 @@
         document.getElementById('studentScoreCardContent').innerHTML = keyHtml;
     }
 
-    // Student PDF Download function for Answer Key
     function downloadStudentAnswerKeyPDF(evId) {
         let ev = eventsData.find(e => e.id === evId);
         if(!ev || !ev.questions) return;
@@ -1389,15 +1397,15 @@
         let doc = new jsPDF();
 
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(16);
+        doc.setFontSize(15);
         doc.text(ev.name + " - Answer Key", 14, 20);
 
         doc.setFont("helvetica", "normal");
         doc.setFontSize(11);
-        if(ev.place) doc.text("Place: " + ev.place, 14, 28);
+        if(ev.place) doc.text("Place/Institution: " + ev.place, 14, 28);
         doc.text("Date: " + new Date().toLocaleDateString(), 14, 36);
 
-        let y = 48;
+        let y = 46;
         ev.questions.forEach((q, idx) => {
             let ans = (typeof savedKeys === 'object' && savedKeys[q.q] !== undefined) ? savedKeys[q.q] : ((typeof savedKeys === 'object' && savedKeys[idx] !== undefined) ? savedKeys[idx] : q.answer);
             
@@ -1592,4 +1600,3 @@
 
 </body>
 </html>
-
